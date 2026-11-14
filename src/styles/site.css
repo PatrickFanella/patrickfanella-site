@@ -8,7 +8,7 @@
   --dim: #465064;
   --line: rgb(14 20 34 / 0.16);
   --cobalt: #2353d6;
-  --orange: #c4500a;
+  --orange: #b54807; /* 4.6:1 on the ground and more on the panels, for the small chip text */
   --gold: #8a6500;
   --focus: #2353d6;
   --name: #0e1422;
@@ -67,6 +67,7 @@ p { margin: 0; }
 .bar { z-index: 3; }
 main, .foot { position: relative; z-index: 1; }
 
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .skip { position: absolute; left: var(--gutter); top: -60px; z-index: 5; background: var(--raise-solid); padding: 8px 12px; }
 .skip:focus { top: 8px; }
 
@@ -97,7 +98,7 @@ main, .foot { position: relative; z-index: 1; }
 }
 .switch:active { transform: scale(0.96); }
 .switch i { width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(90deg, var(--text) 50%, transparent 50%); border: 1.5px solid var(--text); transition: transform var(--t-3) var(--ease-spring); }
-.switch[aria-pressed="true"] i { transform: rotate(180deg); }
+.switch[data-dark] i { transform: rotate(180deg); }
 
 /* ---------- hero ---------- */
 .hero { padding: 6px var(--gutter-r) 0 var(--gutter); }
