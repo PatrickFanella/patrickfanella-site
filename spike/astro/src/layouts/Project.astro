@@ -1,0 +1,40 @@
+---
+// Shell shared by the projects index and every project page.
+interface Props { title: string; description: string; current?: boolean }
+const { title, description, current = false } = Astro.props
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="color-scheme" content="light dark">
+  <noscript><style is:inline>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body class="project-page">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  <a class="skip" href="#main">Skip to the content</a>
+  <header class="bar">
+    <a class="mark is-name" href="/" data-bleed="y">patrickfanella.co</a>
+    <nav aria-label="Main">
+      <a href="/projects/" aria-current={current ? 'page' : undefined} data-bleed="c">Projects</a>
+      <a href="/motion/" data-bleed="o">Motion</a>
+      <a href="https://github.com/PatrickFanella" data-bleed="y">GitHub</a>
+      <button type="button" class="switch" data-theme-switch data-splash="y" aria-pressed="false" aria-label="Dark theme"><i aria-hidden="true"></i><span>Light</span></button>
+    </nav>
+  </header>
+  <slot />
+  <footer class="foot">
+    <p>Patrick Fanella. Software, sound, culture.</p>
+    <nav aria-label="Contact">
+      <a href="mailto:patrick@subcult.tv" data-bleed="y">patrick@subcult.tv</a>
+      <a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a>
+      <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
+    </nav>
+  </footer>
+  <script>import '../../../../src/project-page.ts'</script>
+</body>
+</html>

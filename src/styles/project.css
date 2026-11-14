@@ -1,0 +1,21 @@
+/* Spike: project pages and the projects index. Same panels and type as the landing page. */
+.project { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; padding: 28px var(--gutter-r) 100px var(--gutter); }
+.project-head { position: sticky; top: 76px; align-self: start; display: grid; gap: 14px; padding: 22px 24px; }
+.project-head .meta { font: 500 0.75rem/1.4 var(--mono); color: var(--dim); }
+.title { margin: 0; font: 900 clamp(3.2rem, 8vw, 7rem)/0.86 var(--display); text-transform: uppercase; color: var(--name); overflow-wrap: anywhere; }
+.title [data-word], .title [data-ink-letter] { display: inline-block; }
+.stack { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.stack li { font: 600 0.6875rem/1 var(--mono); padding: 6px 8px; border: 1.5px solid var(--line); }
+.body { display: grid; gap: 14px; }
+.body section, .body details { padding: 20px 22px; display: grid; gap: 10px; }
+.body h2, .body summary { margin: 0; font: 800 1.9rem/1 var(--display); text-transform: uppercase; }
+.body summary { cursor: pointer; }
+.body ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); }
+.cards a { display: grid; gap: 8px; padding: 18px 20px; text-decoration: none; height: 100%; }
+.cards b { font: 800 1.75rem/1.05 var(--display); text-transform: uppercase; justify-self: start; }
+.cards span { color: var(--dim); font-size: 0.97rem; }
+@media (max-width: 860px) {
+  .project { grid-template-columns: minmax(0, 1fr); }
+  .project-head { position: static; }
+}

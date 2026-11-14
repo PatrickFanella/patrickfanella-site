@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Clpr, Patrick Fanella</title>
+  <meta name="description" content="A Twitch clip discovery app with creator and topic search, playlists, and moderation. I built and operate the Go API, React client, and search pipeline.">
+  <meta name="color-scheme" content="light dark">
+  <noscript><style>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/_astro/boot.C3fSjCNv.css">
+<link rel="stylesheet" href="/_astro/Project.Vzh5Ss-f.css"></head>
+<body class="project-page">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  <a class="skip" href="#main">Skip to the content</a>
+  <header class="bar">
+    <a class="mark is-name" href="/" data-bleed="y">patrickfanella.co</a>
+    <nav aria-label="Main">
+      <a href="/projects/" data-bleed="c">Projects</a>
+      <a href="/motion/" data-bleed="o">Motion</a>
+      <a href="https://github.com/PatrickFanella" data-bleed="y">GitHub</a>
+      <button type="button" class="switch" data-theme-switch data-splash="y" aria-pressed="false" aria-label="Dark theme"><i aria-hidden="true"></i><span>Light</span></button>
+    </nav>
+  </header>
+  
+  <main id="main" class="project">
+    <div class="project-head panel">
+      <p class="meta">Community &amp; Media · 2025–present · Production</p>
+      <h1 class="title" data-pour-in style="view-transition-name: p-clpr"><span data-fit><span data-word>Clpr</span></span></h1>
+      <p>A Twitch clip discovery app with creator and topic search, playlists, and moderation. I built and operate the Go API, React client, and search pipeline.</p>
+      <ul class="stack" aria-label="Stack"><li>Go</li><li>React</li><li>PostgreSQL</li><li>Redis</li><li>OpenSearch</li><li>TypeScript</li><li>Docker</li></ul>
+      <div class="actions">
+        <a class="btn primary" href="https://clpr.tv" data-bleed="o" data-splash="o">Open it</a>
+        <a class="btn" href="https://git.subcult.tv/subculture-collective/clpr" data-bleed="c" data-splash="c">Source</a>
+      </div>
+    </div>
+    <div class="body">
+      <section class="panel" data-rise><h2>The problem</h2><p>A Twitch clip is easy to make and hard to find a week later. Viewers had no dependable place to vote on clips, organize them, talk about them, or search for one they half remember.</p></section>
+      <section class="panel" data-rise><h2>What I built</h2><p>Clpr helps viewers find Twitch clips by creator, topic, and tag, then save and share them in playlists. I built the Go API, React web client, PostgreSQL model, moderation tools, and hybrid search pipeline, and handle container releases and public-service operations.</p><ul><li>Built clip discovery, playlists, voting, discussions, and moderation around one Go API and responsive React client.</li><li>Designed hybrid lexical and semantic retrieval so exact clip metadata and conversational queries can use different relevance signals.</li><li>Operate the public clpr.tv deployment from a tested, tagged release with documented verification and rollback paths.</li></ul></section>
+      <section class="panel" data-rise><h2>How it's built</h2><p>The React client uses a versioned Go API for discovery, accounts, playlists, and moderation. PostgreSQL owns the durable data; client behavior stays separate from retrieval and background processing.</p><p>Clip titles and tags benefit from exact matching, while conversational queries need semantic retrieval. I combined BM25 and vector search so each path can be evaluated and fail independently.</p><p>PostgreSQL remains the system of record, while Redis handles sessions and caching and OpenSearch serves retrieval. Keeping those responsibilities separate improves recovery, at the cost of explicit synchronization and health checks.</p></section>
+      <details data-unfold class="panel" data-rise><summary data-bleed="y">What I learned</summary><ul><li>A hybrid search stack adds operational cost, so its lexical and semantic paths need independent failure handling and measurable relevance tests.</li><li>A versioned API keeps interface changes separate from retrieval and moderation behavior, but requires explicit contract checks.</li></ul></details>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <p>Patrick Fanella. Software, sound, culture.</p>
+    <nav aria-label="Contact">
+      <a href="mailto:patrick@subcult.tv" data-bleed="y">patrick@subcult.tv</a>
+      <a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a>
+      <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
+    </nav>
+  </footer>
+  <script type="module" src="/_astro/Project.astro_astro_type_script_index_0_lang.D53OURKE.js"></script>
+</body>
+</html>

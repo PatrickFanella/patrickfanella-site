@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Motion set, Patrick Fanella</title>
+  <meta name="description" content="Every transition and interaction on patrickfanella.co, one at a time, with its timing and its reduced-motion version.">
+  <meta name="color-scheme" content="light dark">
+  <noscript><style is:inline>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body class="motion-page">
+  <canvas id="ink" aria-hidden="true"></canvas>
+
+  <header class="bar">
+    <a class="mark is-name" href="/" data-bleed="y">patrickfanella.co</a>
+    <nav aria-label="Main">
+      <a href="/#coming" data-bleed="c">What's coming</a>
+      <a href="/motion/" aria-current="page" data-bleed="o">Motion</a>
+      <a href="https://github.com/PatrickFanella" data-bleed="y">GitHub</a>
+      <button type="button" class="switch" data-theme-switch data-splash="y" aria-pressed="false" aria-label="Dark theme"><i aria-hidden="true"></i><span>Light</span></button>
+    </nav>
+  </header>
+
+  <main class="specs">
+    <div class="specs-head panel">
+      <h1>Motion set</h1>
+      <p>Every page on the new site moves with these nine animations and nothing else. They share four durations and two curves. Each has a reduced-motion version: if your system asks for less motion, the page still shows everything, just without the movement.</p>
+      <dl class="tokens">
+        <div><dt>120 ms</dt><dd>press, toggle</dd></div>
+        <div><dt>240 ms</dt><dd>hover, focus</dd></div>
+        <div><dt>420 ms</dt><dd>unfold, theme</dd></div>
+        <div><dt>620 ms</dt><dd>a letter landing, a page handing over</dd></div>
+      </dl>
+    </div>
+
+    <ol class="spec-list">
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Pour-in</h2>
+          <p>Letters drop into place from left to right. The moment each one hits, its ink splashes down from its foot and starts to pour.</p>
+          <dl><dt>Trigger</dt><dd>Page load</dd><dt>Timing</dt><dd>620 ms per letter, 60 ms apart, spring curve; ink splashes down as each letter hits</dd><dt>Reduced</dt><dd>Letters in place, ink already poured</dd></dl>
+        </div>
+        <div class="stage">
+          <p class="demo-word" data-pour-in id="demo-pour"><span data-fit><span data-word>Ink</span></span></p>
+          <button type="button" class="btn" data-replay="pour" data-splash="c">Replay</button>
+        </div>
+      </li>
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Bleed</h2>
+          <p>Links and buttons let ink go from their bottom edge while you hover or focus them.</p>
+          <dl><dt>Trigger</dt><dd>Hover, keyboard focus</dd><dt>Timing</dt><dd>Fades in over 240 ms, out over 400 ms</dd><dt>Reduced</dt><dd>Underline and colour change only</dd></dl>
+        </div>
+        <div class="stage">
+          <a class="btn" href="#bleed" data-bleed="c">Cobalt</a>
+          <a class="btn" href="#bleed" data-bleed="o">Orange</a>
+          <a class="btn" href="#bleed" data-bleed="y">Gold</a>
+        </div>
+      </li>
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Splash</h2>
+          <p>Pressing a button pushes the water out from your pointer and drops a little of that button's ink.</p>
+          <dl><dt>Trigger</dt><dd>Pointer down, Enter or Space</dd><dt>Timing</dt><dd>One solver step; the ink settles over about 2 s</dd><dt>Reduced</dt><dd>A 120 ms press only</dd></dl>
+        </div>
+        <div class="stage">
+          <button type="button" class="btn primary" data-splash="o">Press me</button>
+          <button type="button" class="btn" data-splash="c">Or me</button>
+        </div>
+      </li>
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Stir</h2>
+          <p>The tank follows your pointer, and scrolling drags the water with the page.</p>
+          <dl><dt>Trigger</dt><dd>Pointer movement, scrolling</dd><dt>Timing</dt><dd>Continuous, 60 solver steps a second</dd><dt>Reduced</dt><dd>One still frame of poured ink</dd></dl>
+        </div>
+        <div class="stage">
+          <button type="button" class="btn" data-replay="stir" data-splash="y">Stir it for me</button>
+        </div>
+      </li>
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Rise</h2>
+          <p>Rows lift into place as they scroll into view. The browser runs it from the scroll position, with no script.</p>
+          <dl><dt>Trigger</dt><dd>Scrolling, CSS scroll-driven animation</dd><dt>Timing</dt><dd>Over the first 70% of the row's entry</dd><dt>Reduced</dt><dd>Rows already in place</dd></dl>
+        </div>
+        <div class="stage">
+          <div class="rise-demo" id="rise-demo"><span></span><span></span><span></span></div>
+          <button type="button" class="btn" data-replay="rise" data-splash="o">Replay</button>
+        </div>
+      </li>
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Unfold</h2>
+          <p>A row grows into its detail in place, and folds back the same way.</p>
+          <dl><dt>Trigger</dt><dd>Opening a row</dd><dt>Timing</dt><dd>420 ms, ease-out, view transition</dd><dt>Reduced</dt><dd>Opens at once</dd></dl>
+        </div>
+        <div class="stage">
+          <details data-unfold class="unfold-demo">
+            <summary data-bleed="y">Open this row</summary>
+            <p>Here's the detail. The browser takes a picture of the row before and after, then morphs one into the other.</p>
+          </details>
+        </div>
+      </li>
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Hand-over</h2>
+          <p>Moving between pages, the old page drains downward while the new one fills in, and the name travels between its two places.</p>
+          <dl><dt>Trigger</dt><dd>Following a link on this site</dd><dt>Timing</dt><dd>620 ms, cross-document view transition</dd><dt>Reduced</dt><dd>The new page appears at once</dd></dl>
+        </div>
+        <div class="stage">
+          <a class="btn" href="/" data-bleed="o" data-splash="o">Go to the landing page</a>
+        </div>
+      </li>
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Theme switch</h2>
+          <p>The other theme spreads out from the switch as a circle, and the ink changes from pigment on paper to light in the dark.</p>
+          <dl><dt>Trigger</dt><dd>The switch in the top bar</dd><dt>Timing</dt><dd>420 ms, ease-out, view transition</dd><dt>Reduced</dt><dd>Switches at once</dd></dl>
+        </div>
+        <div class="stage">
+          <button type="button" class="btn" data-replay="theme" data-splash="y">Switch theme</button>
+        </div>
+      </li>
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Focus</h2>
+          <p>The keyboard focus ring closes in on the element it lands on, so you can follow it.</p>
+          <dl><dt>Trigger</dt><dd>Tab, Shift+Tab</dd><dt>Timing</dt><dd>240 ms, ease-out</dd><dt>Reduced</dt><dd>The ring appears in place</dd></dl>
+        </div>
+        <div class="stage">
+          <a class="btn" href="#focus">Tab to me</a>
+          <a class="btn" href="#focus">Then me</a>
+        </div>
+      </li>
+    </ol>
+  </main>
+
+  <footer class="foot">
+    <p>Patrick Fanella. Software, sound, culture.</p>
+    <nav aria-label="Contact">
+      <a href="mailto:patrick@subcult.tv" data-bleed="y">patrick@subcult.tv</a>
+      <a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a>
+      <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
+    </nav>
+  </footer>
+  <script>import '../../../../src/motion-page.ts'</script>
+</body>
+</html>
