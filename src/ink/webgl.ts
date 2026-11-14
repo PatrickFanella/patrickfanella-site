@@ -64,6 +64,7 @@ export function createWebGL(canvas: HTMLCanvasElement, onLost: () => void): Back
 
   let dyeW = 0, dyeH = 0
   let vel!: Pair, prs!: Pair, dye!: Pair, curl!: Target, divg!: Target
+  const texel = new Float32Array(4)
 
   function run(name: PassName, uniforms: Record<string, Uniform>, out: Target | null) {
     const pr = progs[name]
@@ -118,6 +119,12 @@ export function createWebGL(canvas: HTMLCanvasElement, onLost: () => void): Back
         uDye: dye.r, uVel: vel.r, uMask: mask, uAsp: asp, uDt: s.dt, uDecay: s.decay, uTime: s.time,
         uRate: p.rate, uCap: p.cap, uBurstA: s.bA, uBurstC: s.bC,
       }, dye.w); dye.swap()
+    },
+    // Reading one texel back makes the GPU run everything before it. A fence would not do:
+    // WebGL only updates its status between tasks, so it cannot be waited on inside one.
+    finish() {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, dye.r.fbo)
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, texel)
     },
     draw(l: Look) {
       run('show', { uDye: dye.r, uDT: [1 / dyeW, 1 / dyeH], uGround: l.ground, uA: l.a, uB: l.b, uC: l.c, uDark: l.dark, uGain: l.gain, uToe: l.toe }, null)
