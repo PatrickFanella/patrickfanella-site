@@ -10,18 +10,26 @@ Three static pages so far:
 
 ```bash
 npm ci
-npm run dev        # http://localhost:5173
-npm run build      # typecheck, then build to dist/
+npm run dev        # http://localhost:4321
+npm run build      # astro check, typecheck, then build to dist/
 npm run preview
 npm run test:e2e   # build, serve dist/ and run the browser tests in headless Chromium
 ```
 
-The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame within 3 s of the fonts loading, that the page works without WebGL2, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. Set `E2E_PORT` to serve on a port other than 4173.
+The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame within 3 s of the fonts loading, that the page works without WebGL2, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. They serve `dist/` with `astro preview`. Set `E2E_PORT` to serve on a port other than 4173.
 
 CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser tests on every push and pull request.
 
+## Preview
+
+Every green build of `main` is published privately at https://pf-preview.subcult.tv, behind the homelab's Authelia sign-in. The CI `deploy` job pushes the built files to the `deploy` branch (one commit, replaced each time); a timer on the homelab checks that branch every minute, reads it with a read-only deploy key, and serves the newest build. The preview sends the production content security policy plus `'wasm-unsafe-eval'` and `worker-src 'self'` for the desk, and `X-Robots-Tag: noindex`. `/REVISION` names the commit it was built from.
+
 ## Layout
 
+The pages are built with Astro as static HTML. There is no client router and no UI framework, and no Astro code ships to the browser. Each page loads its script as a plain TypeScript module, which Astro bundles with Vite.
+
+- `src/pages/`: `/`, `/desk/` and `/motion/`.
+- `src/layouts/Page.astro`: the head, body class and ink canvas every page shares.
 - `src/ink/shaders.ts`: stable fluids (advection, vorticity confinement, buoyancy, Jacobi pressure solve) in WebGL2 fragment shaders, plus the two looks: pigment on paper (light) and ink that glows (dark).
 - `src/ink/wgsl.ts`: the same solver and looks as WebGPU compute shaders.
 - `src/ink/webgl.ts` and `src/ink/webgpu.ts`: the two paths. Both take the same tunables and step input from the engine. WebGPU runs a 320-row grid against 256 on WebGL2. It is used only with a hardware adapter whose first frame runs cleanly offscreen; otherwise WebGL2 takes the canvas. Add `?ink=webgl2` or `?ink=webgpu` to the URL to pick a path; the second also accepts a software adapter.

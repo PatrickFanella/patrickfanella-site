@@ -22,7 +22,9 @@ export default defineConfig({
     },
   }],
   webServer: {
-    command: `npx vite preview --port ${port} --strictPort --host 127.0.0.1`,
+    // --ignore-lock keeps the server in the foreground. Without it, astro preview detaches into the
+    // background when it detects a coding agent, and Playwright would lose track of it.
+    command: `npx astro preview --port ${port} --host 127.0.0.1 --ignore-lock`,
     url: `http://127.0.0.1:${port}/`,
     reuseExistingServer: false,
     timeout: 30_000,
