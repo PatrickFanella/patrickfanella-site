@@ -9,12 +9,9 @@ export const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matc
 export function splitLetters(el: HTMLElement, inks: string) {
   if (el.dataset.split) return [...el.querySelectorAll<HTMLElement>('[data-ink-letter]')]
   el.dataset.split = '1'
-  // Screen readers get the word whole from a hidden copy. aria-label would do it on a heading,
-  // but it is not allowed on a paragraph.
-  const whole = document.createElement('span')
-  whole.className = 'sr-only'
-  whole.textContent = el.textContent?.replace(/\s+/g, ' ').trim() ?? ''
-  el.append(whole)
+  // Screen readers get the word whole from aria-label, so the host needs a role that takes a name
+  // (a heading, or role="img"). A hidden copy would also do it, but selection and find would see the word twice.
+  el.setAttribute('aria-label', el.textContent?.replace(/\s+/g, ' ').trim() ?? '')
   const letters: HTMLElement[] = []
   let n = 0
   for (const word of el.querySelectorAll<HTMLElement>('[data-word]')) {
