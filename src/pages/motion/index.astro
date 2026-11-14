@@ -1,16 +1,7 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Motion set, Patrick Fanella</title>
-  <meta name="description" content="Every transition and interaction on patrickfanella.co, one at a time, with its timing and its reduced-motion version.">
-  <meta name="color-scheme" content="light dark">
-  <noscript><style>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-</head>
-<body class="motion-page">
-  <canvas id="ink" aria-hidden="true"></canvas>
+---
+import Page from '../../layouts/Page.astro'
+---
+<Page title="Motion set, Patrick Fanella" description="Every transition and interaction on patrickfanella.co, one at a time, with its timing and its reduced-motion version." bodyClass="motion-page">
 
   <header class="bar">
     <a class="mark is-name" href="/" data-bleed="y">patrickfanella.co</a>
@@ -146,6 +137,5 @@
       <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
     </nav>
   </footer>
-  <script type="module" src="/src/motion-page.ts"></script>
-</body>
-</html>
+  <Fragment slot="head"><script>import '../../motion-page.ts'</script></Fragment>
+</Page>
