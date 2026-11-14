@@ -1,15 +1,7 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>The desk, Patrick Fanella</title>
-  <meta name="description" content="Patrick Fanella, senior backend and full-stack engineer. A tiling desk of panes on a live ink simulation, where PostgreSQL will run in your tab.">
-  <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-</head>
-<body class="desk">
-  <canvas id="ink" aria-hidden="true"></canvas>
+---
+import Page from '../../layouts/Page.astro'
+---
+<Page title="The desk, Patrick Fanella" description="Patrick Fanella, senior backend and full-stack engineer. A tiling desk of panes on a live ink simulation, where PostgreSQL will run in your tab." bodyClass="desk" noscript={false}>
   <a class="skip" href="#about">Skip to the desk</a>
 
   <header class="bar">
@@ -96,6 +88,5 @@
       <a href="/motion/" data-bleed="o">Motion set</a>
     </nav>
   </footer>
-  <script type="module" src="/src/desk/desk.ts"></script>
-</body>
-</html>
+  <Fragment slot="head"><script>import '../../desk/desk.ts'</script></Fragment>
+</Page>

@@ -21,7 +21,7 @@ A portfolio that shows the work running instead of describing it. A 30-second re
 
 ## Decisions
 
-- Vite with plain TypeScript, no framework, for now. Whether content pages need a static-site generator such as Astro is decided by a spike before they are built.
+- Astro with static output and plain TypeScript, no UI framework and no client router. The content-pages spike (#7) chose it; pages hand over with native cross-document view transitions.
 - Every number on the site is measured or labelled as recorded or simulated, with its source.
 - Every animation has a reduced-motion version that leaves the page complete and still.
 - Fonts are self-hosted and nothing loads from third-party hosts, so the production content security policy needs only `'wasm-unsafe-eval'` added for the desk.
