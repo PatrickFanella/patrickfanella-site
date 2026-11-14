@@ -27,7 +27,7 @@ npm run preview
 
 | Name | Trigger | Timing |
 |---|---|---|
-| Pour-in | Page load | 620 ms per letter, 60 ms apart, spring curve; ink splashes as each letter hits |
+| Pour-in | Page load | 620 ms per letter, 60 ms apart, spring curve; ink splashes down as each letter hits |
 | Bleed | Hover or keyboard focus on `data-bleed` | in over 240 ms, out over 400 ms |
 | Splash | Press on `data-splash` (pointer, Enter, Space) | one solver step |
 | Stir | Pointer movement, scrolling | continuous |

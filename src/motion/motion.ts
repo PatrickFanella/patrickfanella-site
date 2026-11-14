@@ -29,14 +29,16 @@ export function splitLetters(el: HTMLElement, inks: string) {
 
 /** Where the spring curve first reaches the resting position: the moment a letter hits. */
 export const IMPACT = 0.22
+/** The landing splash: downward push, outward fan, and how many solver steps it keeps pushing. */
+export const SPLASH = { down: 1.1, fan: 0.35, steps: 6 }
 /** How long after a letter hits its ink appears, so the contact reads first. */
 export const INK_DELAY = 20
 
 const ms = (v: string) => (v.endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000) || 0
 
 /**
- * pour-in: the letters drop into place left to right, 60 ms apart. The moment
- * each one hits, its ink splashes out along its foot and it starts to pour.
+ * pour-in: the letters drop into place left to right, 60 ms apart. Just after
+ * each one hits, its ink splashes down from its foot and it starts to pour.
  * 620 ms per letter on a spring curve, which reaches rest 22% of the way in.
  */
 export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false } = {}) {
@@ -44,9 +46,6 @@ export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false
   const host = letters[0]?.closest<HTMLElement>('[data-pour-in]')
   if (reduced()) { host?.classList.add('poured'); for (const l of letters) { l.dataset.pour = '1'; l.classList.add('landed') } ink?.invalidate(); return Promise.resolve() }
   if (host) { host.classList.remove('pouring', 'poured'); if (replay) void host.offsetWidth; host.classList.add('pouring') }
-  let live = true
-  const track = () => { if (!live) return; ink?.invalidate(); requestAnimationFrame(track) }
-  requestAnimationFrame(track)
   const hit = (l: HTMLElement) => {
     if (l.dataset.pour) return
     l.dataset.pour = '1'
@@ -54,13 +53,31 @@ export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false
     if (!ink) return
     const r = l.getBoundingClientRect()
     if (r.bottom < 0 || r.top > innerHeight) return
-    ink.burst(r.left + r.width / 2, letterBaseline(l) + 4, inkFromCode(l.dataset.inkLetter), 1.15, r.width * 0.62, r.height * 0.09)
+    // A jet straight down from the foot, fanning out a little: the letter landing splashes its ink.
+    ink.burst(r.left + r.width / 2, letterBaseline(l) + 6, inkFromCode(l.dataset.inkLetter), 1, r.width * 0.42, r.width * 0.22,
+      { dir: [0, SPLASH.down], spread: SPLASH.fan, steps: SPLASH.steps })
   }
-  return Promise.all(letters.map((l) => new Promise<void>((done) => {
+  // Time each splash from the letter's own animation clock, read every frame. The browser starts
+  // the animation when it first renders, which can be later than this script runs, so a timer
+  // started here would let the ink arrive before the letter.
+  const due = letters.map((l) => {
     const cs = getComputedStyle(l)
-    const at = ms(cs.animationDelay) + ms(cs.animationDuration) * IMPACT + INK_DELAY
-    const t = setTimeout(() => hit(l), at)
-    const land = () => { clearTimeout(t); hit(l); l.classList.add('landed'); done() }
+    const anim = l.getAnimations().find((a) => (a as CSSAnimation).animationName === 'pour-in')
+    return { l, anim, at: ms(cs.animationDelay) + ms(cs.animationDuration) * IMPACT + INK_DELAY }
+  })
+  let live = true
+  const track = () => {
+    if (!live) return
+    for (const d of due) {
+      const t = d.anim?.currentTime
+      if (!d.l.dataset.pour && typeof t === 'number' && t >= d.at) hit(d.l)
+    }
+    ink?.invalidate()
+    requestAnimationFrame(track)
+  }
+  requestAnimationFrame(track)
+  return Promise.all(due.map(({ l, at }) => new Promise<void>((done) => {
+    const land = () => { hit(l); l.classList.add('landed'); done() }
     l.addEventListener('animationend', land, { once: true })
     setTimeout(land, at + 2400) // a backstop if the animation never runs
   }))).then(() => { live = false; host?.classList.add('poured') })

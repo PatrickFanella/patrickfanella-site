@@ -3,6 +3,8 @@ import { drawMask, type Emitter, type InkId } from './mask'
 
 export type Theme = 'light' | 'dark'
 
+export interface BurstShape { dir?: [number, number]; spread?: number; steps?: number }
+
 export interface InkInfo {
   path: string
   renderer: string
@@ -19,9 +21,12 @@ export interface Ink {
   /**
    * A burst at a viewport point: pushes the water outward and drops ink there.
    * `rx` and `ry` are its half-width and half-height in CSS px (default 57, round).
-   * Bursts queue and run one per solver step.
+   * By default it pushes straight outward for one step. `dir` (CSS px axes, so
+   * positive y is down) adds a push in that direction, `spread` scales the
+   * outward part, and `steps` keeps pushing for that many steps, like a jet.
+   * Up to four run at once; the rest wait their turn.
    */
-  burst(x: number, y: number, ink: InkId, amount?: number, rx?: number, ry?: number): void
+  burst(x: number, y: number, ink: InkId, amount?: number, rx?: number, ry?: number, opts?: BurstShape): void
   /** Stir as if the pointer moved by (dx, dy) CSS px at (x, y). */
   stir(x: number, y: number, dx: number, dy: number): void
   setTheme(theme: Theme): void
@@ -46,7 +51,7 @@ const INK_RGB: Record<InkId, number[]> = { 0: [1, 0, 0], 1: [0, 1, 0], 2: [0, 0,
 
 interface Target { tex: WebGLTexture; fbo: WebGLFramebuffer; w: number; h: number }
 interface Pair { r: Target; w: Target; swap(): void }
-type Uniform = number | number[] | Target | { tex: WebGLTexture }
+type Uniform = number | number[] | Float32Array | Target | { tex: WebGLTexture }
 
 export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
   const gl = canvas.getContext('webgl2', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance', preserveDrawingBuffer: false })
@@ -71,7 +76,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
     const u = new Map<string, WebGLUniformLocation>()
     for (let i = 0, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS); i < n; i++) {
       const info = gl.getActiveUniform(p, i)!
-      u.set(info.name, gl.getUniformLocation(p, info.name)!)
+      u.set(info.name.replace(/\[0\]$/, ''), gl.getUniformLocation(p, info.name)!)
     }
     progs[name] = { p, u }
   }
@@ -144,6 +149,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
     for (const [k, v] of Object.entries(uniforms)) {
       const loc = pr.u.get(k); if (!loc) continue
       if (typeof v === 'number') gl!.uniform1f(loc, v)
+      else if (v instanceof Float32Array) gl!.uniform4fv(loc, v)
       else if (Array.isArray(v)) { if (v.length === 2) gl!.uniform2f(loc, v[0], v[1]); else gl!.uniform3f(loc, v[0], v[1], v[2]) }
       else { gl!.activeTexture(gl!.TEXTURE0 + unit); gl!.bindTexture(gl!.TEXTURE_2D, v.tex); gl!.uniform1i(loc, unit++) }
     }
@@ -154,7 +160,9 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
 
   // Input gathered between steps.
   const ptr = { x: -1, y: -1, ax: 0, ay: 0 }
-  const bursts: { x: number; y: number; ink: InkId; amount: number; r: number[] }[] = []
+  interface Burst { a: number[]; b: number[]; c: number[]; left: number }
+  const waiting: Burst[] = [], active: Burst[] = []
+  const bA = new Float32Array(16), bB = new Float32Array(16), bC = new Float32Array(16)
   let scrollV = 0
   let time = 0
 
@@ -162,13 +170,14 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
     if (maskDirty) uploadMask()
     const asp = [simW / simH, 1], T = [1 / simW, 1 / simH], scale = simH / 256
     const ptrV = [ptr.ax * 9, ptr.ay * 9]; ptr.ax = 0; ptr.ay = 0
-    const b = bursts.shift()
-    const bpos = b ? [b.x / innerWidth, 1 - b.y / innerHeight] : [-9, -9]
+    while (active.length < 4 && waiting.length) active.push(waiting.shift()!)
+    bA.fill(0); bB.fill(0); bC.fill(0)
+    active.forEach((q, i) => { bA.set(q.a, i * 4); bB.set(q.b, i * 4); bC.set(q.c, i * 4); q.c = [q.c[0], q.c[1], q.c[2], 0] })
     run('advect', { uVel: vel.r, uMask: mask, uAsp: asp, uDt: dt, uDamp: P.damp }, vel.w); vel.swap()
     run('curl', { uVel: vel.r, uT: T }, curl)
     run('force', {
       uVel: vel.r, uCurl: curl, uDye: dye.r, uMask: mask, uT: T, uAsp: asp, uPtr: [ptr.x, ptr.y], uPtrV: ptrV,
-      uBurst: bpos, uBurstR: b ? b.r : [1, 1], uBurstK: b ? 0.9 * b.amount : 0, uDt: dt, uTime: time, uGrav: P.grav, uConf: P.conf * scale,
+      uBurstA: bA, uBurstB: bB, uDt: dt, uTime: time, uGrav: P.grav, uConf: P.conf * scale,
       uPtrR: P.ptrR, uSway: P.sway, uPush: P.push, uScroll: scrollV,
     }, vel.w); vel.swap()
     scrollV *= 0.5
@@ -177,8 +186,9 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
     run('gradient', { uP: prs.r, uVel: vel.r, uMask: mask, uT: T }, vel.w); vel.swap()
     run('dye', {
       uDye: dye.r, uVel: vel.r, uMask: mask, uAsp: asp, uDt: dt, uDecay: Math.pow(P.decay, dt * 60), uTime: time,
-      uRate: P.rate, uCap: P.cap, uBurst: bpos, uBurstR: b ? b.r : [1, 1], uBurstInk: b ? INK_RGB[b.ink] : [0, 0, 0], uBurstAmt: b ? 1.4 * b.amount : 0,
+      uRate: P.rate, uCap: P.cap, uBurstA: bA, uBurstC: bC,
     }, dye.w); dye.swap()
+    for (let i = active.length - 1; i >= 0; i--) if (--active[i].left <= 0) active.splice(i, 1)
     time += dt
   }
 
@@ -224,7 +234,15 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
   return {
     invalidate() { maskDirty = true },
     setEmitters(list) { emitters = list; maskDirty = true },
-    burst(x, y, ink, amount = 1, rx = 57, ry = rx) { if (bursts.length < 24) bursts.push({ x, y, ink, amount, r: [rx / innerHeight, ry / innerHeight] }) },
+    burst(x, y, ink, amount = 1, rx = 57, ry = rx, { dir = [0, 0], spread = 1, steps = 1 } = {}) {
+      if (waiting.length >= 24) return
+      waiting.push({
+        a: [x / innerWidth, 1 - y / innerHeight, rx / innerHeight, ry / innerHeight],
+        b: [dir[0], -dir[1], spread, 0.9 * amount],
+        c: [...INK_RGB[ink], 1.4 * amount],
+        left: steps,
+      })
+    },
     stir(x, y, dx, dy) { ptr.x = x / innerWidth; ptr.y = 1 - y / innerHeight; ptr.ax += dx / innerHeight; ptr.ay -= dy / innerHeight },
     setTheme(t) { look = LOOK[t]; if (!running) draw() },
     setRunning(on) { wanted = on; if (on && !document.hidden) start(); else { stop(); draw() } },
