@@ -186,25 +186,25 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   // SwiftShader queue all 240 steps of a 1.5 s preroll and then freeze the tab for 15 s or more.
   function preroll(steps: number, budgetMs: number) {
     if (!live || !be) { pending = [steps, budgetMs]; return 0 }
-    const b = be, t0 = performance.now(); let n = 0
+    const b = be, finish = b.finish?.bind(b), t0 = performance.now(); let n = 0
     try {
-      if (b.finish) {
+      if (finish) {
         // Time real completion. Start from an idle GPU and run one step alone: it also uploads the
         // mask and wakes the GPU, so its cost only bounds the next batch. Then probe with up to 8
-        // steps, enough to spread the readback's round trip. After that send half of what the
-        // time left allows at the last batch's cost, and so on. Once the rest fits, send it and
-        // return, so a GPU with room to spare only waits for the first 9 steps.
-        b.finish()
-        let cost = 0, t = performance.now()
-        while (n < steps) {
-          const fits = n ? Math.floor((budgetMs - (t - t0)) / Math.max(cost, 0.01)) : 1
-          if (fits < 1) break
-          const k = fits >= steps - n ? steps - n : Math.max(1, Math.min(n === 1 ? 8 : steps, fits >> 1))
+        // steps, enough to spread the readback's round trip. Send what the time left allows at the
+        // probe's cost and return without waiting, so the main thread only waits for those 9 steps.
+        // More readbacks would refine the count, but each drains the GPU and blocks the page.
+        const timed = (k: number) => {
+          const t = performance.now()
           for (let i = 0; i < k; i++) step(1 / 60)
-          if ((n += k) === steps) break
-          b.finish()
-          const now = performance.now(); cost = (now - t) / k; t = now
+          n += k; finish()
+          const now = performance.now()
+          return Math.floor((budgetMs - (now - t0)) / Math.max((now - t) / k, 0.01))
         }
+        finish()
+        let fits = timed(1)
+        if (fits >= 1 && fits < steps - n) fits = timed(Math.max(1, Math.min(8, fits >> 1)))
+        for (let k = Math.min(steps - n, fits); k > 0; k--) { step(1 / 60); n++ }
       } else {
         // WebGPU cannot wait here, so the GPU cost it measured at start caps the count.
         if (b.stepCost) steps = Math.min(steps, Math.max(1, Math.floor(budgetMs / b.stepCost)))
