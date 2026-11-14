@@ -1,0 +1,1829 @@
+{
+ "recordedAt": "2026-11-14T03:06:23.928Z",
+ "engine": "Chrome/156",
+ "boot": {
+  "type": "ready",
+  "phases": {
+   "PostgreSQL": 1416,
+   "Migrations": 1052,
+   "Synthetic rows": 10089,
+   "Go": 299
+  },
+  "migrations": 155,
+  "rows": 50008
+ },
+ "cases": [
+  {
+   "id": "relevance",
+   "label": "Relevance search",
+   "url": "/api/v1/search?q=world+record&type=clips&sort=relevance",
+   "status": 200,
+   "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+   },
+   "body": "{\"query\":\"world record\",\"results\":{\"clips\":[{\"id\":\"e9f01036-06a0-414d-9ddf-85e31f462027\",\"twitch_clip_id\":\"fixture-0\",\"twitch_clip_url\":\"https://example.invalid/clip/0\",\"embed_url\":\"https://example.invalid/clip/0\",\"title\":\"speedrun world record attempt\",\"creator_name\":\"runner_a\",\"broadcaster_name\":\"runner_a\",\"view_count\":0,\"created_at\":\"2026-11-01T00:00:00Z\",\"imported_at\":\"2026-11-14T03:05:46.928Z\",\"vote_score\":41,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"86b0c7bb-a7b3-4715-9117-d5f016659c36\",\"twitch_clip_id\":\"fixture-1\",\"twitch_clip_url\":\"https://example.invalid/clip/1\",\"embed_url\":\"https://example.invalid/clip/1\",\"title\":\"chat reacts to the world record\",\"creator_name\":\"streamer_b\",\"broadcaster_name\":\"streamer_b\",\"view_count\":0,\"created_at\":\"2026-11-01T07:00:00Z\",\"imported_at\":\"2026-11-14T03:05:46.94Z\",\"vote_score\":33,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[]},\"counts\":{\"clips\":2,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":0},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":20,\"total_items\":2,\"total_pages\":1}}",
+   "statements": [
+    {
+     "kind": "prepare",
+     "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+     "params": [],
+     "start": 22.38,
+     "dur": 0.71,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        222
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        11
+       ],
+       [
+        "T",
+        31
+       ],
+       [
+        "S",
+        26
+       ],
+       [
+        "S",
+        21
+       ],
+       [
+        "S",
+        18
+       ],
+       [
+        "S",
+        24
+       ],
+       [
+        "S",
+        24
+       ],
+       [
+        "S",
+        26
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+     "params": [
+      "world:* & record:*"
+     ],
+     "start": 24.56,
+     "dur": 6.81,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        97
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        19
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "prepare",
+     "sql": "SELECT c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url, c.title, c.creator_name, c.creator_id, c.broadcaster_name, c.broadcaster_id, c.game_id, c.game_name, c.language, c.thumbnail_url, c.duration, c.view_count, c.created_at, c.imported_at, c.vote_score, c.comment_count, c.favorite_count, c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1) ORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC LIMIT $2 OFFSET $3",
+     "params": [],
+     "start": 33.17,
+     "dur": 0.68,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        726
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        19
+       ],
+       [
+        "T",
+        738
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url, c.title, c.creator_name, c.creator_id, c.broadcaster_name, c.broadcaster_id, c.game_id, c.game_name, c.language, c.thumbnail_url, c.duration, c.view_count, c.created_at, c.imported_at, c.vote_score, c.comment_count, c.favorite_count, c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1) ORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC LIMIT $2 OFFSET $3",
+     "params": [
+      "world:* & record:*",
+      20,
+      0
+     ],
+     "start": 34.69,
+     "dur": 5.28,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        173
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        272
+       ],
+       [
+        "D",
+        278
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "prepare",
+     "sql": "INSERT INTO search_queries (user_id, query, result_count) VALUES ($1, $2, $3)",
+     "params": [],
+     "start": 42.17,
+     "dur": 0.93,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        151
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        19
+       ],
+       [
+        "n",
+        5
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "INSERT INTO search_queries (user_id, query, result_count) VALUES ($1, $2, $3)",
+     "params": [
+      null,
+      "world record",
+      2
+     ],
+     "start": 43.54,
+     "dur": 1.07,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        105
+       ],
+       [
+        "D",
+        7
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "n",
+        5
+       ],
+       [
+        "C",
+        16
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    }
+   ],
+   "ms": 60.9,
+   "plan": [
+    "Limit  (cost=1494.37..1494.42 rows=20 width=891) (actual time=3.335..3.340 rows=2.00 loops=1)",
+    "  Buffers: shared hit=118",
+    "  ->  Sort  (cost=1494.37..1495.25 rows=352 width=891) (actual time=3.325..3.330 rows=2.00 loops=1)",
+    "        Sort Key: (ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC, vote_score DESC, created_at DESC",
+    "        Sort Method: quicksort  Memory: 17kB",
+    "        Buffers: shared hit=118",
+    "        ->  Bitmap Heap Scan on clips c  (cost=512.02..1485.01 rows=352 width=891) (actual time=3.270..3.295 rows=2.00 loops=1)",
+    "              Recheck Cond: (search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+    "              Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+    "              Heap Blocks: exact=1",
+    "              Buffers: shared hit=118",
+    "              ->  Bitmap Index Scan on idx_clips_search_vector  (cost=0.00..511.93 rows=352 width=0) (actual time=3.215..3.215 rows=2.00 loops=1)",
+    "                    Index Cond: (search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+    "                    Index Searches: 1",
+    "                    Buffers: shared hit=117",
+    "Planning:",
+    "  Buffers: shared hit=15",
+    "Planning Time: 0.940 ms",
+    "Execution Time: 3.495 ms"
+   ],
+   "rows": 50008
+  },
+  {
+   "id": "all",
+   "label": "Every result type",
+   "url": "/api/v1/search?q=world&type=all&limit=5",
+   "status": 200,
+   "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+   },
+   "body": "{\"query\":\"world\",\"results\":{\"clips\":[{\"id\":\"3e82ecd4-8eae-4d8e-8425-f244dfb18baf\",\"twitch_clip_id\":\"synthetic-49987\",\"twitch_clip_url\":\"https://example.invalid/s/49987\",\"embed_url\":\"https://example.invalid/s/49987\",\"title\":\"world moment 49987\",\"creator_name\":\"synthetic_487\",\"broadcaster_name\":\"synthetic_487\",\"view_count\":0,\"created_at\":\"2026-02-04T17:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"b69f8cac-d753-407c-9472-4bd01bb9becc\",\"twitch_clip_id\":\"synthetic-49687\",\"twitch_clip_url\":\"https://example.invalid/s/49687\",\"embed_url\":\"https://example.invalid/s/49687\",\"title\":\"world moment 49687\",\"creator_name\":\"synthetic_187\",\"broadcaster_name\":\"synthetic_187\",\"view_count\":0,\"created_at\":\"2026-02-04T12:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"6e94211f-874f-4937-8544-ef981ee139c6\",\"twitch_clip_id\":\"synthetic-49387\",\"twitch_clip_url\":\"https://example.invalid/s/49387\",\"embed_url\":\"https://example.invalid/s/49387\",\"title\":\"world moment 49387\",\"creator_name\":\"synthetic_387\",\"broadcaster_name\":\"synthetic_387\",\"view_count\":0,\"created_at\":\"2026-02-04T07:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"35d4f88b-e393-425e-ac89-3af1a1623e1a\",\"twitch_clip_id\":\"synthetic-49087\",\"twitch_clip_url\":\"https://example.invalid/s/49087\",\"embed_url\":\"https://example.invalid/s/49087\",\"title\":\"world moment 49087\",\"creator_name\":\"synthetic_87\",\"broadcaster_name\":\"synthetic_87\",\"view_count\":0,\"created_at\":\"2026-02-04T02:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"0500c7b9-ff26-4cdd-83b1-1969e9d1c787\",\"twitch_clip_id\":\"synthetic-48787\",\"twitch_clip_url\":\"https://example.invalid/s/48787\",\"embed_url\":\"https://example.invalid/s/48787\",\"title\":\"world moment 48787\",\"creator_name\":\"synthetic_287\",\"broadcaster_name\":\"synthetic_287\",\"view_count\":0,\"created_at\":\"2026-02-03T21:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[{\"id\":\"49746dca-2c62-427d-bd93-2e123d76bc2a\",\"name\":\"Content: crowd\",\"slug\":\"content/crowd\",\"description\":\"A real-world audience or large group.\",\"usage_count\":0,\"created_at\":\"2026-11-14T03:05:46.797Z\",\"lane\":\"detected\",\"display_name\":\"Crowd\",\"evidence\":\"visible\"},{\"id\":\"e05ab010-823f-4d64-9823-2f1c812a6984\",\"name\":\"Content: stage\",\"slug\":\"content/stage\",\"description\":\"A real-world stage or live venue is visible.\",\"usage_count\":0,\"created_at\":\"2026-11-14T03:05:46.797Z\",\"lane\":\"detected\",\"display_name\":\"Stage\",\"evidence\":\"visible\"},{\"id\":\"2733a249-a1f9-4060-a590-d197cdf1cde8\",\"name\":\"Content: music-performance\",\"slug\":\"content/music-performance\",\"description\":\"Real-world live musical performance is visible.\",\"usage_count\":0,\"created_at\":\"2026-11-14T03:05:46.797Z\",\"lane\":\"detected\",\"display_name\":\"Music Performance\",\"evidence\":\"visible\"},{\"id\":\"040e226a-2e76-4071-9c45-dc4ddbbe4592\",\"name\":\"Content: dance\",\"slug\":\"content/dance\",\"description\":\"Real-world dance performance or practice.\",\"usage_count\":0,\"created_at\":\"2026-11-14T03:05:46.797Z\",\"lane\":\"detected\",\"display_name\":\"Dance\",\"evidence\":\"visible\"},{\"id\":\"33385188-3ce1-4f81-ac99-e8718c1fa738\",\"name\":\"Content: event\",\"slug\":\"content/event\",\"description\":\"Organized real-world live event or gathering.\",\"usage_count\":0,\"created_at\":\"2026-11-14T03:05:46.797Z\",\"lane\":\"detected\",\"display_name\":\"Event\",\"evidence\":\"visible\"}]},\"counts\":{\"clips\":4170,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":12},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":5,\"total_items\":4182,\"total_pages\":837}}",
+   "statements": [
+    {
+     "kind": "execute",
+     "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+     "params": [
+      "world:*"
+     ],
+     "start": 1.02,
+     "dur": 16.29,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        86
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        19
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url, c.title, c.creator_name, c.creator_id, c.broadcaster_name, c.broadcaster_id, c.game_id, c.game_name, c.language, c.thumbnail_url, c.duration, c.view_count, c.created_at, c.imported_at, c.vote_score, c.comment_count, c.favorite_count, c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1) ORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC LIMIT $2 OFFSET $3",
+     "params": [
+      "world:*",
+      5,
+      0
+     ],
+     "start": 17.69,
+     "dur": 24.44,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        162
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        277
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "prepare",
+     "sql": "SELECT COUNT(*) FROM users u WHERE u.is_banned = false AND u.search_vector @@ to_tsquery('english', $1)",
+     "params": [],
+     "start": 42.78,
+     "dur": 0.32,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        170
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        11
+       ],
+       [
+        "T",
+        31
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT COUNT(*) FROM users u WHERE u.is_banned = false AND u.search_vector @@ to_tsquery('english', $1)",
+     "params": [
+      "world:*"
+     ],
+     "start": 43.25,
+     "dur": 0.95,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        86
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        19
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "prepare",
+     "sql": "SELECT u.id, u.twitch_id, u.username, u.display_name, u.email, u.avatar_url, u.bio, u.karma_points, u.role, u.is_banned, u.created_at, u.updated_at, u.last_login_at FROM users u WHERE u.is_banned = false AND u.search_vector @@ to_tsquery('english', $1) ORDER BY ts_rank(u.search_vector, to_tsquery('english', $1)) DESC, u.karma_points DESC LIMIT $2 OFFSET $3",
+     "params": [],
+     "start": 44.43,
+     "dur": 0.25,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        450
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        19
+       ],
+       [
+        "T",
+        361
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT u.id, u.twitch_id, u.username, u.display_name, u.email, u.avatar_url, u.bio, u.karma_points, u.role, u.is_banned, u.created_at, u.updated_at, u.last_login_at FROM users u WHERE u.is_banned = false AND u.search_vector @@ to_tsquery('english', $1) ORDER BY ts_rank(u.search_vector, to_tsquery('english', $1)) DESC, u.karma_points DESC LIMIT $2 OFFSET $3",
+     "params": [
+      "world:*",
+      5,
+      0
+     ],
+     "start": 44.86,
+     "dur": 0.48,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        138
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "prepare",
+     "sql": "SELECT COUNT(DISTINCT c.game_id) FROM clips c LEFT JOIN games g ON g.twitch_game_id=c.game_id WHERE c.game_id IS NOT NULL AND COALESCE(c.game_name,g.name) IS NOT NULL AND c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND to_tsvector('english', COALESCE(c.game_name,g.name)) @@ to_tsquery('english', $1)",
+     "params": [],
+     "start": 45.79,
+     "dur": 0.56,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        404
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        11
+       ],
+       [
+        "T",
+        31
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT COUNT(DISTINCT c.game_id) FROM clips c LEFT JOIN games g ON g.twitch_game_id=c.game_id WHERE c.game_id IS NOT NULL AND COALESCE(c.game_name,g.name) IS NOT NULL AND c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND to_tsvector('english', COALESCE(c.game_name,g.name)) @@ to_tsquery('english', $1)",
+     "params": [
+      "world:*"
+     ],
+     "start": 46.47,
+     "dur": 1.63,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        86
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        19
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "prepare",
+     "sql": "SELECT c.game_id, COALESCE(c.game_name,g.name), COUNT(*) as clip_count FROM clips c LEFT JOIN games g ON g.twitch_game_id=c.game_id WHERE c.game_id IS NOT NULL AND COALESCE(c.game_name,g.name) IS NOT NULL AND c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND to_tsvector('english', COALESCE(c.game_name,g.name)) @@ to_tsquery('english', $1) GROUP BY c.game_id, COALESCE(c.game_name,g.name) ORDER BY clip_count DESC LIMIT $2 OFFSET $3",
+     "params": [],
+     "start": 48.38,
+     "dur": 0.41,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        541
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        19
+       ],
+       [
+        "T",
+        89
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT c.game_id, COALESCE(c.game_name,g.name), COUNT(*) as clip_count FROM clips c LEFT JOIN games g ON g.twitch_game_id=c.game_id WHERE c.game_id IS NOT NULL AND COALESCE(c.game_name,g.name) IS NOT NULL AND c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND to_tsvector('english', COALESCE(c.game_name,g.name)) @@ to_tsquery('english', $1) GROUP BY c.game_id, COALESCE(c.game_name,g.name) ORDER BY clip_count DESC LIMIT $2 OFFSET $3",
+     "params": [
+      "world:*",
+      5,
+      0
+     ],
+     "start": 48.97,
+     "dur": 0.98,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        118
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "prepare",
+     "sql": "SELECT COUNT(*) FROM tags t WHERE NOT EXISTS (SELECT 1 FROM blacklisted_tags b WHERE b.literal_slug = lower(t.slug)) AND NOT EXISTS (SELECT 1 FROM blacklisted_tags b WHERE b.literal_slug IS NULL AND t.slug ILIKE b.like_pattern ESCAPE '\\') AND NOT EXISTS (SELECT 1 FROM tag_suppressions s WHERE s.tag_id = t.id) AND t.search_vector @@ to_tsquery('english', $1)",
+     "params": [],
+     "start": 50.48,
+     "dur": 0.61,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        434
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        11
+       ],
+       [
+        "T",
+        31
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT COUNT(*) FROM tags t WHERE NOT EXISTS (SELECT 1 FROM blacklisted_tags b WHERE b.literal_slug = lower(t.slug)) AND NOT EXISTS (SELECT 1 FROM blacklisted_tags b WHERE b.literal_slug IS NULL AND t.slug ILIKE b.like_pattern ESCAPE '\\') AND NOT EXISTS (SELECT 1 FROM tag_suppressions s WHERE s.tag_id = t.id) AND t.search_vector @@ to_tsquery('english', $1)",
+     "params": [
+      "world:*"
+     ],
+     "start": 51.21,
+     "dur": 1.7,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        86
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        19
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "prepare",
+     "sql": "SELECT t.id, t.name, t.slug, t.description, t.color, t.usage_count, t.created_at FROM tags t WHERE NOT EXISTS (SELECT 1 FROM blacklisted_tags b WHERE b.literal_slug = lower(t.slug)) AND NOT EXISTS (SELECT 1 FROM blacklisted_tags b WHERE b.literal_slug IS NULL AND t.slug ILIKE b.like_pattern ESCAPE '\\') AND NOT EXISTS (SELECT 1 FROM tag_suppressions s WHERE s.tag_id = t.id) AND t.search_vector @@ to_tsquery('english', $1) ORDER BY ts_rank(t.search_vector, to_tsquery('english', $1)) DESC, t.usage_count DESC LIMIT $2 OFFSET $3",
+     "params": [],
+     "start": 53.11,
+     "dur": 0.33,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        617
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        19
+       ],
+       [
+        "T",
+        187
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT t.id, t.name, t.slug, t.description, t.color, t.usage_count, t.created_at FROM tags t WHERE NOT EXISTS (SELECT 1 FROM blacklisted_tags b WHERE b.literal_slug = lower(t.slug)) AND NOT EXISTS (SELECT 1 FROM blacklisted_tags b WHERE b.literal_slug IS NULL AND t.slug ILIKE b.like_pattern ESCAPE '\\') AND NOT EXISTS (SELECT 1 FROM tag_suppressions s WHERE s.tag_id = t.id) AND t.search_vector @@ to_tsquery('english', $1) ORDER BY ts_rank(t.search_vector, to_tsquery('english', $1)) DESC, t.usage_count DESC LIMIT $2 OFFSET $3",
+     "params": [
+      "world:*",
+      5,
+      0
+     ],
+     "start": 53.56,
+     "dur": 0.71,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        126
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        127
+       ],
+       [
+        "D",
+        134
+       ],
+       [
+        "D",
+        161
+       ],
+       [
+        "D",
+        131
+       ],
+       [
+        "D",
+        135
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "INSERT INTO search_queries (user_id, query, result_count) VALUES ($1, $2, $3)",
+     "params": [
+      null,
+      "world",
+      4182
+     ],
+     "start": 54.63,
+     "dur": 0.29,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        98
+       ],
+       [
+        "D",
+        7
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "n",
+        5
+       ],
+       [
+        "C",
+        16
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    }
+   ],
+   "ms": 56.8,
+   "plan": [
+    "Limit  (cost=3309.97..3309.98 rows=5 width=891) (actual time=32.375..32.385 rows=5.00 loops=1)",
+    "  Buffers: shared hit=2606",
+    "  ->  Sort  (cost=3309.97..3320.28 rows=4127 width=891) (actual time=32.370..32.370 rows=5.00 loops=1)",
+    "        Sort Key: (ts_rank(search_vector, '''world'':*'::tsquery)) DESC, vote_score DESC, created_at DESC",
+    "        Sort Method: top-N heapsort  Memory: 19kB",
+    "        Buffers: shared hit=2606",
+    "        ->  Seq Scan on clips c  (cost=0.00..3241.42 rows=4127 width=891) (actual time=0.030..27.680 rows=4170.00 loops=1)",
+    "              Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':*'::tsquery))",
+    "              Rows Removed by Filter: 45838",
+    "              Buffers: shared hit=2606",
+    "Planning:",
+    "  Buffers: shared hit=15",
+    "Planning Time: 0.625 ms",
+    "Execution Time: 32.440 ms"
+   ],
+   "rows": 50008
+  },
+  {
+   "id": "symbols",
+   "label": "Punctuation in the query",
+   "url": "/api/v1/search?q=rock+%26+roll&type=clips",
+   "status": 200,
+   "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+   },
+   "body": "{\"query\":\"rock \\u0026 roll\",\"results\":{\"clips\":[{\"id\":\"c15e46b2-ac83-4f1f-a296-78852591168e\",\"twitch_clip_id\":\"fixture-6\",\"twitch_clip_url\":\"https://example.invalid/clip/6\",\"embed_url\":\"https://example.invalid/clip/6\",\"title\":\"rock and roll cover on stream\",\"creator_name\":\"band_g\",\"broadcaster_name\":\"band_g\",\"view_count\":0,\"created_at\":\"2026-11-02T18:00:00Z\",\"imported_at\":\"2026-11-14T03:05:46.95Z\",\"vote_score\":9,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[]},\"counts\":{\"clips\":1,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":0},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":20,\"total_items\":1,\"total_pages\":1}}",
+   "statements": [
+    {
+     "kind": "execute",
+     "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+     "params": [
+      "rock:* & roll:*"
+     ],
+     "start": 0.84,
+     "dur": 2.74,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        94
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        19
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url, c.title, c.creator_name, c.creator_id, c.broadcaster_name, c.broadcaster_id, c.game_id, c.game_name, c.language, c.thumbnail_url, c.duration, c.view_count, c.created_at, c.imported_at, c.vote_score, c.comment_count, c.favorite_count, c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1) ORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC LIMIT $2 OFFSET $3",
+     "params": [
+      "rock:* & roll:*",
+      20,
+      0
+     ],
+     "start": 3.8,
+     "dur": 2.03,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        170
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        268
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "INSERT INTO search_queries (user_id, query, result_count) VALUES ($1, $2, $3)",
+     "params": [
+      null,
+      "rock & roll",
+      1
+     ],
+     "start": 6.16,
+     "dur": 0.36,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        104
+       ],
+       [
+        "D",
+        7
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "n",
+        5
+       ],
+       [
+        "C",
+        16
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    }
+   ],
+   "ms": 7.1,
+   "plan": [
+    "Limit  (cost=514.20..514.21 rows=1 width=891) (actual time=1.480..1.485 rows=1.00 loops=1)",
+    "  Buffers: shared hit=116",
+    "  ->  Sort  (cost=514.20..514.21 rows=1 width=891) (actual time=1.475..1.480 rows=1.00 loops=1)",
+    "        Sort Key: (ts_rank(search_vector, '''rock'':* & ''roll'':*'::tsquery)) DESC, vote_score DESC, created_at DESC",
+    "        Sort Method: quicksort  Memory: 17kB",
+    "        Buffers: shared hit=116",
+    "        ->  Bitmap Heap Scan on clips c  (cost=510.18..514.19 rows=1 width=891) (actual time=1.455..1.455 rows=1.00 loops=1)",
+    "              Recheck Cond: (search_vector @@ '''rock'':* & ''roll'':*'::tsquery)",
+    "              Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+    "              Heap Blocks: exact=1",
+    "              Buffers: shared hit=116",
+    "              ->  Bitmap Index Scan on idx_clips_search_vector  (cost=0.00..510.18 rows=1 width=0) (actual time=1.430..1.430 rows=1.00 loops=1)",
+    "                    Index Cond: (search_vector @@ '''rock'':* & ''roll'':*'::tsquery)",
+    "                    Index Searches: 1",
+    "                    Buffers: shared hit=115",
+    "Planning:",
+    "  Buffers: shared hit=15",
+    "Planning Time: 0.520 ms",
+    "Execution Time: 1.525 ms"
+   ],
+   "rows": 50008
+  },
+  {
+   "id": "missing",
+   "label": "No query",
+   "url": "/api/v1/search?type=clips",
+   "status": 400,
+   "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+   },
+   "body": "{\"error\":\"Query parameter 'q' or 'said' is required\"}",
+   "statements": [],
+   "ms": 2.1,
+   "plan": null,
+   "rows": 50008
+  },
+  {
+   "id": "bang",
+   "label": "A query that cleans to nothing",
+   "url": "/api/v1/search?q=!&type=clips&limit=3",
+   "status": 200,
+   "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+   },
+   "body": "{\"query\":\"!\",\"results\":{\"clips\":[{\"id\":\"ab405cc7-2d26-4cef-8ab8-e5e94994687c\",\"twitch_clip_id\":\"fixture-7\",\"twitch_clip_url\":\"https://example.invalid/clip/7\",\"embed_url\":\"https://example.invalid/clip/7\",\"title\":\"c++ live coding session\",\"creator_name\":\"dev_h\",\"broadcaster_name\":\"dev_h\",\"view_count\":0,\"created_at\":\"2026-11-03T01:00:00Z\",\"imported_at\":\"2026-11-14T03:05:46.951Z\",\"vote_score\":15,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"c15e46b2-ac83-4f1f-a296-78852591168e\",\"twitch_clip_id\":\"fixture-6\",\"twitch_clip_url\":\"https://example.invalid/clip/6\",\"embed_url\":\"https://example.invalid/clip/6\",\"title\":\"rock and roll cover on stream\",\"creator_name\":\"band_g\",\"broadcaster_name\":\"band_g\",\"view_count\":0,\"created_at\":\"2026-11-02T18:00:00Z\",\"imported_at\":\"2026-11-14T03:05:46.95Z\",\"vote_score\":9,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"2742fadf-cb43-482b-9d7a-91bfeba0fb14\",\"twitch_clip_id\":\"fixture-5\",\"twitch_clip_url\":\"https://example.invalid/clip/5\",\"embed_url\":\"https://example.invalid/clip/5\",\"title\":\"record breaking subathon finale\",\"creator_name\":\"host_f\",\"broadcaster_name\":\"host_f\",\"view_count\":0,\"created_at\":\"2026-11-02T11:00:00Z\",\"imported_at\":\"2026-11-14T03:05:46.949Z\",\"vote_score\":22,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[]},\"counts\":{\"clips\":50008,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":0},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":3,\"total_items\":50008,\"total_pages\":16670}}",
+   "statements": [
+    {
+     "kind": "prepare",
+     "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false",
+     "params": [],
+     "start": 0.62,
+     "dur": 0.36,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        173
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        7
+       ],
+       [
+        "T",
+        31
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false",
+     "params": [],
+     "start": 1.09,
+     "dur": 17.77,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        73
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        19
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "prepare",
+     "sql": "SELECT c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url, c.title, c.creator_name, c.creator_id, c.broadcaster_name, c.broadcaster_id, c.game_id, c.game_name, c.language, c.thumbnail_url, c.duration, c.view_count, c.created_at, c.imported_at, c.vote_score, c.comment_count, c.favorite_count, c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false ORDER BY c.created_at DESC LIMIT $1 OFFSET $2",
+     "params": [],
+     "start": 19.15,
+     "dur": 0.36,
+     "wire": {
+      "sent": [
+       [
+        "P",
+        600
+       ],
+       [
+        "D",
+        65
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "1",
+        5
+       ],
+       [
+        "t",
+        15
+       ],
+       [
+        "T",
+        738
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url, c.title, c.creator_name, c.creator_id, c.broadcaster_name, c.broadcaster_id, c.game_id, c.game_name, c.language, c.thumbnail_url, c.duration, c.view_count, c.created_at, c.imported_at, c.vote_score, c.comment_count, c.favorite_count, c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false ORDER BY c.created_at DESC LIMIT $1 OFFSET $2",
+     "params": [
+      3,
+      0
+     ],
+     "start": 19.64,
+     "dur": 0.64,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        149
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        260
+       ],
+       [
+        "D",
+        268
+       ],
+       [
+        "D",
+        270
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "INSERT INTO search_queries (user_id, query, result_count) VALUES ($1, $2, $3)",
+     "params": [
+      null,
+      "!",
+      50008
+     ],
+     "start": 20.57,
+     "dur": 0.29,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        94
+       ],
+       [
+        "D",
+        7
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "n",
+        5
+       ],
+       [
+        "C",
+        16
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    }
+   ],
+   "ms": 21.2,
+   "plan": [
+    "Limit  (cost=0.29..0.55 rows=3 width=887) (actual time=0.025..0.035 rows=3.00 loops=1)",
+    "  Buffers: shared hit=3",
+    "  ->  Index Scan using idx_clips_created_at on clips c  (cost=0.29..4359.91 rows=50008 width=887) (actual time=0.015..0.025 rows=3.00 loops=1)",
+    "        Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+    "        Index Searches: 1",
+    "        Buffers: shared hit=3",
+    "Planning:",
+    "  Buffers: shared hit=14",
+    "Planning Time: 0.360 ms",
+    "Execution Time: 0.060 ms"
+   ],
+   "rows": 50008
+  },
+  {
+   "id": "limit",
+   "label": "Limit above the maximum",
+   "url": "/api/v1/search?q=world&type=clips&limit=500",
+   "status": 200,
+   "headers": {
+    "Content-Type": "application/json; charset=utf-8"
+   },
+   "body": "{\"query\":\"world\",\"results\":{\"clips\":[{\"id\":\"3e82ecd4-8eae-4d8e-8425-f244dfb18baf\",\"twitch_clip_id\":\"synthetic-49987\",\"twitch_clip_url\":\"https://example.invalid/s/49987\",\"embed_url\":\"https://example.invalid/s/49987\",\"title\":\"world moment 49987\",\"creator_name\":\"synthetic_487\",\"broadcaster_name\":\"synthetic_487\",\"view_count\":0,\"created_at\":\"2026-02-04T17:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"b69f8cac-d753-407c-9472-4bd01bb9becc\",\"twitch_clip_id\":\"synthetic-49687\",\"twitch_clip_url\":\"https://example.invalid/s/49687\",\"embed_url\":\"https://example.invalid/s/49687\",\"title\":\"world moment 49687\",\"creator_name\":\"synthetic_187\",\"broadcaster_name\":\"synthetic_187\",\"view_count\":0,\"created_at\":\"2026-02-04T12:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"6e94211f-874f-4937-8544-ef981ee139c6\",\"twitch_clip_id\":\"synthetic-49387\",\"twitch_clip_url\":\"https://example.invalid/s/49387\",\"embed_url\":\"https://example.invalid/s/49387\",\"title\":\"world moment 49387\",\"creator_name\":\"synthetic_387\",\"broadcaster_name\":\"synthetic_387\",\"view_count\":0,\"created_at\":\"2026-02-04T07:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"35d4f88b-e393-425e-ac89-3af1a1623e1a\",\"twitch_clip_id\":\"synthetic-49087\",\"twitch_clip_url\":\"https://example.invalid/s/49087\",\"embed_url\":\"https://example.invalid/s/49087\",\"title\":\"world moment 49087\",\"creator_name\":\"synthetic_87\",\"broadcaster_name\":\"synthetic_87\",\"view_count\":0,\"created_at\":\"2026-02-04T02:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"0500c7b9-ff26-4cdd-83b1-1969e9d1c787\",\"twitch_clip_id\":\"synthetic-48787\",\"twitch_clip_url\":\"https://example.invalid/s/48787\",\"embed_url\":\"https://example.invalid/s/48787\",\"title\":\"world moment 48787\",\"creator_name\":\"synthetic_287\",\"broadcaster_name\":\"synthetic_287\",\"view_count\":0,\"created_at\":\"2026-02-03T21:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"74ff7b61-e1ae-4b51-8f58-2d490520d75c\",\"twitch_clip_id\":\"synthetic-48487\",\"twitch_clip_url\":\"https://example.invalid/s/48487\",\"embed_url\":\"https://example.invalid/s/48487\",\"title\":\"world moment 48487\",\"creator_name\":\"synthetic_487\",\"broadcaster_name\":\"synthetic_487\",\"view_count\":0,\"created_at\":\"2026-02-03T16:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"05f3be2d-4155-4a29-a14c-98e9aa45b94a\",\"twitch_clip_id\":\"synthetic-48187\",\"twitch_clip_url\":\"https://example.invalid/s/48187\",\"embed_url\":\"https://example.invalid/s/48187\",\"title\":\"world moment 48187\",\"creator_name\":\"synthetic_187\",\"broadcaster_name\":\"synthetic_187\",\"view_count\":0,\"created_at\":\"2026-02-03T11:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"e13e52a6-358e-4059-9b4a-a7e073bbc8f6\",\"twitch_clip_id\":\"synthetic-47887\",\"twitch_clip_url\":\"https://example.invalid/s/47887\",\"embed_url\":\"https://example.invalid/s/47887\",\"title\":\"world moment 47887\",\"creator_name\":\"synthetic_387\",\"broadcaster_name\":\"synthetic_387\",\"view_count\":0,\"created_at\":\"2026-02-03T06:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"bbab304f-88be-4b0d-b40b-0e115f3f334a\",\"twitch_clip_id\":\"synthetic-47587\",\"twitch_clip_url\":\"https://example.invalid/s/47587\",\"embed_url\":\"https://example.invalid/s/47587\",\"title\":\"world moment 47587\",\"creator_name\":\"synthetic_87\",\"broadcaster_name\":\"synthetic_87\",\"view_count\":0,\"created_at\":\"2026-02-03T01:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"04556063-00f3-4874-8931-face1c8710a4\",\"twitch_clip_id\":\"synthetic-47287\",\"twitch_clip_url\":\"https://example.invalid/s/47287\",\"embed_url\":\"https://example.invalid/s/47287\",\"title\":\"world moment 47287\",\"creator_name\":\"synthetic_287\",\"broadcaster_name\":\"synthetic_287\",\"view_count\":0,\"created_at\":\"2026-02-02T20:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"103e4c26-aced-4978-af8b-ea5dc7ec05aa\",\"twitch_clip_id\":\"synthetic-46987\",\"twitch_clip_url\":\"https://example.invalid/s/46987\",\"embed_url\":\"https://example.invalid/s/46987\",\"title\":\"world moment 46987\",\"creator_name\":\"synthetic_487\",\"broadcaster_name\":\"synthetic_487\",\"view_count\":0,\"created_at\":\"2026-02-02T15:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"0c2e0e4c-962d-4c2c-9c79-1f14427a4189\",\"twitch_clip_id\":\"synthetic-46687\",\"twitch_clip_url\":\"https://example.invalid/s/46687\",\"embed_url\":\"https://example.invalid/s/46687\",\"title\":\"world moment 46687\",\"creator_name\":\"synthetic_187\",\"broadcaster_name\":\"synthetic_187\",\"view_count\":0,\"created_at\":\"2026-02-02T10:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"e93a9b3a-5cd2-4269-b181-3fb4ca8f1ba5\",\"twitch_clip_id\":\"synthetic-46387\",\"twitch_clip_url\":\"https://example.invalid/s/46387\",\"embed_url\":\"https://example.invalid/s/46387\",\"title\":\"world moment 46387\",\"creator_name\":\"synthetic_387\",\"broadcaster_name\":\"synthetic_387\",\"view_count\":0,\"created_at\":\"2026-02-02T05:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"a597d8de-432f-4be8-afe7-2507e79e56cc\",\"twitch_clip_id\":\"synthetic-46087\",\"twitch_clip_url\":\"https://example.invalid/s/46087\",\"embed_url\":\"https://example.invalid/s/46087\",\"title\":\"world moment 46087\",\"creator_name\":\"synthetic_87\",\"broadcaster_name\":\"synthetic_87\",\"view_count\":0,\"created_at\":\"2026-02-02T00:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"823a1332-1613-4dbf-a5b1-d4eb234265d4\",\"twitch_clip_id\":\"synthetic-45787\",\"twitch_clip_url\":\"https://example.invalid/s/45787\",\"embed_url\":\"https://example.invalid/s/45787\",\"title\":\"world moment 45787\",\"creator_name\":\"synthetic_287\",\"broadcaster_name\":\"synthetic_287\",\"view_count\":0,\"created_at\":\"2026-02-01T19:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"a0fe6b28-eedb-495e-a565-d18bdcfc9efb\",\"twitch_clip_id\":\"synthetic-45487\",\"twitch_clip_url\":\"https://example.invalid/s/45487\",\"embed_url\":\"https://example.invalid/s/45487\",\"title\":\"world moment 45487\",\"creator_name\":\"synthetic_487\",\"broadcaster_name\":\"synthetic_487\",\"view_count\":0,\"created_at\":\"2026-02-01T14:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"952cbae1-7407-414e-ae52-e3ec662da7e1\",\"twitch_clip_id\":\"synthetic-45187\",\"twitch_clip_url\":\"https://example.invalid/s/45187\",\"embed_url\":\"https://example.invalid/s/45187\",\"title\":\"world moment 45187\",\"creator_name\":\"synthetic_187\",\"broadcaster_name\":\"synthetic_187\",\"view_count\":0,\"created_at\":\"2026-02-01T09:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"1c615187-5d33-42cd-84a1-32f246dc8285\",\"twitch_clip_id\":\"synthetic-44887\",\"twitch_clip_url\":\"https://example.invalid/s/44887\",\"embed_url\":\"https://example.invalid/s/44887\",\"title\":\"world moment 44887\",\"creator_name\":\"synthetic_387\",\"broadcaster_name\":\"synthetic_387\",\"view_count\":0,\"created_at\":\"2026-02-01T04:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"cb740bd7-26e4-497f-bd20-68f7a63b65e3\",\"twitch_clip_id\":\"synthetic-44587\",\"twitch_clip_url\":\"https://example.invalid/s/44587\",\"embed_url\":\"https://example.invalid/s/44587\",\"title\":\"world moment 44587\",\"creator_name\":\"synthetic_87\",\"broadcaster_name\":\"synthetic_87\",\"view_count\":0,\"created_at\":\"2026-01-31T23:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"f5e246db-5917-447c-b7e2-735a55db1e38\",\"twitch_clip_id\":\"synthetic-44287\",\"twitch_clip_url\":\"https://example.invalid/s/44287\",\"embed_url\":\"https://example.invalid/s/44287\",\"title\":\"world moment 44287\",\"creator_name\":\"synthetic_287\",\"broadcaster_name\":\"synthetic_287\",\"view_count\":0,\"created_at\":\"2026-01-31T18:07:00Z\",\"imported_at\":\"2026-11-14T03:05:46.978Z\",\"vote_score\":97,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[]},\"counts\":{\"clips\":4170,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":0},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":20,\"total_items\":4170,\"total_pages\":209}}",
+   "statements": [
+    {
+     "kind": "execute",
+     "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+     "params": [
+      "world:*"
+     ],
+     "start": 0.77,
+     "dur": 16.89,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        86
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        19
+       ],
+       [
+        "C",
+        14
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "SELECT c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url, c.title, c.creator_name, c.creator_id, c.broadcaster_name, c.broadcaster_id, c.game_id, c.game_name, c.language, c.thumbnail_url, c.duration, c.view_count, c.created_at, c.imported_at, c.vote_score, c.comment_count, c.favorite_count, c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1) ORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC LIMIT $2 OFFSET $3",
+     "params": [
+      "world:*",
+      20,
+      0
+     ],
+     "start": 18.2,
+     "dur": 26.95,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        162
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        277
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        277
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        277
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "D",
+        277
+       ],
+       [
+        "D",
+        279
+       ],
+       [
+        "C",
+        15
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    },
+    {
+     "kind": "execute",
+     "sql": "INSERT INTO search_queries (user_id, query, result_count) VALUES ($1, $2, $3)",
+     "params": [
+      null,
+      "world",
+      4170
+     ],
+     "start": 45.76,
+     "dur": 0.42,
+     "wire": {
+      "sent": [
+       [
+        "B",
+        98
+       ],
+       [
+        "D",
+        7
+       ],
+       [
+        "E",
+        10
+       ],
+       [
+        "S",
+        5
+       ]
+      ],
+      "received": [
+       [
+        "2",
+        5
+       ],
+       [
+        "n",
+        5
+       ],
+       [
+        "C",
+        16
+       ],
+       [
+        "Z",
+        6
+       ]
+      ]
+     }
+    }
+   ],
+   "ms": 47.1,
+   "plan": [
+    "Limit  (cost=3351.24..3351.29 rows=20 width=891) (actual time=31.635..31.665 rows=20.00 loops=1)",
+    "  Buffers: shared hit=2606",
+    "  ->  Sort  (cost=3351.24..3361.55 rows=4127 width=891) (actual time=31.635..31.645 rows=20.00 loops=1)",
+    "        Sort Key: (ts_rank(search_vector, '''world'':*'::tsquery)) DESC, vote_score DESC, created_at DESC",
+    "        Sort Method: top-N heapsort  Memory: 25kB",
+    "        Buffers: shared hit=2606",
+    "        ->  Seq Scan on clips c  (cost=0.00..3241.42 rows=4127 width=891) (actual time=0.025..26.735 rows=4170.00 loops=1)",
+    "              Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':*'::tsquery))",
+    "              Rows Removed by Filter: 45838",
+    "              Buffers: shared hit=2606",
+    "Planning:",
+    "  Buffers: shared hit=15",
+    "Planning Time: 0.605 ms",
+    "Execution Time: 31.725 ms"
+   ],
+   "rows": 50008
+  },
+  {
+   "id": "hybrid-down",
+   "label": "Hybrid search, OpenSearch down",
+   "url": "/demo/fault/hybrid?q=world&type=clips",
+   "simulated": true,
+   "status": 503,
+   "headers": {
+    "Content-Type": "application/json; charset=utf-8",
+    "Retry-After": "60"
+   },
+   "body": "{\"error\":\"Search service is temporarily unavailable. Please try again in about 1 minute.\"}",
+   "statements": [],
+   "ms": 1.7,
+   "plan": null,
+   "rows": 50008
+  }
+ ],
+ "plans": {
+  "8": [
+   "Limit  (cost=1.11..1.12 rows=1 width=883) (actual time=0.045..0.050 rows=2.00 loops=1)",
+   "  Buffers: shared hit=1",
+   "  ->  Sort  (cost=1.11..1.12 rows=1 width=883) (actual time=0.045..0.045 rows=2.00 loops=1)",
+   "        Sort Key: (ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC, vote_score DESC, created_at DESC",
+   "        Sort Method: quicksort  Memory: 17kB",
+   "        Buffers: shared hit=1",
+   "        ->  Seq Scan on clips c  (cost=0.00..1.10 rows=1 width=883) (actual time=0.020..0.030 rows=2.00 loops=1)",
+   "              Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+   "              Rows Removed by Filter: 6",
+   "              Buffers: shared hit=1",
+   "Planning:",
+   "  Buffers: shared hit=15",
+   "Planning Time: 0.505 ms",
+   "Execution Time: 0.085 ms"
+  ],
+  "10008": [
+   "Limit  (cost=628.14..628.19 rows=20 width=887) (actual time=3.600..3.610 rows=2.00 loops=1)",
+   "  Buffers: shared hit=501",
+   "  ->  Sort  (cost=628.14..628.31 rows=70 width=887) (actual time=3.600..3.605 rows=2.00 loops=1)",
+   "        Sort Key: (ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC, vote_score DESC, created_at DESC",
+   "        Sort Method: quicksort  Memory: 17kB",
+   "        Buffers: shared hit=501",
+   "        ->  Seq Scan on clips c  (cost=0.00..626.27 rows=70 width=887) (actual time=0.025..3.580 rows=2.00 loops=1)",
+   "              Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+   "              Rows Removed by Filter: 10006",
+   "              Buffers: shared hit=501",
+   "Planning:",
+   "  Buffers: shared hit=15",
+   "Planning Time: 0.570 ms",
+   "Execution Time: 3.665 ms"
+  ],
+  "20008": [
+   "Limit  (cost=1281.15..1281.20 rows=20 width=890) (actual time=9.500..9.510 rows=2.00 loops=1)",
+   "  Buffers: shared hit=1027",
+   "  ->  Sort  (cost=1281.15..1281.49 rows=139 width=890) (actual time=9.490..9.495 rows=2.00 loops=1)",
+   "        Sort Key: (ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC, vote_score DESC, created_at DESC",
+   "        Sort Method: quicksort  Memory: 17kB",
+   "        Buffers: shared hit=1027",
+   "        ->  Seq Scan on clips c  (cost=0.00..1277.45 rows=139 width=890) (actual time=0.025..9.170 rows=2.00 loops=1)",
+   "              Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+   "              Rows Removed by Filter: 20006",
+   "              Buffers: shared hit=1027",
+   "Planning:",
+   "  Buffers: shared hit=15",
+   "Planning Time: 0.445 ms",
+   "Execution Time: 9.550 ms"
+  ],
+  "30008": [
+   "Limit  (cost=1934.18..1934.23 rows=20 width=890) (actual time=14.495..14.500 rows=2.00 loops=1)",
+   "  Buffers: shared hit=1553",
+   "  ->  Sort  (cost=1934.18..1934.71 rows=209 width=890) (actual time=14.490..14.490 rows=2.00 loops=1)",
+   "        Sort Key: (ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC, vote_score DESC, created_at DESC",
+   "        Sort Method: quicksort  Memory: 17kB",
+   "        Buffers: shared hit=1553",
+   "        ->  Seq Scan on clips c  (cost=0.00..1928.62 rows=209 width=890) (actual time=0.025..14.465 rows=2.00 loops=1)",
+   "              Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+   "              Rows Removed by Filter: 30006",
+   "              Buffers: shared hit=1553",
+   "Planning:",
+   "  Buffers: shared hit=15",
+   "Planning Time: 0.565 ms",
+   "Execution Time: 14.550 ms"
+  ],
+  "50008": [
+   "Limit  (cost=1494.37..1494.42 rows=20 width=891) (actual time=3.335..3.340 rows=2.00 loops=1)",
+   "  Buffers: shared hit=118",
+   "  ->  Sort  (cost=1494.37..1495.25 rows=352 width=891) (actual time=3.325..3.330 rows=2.00 loops=1)",
+   "        Sort Key: (ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC, vote_score DESC, created_at DESC",
+   "        Sort Method: quicksort  Memory: 17kB",
+   "        Buffers: shared hit=118",
+   "        ->  Bitmap Heap Scan on clips c  (cost=512.02..1485.01 rows=352 width=891) (actual time=3.270..3.295 rows=2.00 loops=1)",
+   "              Recheck Cond: (search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+   "              Filter: ((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+   "              Heap Blocks: exact=1",
+   "              Buffers: shared hit=118",
+   "              ->  Bitmap Index Scan on idx_clips_search_vector  (cost=0.00..511.93 rows=352 width=0) (actual time=3.215..3.215 rows=2.00 loops=1)",
+   "                    Index Cond: (search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+   "                    Index Searches: 1",
+   "                    Buffers: shared hit=117",
+   "Planning:",
+   "  Buffers: shared hit=15",
+   "Planning Time: 0.940 ms",
+   "Execution Time: 3.495 ms"
+  ]
+ },
+ "datasetMs": {
+  "8": 1420,
+  "10008": 4555,
+  "20008": 7649,
+  "30008": 12504
+ }
+}

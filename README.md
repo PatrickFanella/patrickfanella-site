@@ -1,6 +1,6 @@
-# site
+# patrickfanella-site
 
-The rebuild of patrickfanella.co, started 2026-11-14. It lives beside the current React site in `web/` and is not deployed yet.
+The rebuild of patrickfanella.co, started 2026-11-14. It is not deployed yet; the live site still comes from `subculture-collective/patrickfanella-co`. What is planned and in what order: [docs/plan.md](docs/plan.md) and the pinned roadmap issue.
 
 Two static pages so far:
 
@@ -14,14 +14,17 @@ npm run build      # typecheck, then build to dist/
 npm run preview
 ```
 
+CI (`.github/workflows/ci.yml`) runs `npm ci` and `npm run build` on every push and pull request.
+
 ## Layout
 
 - `src/ink/shaders.ts`: stable fluids (advection, vorticity confinement, buoyancy, Jacobi pressure solve) in WebGL2 fragment shaders, plus the two looks: pigment on paper (light) and ink that glows (dark).
 - `src/ink/mask.ts`: draws the page into the solver's mask. Letters marked `data-ink-letter` are solid and pour from their feet once they carry `data-pour`. Elements marked `data-ink-solid` are solid rectangles.
-- `src/ink/engine.ts`: the frame loop and the API the pages use: `setEmitters`, `burst`, `stir`, `setTheme`, `preroll`.
+- `src/ink/engine.ts`: the frame loop and the API the pages use: `setEmitters`, `burst`, `stir`, `setTheme`, `preroll`. Up to four bursts run at once, each with a direction, spread and length.
 - `src/motion/motion.ts`: the motion set. Pour-in, bleed, splash, stir, unfold and fitting the name to the width.
 - `src/boot.ts`: start-up shared by both pages: fonts, theme switch, ink, readout.
 - `src/styles/site.css`: tokens (colour, type, four durations, two curves), layout, rise, view transitions and reduced motion.
+- `docs/`: the plan, the original design doc and the prototypes the roadmap builds from.
 
 ## Motion set
 
@@ -39,6 +42,6 @@ npm run preview
 
 With `prefers-reduced-motion: reduce`, the solver runs ahead and the page shows one still frame, letters start in place, and transitions and view transitions are off. Without WebGL2 the page falls back to a static wash in the same three inks.
 
-## Deployment notes for later
+## Licence
 
-The production edge CSP in `deploy/caddy/patrickfanella.caddy` already allows everything this needs (`script-src 'self'`, `font-src 'self'`, inline styles): fonts are self-hosted and there are no workers or third-party scripts.
+GPL-3.0-or-later, as in the repository it came from. See [LICENSE](LICENSE).

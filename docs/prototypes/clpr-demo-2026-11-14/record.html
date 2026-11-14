@@ -1,0 +1,23 @@
+<!doctype html><meta charset=utf-8><title>record</title><pre id=out>recording</pre>
+<script type=module>
+import { CASES } from './cases.mjs'
+const w = new Worker('live-worker.mjs', { type: 'module' })
+let seq = 0; const waiters = new Map(); let ready
+const readyP = new Promise((r) => ready = r)
+w.onmessage = ({ data }) => { if (data.type === 'ready') ready(data); if (data.id && waiters.has(data.id)) { waiters.get(data.id)(data); waiters.delete(data.id) } }
+const ask = (m) => new Promise((r) => { const id = ++seq; waiters.set(id, r); w.postMessage({ ...m, id }) })
+w.postMessage({ type: 'boot', synthetic: 50000 })
+const boot = await readyP
+const cases = []
+for (const c of CASES) cases.push({ ...c, ...(await ask({ type: 'request', url: c.url })).result })
+const plans = { 50008: cases[0].plan }
+const timing = {}
+for (const n of [30000, 20000, 10000, 0]) {
+  const d = await ask({ type: 'dataset', synthetic: n }); timing[d.rows] = d.ms
+  const r = (await ask({ type: 'request', url: CASES[0].url })).result; plans[r.rows] = r.plan
+}
+const fixture = { plan: plans[8], rows: 8 }
+window.RECORDED_OUT = { recordedAt: new Date().toISOString(), engine: navigator.userAgent.match(/Chrome\/[\d]+/)?.[0] || 'Chromium',
+  boot, cases, plans, datasetMs: timing }
+document.getElementById('out').textContent = 'DONE'
+</script>

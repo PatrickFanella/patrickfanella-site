@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Patrick Fanella, senior backend and full-stack engineer</title>
+<meta name="description" content="Patrick Fanella builds and runs Go, Python and TypeScript services on PostgreSQL. Chicago or remote.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600..900&family=Hanken+Grotesk:wght@400..700&family=Martian+Mono:wght@400..600&display=swap" rel="stylesheet">
+<style>
+/* Ink: one screen. The canvas is a fluid simulation and every piece of text is real HTML on top of it.
+   The system: navy things are solid (the name, the slab, the floor), coloured things are fluid, paper is the ground.
+   Big Shoulders is Chicago's own display face, Hanken Grotesk carries sentences, Martian Mono is only for the readout numbers. */
+:root{
+  --paper:#E9EFF2;      /* cool paper ground, also the canvas clear colour */
+  --ink:#0A0F24;        /* type and every solid block */
+  --cobalt:#143AD4;     /* ink A, also focus */
+  --orange:#F2560D;     /* ink B */
+  --yellow:#FFC81F;     /* ink C, also the primary action */
+  --dim:#9AAABC;        /* quiet text on navy, 7:1 */
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --text:"Hanken Grotesk",system-ui,sans-serif;
+  --mono:"Martian Mono",ui-monospace,Menlo,monospace;
+  --pad:clamp(14px,2.1vw,32px);
+  --drop:clamp(26px,5.2vh,48px);   /* the channel between the name and the slab */
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+#ink{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.stage{position:relative;height:100vh;height:100svh;pointer-events:none;display:flex;flex-direction:column}
+.stage a,.stage button{pointer-events:auto}
+:focus-visible{outline:3px solid var(--cobalt);outline-offset:3px}
+.slab :focus-visible,.floor :focus-visible{outline-color:var(--yellow)}
+
+/* The lid: paper, closed to the fluid, so the nav never needs a backing strip. */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:clamp(12px,1.5vw,22px) var(--pad) 0}
+.brand{margin:0;font:700 clamp(15px,1.3vw,20px)/1 var(--display);letter-spacing:.045em}
+.top nav{display:flex;align-items:center;gap:clamp(14px,2.2vw,34px)}
+.top nav a{font:700 clamp(15px,1.3vw,20px)/1 var(--display);letter-spacing:.075em;text-transform:uppercase;text-decoration:none;padding:.5em 0 .42em;border-bottom:2px solid transparent}
+.top nav a:hover{border-bottom-color:var(--ink)}
+.top nav a.nav-cv{background:var(--ink);color:var(--paper);padding:.5em .85em .42em;border-bottom-color:var(--ink)}
+.top nav a.nav-cv:hover{background:var(--cobalt);border-bottom-color:var(--cobalt)}
+
+/* The name is the emitter: each letter holds one ink and lets it go from its feet. Its size is fitted to the width in JS. */
+.name{margin:clamp(12px,1.7vw,26px) var(--pad) 0;font-family:var(--display);font-weight:900;font-size:14.4vw;line-height:.86;text-transform:uppercase;white-space:nowrap;color:var(--ink);letter-spacing:0}
+.fit{display:inline-block}
+
+/* The tank: open water between the name and the floor. */
+.tank{flex:1;min-height:0;position:relative;margin:0 var(--pad)}
+
+/* The slab: one solid block for the role, the pitch and the two actions. Everything inside is sized in em so JS can fit it with one number. */
+.slab{position:absolute;left:0;top:var(--drop);width:max-content;background:var(--ink);color:var(--paper);padding:1.3em 1.55em 1.5em;font-size:20px}
+.status{margin:0 0 .95em;display:flex;align-items:center;gap:.62em;font:600 .8em/1 var(--text);color:var(--yellow)}
+.status::before{content:"";flex:none;width:.6em;height:.6em;background:var(--yellow)}
+.role{margin:0;font:800 3.3em/.92 var(--display);letter-spacing:.008em;text-transform:uppercase;white-space:nowrap}
+.about{margin:.8em 0 0;width:0;min-width:100%;font:500 1em/1.45 var(--text)}
+.cta{margin:1.1em 0 0;display:flex;flex-wrap:wrap;gap:.7em}
+.btn{font:700 1.02em/1 var(--display);letter-spacing:.075em;text-transform:uppercase;text-decoration:none;white-space:nowrap;padding:.74em 1.05em .66em;color:var(--paper);box-shadow:inset 0 0 0 2px var(--paper)}
+.btn:hover{background:var(--paper);color:var(--ink)}
+.btn-main{background:var(--yellow);color:var(--ink);box-shadow:none}
+.btn-main:hover{background:#fff}
+
+/* The floor: the ink lands on it. Six projects in one row from the name's left edge to its right edge, then the readout. */
+.floor{background:var(--ink);color:var(--paper);padding:clamp(12px,1.25vw,18px) var(--pad) clamp(8px,.85vw,12px)}
+.projects{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,auto);justify-content:space-between;column-gap:14px}
+.proj a{display:block;text-decoration:none}
+.proj-name{display:block;font:800 clamp(24px,2.35vw,34px)/.95 var(--display);letter-spacing:.015em;text-transform:uppercase}
+.proj-what{display:block;margin-top:.3em;font:500 clamp(11px,.92vw,13.5px)/1.35 var(--text);color:#CBD5DE;white-space:nowrap}
+.proj-what .s{display:none}
+.proj a:hover .proj-name,.proj a:focus-visible .proj-name{color:var(--yellow)}
+
+.meter{display:flex;align-items:center;gap:0 1.7em;margin-top:clamp(9px,1vw,14px);padding-top:clamp(7px,.75vw,10px);border-top:1px solid rgba(233,239,242,.2);font:400 10px/1.3 var(--mono)}
+.meter dl{display:flex;gap:0 1.7em;margin:0}
+.meter dl div{display:flex;gap:.65em;white-space:nowrap}
+.meter dt{color:var(--dim)}
+.meter dd{margin:0;font-variant-numeric:tabular-nums}
+.meter button{font:500 10px/1 var(--mono);color:var(--ink);background:var(--paper);border:0;padding:.5em .8em;cursor:pointer;white-space:nowrap}
+.meter button:hover{background:var(--yellow)}
+.faked{margin:0 0 0 auto;font:500 11px/1.3 var(--text);color:#CBD5DE;white-space:nowrap}
+
+@media (max-width:1700px){ .meter dl .w2{display:none} }
+@media (max-width:1300px){ .meter dl .w1{display:none} }
+/* Narrow desktop and tablets: projects in three columns. */
+@media (max-width:1040px){
+  .projects{grid-template-columns:repeat(3,auto);row-gap:10px}
+  .faked .more{display:none}
+  .meter{flex-wrap:wrap;row-gap:6px}
+}
+/* Phone: the name breaks into two fitted lines, the slab leaves a channel on each side for the ink to fall through. */
+@media (max-width:700px){
+  .line{display:block}
+  .top{flex-direction:column;align-items:stretch;gap:9px;padding-top:11px}
+  .brand{font-size:14px}
+  .top nav{justify-content:space-between;gap:8px}
+  .top nav a{font-size:15px}
+  .name{font-size:27vw;line-height:.84;margin-top:11px}
+  .slab{left:26px;padding:1.05em 1.15em 1.2em;font-size:15px}
+  .role{font-size:2.12em}
+  .about{line-height:1.42}
+  .btn{font-size:.98em;padding:.72em .8em .64em}
+  .floor{padding-top:12px;padding-bottom:8px}
+  .projects{grid-template-columns:1fr 1fr;column-gap:14px;row-gap:8px}
+  .proj-name{font-size:22px}
+  .proj-what{font-size:11px;margin-top:.2em}
+  .proj-what .l{display:none}
+  .proj-what .s{display:inline}
+  .meter{flex-wrap:wrap;gap:6px 1em;font-size:9px;margin-top:9px;padding-top:7px}
+  .meter dl{gap:0 1.25em;flex-basis:100%}
+  .meter dl .w0{display:none}
+  .meter button{font-size:9px;order:3;margin-left:auto}
+  .faked{margin:0;font-size:10px}
+}
+@media (max-height:600px) and (min-width:701px){ .about{display:none} }
+
+/* No WebGL2 and no WebGPU: a still wash in the same three inks, everything visible. */
+.no-gl #ink{display:none}
+.no-gl body{background:
+  radial-gradient(50vw 50vh at 62% 52%,rgba(20,58,212,.55),transparent 70%),
+  radial-gradient(40vw 55vh at 78% 64%,rgba(242,86,13,.5),transparent 70%),
+  radial-gradient(35vw 50vh at 92% 50%,rgba(255,200,31,.6),transparent 70%),var(--paper)}
+
+/* boot-ink: background layer only */
+body > :not(#ink):not(script){visibility:hidden !important}
+</style>
+</head>
+<body>
+<canvas id="ink" aria-hidden="true"></canvas>
+
+<div class="stage">
+  <header class="top">
+    <p class="brand">Software. Sound. Culture.</p>
+    <nav aria-label="Primary">
+      <a href="#projects">Projects</a>
+      <a class="nav-cv" href="#resume">Résumé</a>
+      <a href="#github">GitHub</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main style="display:contents">
+    <h1 class="name"><span class="fit"><span class="line"><span data-ink>Patrick</span></span> <span class="line"><span data-ink>Fanella</span></span></span></h1>
+
+    <div class="tank">
+      <section class="slab" aria-label="About">
+        <p class="status">Interviewing now, Chicago or remote</p>
+        <p class="role">Senior backend and<br>full-stack engineer</p>
+        <p class="about">I build services in Go, Python and TypeScript on PostgreSQL. At DeliverZero I built the inventory, returns and partner integrations that cut manual operations work by about 25%.</p>
+        <p class="cta"><a class="btn btn-main" href="#resume">Download résumé</a><a class="btn" href="#clpr">Run the Clpr demo</a></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="floor" data-solid>
+    <ul class="projects" id="projects" aria-label="Projects">
+      <li class="proj"><a href="#clpr"><span class="proj-name">Clpr</span><span class="proj-what"><span class="l">Twitch clip search on Go and Postgres</span><span class="s">Twitch clip search</span></span></a></li>
+      <li class="proj"><a href="#undertow"><span class="proj-name">Undertow</span><span class="proj-what"><span class="l">Music videos rendered with WebCodecs</span><span class="s">WebCodecs music videos</span></span></a></li>
+      <li class="proj"><a href="#hasanara"><span class="proj-name">HasanAra</span><span class="proj-what"><span class="l">Searchable broadcast archive</span><span class="s">Broadcast archive search</span></span></a></li>
+      <li class="proj"><a href="#rekolekt"><span class="proj-name">Rekolekt</span><span class="proj-what">Transcript search</span></a></li>
+      <li class="proj"><a href="#subcult-os"><span class="proj-name">Subcult OS</span><span class="proj-what"><span class="l">Event staffing, check-in, reports</span><span class="s">Event staffing, check-in</span></span></a></li>
+      <li class="proj"><a href="#headcount"><span class="proj-name">Headcount</span><span class="proj-what"><span class="l">Polls about 1,764 Twitch channels a minute</span><span class="s">Twitch audience analytics</span></span></a></li>
+    </ul>
+    <div class="meter">
+      <dl aria-label="Simulation readout">
+        <div><dt>fluid</dt><dd id="r-path">starting</dd></div>
+        <div><dt>grid</dt><dd id="r-grid">–</dd></div>
+        <div class="w1"><dt>dye</dt><dd id="r-dye">–</dd></div>
+        <div><dt>step</dt><dd id="r-step">–</dd></div>
+        <div class="w2"><dt>pressure</dt><dd id="r-solver">–</dd></div>
+        <div class="w0"><dt>gpu</dt><dd id="r-gpu">–</dd></div>
+      </dl>
+      <button id="toggle" type="button">Pause the fluid</button>
+      <p class="faked"><span class="more">Stir it with the pointer. </span>Prototype: links are placeholders.</p>
+    </div>
+  </footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+const qs = new URLSearchParams(location.search);
+const $ = (id) => document.getElementById(id);
+let canvas = $('ink');
+const root = document.documentElement;
+const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+
+/* ---------- tunables (shared by both GPU paths) ---------- */
+const DT = 1 / 60;
+const P = {
+  src: 1.4,        // how fast the water under a letter's foot is replaced, per second: the pour
+  drainPx: 14,     // depth of the drain strip along the floor, CSS px
+  narrow: 1,       // gravity multiplier; 2 on a phone, where the ink has to get down two narrow channels
+  grav: 0.7,       // downward pull per unit of dye: the ink is denser than the water
+  conf: 4,         // vorticity confinement, at a 250-row grid (scaled with the grid so the look holds at any size)
+  damp: 0.9994,    // velocity kept per step
+  decay: 0.9974,   // dye kept per step
+  rate: 28,        // dye a letter lets go per second
+  cap: 2.6,        // local dye ceiling
+  sway: 0.03,      // slow horizontal slosh
+  coarse: 20,      // pressure sweeps on the quarter-size grid
+  fine: 4,         // pressure sweeps on the full grid
+  gain: 2.1,       // how strongly dye absorbs light when drawn
+  toe: 0.4,        // dye below this fades out when drawn, so faint haze clears and paper stays paper
+  bandPx: 9,       // depth of the strip under a letter's foot where its ink enters, CSS px
+  jetPx: 26,       // depth of the source strip in the velocity grid; deep enough for the coarse pressure grid to see it
+};
+const SOFT_RE = /swiftshader|llvmpipe|software|basic render/i;
+// One ink per letter of the name: c cobalt, o orange, y yellow. Yellow sits between the other two because cobalt and orange mix to mud.
+// On a wide screen both words pour (14 letters); on a phone only the second line does (7).
+const INKS = qs.get('inks') || 'ooyycccccyyooo', INKS_PHONE = qs.get('inks') || 'ooyyccc';
+for (const k of Object.keys(P)) if (qs.has(k)) P[k] = +qs.get(k);
+// Ink absorption per RGB channel (Beer-Lambert). Colour = paper * exp(-sum(density * k)).
+const INK = {
+  paper: [0.914, 0.937, 0.949],
+  kA: [2.81, 1.43, 0.13],   // cobalt
+  kB: [0.00, 1.02, 2.66],   // orange
+  kC: [0.00, 0.22, 2.53],   // yellow
+};
+
+/* ---------- layout: fit the name to the width and the slab to the tank ---------- */
+function fitType() {
+  const phone = innerWidth <= 700, vh = innerHeight;
+  const name = document.querySelector('.name');
+  name.style.fontSize = '100px';
+  const fs = 100 * name.clientWidth / name.querySelector('.fit').getBoundingClientRect().width;
+  name.style.fontSize = Math.min(fs, vh * (phone ? 0.16 : 0.27)).toFixed(2) + 'px';
+  // The slab is sized in em: one font size scales the role, the pitch and the buttons together.
+  const tank = document.querySelector('.tank'), slab = document.querySelector('.slab');
+  const drop = parseFloat(getComputedStyle(slab).top) || 0;
+  const maxH = tank.clientHeight - drop - Math.max(22, vh * (phone ? 0.115 : 0.06));
+  const maxW = phone ? tank.clientWidth - slab.offsetLeft - Math.max(44, tank.clientWidth * 0.13) : tank.clientWidth * 0.5;
+  let f = phone ? 16 : Math.max(15, Math.min(22, innerWidth * 0.0143));
+  for (let i = 0; i < 4; i++) {
+    slab.style.fontSize = f.toFixed(2) + 'px';
+    const r = slab.getBoundingClientRect();
+    const k = Math.min(maxH / r.height, maxW / r.width);
+    if (k >= 1) break;
+    f = Math.max(8, f * k * 0.997);
+  }
+}
+
+/* ---------- obstacle mask: rasterise the DOM into a texture ----------
+   R = solid: the lid, the letters of the name, the slab, the floor.
+   G = the strip of water just under a letter's foot, where that letter's ink enters. B over G = which ink it holds.
+   B without G = the drain strip along the floor. */
+function rasterMask(w, h, band) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const ctx = c.getContext('2d', { willReadFrequently: true });
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
+  const r0 = canvas.getBoundingClientRect();
+  ctx.setTransform(w / r0.width, 0, 0, h / r0.height, 0, 0);
+  const floorTop = document.querySelector('.floor').getBoundingClientRect().top - r0.top;
+  ctx.fillStyle = 'rgb(0,0,255)'; ctx.fillRect(0, floorTop - P.drainPx, r0.width, P.drainPx);   // B alone = drain
+  ctx.fillStyle = 'rgb(255,0,0)';
+  ctx.fillRect(0, 0, r0.width, document.querySelector('.top').getBoundingClientRect().bottom - r0.top + 2);
+  for (const el of document.querySelectorAll('[data-solid]')) {
+    const r = el.getBoundingClientRect(); ctx.fillRect(r.left - r0.left, r.top - r0.top, r.width, r.height);
+  }
+  ctx.textBaseline = 'alphabetic';
+  const words = [...document.querySelectorAll('[data-ink]')].map((el) => ({ el, r: el.getBoundingClientRect() }));
+  const low = Math.max(...words.map((x) => x.r.bottom));
+  const inks = innerWidth <= 700 ? INKS_PHONE : INKS;
+  let n = 0;
+  for (const { el, r } of words) {
+    const cs = getComputedStyle(el);
+    ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    let t = el.textContent;
+    if (cs.textTransform === 'uppercase') t = t.toUpperCase();
+    // An inline box's content area is the font's ascent + descent, so the baseline sits one ascent below its top.
+    const x0 = r.left - r0.left, base = r.top - r0.top + ctx.measureText(t).fontBoundingBoxAscent;
+    const emits = r.bottom > low - 2;          // only the last line of the name pours
+    for (let i = 0; emits && i < t.length; i++, n++) {
+      const x = x0 + ctx.measureText(t.slice(0, i)).width, cw = ctx.measureText(t[i]).width;
+      ctx.save(); ctx.beginPath(); ctx.rect(x - 1, base - 2, cw + 2, band + 3); ctx.clip();
+      ctx.fillStyle = `rgb(0,255,${Math.round(127.5 * 'coy'.indexOf(inks[n % inks.length]))})`;
+      for (let dy = 1; dy <= band; dy++) ctx.fillText(t[i], x, base + dy);
+      ctx.restore();
+    }
+    ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgb(255,0,0)';
+    ctx.fillText(t, x0, base);
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  return c;
+}
+// The velocity grid cannot carry a flow through a slot only a cell or two wide: it turns to noise there.
+// So on that grid any gap narrower than n cells between two walls is filled in. Returns the wall map.
+function closeGaps(c, n) {
+  const w = c.width, h = c.height, ctx = c.getContext('2d');
+  const im = ctx.getImageData(0, 0, w, h), px = im.data, solid = new Uint8Array(w * h);
+  for (let i = 0; i < w * h; i++) solid[i] = px[i * 4] > 127 ? 1 : 0;
+  const sweep = (len, lines, at) => {
+    for (let a = 0; a < lines; a++) {
+      let start = -1;
+      for (let b = 0; b <= len; b++) {
+        const s = b === len || solid[at(a, b)];
+        if (!s && start < 0) start = b;
+        else if (s && start >= 0) { if (start > 0 && b < len && b - start < n) for (let k = start; k < b; k++) solid[at(a, k)] = 1; start = -1; }
+      }
+    }
+  };
+  sweep(w, h, (y, x) => y * w + x);
+  sweep(h, w, (x, y) => y * w + x);
+  for (let i = 0; i < w * h; i++) if (solid[i]) { px[i * 4] = 255; px[i * 4 + 1] = 0; px[i * 4 + 2] = 0; }
+  ctx.putImageData(im, 0, 0);
+  return solid;
+}
+// The quarter-size pressure grid must never see water where the full grid has a wall, or the two fight and the pour stalls.
+// So a coarse cell is a wall as soon as three of its sixteen cells are.
+function coarsen(solid, w, h) {
+  const cw = w / 4, ch = h / 4, o = document.createElement('canvas'); o.width = cw; o.height = ch;
+  const ctx = o.getContext('2d'), im = ctx.createImageData(cw, ch);
+  for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
+    let n = 0;
+    for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) n += solid[(y * 4 + j) * w + x * 4 + i];
+    const k = (y * cw + x) * 4; im.data[k] = n >= 3 ? 255 : 0; im.data[k + 3] = 255;
+  }
+  ctx.putImageData(im, 0, 0);
+  return o;
+}
+// The source under the letters and the drain along the floor must carry the same volume, or the pressure solve has no answer.
+// Count both on the velocity grid and scale the drain to match. Values are in grid units (per-second rate over rows).
+function sourceBalance(maskCanvas) {
+  const w = maskCanvas.width, h = maskCanvas.height, px = maskCanvas.getContext('2d').getImageData(0, 0, w, h).data;
+  let g = 0, n = 0;
+  for (let i = 0; i < px.length; i += 4) {
+    if (px[i] > 127) continue;
+    if (px[i + 1] > 2) g += px[i + 1] / 255; else n += px[i + 2] / 255;
+  }
+  const src = P.src / h;
+  return [src, n > 0 ? src * g / n : 0];
+}
+
+/* =====================================================================
+   Path 1: WebGL2. Stable fluids in fragment shaders, ping-ponging float targets.
+   ===================================================================== */
+const GLSL_HEAD = `#version 300 es
+precision highp float; precision highp sampler2D;
+in vec2 uv; out vec4 o;
+`;
+const GLSL_SOL = `
+uniform sampler2D uMask;
+float sol(vec2 p){ return (p.x<0.||p.x>1.||p.y<0.||p.y>1.) ? 1. : step(.5, texture(uMask,p).r); }
+`;
+const GLSL = {
+  vs: `#version 300 es
+in vec2 a; out vec2 uv; void main(){ uv=a*.5+.5; gl_Position=vec4(a,0.,1.); }`,
+  advectV: GLSL_HEAD + `
+uniform sampler2D uVel, uMask; uniform vec2 uAsp; uniform float uDt, uDamp;
+void main(){
+  if (texture(uMask,uv).r > .5) { o = vec4(0.); return; }
+  vec2 v = texture(uVel,uv).xy;
+  o = vec4(texture(uVel, uv - uDt*v/uAsp).xy * uDamp, 0., 1.);
+}`,
+  curl: GLSL_HEAD + `
+uniform sampler2D uVel; uniform vec2 uT;
+void main(){
+  float L = texture(uVel, uv-vec2(uT.x,0.)).y, R = texture(uVel, uv+vec2(uT.x,0.)).y;
+  float B = texture(uVel, uv-vec2(0.,uT.y)).x, T = texture(uVel, uv+vec2(0.,uT.y)).x;
+  o = vec4(.5*(R-L-T+B), 0., 0., 1.);
+}`,
+  force: GLSL_HEAD + `
+uniform sampler2D uVel, uCurl, uDye, uMask;
+uniform vec2 uT, uAsp, uPtr, uPtrV; uniform float uDt, uTime, uGrav, uConf, uPtrR, uSway;
+void main(){
+  if (texture(uMask,uv).r > .5) { o = vec4(0.); return; }
+  vec2 v = texture(uVel,uv).xy;
+  float L = abs(texture(uCurl, uv-vec2(uT.x,0.)).x), R = abs(texture(uCurl, uv+vec2(uT.x,0.)).x);
+  float B = abs(texture(uCurl, uv-vec2(0.,uT.y)).x), T = abs(texture(uCurl, uv+vec2(0.,uT.y)).x);
+  float C = texture(uCurl,uv).x;
+  vec2 f = .5*vec2(T-B, R-L); f /= length(f)+1e-4; f *= uConf*C; f.y = -f.y;
+  v += f*uDt;
+  vec3 d = texture(uDye,uv).rgb;
+  v.y -= uGrav*(d.r+d.g+d.b)*uDt;
+  v.x += uSway*sin(uTime*.21 + uv.y*5.)*uDt;
+  vec2 q = (uv-uPtr)*uAsp;
+  v += uPtrV*exp(-dot(q,q)/uPtrR);
+  float s = length(v); if (s > 2.5) v *= 2.5/s;
+  o = vec4(v, 0., 1.);
+}`,
+  div: GLSL_HEAD + GLSL_SOL + `
+uniform sampler2D uVel; uniform vec2 uT, uSrc;
+void main(){
+  vec2 l = uv-vec2(uT.x,0.), r = uv+vec2(uT.x,0.), b = uv-vec2(0.,uT.y), t = uv+vec2(0.,uT.y);
+  float L = sol(l)>.5 ? 0. : texture(uVel,l).x, R = sol(r)>.5 ? 0. : texture(uVel,r).x;
+  float B = sol(b)>.5 ? 0. : texture(uVel,b).y, T = sol(t)>.5 ? 0. : texture(uVel,t).y;
+  vec4 m = texture(uMask,uv);
+  float s = (uSrc.x*m.g - uSrc.y*m.b*step(m.g,.01)) * step(m.r,.5);
+  o = vec4(.5*(R-L+T-B) - s, 0., 0., 1.);
+}`,
+  pressure: GLSL_HEAD + GLSL_SOL + `
+uniform sampler2D uP, uDiv; uniform vec2 uT; uniform float uKeep, uScale;
+void main(){
+  vec2 l = uv-vec2(uT.x,0.), r = uv+vec2(uT.x,0.), b = uv-vec2(0.,uT.y), t = uv+vec2(0.,uT.y);
+  float C = texture(uP,uv).x;
+  float L = sol(l)>.5 ? C : texture(uP,l).x, R = sol(r)>.5 ? C : texture(uP,r).x;
+  float B = sol(b)>.5 ? C : texture(uP,b).x, T = sol(t)>.5 ? C : texture(uP,t).x;
+  o = vec4((L+R+B+T)*uKeep*.25 - texture(uDiv,uv).x*uScale*.25, 0., 0., 1.);
+}`,
+  grad: GLSL_HEAD + GLSL_SOL + `
+uniform sampler2D uP, uVel; uniform vec2 uT;
+void main(){
+  if (sol(uv) > .5) { o = vec4(0.); return; }
+  vec2 l = uv-vec2(uT.x,0.), r = uv+vec2(uT.x,0.), b = uv-vec2(0.,uT.y), t = uv+vec2(0.,uT.y);
+  float sL = sol(l), sR = sol(r), sB = sol(b), sT = sol(t);
+  float C = texture(uP,uv).x;
+  float L = sL>.5 ? C : texture(uP,l).x, R = sR>.5 ? C : texture(uP,r).x;
+  float B = sB>.5 ? C : texture(uP,b).x, T = sT>.5 ? C : texture(uP,t).x;
+  vec2 v = texture(uVel,uv).xy - .5*vec2(R-L, T-B);
+  if (sL>.5 && v.x<0.) v.x = 0.; if (sR>.5 && v.x>0.) v.x = 0.;
+  if (sB>.5 && v.y<0.) v.y = 0.; if (sT>.5 && v.y>0.) v.y = 0.;
+  o = vec4(v, 0., 1.);
+}`,
+  restrict: GLSL_HEAD + `
+uniform sampler2D uDiv; uniform vec2 uT;
+void main(){   // four bilinear taps = the mean of a 4 x 4 block of the full grid
+  o = vec4(.25*(texture(uDiv,uv+vec2(-uT.x,-uT.y)).x + texture(uDiv,uv+vec2(uT.x,-uT.y)).x
+              + texture(uDiv,uv+vec2(-uT.x,uT.y)).x + texture(uDiv,uv+uT).x), 0., 0., 1.);
+}`,
+  prolong: GLSL_HEAD + `
+uniform sampler2D uP;
+void main(){ o = vec4(texture(uP,uv).x, 0., 0., 1.); }`,
+  dye: GLSL_HEAD + `
+uniform sampler2D uDye, uVel, uMask, uMaskS;
+uniform vec2 uAsp; uniform float uDt, uDecay, uTime, uRate, uCap;
+float h21(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
+float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(h21(i),h21(i+vec2(1,0)),f.x), mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x), f.y); }
+void main(){
+  vec4 m = texture(uMask,uv);
+  if (m.r > .5) { o = vec4(0.,0.,0.,1.); return; }
+  vec2 v = texture(uVel,uv).xy;
+  vec3 d = texture(uDye, uv - uDt*v/uAsp).rgb * uDecay;
+  if (m.g < .01) d *= 1. - .12*m.b;                     // the drain along the floor takes the ink out with the water
+  d *= 1. - .35*smoothstep(.12,.5,texture(uMaskS,uv).r);   // ink in a gap too narrow for the velocity grid cannot move, so it fades
+  // Under a letter's foot: that letter's ink enters, in pulses, until the water there is full.
+  if (m.g > .02) {
+    float pulse = .2 + smoothstep(.34,.7, vn(vec2(uv.x*uAsp.x*7., uTime*.22)));
+    float id = clamp(2.*m.b/m.g, 0., 2.);
+    vec3 w = vec3(1.-min(id,1.), 1.-abs(id-1.), max(id-1.,0.));
+    d += m.g*pulse*uRate*uDt*w*max(0., 1.-(d.r+d.g+d.b)/uCap);
+  }
+  o = vec4(d, 1.);
+}`,
+  show: GLSL_HEAD + `
+uniform sampler2D uDye, uMask; uniform vec2 uDT; uniform vec3 uPaper, uKA, uKB, uKC; uniform float uDebug, uGain, uToe;
+float h21(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
+float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(h21(i),h21(i+vec2(1,0)),f.x), mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x), f.y); }
+float tot(vec2 p){ vec3 d = texture(uDye,p).rgb; return d.r+d.g+d.b; }
+void main(){
+  vec3 d = texture(uDye,uv).rgb;
+  d *= smoothstep(.01,uToe,d.r+d.g+d.b);               // a toe: faint haze clears, so paper stays paper
+  vec2 e = uDT*1.5;
+  vec2 g = vec2(tot(uv+vec2(e.x,0.))-tot(uv-vec2(e.x,0.)), tot(uv+vec2(0.,e.y))-tot(uv-vec2(0.,e.y)));
+  float edge = smoothstep(.015,.45,length(g));        // pigment gathers at the rim of a wash
+  vec2 px = gl_FragCoord.xy;
+  float grain = .6*vn(px*.9) + .4*vn(px*.23);          // paper tooth
+  vec3 dd = d*uGain*(1.+.95*edge)*(.86+.28*grain);
+  vec3 A = dd.r*uKA + dd.g*uKB + dd.b*uKC;
+  float s = max(A.r,max(A.g,A.b));
+  A *= (2.05*(1.-exp(-s/2.05)))/max(s,1e-4);          // soft ceiling: the wash never goes as dark as the type
+  vec3 col = uPaper*exp(-A);
+  col *= .985 + .03*grain;
+  // Luminance floor: the wash stays at least 3:1 lighter than the type colour, so the big letters always read.
+  vec3 lin = pow(col, vec3(2.2));
+  float Lu = dot(lin, vec3(.2126,.7152,.0722));
+  float Lf = .5*(Lu + .125 + sqrt((Lu-.125)*(Lu-.125) + .0006));
+  lin += (Lf-Lu)/(1.-Lu)*(1.-lin);
+  col = pow(lin, vec3(1./2.2));
+  if (uDebug > .5) { vec4 m = texture(uMask,uv); col = mix(col, vec3(1.,0.,.6), .5*m.r); }
+  o = vec4(col, 1.);
+}`,
+  probe: GLSL_HEAD + `
+uniform sampler2D uDye;
+void main(){ o = vec4(clamp(texture(uDye,uv).rgb*.5, 0., 1.), 1.); }`,
+};
+
+class GLSim {
+  constructor(canvas) {
+    const gl = canvas.getContext('webgl2', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' });
+    if (!gl) throw new Error('WebGL2 unavailable');
+    if (!gl.getExtension('EXT_color_buffer_float') && !gl.getExtension('EXT_color_buffer_half_float')) throw new Error('no float render targets');
+    this.gl = gl; this.canvas = canvas;
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    this.renderer = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    this.label = 'WebGL2 fragment shaders'; this.soft = SOFT_RE.test(this.renderer || '');
+    const vs = this.shader(gl.VERTEX_SHADER, GLSL.vs);
+    this.prog = {};
+    for (const k of Object.keys(GLSL)) if (k !== 'vs') this.prog[k] = this.program(vs, GLSL[k]);
+    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    gl.disable(gl.BLEND); gl.disable(gl.DEPTH_TEST);
+    canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); this.lost = true; });
+  }
+  shader(type, src) {
+    const gl = this.gl, s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s) + '\n' + src);
+    return s;
+  }
+  program(vs, fsSrc) {
+    const gl = this.gl, p = gl.createProgram();
+    gl.attachShader(p, vs); gl.attachShader(p, this.shader(gl.FRAGMENT_SHADER, fsSrc));
+    gl.bindAttribLocation(p, 0, 'a'); gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    const u = {};
+    for (let i = 0, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS); i < n; i++) {
+      const info = gl.getActiveUniform(p, i); u[info.name] = { loc: gl.getUniformLocation(p, info.name), type: info.type };
+    }
+    return { p, u };
+  }
+  target(w, h, ifmt, fmt, type, filter) {
+    const gl = this.gl, tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, ifmt, w, h, 0, fmt, type, null);
+    const fbo = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) throw new Error('float framebuffer incomplete');
+    gl.viewport(0, 0, w, h); gl.clearColor(0, 0, 0, 1); gl.clear(gl.COLOR_BUFFER_BIT);
+    return { tex, fbo, w, h };
+  }
+  pair(...a) { const o = { r: this.target(...a), w: this.target(...a) }; o.swap = () => { const t = o.r; o.r = o.w; o.w = t; }; return o; }
+  free() {
+    const gl = this.gl;
+    for (const t of this.all || []) { gl.deleteTexture(t.tex); if (t.fbo) gl.deleteFramebuffer(t.fbo); }
+    this.all = [];
+  }
+  resize(simW, simH, dyeW, dyeH) {
+    const gl = this.gl; this.free();
+    this.simW = simW; this.simH = simH; this.dyeW = dyeW; this.dyeH = dyeH;
+    const cW = this.cW = simW / 4, cH = this.cH = simH / 4;
+    const HF = gl.HALF_FLOAT, LIN = gl.LINEAR, NEAR = gl.NEAREST;
+    this.vel = this.pair(simW, simH, gl.RG16F, gl.RG, HF, LIN);
+    this.prs = this.pair(simW, simH, gl.R16F, gl.RED, HF, NEAR);
+    this.prsC = this.pair(cW, cH, gl.R16F, gl.RED, HF, LIN);
+    this.curl = this.target(simW, simH, gl.R16F, gl.RED, HF, NEAR);
+    this.divg = this.target(simW, simH, gl.R16F, gl.RED, HF, LIN);
+    this.divC = this.target(cW, cH, gl.R16F, gl.RED, HF, NEAR);
+    this.dye = this.pair(dyeW, dyeH, gl.RGBA16F, gl.RGBA, HF, LIN);
+    this.pw = 64; this.ph = Math.max(8, Math.round(64 * simH / simW));
+    this.prb = this.target(this.pw, this.ph, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, NEAR);
+    this.probeBuf = new Uint8Array(this.pw * this.ph * 4);
+    this.maskS = this.maskTex(); this.maskC = this.maskTex(); this.maskD = this.maskTex();
+    this.all = [this.vel.r, this.vel.w, this.prs.r, this.prs.w, this.prsC.r, this.prsC.w, this.curl, this.divg, this.divC, this.dye.r, this.dye.w, this.prb, this.maskS, this.maskC, this.maskD];
+  }
+  maskTex() {
+    const gl = this.gl, tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    return { tex };
+  }
+  setSource(src, sink) { this.src = [src, sink]; }
+  setMask(simCanvas, coarseCanvas, dyeCanvas) {
+    const gl = this.gl;
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    for (const [t, c] of [[this.maskS, simCanvas], [this.maskC, coarseCanvas], [this.maskD, dyeCanvas]]) {
+      gl.bindTexture(gl.TEXTURE_2D, t.tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+    }
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  }
+  run(name, uniforms, target) {
+    const gl = this.gl, pr = this.prog[name];
+    gl.useProgram(pr.p);
+    let unit = 0;
+    for (const k in uniforms) {
+      const u = pr.u[k]; if (!u) continue; const v = uniforms[k];
+      if (v && v.tex) { gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, v.tex); gl.uniform1i(u.loc, unit++); }
+      else if (typeof v === 'number') gl.uniform1f(u.loc, v);
+      else if (v.length === 2) gl.uniform2f(u.loc, v[0], v[1]);
+      else gl.uniform3f(u.loc, v[0], v[1], v[2]);
+    }
+    if (target) { gl.bindFramebuffer(gl.FRAMEBUFFER, target.fbo); gl.viewport(0, 0, target.w, target.h); }
+    else { gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, this.canvas.width, this.canvas.height); }
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  step(time, ptr, _band, dt) {
+    const DT = dt, asp = [this.simW / this.simH, 1], T = [1 / this.simW, 1 / this.simH], TC = [1 / this.cW, 1 / this.cH];
+    const { vel, prs, prsC, dye } = this;
+    this.run('advectV', { uVel: vel.r, uMask: this.maskS, uAsp: asp, uDt: DT, uDamp: P.damp }, vel.w); vel.swap();
+    this.run('curl', { uVel: vel.r, uT: T }, this.curl);
+    this.run('force', { uVel: vel.r, uCurl: this.curl, uDye: dye.r, uMask: this.maskS, uT: T, uAsp: asp, uPtr: [ptr.x, ptr.y], uPtrV: [ptr.vx, ptr.vy],
+      uDt: DT, uTime: time, uGrav: P.grav * P.narrow, uConf: P.conf * this.simH / 250, uPtrR: 0.0032, uSway: P.sway }, vel.w); vel.swap();
+    this.run('div', { uVel: vel.r, uMask: this.maskS, uT: T, uSrc: this.src || [0, 0] }, this.divg);
+    // Pressure on two grids: solve the large scales on a quarter-size grid, carry that up, then smooth on the full grid.
+    this.run('restrict', { uDiv: this.divg, uT: T }, this.divC);
+    for (let i = 0; i < P.coarse; i++) {
+      this.run('pressure', { uP: prsC.r, uDiv: this.divC, uMask: this.maskC, uT: TC, uKeep: i === 0 ? 0.9 : 1, uScale: 16 }, prsC.w); prsC.swap();
+    }
+    this.run('prolong', { uP: prsC.r }, prs.w); prs.swap();
+    for (let i = 0; i < P.fine; i++) {
+      this.run('pressure', { uP: prs.r, uDiv: this.divg, uMask: this.maskS, uT: T, uKeep: 1, uScale: 1 }, prs.w); prs.swap();
+    }
+    this.run('grad', { uP: prs.r, uVel: vel.r, uMask: this.maskS, uT: T }, vel.w); vel.swap();
+    this.run('dye', { uDye: dye.r, uVel: vel.r, uMask: this.maskD, uMaskS: this.maskS, uAsp: asp, uDt: DT, uDecay: Math.pow(P.decay, DT * 60), uTime: time, uRate: P.rate, uCap: P.cap }, dye.w); dye.swap();
+  }
+  draw(debug) {
+    this.run('show', { uDye: this.dye.r, uMask: this.maskD, uDT: [1 / this.dyeW, 1 / this.dyeH], uPaper: INK.paper, uKA: INK.kA, uKB: INK.kB, uKC: INK.kC, uDebug: debug ? 1 : 0, uGain: P.gain, uToe: P.toe }, null);
+  }
+  // Total dye on a coarse grid, read back so the page can tell which project names are under ink. Also a hard sync point.
+  probe() {
+    const gl = this.gl;
+    this.run('probe', { uDye: this.dye.r }, this.prb);
+    gl.readPixels(0, 0, this.pw, this.ph, gl.RGBA, gl.UNSIGNED_BYTE, this.probeBuf);
+    return Promise.resolve({ data: this.probeBuf, w: this.pw, h: this.ph, stride: 4, flipY: true });
+  }
+  // Draw one pass that depends on the newest dye, then read a pixel of it back: the GPU has to finish everything first.
+  sync() { const gl = this.gl; this.run('probe', { uDye: this.dye.r }, this.prb); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, this.syncBuf || (this.syncBuf = new Uint8Array(4))); return Promise.resolve(); }
+}
+
+/* =====================================================================
+   Path 2: WebGPU. The same solver as compute shaders writing storage textures.
+   Every dispatch of one step sits in a single compute pass, so a timestamp query
+   around that pass gives the GPU time of the step.
+   ===================================================================== */
+const WGSL_U = `struct U { asp: vec2f, texel: vec2f, ptr: vec2f, ptrV: vec2f, dt: f32, time: f32, grav: f32, conf: f32,
+  ptrR: f32, sway: f32, damp: f32, decay: f32, band: f32, rate: f32, cap: f32, debug: f32, dyeTexel: vec2f, pad: vec2f,
+  paper: vec4f, kA: vec4f, kB: vec4f, kC: vec4f };
+`;
+const WGSL_NOISE = `
+fn h21(p0: vec2f) -> f32 { var p = fract(p0*vec2f(123.34,456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
+fn vn(p: vec2f) -> f32 { let i = floor(p); var f = fract(p); f = f*f*(3.0-2.0*f);
+  return mix(mix(h21(i), h21(i+vec2f(1.0,0.0)), f.x), mix(h21(i+vec2f(0.0,1.0)), h21(i+vec2f(1.0,1.0)), f.x), f.y); }
+`;
+const WGSL_MAIN = `@compute @workgroup_size(8,8) fn main(@builtin(global_invocation_id) gid: vec3u) {
+  let dimu = textureDimensions(outT); if (gid.x >= dimu.x || gid.y >= dimu.y) { return; }
+  let d = vec2i(dimu); let c = vec2i(gid.xy); let uv = (vec2f(gid.xy)+0.5)/vec2f(dimu);
+`;
+const WGSL_SOL = `
+fn sol(c: vec2i, d: vec2i) -> bool { if (c.x < 0 || c.y < 0 || c.x >= d.x || c.y >= d.y) { return true; } return textureLoad(maskT, c, 0).r > 0.5; }
+fn cl(c: vec2i, d: vec2i) -> vec2i { return clamp(c, vec2i(0), d - vec2i(1)); }
+`;
+const WGSL = {
+  advectV: WGSL_U + `
+@group(0) @binding(0) var<uniform> u: U;
+@group(0) @binding(1) var samp: sampler;
+@group(0) @binding(2) var velIn: texture_2d<f32>;
+@group(0) @binding(3) var maskT: texture_2d<f32>;
+@group(0) @binding(4) var outT: texture_storage_2d<rgba16float, write>;
+` + WGSL_MAIN + `
+  if (textureLoad(maskT, c, 0).r > 0.5) { textureStore(outT, c, vec4f(0.0)); return; }
+  let v = textureLoad(velIn, c, 0).xy;
+  let nv = textureSampleLevel(velIn, samp, uv - u.dt*v/u.asp, 0.0).xy * u.damp;
+  textureStore(outT, c, vec4f(nv, 0.0, 1.0));
+}`,
+  curl: `
+@group(0) @binding(0) var velIn: texture_2d<f32>;
+@group(0) @binding(1) var outT: texture_storage_2d<r32float, write>;
+fn V(c: vec2i, d: vec2i) -> vec2f { return textureLoad(velIn, clamp(c, vec2i(0), d - vec2i(1)), 0).xy; }
+` + WGSL_MAIN + `
+  let L = V(c+vec2i(-1,0), d).y; let R = V(c+vec2i(1,0), d).y; let B = V(c+vec2i(0,-1), d).x; let T = V(c+vec2i(0,1), d).x;
+  textureStore(outT, c, vec4f(0.5*(R-L-T+B), 0.0, 0.0, 1.0));
+}`,
+  force: WGSL_U + `
+@group(0) @binding(0) var<uniform> u: U;
+@group(0) @binding(1) var samp: sampler;
+@group(0) @binding(2) var velIn: texture_2d<f32>;
+@group(0) @binding(3) var curlT: texture_2d<f32>;
+@group(0) @binding(4) var dyeIn: texture_2d<f32>;
+@group(0) @binding(5) var maskT: texture_2d<f32>;
+@group(0) @binding(6) var outT: texture_storage_2d<rgba16float, write>;
+fn K(c: vec2i, d: vec2i) -> f32 { return textureLoad(curlT, clamp(c, vec2i(0), d - vec2i(1)), 0).r; }
+` + WGSL_MAIN + `
+  if (textureLoad(maskT, c, 0).r > 0.5) { textureStore(outT, c, vec4f(0.0)); return; }
+  var v = textureLoad(velIn, c, 0).xy;
+  let L = abs(K(c+vec2i(-1,0), d)); let R = abs(K(c+vec2i(1,0), d)); let B = abs(K(c+vec2i(0,-1), d)); let T = abs(K(c+vec2i(0,1), d));
+  let C = K(c, d);
+  var f = 0.5*vec2f(T-B, R-L); f = f/(length(f)+1e-4)*u.conf*C; f.y = -f.y;
+  v += f*u.dt;
+  let dd = textureSampleLevel(dyeIn, samp, uv, 0.0).rgb;
+  v.y -= u.grav*(dd.r+dd.g+dd.b)*u.dt;
+  v.x += u.sway*sin(u.time*0.21 + uv.y*5.0)*u.dt;
+  let q = (uv-u.ptr)*u.asp;
+  v += u.ptrV*exp(-dot(q,q)/u.ptrR);
+  let s = length(v); if (s > 2.5) { v *= 2.5/s; }
+  textureStore(outT, c, vec4f(v, 0.0, 1.0));
+}`,
+  div: `
+struct Src { src: f32, sink: f32 };
+@group(0) @binding(0) var velIn: texture_2d<f32>;
+@group(0) @binding(1) var maskT: texture_2d<f32>;
+@group(0) @binding(2) var outT: texture_storage_2d<r32float, write>;
+@group(0) @binding(3) var<uniform> q: Src;
+` + WGSL_SOL + WGSL_MAIN + `
+  let l = c+vec2i(-1,0); let r = c+vec2i(1,0); let b = c+vec2i(0,-1); let t = c+vec2i(0,1);
+  let L = select(textureLoad(velIn, cl(l,d), 0).x, 0.0, sol(l,d)); let R = select(textureLoad(velIn, cl(r,d), 0).x, 0.0, sol(r,d));
+  let B = select(textureLoad(velIn, cl(b,d), 0).y, 0.0, sol(b,d)); let T = select(textureLoad(velIn, cl(t,d), 0).y, 0.0, sol(t,d));
+  let m = textureLoad(maskT, c, 0);
+  let s = (q.src*m.g - q.sink*m.b*step(m.g, 0.01)) * step(m.r, 0.5);
+  textureStore(outT, c, vec4f(0.5*(R-L+T-B) - s, 0.0, 0.0, 1.0));
+}`,
+  pressure: `
+struct Keep { keep: f32, scale: f32 };
+@group(0) @binding(0) var<uniform> k: Keep;
+@group(0) @binding(1) var pIn: texture_2d<f32>;
+@group(0) @binding(2) var divT: texture_2d<f32>;
+@group(0) @binding(3) var maskT: texture_2d<f32>;
+@group(0) @binding(4) var outT: texture_storage_2d<r32float, write>;
+` + WGSL_SOL + WGSL_MAIN + `
+  let l = c+vec2i(-1,0); let r = c+vec2i(1,0); let b = c+vec2i(0,-1); let t = c+vec2i(0,1);
+  let C = textureLoad(pIn, c, 0).r;
+  let L = select(textureLoad(pIn, cl(l,d), 0).r, C, sol(l,d)); let R = select(textureLoad(pIn, cl(r,d), 0).r, C, sol(r,d));
+  let B = select(textureLoad(pIn, cl(b,d), 0).r, C, sol(b,d)); let T = select(textureLoad(pIn, cl(t,d), 0).r, C, sol(t,d));
+  textureStore(outT, c, vec4f((L+R+B+T)*k.keep*0.25 - textureLoad(divT, c, 0).r*k.scale*0.25, 0.0, 0.0, 1.0));
+}`,
+  grad: `
+@group(0) @binding(0) var pIn: texture_2d<f32>;
+@group(0) @binding(1) var velIn: texture_2d<f32>;
+@group(0) @binding(2) var maskT: texture_2d<f32>;
+@group(0) @binding(3) var outT: texture_storage_2d<rgba16float, write>;
+` + WGSL_SOL + WGSL_MAIN + `
+  if (sol(c,d)) { textureStore(outT, c, vec4f(0.0)); return; }
+  let l = c+vec2i(-1,0); let r = c+vec2i(1,0); let b = c+vec2i(0,-1); let t = c+vec2i(0,1);
+  let sL = sol(l,d); let sR = sol(r,d); let sB = sol(b,d); let sT = sol(t,d);
+  let C = textureLoad(pIn, c, 0).r;
+  let L = select(textureLoad(pIn, cl(l,d), 0).r, C, sL); let R = select(textureLoad(pIn, cl(r,d), 0).r, C, sR);
+  let B = select(textureLoad(pIn, cl(b,d), 0).r, C, sB); let T = select(textureLoad(pIn, cl(t,d), 0).r, C, sT);
+  var v = textureLoad(velIn, c, 0).xy - 0.5*vec2f(R-L, T-B);
+  if (sL && v.x < 0.0) { v.x = 0.0; } if (sR && v.x > 0.0) { v.x = 0.0; }
+  if (sB && v.y < 0.0) { v.y = 0.0; } if (sT && v.y > 0.0) { v.y = 0.0; }
+  textureStore(outT, c, vec4f(v, 0.0, 1.0));
+}`,
+  restrict: `
+@group(0) @binding(0) var divT: texture_2d<f32>;
+@group(0) @binding(1) var outT: texture_storage_2d<r32float, write>;
+` + WGSL_MAIN + `
+  let fd = vec2i(textureDimensions(divT)); var s = 0.0;
+  for (var j = 0; j < 4; j++) { for (var i = 0; i < 4; i++) { s += textureLoad(divT, clamp(c*4 + vec2i(i, j), vec2i(0), fd - vec2i(1)), 0).r; } }
+  textureStore(outT, c, vec4f(s/16.0, 0.0, 0.0, 1.0));
+}`,
+  prolong: `
+@group(0) @binding(0) var pC: texture_2d<f32>;
+@group(0) @binding(1) var outT: texture_storage_2d<r32float, write>;
+fn PC(q: vec2i, cd: vec2i) -> f32 { return textureLoad(pC, clamp(q, vec2i(0), cd - vec2i(1)), 0).r; }
+` + WGSL_MAIN + `
+  let cd = vec2i(textureDimensions(pC));
+  let p = (vec2f(gid.xy) + 0.5)/4.0 - 0.5; let i0 = vec2i(floor(p)); let f = p - floor(p);
+  let v = mix(mix(PC(i0, cd), PC(i0 + vec2i(1, 0), cd), f.x), mix(PC(i0 + vec2i(0, 1), cd), PC(i0 + vec2i(1, 1), cd), f.x), f.y);
+  textureStore(outT, c, vec4f(v, 0.0, 0.0, 1.0));
+}`,
+  dye: WGSL_U + WGSL_NOISE + `
+@group(0) @binding(0) var<uniform> u: U;
+@group(0) @binding(1) var samp: sampler;
+@group(0) @binding(2) var dyeIn: texture_2d<f32>;
+@group(0) @binding(3) var velIn: texture_2d<f32>;
+@group(0) @binding(4) var maskT: texture_2d<f32>;
+@group(0) @binding(5) var outT: texture_storage_2d<rgba16float, write>;
+@group(0) @binding(6) var maskSim: texture_2d<f32>;
+` + WGSL_MAIN + `
+  let m = textureLoad(maskT, c, 0);
+  if (m.r > 0.5) { textureStore(outT, c, vec4f(0.0, 0.0, 0.0, 1.0)); return; }
+  let v = textureSampleLevel(velIn, samp, uv, 0.0).xy;
+  var q = textureSampleLevel(dyeIn, samp, uv - u.dt*v/u.asp, 0.0).rgb * u.decay;
+  if (m.g < 0.01) { q *= 1.0 - 0.12*m.b; }
+  q *= 1.0 - 0.35*smoothstep(0.12, 0.5, textureSampleLevel(maskSim, samp, uv, 0.0).r);
+  if (m.g > 0.02) {
+    let pulse = 0.2 + smoothstep(0.34, 0.7, vn(vec2f(uv.x*u.asp.x*7.0, u.time*0.22)));
+    let id = clamp(2.0*m.b/m.g, 0.0, 2.0);
+    let w = vec3f(1.0 - min(id, 1.0), 1.0 - abs(id - 1.0), max(id - 1.0, 0.0));
+    q += m.g*pulse*u.rate*u.dt*w*max(0.0, 1.0 - (q.r+q.g+q.b)/u.cap);
+  }
+  textureStore(outT, c, vec4f(q, 1.0));
+}`,
+  probe: `
+@group(0) @binding(0) var samp: sampler;
+@group(0) @binding(1) var dyeIn: texture_2d<f32>;
+@group(0) @binding(2) var outT: texture_storage_2d<rgba8unorm, write>;
+` + WGSL_MAIN + `
+  let q = textureSampleLevel(dyeIn, samp, uv, 0.0).rgb;
+  textureStore(outT, c, vec4f(clamp(q*0.5, vec3f(0.0), vec3f(1.0)), 1.0));
+}`,
+  show: WGSL_U + WGSL_NOISE + `
+@group(0) @binding(0) var<uniform> u: U;
+@group(0) @binding(1) var samp: sampler;
+@group(0) @binding(2) var dyeT: texture_2d<f32>;
+@group(0) @binding(3) var maskT: texture_2d<f32>;
+struct VO { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
+@vertex fn vs(@builtin(vertex_index) i: u32) -> VO {
+  let p = vec2f(f32((i << 1u) & 2u), f32(i & 2u)) * 2.0 - 1.0;
+  var o: VO; o.pos = vec4f(p, 0.0, 1.0); o.uv = p*0.5+0.5; return o;
+}
+fn tot(p: vec2f) -> f32 { let q = textureSampleLevel(dyeT, samp, p, 0.0).rgb; return q.r+q.g+q.b; }
+@fragment fn fs(i: VO) -> @location(0) vec4f {
+  let uv = i.uv;
+  var q = textureSampleLevel(dyeT, samp, uv, 0.0).rgb;
+  q *= smoothstep(0.01, u.pad.y, q.r+q.g+q.b);
+  let e = u.dyeTexel*1.5;
+  let g = vec2f(tot(uv+vec2f(e.x,0.0))-tot(uv-vec2f(e.x,0.0)), tot(uv+vec2f(0.0,e.y))-tot(uv-vec2f(0.0,e.y)));
+  let edge = smoothstep(0.015, 0.45, length(g));
+  let px = i.pos.xy;
+  let grain = 0.6*vn(px*0.9) + 0.4*vn(px*0.23);
+  let dd = q*u.pad.x*(1.0+0.95*edge)*(0.86+0.28*grain);
+  var A = dd.r*u.kA.rgb + dd.g*u.kB.rgb + dd.b*u.kC.rgb;
+  let s = max(A.r, max(A.g, A.b));
+  A *= (2.05*(1.0-exp(-s/2.05)))/max(s, 1e-4);
+  var col = u.paper.rgb*exp(-A);
+  col *= 0.985 + 0.03*grain;
+  var lin = pow(col, vec3f(2.2));
+  let L = dot(lin, vec3f(0.2126, 0.7152, 0.0722));
+  let Lf = 0.5*(L + 0.125 + sqrt((L-0.125)*(L-0.125) + 0.0006));
+  lin += (Lf-L)/(1.0-L)*(vec3f(1.0)-lin);
+  col = pow(lin, vec3f(1.0/2.2));
+  if (u.debug > 0.5) { let m = textureSampleLevel(maskT, samp, uv, 0.0); col = mix(col, vec3f(1.0, 0.0, 0.6), 0.5*m.r); }
+  return vec4f(col, 1.0);
+}`,
+};
+
+class GPUSim {
+  constructor(canvas, adapter, device, pipes, showModule, pick, glName) {
+    this.canvas = canvas; this.device = device; this.pipes = pipes; this.showModule = showModule;
+    const info = adapter.info || {};
+    this.soft = pick.soft; this.compat = pick.compat;
+    // Chrome leaves most adapter fields blank; the WebGL renderer string names the same GPU in words.
+    this.renderer = (!pick.soft && glName && !SOFT_RE.test(glName) && glName) || info.description || [info.vendor, info.architecture, info.device].filter(Boolean).join(' ') || 'WebGPU adapter';
+    this.label = 'WebGPU compute';
+    this.hasTS = device.features.has('timestamp-query');
+    this.ctx = canvas.getContext('webgpu');
+    this.format = navigator.gpu.getPreferredCanvasFormat();
+    this.ctx.configure({ device, format: this.format, alphaMode: 'opaque' });
+    this.showPipe = device.createRenderPipeline({ layout: 'auto', vertex: { module: showModule, entryPoint: 'vs' },
+      fragment: { module: showModule, entryPoint: 'fs', targets: [{ format: this.format }] }, primitive: { topology: 'triangle-list' } });
+    this.ids = 0; this.cache = new Map(); this.tex = [];
+    this.samp = this.wrap(device.createSampler({ magFilter: 'linear', minFilter: 'linear', addressModeU: 'clamp-to-edge', addressModeV: 'clamp-to-edge' }));
+    this.ubuf = device.createBuffer({ size: 160, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    this.u = this.wrap({ buffer: this.ubuf }); this.ud = new Float32Array(40);
+    const keep = (v, s) => { const b = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST }); device.queue.writeBuffer(b, 0, new Float32Array([v, s, 0, 0])); return this.wrap({ buffer: b }); };
+    this.keepC0 = keep(0.9, 16); this.keepC1 = keep(1, 16); this.keepF = keep(1, 1); this.srcU = keep(0, 0);
+    if (this.hasTS) {
+      this.qset = device.createQuerySet({ type: 'timestamp', count: 2 });
+      this.qres = device.createBuffer({ size: 16, usage: GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.COPY_SRC });
+      this.qread = device.createBuffer({ size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    }
+  }
+  wrap(res) { return { id: ++this.ids, res }; }
+  texture(w, h, format, usage) {
+    const t = this.device.createTexture({ size: [w, h], format, usage }); this.tex.push(t);
+    const o = this.wrap(t.createView()); o.t = t; o.w = w; o.h = h; return o;
+  }
+  resize(simW, simH, dyeW, dyeH) {
+    for (const t of this.tex) t.destroy(); this.tex = []; this.cache.clear();
+    if (this.pbuf) this.pbuf.destroy();
+    this.simW = simW; this.simH = simH; this.dyeW = dyeW; this.dyeH = dyeH;
+    const RW = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.STORAGE_BINDING;
+    const two = (w, h, f) => ({ r: this.texture(w, h, f, RW), w: this.texture(w, h, f, RW), swap() { const t = this.r; this.r = this.w; this.w = t; } });
+    const cW = this.cW = simW / 4, cH = this.cH = simH / 4;
+    this.vel = two(simW, simH, 'rgba16float'); this.prs = two(simW, simH, 'r32float'); this.prsC = two(cW, cH, 'r32float');
+    this.curl = this.texture(simW, simH, 'r32float', RW); this.divg = this.texture(simW, simH, 'r32float', RW); this.divC = this.texture(cW, cH, 'r32float', RW);
+    this.dye = two(dyeW, dyeH, 'rgba16float');
+    this.pw = 64; this.ph = Math.max(8, Math.round(64 * simH / simW));
+    this.prb = this.texture(this.pw, this.ph, 'rgba8unorm', GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.COPY_SRC);
+    this.pbuf = this.device.createBuffer({ size: 256 * this.ph, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    this.probeBuf = new Uint8Array(this.pw * this.ph * 4);
+    const MU = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT;
+    this.maskS = this.texture(simW, simH, 'rgba8unorm', MU); this.maskC = this.texture(cW, cH, 'rgba8unorm', MU); this.maskD = this.texture(dyeW, dyeH, 'rgba8unorm', MU);
+  }
+  setSource(src, sink) { this.device.queue.writeBuffer(this.srcU.res.buffer, 0, new Float32Array([src, sink, 0, 0])); }
+  setMask(simCanvas, coarseCanvas, dyeCanvas) {
+    const q = this.device.queue;
+    q.copyExternalImageToTexture({ source: simCanvas, flipY: true }, { texture: this.maskS.t }, [this.simW, this.simH]);
+    q.copyExternalImageToTexture({ source: coarseCanvas, flipY: true }, { texture: this.maskC.t }, [this.cW, this.cH]);
+    q.copyExternalImageToTexture({ source: dyeCanvas, flipY: true }, { texture: this.maskD.t }, [this.dyeW, this.dyeH]);
+  }
+  group(pipe, res) {
+    const key = pipe.label + ':' + res.map((r) => r.id).join(',');
+    let g = this.cache.get(key);
+    if (!g) { g = this.device.createBindGroup({ layout: pipe.getBindGroupLayout(0), entries: res.map((r, i) => ({ binding: i, resource: r.res })) }); this.cache.set(key, g); }
+    return g;
+  }
+  go(pass, name, res, w, h) {
+    const p = this.pipes[name];
+    pass.setPipeline(p); pass.setBindGroup(0, this.group(p, res)); pass.dispatchWorkgroups(Math.ceil(w / 8), Math.ceil(h / 8));
+  }
+  uniforms(time, ptr, bandUV, debug, dt) {
+    const d = this.ud, DT = dt || this.dt || 1 / 60; this.dt = DT;
+    d.set([this.simW / this.simH, 1, 1 / this.simW, 1 / this.simH, ptr.x, ptr.y, ptr.vx, ptr.vy, DT, time, P.grav * P.narrow, P.conf * this.simH / 250, 0.0032, P.sway, P.damp, Math.pow(P.decay, DT * 60),
+      bandUV, P.rate, P.cap, debug ? 1 : 0, 1 / this.dyeW, 1 / this.dyeH, P.gain, P.toe, ...INK.paper, 1, ...INK.kA, 0, ...INK.kB, 0, ...INK.kC, 0]);
+    this.device.queue.writeBuffer(this.ubuf, 0, d);
+  }
+  encode(pass) {
+    const { vel, prs, prsC, dye, u, samp } = this, W = this.simW, H = this.simH, cW = this.cW, cH = this.cH;
+    this.go(pass, 'advectV', [u, samp, vel.r, this.maskS, vel.w], W, H); vel.swap();
+    this.go(pass, 'curl', [vel.r, this.curl], W, H);
+    this.go(pass, 'force', [u, samp, vel.r, this.curl, dye.r, this.maskS, vel.w], W, H); vel.swap();
+    this.go(pass, 'div', [vel.r, this.maskS, this.divg, this.srcU], W, H);
+    // Pressure on two grids: solve the large scales on a quarter-size grid, carry that up, then smooth on the full grid.
+    this.go(pass, 'restrict', [this.divg, this.divC], cW, cH);
+    for (let i = 0; i < P.coarse; i++) { this.go(pass, 'pressure', [i === 0 ? this.keepC0 : this.keepC1, prsC.r, this.divC, this.maskC, prsC.w], cW, cH); prsC.swap(); }
+    this.go(pass, 'prolong', [prsC.r, prs.w], W, H); prs.swap();
+    for (let i = 0; i < P.fine; i++) { this.go(pass, 'pressure', [this.keepF, prs.r, this.divg, this.maskS, prs.w], W, H); prs.swap(); }
+    this.go(pass, 'grad', [prs.r, vel.r, this.maskS, vel.w], W, H); vel.swap();
+    this.go(pass, 'dye', [u, samp, dye.r, vel.r, this.maskD, dye.w, this.maskS], this.dyeW, this.dyeH); dye.swap();
+  }
+  step(time, ptr, bandUV, dt) {
+    this.last = { time, ptr, bandUV };
+    this.uniforms(time, ptr, bandUV, this.debug, dt);
+    const enc = this.device.createCommandEncoder(), pass = enc.beginComputePass();
+    this.encode(pass); pass.end(); this.device.queue.submit([enc.finish()]);
+  }
+  // One step bracketed by timestamp queries. Returns GPU milliseconds, or null when the adapter has no usable timestamps.
+  async stepTimed(time, ptr, bandUV, dt) {
+    if (!this.hasTS || this.tsBroken) return null;
+    this.last = { time, ptr, bandUV };
+    this.uniforms(time, ptr, bandUV, this.debug, dt);
+    const enc = this.device.createCommandEncoder();
+    const pass = enc.beginComputePass({ timestampWrites: { querySet: this.qset, beginningOfPassWriteIndex: 0, endOfPassWriteIndex: 1 } });
+    this.encode(pass); pass.end();
+    enc.resolveQuerySet(this.qset, 0, 2, this.qres, 0); enc.copyBufferToBuffer(this.qres, 0, this.qread, 0, 16);
+    this.device.queue.submit([enc.finish()]);
+    await this.qread.mapAsync(GPUMapMode.READ);
+    const t = new BigUint64Array(this.qread.getMappedRange().slice(0));
+    this.qread.unmap();
+    const ms = Number(t[1] - t[0]) / 1e6;
+    if (!(ms > 0) || ms > 5000) { this.tsBroken = true; return -1; }
+    return ms;
+  }
+  draw(debug) {
+    this.debug = debug;
+    if (this.last) this.uniforms(this.last.time, this.last.ptr, this.last.bandUV, debug);
+    const enc = this.device.createCommandEncoder();
+    const pass = enc.beginRenderPass({ colorAttachments: [{ view: this.ctx.getCurrentTexture().createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: INK.paper[0], g: INK.paper[1], b: INK.paper[2], a: 1 } }] });
+    pass.setPipeline(this.showPipe); pass.setBindGroup(0, this.group(this.showPipe, [this.u, this.samp, this.dye.r, this.maskD])); pass.draw(3); pass.end();
+    this.device.queue.submit([enc.finish()]);
+  }
+  async probe() {
+    const enc = this.device.createCommandEncoder(), pass = enc.beginComputePass();
+    this.go(pass, 'probe', [this.samp, this.dye.r, this.prb], this.pw, this.ph); pass.end();
+    enc.copyTextureToBuffer({ texture: this.prb.t }, { buffer: this.pbuf, bytesPerRow: 256 }, [this.pw, this.ph]);
+    this.device.queue.submit([enc.finish()]);
+    const buf = this.pbuf;
+    await buf.mapAsync(GPUMapMode.READ);
+    const src = new Uint8Array(buf.getMappedRange());
+    for (let y = 0; y < this.ph; y++) this.probeBuf.set(src.subarray(y * 256, y * 256 + this.pw * 4), y * this.pw * 4);
+    buf.unmap();
+    return { data: this.probeBuf, w: this.pw, h: this.ph, stride: 4, flipY: true };
+  }
+  sync() { return this.device.queue.onSubmittedWorkDone(); }
+}
+
+// Everything that can fail happens before the canvas is given a WebGPU context, so a failure still leaves it free for WebGL2.
+async function makeGPUSim(canvas, pick, glName) {
+  const adapter = pick.adapter;
+  const device = await adapter.requestDevice({ requiredFeatures: adapter.features.has('timestamp-query') ? ['timestamp-query'] : [] });
+  device.pushErrorScope('validation');
+  const pipes = {};
+  const jobs = Object.keys(WGSL).filter((k) => k !== 'show').map(async (k) => {
+    pipes[k] = await device.createComputePipelineAsync({ label: k, layout: 'auto', compute: { module: device.createShaderModule({ code: WGSL[k] }), entryPoint: 'main' } });
+  });
+  const showModule = device.createShaderModule({ code: WGSL.show });
+  await Promise.all(jobs);
+  const info = await showModule.getCompilationInfo();
+  const bad = info.messages.find((m) => m.type === 'error');
+  const err = await device.popErrorScope();
+  if (bad || err) { device.destroy(); throw new Error('WebGPU shader setup failed: ' + (bad ? bad.message : err.message)); }
+  const sim = new GPUSim(canvas, adapter, device, pipes, showModule, pick, glName);
+  sim.showPipe.label = 'show';
+  device.addEventListener('uncapturederror', (e) => console.warn('WebGPU error:', e.error && e.error.message));
+  return sim;
+}
+
+
+/* ---------- choosing a GPU path ----------
+   Hardware WebGPU first (core, then the compatibility feature level), then hardware WebGL2, then whatever software path exists. */
+function glRendererName() {
+  try {
+    const gl = document.createElement('canvas').getContext('webgl2');
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    const lose = gl.getExtension('WEBGL_lose_context'); if (lose) lose.loseContext();
+    return String(name || '');
+  } catch (_) { return ''; }
+}
+async function pickAdapter() {
+  if (!navigator.gpu) return null;
+  let soft = null;
+  for (const o of [{ powerPreference: 'high-performance' }, { featureLevel: 'compatibility', powerPreference: 'high-performance' }]) {
+    let a = null;
+    try { a = await navigator.gpu.requestAdapter(o); } catch (_) {}
+    if (!a) continue;
+    const i = a.info || {};
+    const isSoft = !!i.isFallbackAdapter || SOFT_RE.test([i.vendor, i.architecture, i.device, i.description].join(' '));
+    const pick = { adapter: a, soft: isSoft, compat: !!o.featureLevel };
+    if (!isSoft) return pick;
+    soft = soft || pick;
+  }
+  return soft;
+}
+
+/* ---------- driver ---------- */
+const TIERS = [655360, 409600, 262144, 147456, 92160];   // velocity cells; the page takes the largest one that steps inside the budget
+const BUDGET = +qs.get('budget') || 4.5;                  // ms per step
+const S = { sim: null, running: true, time: 0, frame: 0, ms: 0, samples: [], acc: 0, last: 0, soft: false, tier: 0, timeEvery: 90, debug: qs.get('debug') === 'mask', busy: false };
+const ptr = { x: 0.5, y: 0.5, vx: 0, vy: 0, lx: null, ly: null, ax: 0, ay: 0 };
+
+function sizes() {
+  const r = canvas.getBoundingClientRect();
+  const dpr = Math.min(devicePixelRatio || 1, S.soft ? 1 : 2);
+  canvas.width = Math.max(2, Math.round(r.width * dpr)); canvas.height = Math.max(2, Math.round(r.height * dpr));
+  const asp = r.width / r.height, px = canvas.width * canvas.height;
+  const nSim = Math.min(+qs.get('cells') || (S.soft ? 30000 : TIERS[S.tier]), px);
+  const nDye = Math.min(S.soft ? 460000 : 1600000, px);
+  const simH = 4 * Math.max(6, Math.round(Math.sqrt(nSim / asp) / 4)), simW = 4 * Math.max(6, Math.round(simH * asp / 4));
+  const dyeH = Math.min(Math.round(Math.sqrt(nDye / asp)), canvas.height), dyeW = Math.round(dyeH * asp);
+  return { simW, simH, dyeW, dyeH };
+}
+
+function build() {
+  fitType();
+  const z = sizes(), sim = S.sim, phone = innerWidth <= 700;
+  if (!qs.has('narrow')) P.narrow = phone ? 2 : 1;
+  $('r-path').textContent = sim.label;
+  $('r-grid').textContent = phone ? `${z.simW} × ${z.simH} cells` : `${z.simW} × ${z.simH} = ${(z.simW * z.simH).toLocaleString('en-US')} cells`;
+  $('r-dye').textContent = `${z.dyeW} × ${z.dyeH} texels`;
+  $('r-solver').textContent = `two grids, ${P.coarse} + ${P.fine} sweeps`;
+  $('r-gpu').textContent = shortGpu(sim.renderer, sim.soft);
+  sim.resize(z.simW, z.simH, z.dyeW, z.dyeH);
+  const simMask = rasterMask(z.simW, z.simH, P.jetPx);
+  const walls = closeGaps(simMask, 4);
+  sim.setMask(simMask, coarsen(walls, z.simW, z.simH), rasterMask(z.dyeW, z.dyeH, P.bandPx));
+  sim.setSource(...sourceBalance(simMask));
+}
+function shortGpu(s, soft) {
+  s = String(s || 'unknown');
+  if (soft || SOFT_RE.test(s)) return 'none here, software renderer';
+  const m = s.match(/^ANGLE \((?:[^,]+), (.+), [^,]+\)$/);
+  if (m) s = m[1];
+  s = s.replace(/^ANGLE Metal Renderer: /, '').replace(/ \(0x[0-9a-f]+\)/i, '').replace(/ Direct3D.*$/, '').replace(/ \(.*$/, '');
+  return s.length > 30 ? s.slice(0, 29) + '…' : s;
+}
+
+function pointerToVelocity() {
+  const k = 0.85 / DT;                       // pointer displacement this step, as a velocity
+  ptr.vx = Math.max(-2, Math.min(2, ptr.ax * k)); ptr.vy = Math.max(-2, Math.min(2, ptr.ay * k));
+  ptr.ax = 0; ptr.ay = 0;
+}
+function oneStep(dt) {
+  pointerToVelocity();
+  S.sim.step(S.time, ptr, 0, dt);
+  S.time += dt;
+}
+// Wall clock: k sub-steps (each a full solve, together one step of simulated time) between two forced GPU syncs.
+// Timing several at once keeps the cost of the sync itself out of the number.
+async function timeBatch(k) {
+  await S.sim.sync(); const t0 = performance.now();
+  for (let i = 0; i < k; i++) oneStep(DT / k);
+  await S.sim.sync();
+  return (performance.now() - t0) / k;
+}
+// WebGPU with timestamp queries: the GPU's own clock around the compute pass. Otherwise the wall clock.
+async function timedStep() {
+  const sim = S.sim;
+  if (sim.stepTimed) {
+    pointerToVelocity();
+    const ms = await sim.stepTimed(S.time, ptr, 0, DT);
+    if (ms !== null) { S.time += DT; if (ms > 0) { S.clock = 'GPU timestamp query around the compute pass'; S.timeEvery = 24; return ms; } }
+  }
+  S.clock = 'wall clock between two GPU syncs, mean of the sub-steps';
+  S.timeEvery = S.soft ? 40 : 90;
+  return timeBatch(S.soft ? 1 : 3);
+}
+// Start at the largest grid and step down until one step fits the budget on this GPU.
+async function calibrate() {
+  if (S.soft || qs.get('cells') || qs.get('tier')) { note(await timeBatch(1)); return; }
+  for (;;) {
+    for (let i = 0; i < 4; i++) oneStep(DT);
+    await timeBatch(2);
+    const ms = [await timeBatch(3), await timeBatch(3), await timeBatch(3)].sort((a, b) => a - b)[1];
+    if (ms <= BUDGET || S.tier >= TIERS.length - 1) { note(ms); return; }
+    S.tier++; build();
+  }
+}
+
+// Run the tank forward before the first frame. The pre-roll takes double-length steps (semi-Lagrangian advection stays stable).
+async function preroll(maxSteps, budgetMs) {
+  const t0 = performance.now(); let n = 0;
+  const stretch = qs.get('steps') ? 1 : 2;
+  while (n < maxSteps) {
+    for (let i = 0; i < 8 && n < maxSteps; i++, n++) oneStep(DT * stretch);
+    await S.sim.sync();
+    if (S.soft) { S.sim.draw(S.debug); await new Promise((r) => setTimeout(r)); }   // let the slow path paint as it goes
+    if (performance.now() - t0 > budgetMs) break;
+  }
+  return n;
+}
+
+async function frame(now) {
+  if (S.busy) return;
+  S.busy = true;
+  try {
+    const sim = S.sim;
+    if (sim.lost) { S.busy = false; return; }
+    S.frame++;
+    if (S.running) {
+      S.acc = Math.min(S.acc + (now - S.last) / 1000, DT * (S.soft ? 1 : 2));   // software renderers get one step per frame
+      const timeIt = S.frame % S.timeEvery === 0; let timed = false;
+      while (S.acc >= DT) {
+        S.acc -= DT;
+        if (timeIt && !timed) { note(await timedStep()); timed = true; }
+        else oneStep(DT);
+      }
+    }
+    S.last = now;
+    sim.draw(S.debug);
+  } finally { S.busy = false; }
+  if (S.running) requestAnimationFrame(frame);
+}
+
+// The readout shows the median of the last five timings, so one slow frame does not move it.
+function note(ms) {
+  S.samples.push(ms); if (S.samples.length > 5) S.samples.shift();
+  S.ms = [...S.samples].sort((a, b) => a - b)[S.samples.length >> 1];
+  showStep();
+}
+function showStep() {
+  const el = $('r-step');
+  el.textContent = `${S.ms.toFixed(S.ms < 10 ? 2 : 1)} ms`;
+  el.title = S.clock || '';
+}
+
+function setRunning(on) {
+  S.running = on;
+  $('toggle').textContent = on ? 'Pause the fluid' : 'Run the fluid';
+  root.classList.toggle('still', !on);
+  if (on) { S.last = performance.now(); requestAnimationFrame(frame); }
+}
+
+async function start() {
+  let lateFonts = false;
+  try {
+    const fonts = Promise.all([document.fonts.load('900 100px "Big Shoulders Display"'), document.fonts.load('800 60px "Big Shoulders Display"'), document.fonts.load('500 20px "Hanken Grotesk"'), document.fonts.ready]);
+    await Promise.race([fonts, new Promise((r) => setTimeout(() => { lateFonts = true; r(); }, 2500))]);
+    // If the faces arrive after the deadline, the letters change shape: redo the obstacle mask.
+    fonts.then(() => { if (lateFonts) dispatchEvent(new Event('resize')); });
+  } catch (_) {}
+  const freshCanvas = () => { const c2 = canvas.cloneNode(false); canvas.replaceWith(c2); canvas = c2; };
+  const boot = async (sim) => {
+    S.sim = sim;
+    S.soft = sim.soft && qs.get('tier') === null;      // ?tier=n forces a hardware grid on any renderer
+    S.tier = Math.min(TIERS.length - 1, +qs.get('tier') || 0);
+    if (!qs.has('coarse')) P.coarse = S.soft ? 14 : 20;
+    if (!qs.has('fine')) P.fine = S.soft ? 3 : 4;
+    build();
+    if (!sim.device) return;
+    // Smoke test: some setups hand out a WebGPU device but cannot present it to a canvas. Find out before the pour starts.
+    sim.device.addEventListener('uncapturederror', () => { sim.failed = true; });
+    sim.step(0, ptr, 0, DT); sim.draw(false);
+    await Promise.race([sim.probe(), new Promise((_, rej) => setTimeout(() => rej(new Error('WebGPU readback timed out')), 4000))]);
+    await sim.sync();
+    if (sim.failed) throw new Error('WebGPU validation error on the first frame');
+    sim.device.lost.then((info) => {
+      if (info.reason === 'destroyed' || S.sim !== sim) return;
+      console.warn('WebGPU device lost, switching to WebGL2:', info.message);
+      try { freshCanvas(); const g = new GLSim(canvas); S.sim = g; S.soft = g.soft; build(); preroll(45, 500).then(() => S.sim.draw(S.debug)); }
+      catch (e) { root.classList.add('no-gl', 'still'); S.running = false; }
+    });
+  };
+  const want = qs.get('gpu');
+  const glName = glRendererName();
+  const pick = (want === 'webgl2' || want === 'none') ? null : await pickAdapter();
+  const order = want === 'none' ? [] : want === 'webgl2' ? ['gl'] : (want === 'webgpu' || (pick && !pick.soft)) ? ['gpu', 'gl'] : ['gl', 'gpu'];
+  let sim = null;
+  for (const kind of order) {
+    if (kind === 'gpu' && !pick) continue;
+    let g = null;
+    try {
+      g = kind === 'gpu' ? await makeGPUSim(canvas, pick, glName) : new GLSim(canvas);
+      await boot(g); sim = g; break;
+    } catch (e) {
+      console.warn((kind === 'gpu' ? 'WebGPU' : 'WebGL2') + ' path unavailable:', e && e.message);
+      if (g && g.device) { try { g.device.destroy(); } catch (_) {} }
+      freshCanvas();
+    }
+  }
+  if (!sim) { S.sim = null; root.classList.add('no-gl', 'still'); fitType(); $('r-path').textContent = 'none, still image'; $('toggle').remove(); root.dataset.ready = '1'; return; }
+  await calibrate();
+  const forced = +qs.get('steps');
+  const still = reduceMQ.matches;
+  // Moving: open just as the first ink leaves the letters, so the pour is the first thing a visitor watches. Still: open on a full tank.
+  const n = await preroll(forced || (still ? 220 : 45), forced ? 1e9 : (still ? 6000 : 700));
+  S.prerolled = n;
+  sim.draw(S.debug);
+  note(await timedStep());
+  sim.draw(S.debug);
+  root.dataset.ready = '1';
+  setRunning(!still);
+}
+
+$('toggle').addEventListener('click', () => setRunning(!S.running));
+addEventListener('pointermove', (e) => {
+  const r = canvas.getBoundingClientRect();
+  if (ptr.lx !== null) { ptr.ax += (e.clientX - ptr.lx) / r.height; ptr.ay -= (e.clientY - ptr.ly) / r.height; }
+  ptr.lx = e.clientX; ptr.ly = e.clientY;
+  ptr.x = (e.clientX - r.left) / r.width; ptr.y = 1 - (e.clientY - r.top) / r.height;
+}, { passive: true });
+addEventListener('pointerleave', () => { ptr.lx = null; });
+addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') ptr.lx = null; });
+let rz = 0;
+addEventListener('resize', () => {
+  clearTimeout(rz);
+  rz = setTimeout(async () => {
+    if (!S.sim) { fitType(); return; }
+    build(); await preroll(reduceMQ.matches ? 220 : 45, reduceMQ.matches ? 6000 : 600); S.sim.draw(S.debug);
+  }, 180);
+});
+document.addEventListener('visibilitychange', () => { S.last = performance.now(); });
+window.__ink = S;
+start();
+})();
+</script>
+<script>
+// The terminal page above this frame forwards the pointer so the ink still stirs.
+addEventListener('message', (e) => { const d = e.data; if (!d || d.t !== 'ptr') return;
+  dispatchEvent(new PointerEvent(d.k, { clientX: d.x, clientY: d.y, pointerType: 'mouse', bubbles: true })); });
+</script>
+</body>
+</html>
