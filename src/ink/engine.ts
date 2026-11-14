@@ -189,14 +189,17 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     const b = be, t0 = performance.now(); let n = 0
     try {
       if (b.finish) {
-        // Time real completion. Start from an idle GPU, run one step, then half of what the time
-        // left allows at the last batch's cost, and so on. Once the rest fits, send it and return.
+        // Time real completion. Start from an idle GPU and run one step alone: it also uploads the
+        // mask and wakes the GPU, so its cost only bounds the next batch. Then probe with up to 8
+        // steps, enough to spread the readback's round trip. After that send half of what the
+        // time left allows at the last batch's cost, and so on. Once the rest fits, send it and
+        // return, so a GPU with room to spare only waits for the first 9 steps.
         b.finish()
         let cost = 0, t = performance.now()
         while (n < steps) {
           const fits = n ? Math.floor((budgetMs - (t - t0)) / Math.max(cost, 0.01)) : 1
           if (fits < 1) break
-          const k = fits >= steps - n ? steps - n : Math.max(1, fits >> 1)
+          const k = fits >= steps - n ? steps - n : Math.max(1, Math.min(n === 1 ? 8 : steps, fits >> 1))
           for (let i = 0; i < k; i++) step(1 / 60)
           if ((n += k) === steps) break
           b.finish()
