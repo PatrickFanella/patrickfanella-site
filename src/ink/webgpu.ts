@@ -45,13 +45,19 @@ interface Res { id: number; r: GPUBindingResource }
 interface Tex extends Res { t: GPUTexture }
 interface Two { r: Tex; w: Tex; swap(): void }
 
-export async function createWebGPU(canvas: HTMLCanvasElement, soft: boolean, onLost: () => void): Promise<GPUBackend> {
+// Uncaptured GPU errors after the start that end the WebGPU run. One can be a fluke;
+// by the third, passes are failing and the frame is not being drawn.
+const MAX_ERRORS = 3
+
+export async function createWebGPU(canvas: HTMLCanvasElement, soft: boolean, onLost: (why: string) => void): Promise<GPUBackend> {
   const pick = await pickAdapter(soft)
   if (!pick) throw new Error(soft ? 'No WebGPU adapter' : 'No hardware WebGPU adapter')
-  const device = await pick.a.requestDevice()
+  // The default limit is 8192 on core and 4096 at the compatibility level; ask for all the
+  // adapter has, since the canvas backing store must fit in one texture.
+  const device = await pick.a.requestDevice({ requiredLimits: { maxTextureDimension2D: pick.a.limits.maxTextureDimension2D } })
   device.pushErrorScope('out-of-memory'); device.pushErrorScope('validation')
   let live = true
-  device.lost.then((info) => { if (live && info.reason !== 'destroyed') { live = false; onLost() } })
+  device.lost.then((info) => { if (live && info.reason !== 'destroyed') { live = false; onLost('the WebGPU device was lost') } })
 
   const pipes = {} as Record<ComputeName, GPUComputePipeline>
   const showModule = device.createShaderModule({ code: SHOW, label: 'show' })
@@ -89,6 +95,9 @@ export async function createWebGPU(canvas: HTMLCanvasElement, soft: boolean, onL
   }
 
   let W = 0, H = 0, dyeW = 0, dyeH = 0
+  // Some adapters (SwiftShader here) throw on every canvas upload; the CPU copy then takes over.
+  let copyOk = true, flip: Uint8Array<ArrayBuffer> | null = null
+  let last: StepInput | null = null, cost = 0
   let vel!: Two, prs!: Two, dye!: Two, curl!: Tex, divg!: Tex, solid!: Tex, mask!: Tex
 
   // Bind groups for each pass and set of textures. Ping-pong makes a handful per pass.
@@ -116,7 +125,7 @@ export async function createWebGPU(canvas: HTMLCanvasElement, soft: boolean, onL
   const info = pick.a.info
   const renderer = (!pick.soft && glRenderer()) || info.description || [info.vendor, info.architecture].filter(Boolean).join(' ') || 'WebGPU adapter'
 
-  return {
+  const be: GPUBackend = {
     path: 'WebGPU compute',
     renderer,
     rows: [320, 250],
@@ -128,11 +137,21 @@ export async function createWebGPU(canvas: HTMLCanvasElement, soft: boolean, onL
       curl = tex(W, H, 'r32float'); divg = tex(W, H, 'r32float'); solid = tex(W, H, 'r32float')
       mask = tex(dyeW, dyeH, 'rgba8unorm', GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT)
     },
+    get stepCost() { return cost },
+    maxSize: device.limits.maxTextureDimension2D,
     mask(src) {
-      device.queue.copyExternalImageToTexture({ source: src, flipY: true }, { texture: mask.t }, [dyeW, dyeH])
+      if (copyOk) {
+        try { return device.queue.copyExternalImageToTexture({ source: src, flipY: true }, { texture: mask.t }, [dyeW, dyeH]) } catch { copyOk = false }
+      }
+      // Rows come top-down from the 2D canvas; the solver wants them bottom-up.
+      const px = src.getContext('2d')!.getImageData(0, 0, dyeW, dyeH).data, row = dyeW * 4
+      if (flip?.length !== px.length) flip = new Uint8Array(px.length)
+      for (let y = 0; y < dyeH; y++) flip.set(px.subarray(y * row, y * row + row), (dyeH - 1 - y) * row)
+      device.queue.writeTexture({ texture: mask.t }, flip, { bytesPerRow: row }, [dyeW, dyeH])
     },
     step(s: StepInput) {
       const { p } = s
+      last = s
       ud.set([...s.asp, ...s.T, ...s.ptr, ...s.ptrV, s.dt, s.time, p.grav, s.conf, p.ptrR, p.sway, p.push, s.scroll, p.damp, s.decay, p.rate, p.cap])
       ud.set(s.bA, 20); ud.set(s.bB, 36); ud.set(s.bC, 52)
       device.queue.writeBuffer(ubuf, 0, ud)
@@ -151,17 +170,31 @@ export async function createWebGPU(canvas: HTMLCanvasElement, soft: boolean, onL
       if (ctx) paint(ctx.getCurrentTexture().createView(), l)
     },
     async commit(l: Look) {
-      const probe = device.createTexture({ size: [dyeW, dyeH], format, usage: GPUTextureUsage.RENDER_ATTACHMENT })
+      // The probe is the canvas's size, so a backing store over the texture limit fails here, not on the first frame.
+      const probe = device.createTexture({ size: [canvas.width, canvas.height], format, usage: GPUTextureUsage.RENDER_ATTACHMENT })
       paint(probe.createView(), l)
       await device.queue.onSubmittedWorkDone()
       probe.destroy()
+      // A step only encodes on the CPU, so time a few on the GPU itself for preroll's budget.
+      if (last) {
+        const z = new Float32Array(16), t0 = performance.now()
+        for (let i = 0; i < 3; i++) be.step({ ...last, bA: z, bB: z, bC: z })
+        await device.queue.onSubmittedWorkDone()
+        cost = (performance.now() - t0) / 3
+      }
       const bad = (await device.popErrorScope()) ?? (await device.popErrorScope())
       if (bad || !live) { live = false; device.destroy(); throw new Error(bad?.message ?? 'WebGPU device lost') }
       ctx = canvas.getContext('webgpu')
       if (!ctx) { live = false; device.destroy(); throw new Error('No WebGPU canvas context') }
       ctx.configure({ device, format, alphaMode: 'opaque' })
-      device.addEventListener('uncapturederror', (e) => console.warn('WebGPU error:', (e as GPUUncapturedErrorEvent).error.message))
+      let errors = 0
+      device.addEventListener('uncapturederror', (e) => {
+        const msg = (e as GPUUncapturedErrorEvent).error.message
+        console.warn('WebGPU error:', msg)
+        if (++errors === MAX_ERRORS && live) { live = false; onLost(`WebGPU errors: ${msg}`) }
+      })
     },
     abandon() { live = false; device.destroy() },
   }
+  return be
 }

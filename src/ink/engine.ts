@@ -63,6 +63,10 @@ export interface Backend {
   readonly renderer: string
   /** Grid rows on a wide screen and on a phone. */
   readonly rows: readonly [number, number]
+  /** The largest canvas backing size it can draw to, where that is below what screens need. */
+  readonly maxSize?: number
+  /** GPU time of one step in ms, where a step only encodes on the CPU (WebGPU). */
+  readonly stepCost?: number
   resize(simW: number, simH: number, dyeW: number, dyeH: number): void
   mask(src: HTMLCanvasElement): void
   step(s: StepInput): void
@@ -76,8 +80,9 @@ const LOOK: Record<Theme, Look> = {
 }
 const INK_RGB: Record<InkId, number[]> = { 0: [1, 0, 0], 1: [0, 1, 0], 2: [0, 0, 1] }
 
-// How long WebGPU may take to start before WebGL2 takes the canvas instead.
-const GPU_WAIT_MS = 2500
+// How long WebGPU may take to start before WebGL2 takes the canvas instead. The pages wait
+// this long at most before the pour; a cold start took about 250 ms more than WebGL2 here.
+const GPU_WAIT_MS = 1000
 
 /**
  * Starts the ink on WebGPU where the browser gives a hardware adapter, otherwise on
@@ -94,8 +99,9 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
 
   function resize() {
     if (!be) return
-    const dpr = Math.min(devicePixelRatio || 1, 2)
-    canvas.width = Math.round(innerWidth * dpr); canvas.height = Math.round(innerHeight * dpr)
+    const lim = be.maxSize ?? Infinity
+    const dpr = Math.min(devicePixelRatio || 1, 2, lim / Math.max(innerWidth, innerHeight))
+    canvas.width = Math.min(lim, Math.round(innerWidth * dpr)); canvas.height = Math.min(lim, Math.round(innerHeight * dpr))
     const rows = be.rows[innerWidth <= 700 ? 1 : 0]
     simH = rows; simW = Math.max(16, Math.round(rows * innerWidth / innerHeight))
     const dyeScale = Math.min(1, 1100 / Math.max(innerWidth, innerHeight))
@@ -136,7 +142,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   }
 
   let look = LOOK[theme]
-  const draw = () => be?.draw(look)
+  const draw = () => { try { be?.draw(look) } catch (err) { crash(err as Error) } }
 
   // Frame loop. One solver step per frame at a fixed 1/60 s, so the motion
   // looks the same on 60 Hz and 120 Hz screens; the step time is wall clock.
@@ -146,7 +152,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     const gap = now - last; last = now
     if (gap > 0 && gap < 500) fps += (1000 / gap - fps) * 0.05
     const t0 = performance.now()
-    step(1 / 60)
+    try { step(1 / 60) } catch (err) { return crash(err as Error) }
     draw()
     stepMs += (performance.now() - t0 - stepMs) * 0.05
   }
@@ -176,8 +182,12 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   const ready = new Promise<void>((r) => { settle = r })
   function preroll(steps: number, budgetMs: number) {
     if (!live) { pending = [steps, budgetMs]; return 0 }
+    // On WebGPU the loop below only times the encoding, so the measured GPU cost caps the count.
+    if (be?.stepCost) steps = Math.min(steps, Math.max(1, Math.floor(budgetMs / be.stepCost)))
     const t0 = performance.now(); let n = 0
-    while (n < steps && performance.now() - t0 < budgetMs) { step(1 / 60); n++ }
+    try {
+      while (n < steps && performance.now() - t0 < budgetMs) { step(1 / 60); n++ }
+    } catch (err) { crash(err as Error); return n }
     draw(); return n
   }
   function begin() {
@@ -192,31 +202,39 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     resize(); begin()
   }
   function failed(err: Error) {
-    be = null; live = false
+    stop(); be = null; live = false
     console.info('Ink is off:', err.message)
     onFail?.(err); settle()
   }
 
+  let gave = false, gpu: GPUBackend | null = null
+  const toGL = (why: string) => {
+    if (gave) return
+    gave = true
+    console.info(`Ink on WebGL2: ${why}`)
+    try { useGL() } catch (err) { failed(err as Error) }
+  }
+  // WebGPU failing mid-run (a lost device, a throw, repeated GPU errors) hands over to WebGL2
+  // on a fresh canvas: a canvas keeps the first API it was given. Only the running WebGPU
+  // path does this, so a late loss cannot tear down a WebGL2 path that already won.
+  const lost = (why: string) => {
+    if (!gpu || be !== gpu) return
+    stop(); be = null; live = false; gpu.abandon()
+    const fresh = canvas.cloneNode() as HTMLCanvasElement
+    canvas.replaceWith(fresh); canvas = fresh
+    gave = false; toGL(why)
+  }
+  // A throw from a step or a draw: the frame loop would keep going with a solver that never moves.
+  function crash(err: Error) {
+    if (gpu && be === gpu) return lost(`WebGPU failed: ${err.message}`)
+    failed(err)
+  }
+
   if (pick === 'webgl2' || !('gpu' in navigator)) useGL()
   else {
-    let gave = false
-    const toGL = (why: string) => {
-      if (gave) return
-      gave = true
-      console.info(`Ink on WebGL2: ${why}`)
-      try { useGL() } catch (err) { failed(err as Error) }
-    }
     const timer = setTimeout(() => toGL('WebGPU took too long to start'), GPU_WAIT_MS)
-    // A device lost mid-run hands over to WebGL2 on a fresh canvas: a canvas keeps the first API it was given.
-    const lost = () => {
-      stop(); be = null; live = false
-      const fresh = canvas.cloneNode() as HTMLCanvasElement
-      canvas.replaceWith(fresh); canvas = fresh
-      gave = false; toGL('the WebGPU device was lost')
-    }
     // The first step runs on the real grid before the canvas is handed over, so a
     // WebGPU path that fails its first frame never draws.
-    let gpu: GPUBackend | null = null
     createWebGPU(canvas, pick === 'webgpu', lost).then(async (b) => {
       gpu = b
       if (gave) return gpu.abandon()
@@ -228,6 +246,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     }).catch((err: Error) => {
       clearTimeout(timer)
       if (gpu && be === gpu) be = null
+      gpu?.abandon()
       toGL(err.message)
     })
   }
