@@ -36,4 +36,22 @@ test.describe('with reduced motion', () => {
     await page.waitForTimeout(1500)
     await expect(page.locator('[data-k=fps]')).toHaveText('still frame')
   })
+
+  // The run-ahead has a 1.5 s budget. Timing only the submits let SwiftShader queue every step
+  // and hold the page for 20 s. A screenshot needs a new frame from the GPU, so it waits out
+  // any solver work still queued.
+  test('the page settles within 3 s of the fonts loading', async ({ page }) => {
+    await page.addInitScript(() => {
+      addEventListener('DOMContentLoaded', () => {
+        void document.fonts.load('900 100px "Big Shoulders Display Variable"').then(() => document.fonts.ready)
+          .then(() => { (window as unknown as { fontsAt: number }).fontsAt = performance.timeOrigin + performance.now() })
+      })
+    })
+    await page.goto('/')
+    await poured(page)
+    await expect(page.locator('[data-k=fps]')).toHaveText('still frame')
+    await page.screenshot()
+    const fontsAt = await page.evaluate(() => (window as unknown as { fontsAt: number }).fontsAt)
+    expect(Date.now() - fontsAt).toBeLessThan(3000)
+  })
 })

@@ -67,6 +67,8 @@ export interface Backend {
   readonly maxSize?: number
   /** GPU time of one step in ms, where a step only encodes on the CPU (WebGPU). */
   readonly stepCost?: number
+  /** Block until the GPU has run every step sent so far (WebGL2; WebGPU cannot wait on the main thread). */
+  finish?(): void
   resize(simW: number, simH: number, dyeW: number, dyeH: number): void
   mask(src: HTMLCanvasElement): void
   step(s: StepInput): void
@@ -180,13 +182,31 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   let pending: [number, number] | null = null
   let settle!: () => void
   const ready = new Promise<void>((r) => { settle = r })
+  // A step returns once its work is sent, long before the GPU has run it. Timing that alone let
+  // SwiftShader queue all 240 steps of a 1.5 s preroll and then freeze the tab for 15 s or more.
   function preroll(steps: number, budgetMs: number) {
-    if (!live) { pending = [steps, budgetMs]; return 0 }
-    // On WebGPU the loop below only times the encoding, so the measured GPU cost caps the count.
-    if (be?.stepCost) steps = Math.min(steps, Math.max(1, Math.floor(budgetMs / be.stepCost)))
-    const t0 = performance.now(); let n = 0
+    if (!live || !be) { pending = [steps, budgetMs]; return 0 }
+    const b = be, t0 = performance.now(); let n = 0
     try {
-      while (n < steps && performance.now() - t0 < budgetMs) { step(1 / 60); n++ }
+      if (b.finish) {
+        // Time real completion. Start from an idle GPU, run one step, then half of what the time
+        // left allows at the last batch's cost, and so on. Once the rest fits, send it and return.
+        b.finish()
+        let cost = 0, t = performance.now()
+        while (n < steps) {
+          const fits = n ? Math.floor((budgetMs - (t - t0)) / Math.max(cost, 0.01)) : 1
+          if (fits < 1) break
+          const k = fits >= steps - n ? steps - n : Math.max(1, fits >> 1)
+          for (let i = 0; i < k; i++) step(1 / 60)
+          if ((n += k) === steps) break
+          b.finish()
+          const now = performance.now(); cost = (now - t) / k; t = now
+        }
+      } else {
+        // WebGPU cannot wait here, so the GPU cost it measured at start caps the count.
+        if (b.stepCost) steps = Math.min(steps, Math.max(1, Math.floor(budgetMs / b.stepCost)))
+        while (n < steps && performance.now() - t0 < budgetMs) { step(1 / 60); n++ }
+      }
     } catch (err) { crash(err as Error); return n }
     draw(); return n
   }
