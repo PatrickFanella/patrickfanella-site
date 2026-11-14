@@ -29,6 +29,8 @@ export function splitLetters(el: HTMLElement, inks: string) {
 
 /** Where the spring curve first reaches the resting position: the moment a letter hits. */
 export const IMPACT = 0.22
+/** How long after a letter hits its ink appears, so the contact reads first. */
+export const INK_DELAY = 20
 
 const ms = (v: string) => (v.endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000) || 0
 
@@ -56,7 +58,7 @@ export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false
   }
   return Promise.all(letters.map((l) => new Promise<void>((done) => {
     const cs = getComputedStyle(l)
-    const at = ms(cs.animationDelay) + ms(cs.animationDuration) * IMPACT
+    const at = ms(cs.animationDelay) + ms(cs.animationDuration) * IMPACT + INK_DELAY
     const t = setTimeout(() => hit(l), at)
     const land = () => { clearTimeout(t); hit(l); l.classList.add('landed'); done() }
     l.addEventListener('animationend', land, { once: true })
