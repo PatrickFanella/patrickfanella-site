@@ -1,0 +1,30 @@
+---
+// The shell every page shares: head, body class and the ink canvas. Each page keeps its own bar,
+// content and footer. It loads its script into the head slot, so the script tag sits in <head> as
+// it did in the Vite build; Astro bundles it with Vite.
+interface Props {
+  title: string
+  description: string
+  bodyClass: string
+  /** Pages that pour their name show it in place when scripts are off. */
+  noscript?: boolean
+}
+const { title, description, bodyClass, noscript = true } = Astro.props
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="color-scheme" content="light dark">
+  {noscript && <noscript><style is:inline>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>}
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <slot name="head" />
+</head>
+<body class={bodyClass}>
+  <canvas id="ink" aria-hidden="true"></canvas>
+  <slot />
+</body>
+</html>
