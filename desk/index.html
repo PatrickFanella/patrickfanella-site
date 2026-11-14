@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The desk, Patrick Fanella</title>
+  <meta name="description" content="Patrick Fanella, senior backend and full-stack engineer. A tiling desk of panes on a live ink simulation, where PostgreSQL will run in your tab.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body class="desk">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  <a class="skip" href="#about">Skip to the desk</a>
+
+  <header class="bar">
+    <a class="mark" href="/" data-bleed="y">patrickfanella.co</a>
+    <nav class="tags" aria-label="Panes">
+      <button type="button" data-go="1" style="--acc: var(--desk-1)" aria-label="Pane 1, about" aria-keyshortcuts="Alt+1" aria-current="true">1</button>
+      <button type="button" data-go="2" style="--acc: var(--desk-2)" aria-label="Pane 2, projects" aria-keyshortcuts="Alt+2">2</button>
+      <button type="button" data-go="3" style="--acc: var(--desk-3)" aria-label="Pane 3, psql" aria-keyshortcuts="Alt+3">3</button>
+      <button type="button" data-go="4" style="--acc: var(--desk-4)" aria-label="Pane 4, log" aria-keyshortcuts="Alt+4">4</button>
+      <button type="button" data-go="5" style="--acc: var(--desk-5)" aria-label="Pane 5, process" aria-keyshortcuts="Alt+5">5</button>
+    </nav>
+    <nav aria-label="Main">
+      <a href="/#coming" data-bleed="c">What's coming</a>
+      <a href="/desk/" aria-current="page" data-bleed="y">Desk</a>
+      <a href="/motion/" data-bleed="o">Motion</a>
+      <button type="button" class="switch" data-theme-switch data-splash="y" aria-pressed="false" aria-label="Dark theme"><i aria-hidden="true"></i><span>Light</span></button>
+    </nav>
+  </header>
+
+  <main class="wm">
+    <section class="pane about" id="about" data-pane="1" tabindex="-1" aria-labelledby="p1">
+      <header class="ptitle"><b class="pname" id="p1"><i aria-hidden="true">1</i>about</b><span>visitor@patrickfanella.co: ~</span></header>
+      <div class="pbody">
+        <p class="cmdline"><span class="ps1">~</span> $ whoami</p>
+        <h1 id="name" class="desk-name poured" data-pour-in><span data-word>Patrick</span> <span data-word>Fanella</span></h1>
+        <p class="role">Senior backend and full-stack engineer</p>
+        <p class="pitch">I build and run services in Go, Python and TypeScript on PostgreSQL. At DeliverZero I built the inventory, returns and partner integrations that cut manual operations work by about 25%. Chicago or remote, and interviewing now.</p>
+        <ul class="links" aria-label="Contact and code">
+          <li><a href="mailto:patrick@subcult.tv" data-bleed="y">patrick@subcult.tv</a></li>
+          <li><a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a></li>
+          <li><a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a></li>
+          <li><a href="https://patrickfanella.co" data-bleed="y">Current portfolio</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="pane projects" data-pane="2" tabindex="-1" aria-labelledby="p2" style="--i: 1">
+      <header class="ptitle"><h2 class="pname" id="p2"><i aria-hidden="true">2</i>projects</h2><span>ls ~/projects</span></header>
+      <div class="pbody">
+        <ol class="work">
+          <li>
+            <h3><a href="https://clpr.tv" data-bleed="c">Clpr</a><span>Production</span></h3>
+            <p>Twitch clip search, playlists and moderation. I built and run the Go API, the React client and the search pipeline.</p>
+          </li>
+          <li>
+            <h3><a href="https://hasanara.tv" data-bleed="o">HasanAra</a><span>Production</span></h3>
+            <p>A searchable broadcast archive. I built the React frontend on Rekolekt's timestamped transcript API.</p>
+          </li>
+          <li>
+            <h3><a href="https://undertow.subcult.tv" data-bleed="y">Undertow</a><span>Live beta</span></h3>
+            <p>A music-video editor in the browser with timed lyrics and local MP4 export. I built the editor and its WebCodecs renderer.</p>
+          </li>
+        </ol>
+        <p class="more-work">The rest are on the <a href="https://patrickfanella.co">current portfolio</a> until they move here.</p>
+      </div>
+    </section>
+
+    <section class="pane psql" data-pane="3" tabindex="-1" aria-labelledby="p3" style="--i: 2">
+      <header class="ptitle"><h2 class="pname" id="p3"><i aria-hidden="true">3</i>psql</h2><span>empty</span></header>
+      <div class="pbody">
+        <p class="empty"><span class="ps1">clpr=#</span>Empty for now. PostgreSQL 18.6 will start here, load Clpr's clips and time its search with and without the index.</p>
+      </div>
+    </section>
+
+    <section class="pane log" data-pane="4" tabindex="-1" aria-labelledby="p4" style="--i: 3">
+      <header class="ptitle"><h2 class="pname" id="p4"><i aria-hidden="true">4</i>log</h2><span>empty</span></header>
+      <div class="pbody">
+        <p class="empty">Empty for now. This tab's start-up log will scroll here.</p>
+      </div>
+    </section>
+
+    <section class="pane process" data-pane="5" tabindex="-1" aria-labelledby="p5" style="--i: 4">
+      <header class="ptitle"><h2 class="pname" id="p5"><i aria-hidden="true">5</i>process</h2><span>empty</span></header>
+      <div class="pbody">
+        <p class="empty">Empty for now. What this tab spends on drawing and on PostgreSQL will show here.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Alt+1 to Alt+5 move focus between panes.</p>
+    <nav aria-label="Elsewhere">
+      <a href="/" data-bleed="y">Home</a>
+      <a href="/motion/" data-bleed="o">Motion set</a>
+    </nav>
+  </footer>
+  <script type="module" src="/src/desk/desk.ts"></script>
+</body>
+</html>

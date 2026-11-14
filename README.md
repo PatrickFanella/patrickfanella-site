@@ -2,9 +2,10 @@
 
 The rebuild of patrickfanella.co, started 2026-11-14. It is not deployed yet; the live site still comes from `subculture-collective/patrickfanella-co`. What is planned and in what order: [docs/plan.md](docs/plan.md) and the pinned roadmap issue.
 
-Two static pages so far:
+Three static pages so far:
 
 - `/` explains what is coming. The ink behind it is a fluid simulation that pours from the letters of the name.
+- `/desk/` is the desk: translucent panes tiled on the same ink. The name hands over from `/` into the about pane. The projects pane lists three projects; the psql, log and process panes are empty until PostgreSQL runs in the tab. Alt+1 to Alt+5 move focus between panes.
 - `/motion/` shows each animation in the motion set on its own, with its timing and its reduced-motion version.
 
 ```bash
@@ -25,8 +26,10 @@ CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser t
 - `src/ink/mask.ts`: draws the page into the solver's mask. Letters marked `data-ink-letter` are solid and pour from their feet once they carry `data-pour`. Elements marked `data-ink-solid` are solid rectangles.
 - `src/ink/engine.ts`: the frame loop and the API the pages use: `setEmitters`, `burst`, `stir`, `setTheme`, `preroll`. Up to four bursts run at once, each with a direction, spread and length.
 - `src/motion/motion.ts`: the motion set. Pour-in, bleed, splash, stir, unfold and fitting the name to the width.
-- `src/boot.ts`: start-up shared by both pages: fonts, theme switch, ink, readout.
+- `src/boot.ts`: start-up shared by every page: fonts, theme switch, ink, readout.
+- `src/desk/desk.ts`: the desk page: pours the name from the about pane and moves focus between panes.
 - `src/styles/site.css`: tokens (colour, type, four durations, two curves), layout, rise, view transitions and reduced motion.
+- `src/styles/desk.css`: the desk's tiling layout. Its colours are the `--desk-*` tokens in `site.css`. Panes 1, 2 and 5 take their accents from the gold, cobalt and orange inks. Panes 3 and 4 keep the prototype's pink and green, so the five pane buttons stay distinct.
 - `docs/`: the plan, the original design doc and the prototypes the roadmap builds from.
 
 ## Motion set

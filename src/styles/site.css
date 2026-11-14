@@ -13,6 +13,20 @@
   --focus: #2353d6;
   --name: #0e1422;
 
+  /* The desk: translucent bottle-green panes over the ink. One accent per pane, in pane order.
+     Text and accents pass 4.5:1 on a pane even with pure black or white ink behind it. */
+  --desk-pane: rgb(238 245 241 / 0.84);
+  --desk-pane-solid: #eef5f1;
+  --desk-text: #08241b;
+  --desk-dim: #33503f;
+  --desk-line: rgb(8 36 27 / 0.24);
+  --desk-shadow: rgb(8 36 27 / 0.16);
+  --desk-on-acc: #f3f8f4;
+  /* Panes 1, 2 and 5 take the three inks, darkened enough to clear 4.5:1. Panes 3 and 4 keep the
+     prototype's pink and green, so the five switcher buttons stay distinct. */
+  --desk-1: color-mix(in oklab, var(--gold) 80%, #000); --desk-2: color-mix(in oklab, var(--cobalt) 85%, #000);
+  --desk-3: #9c2459; --desk-4: #17633e; --desk-5: color-mix(in oklab, var(--orange) 75%, #000);
+
   --display: "Big Shoulders Display Variable", "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
   --body: "Hanken Grotesk Variable", "Hanken Grotesk", system-ui, sans-serif;
   --mono: "Martian Mono Variable", "Martian Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -33,12 +47,18 @@
   :root:not([data-theme="light"]) {
     --ground: #0c0f16; --raise: rgb(14 19 30 / 0.76); --raise-solid: #121827; --text: #f3efe6; --dim: #a9b0bf;
     --line: rgb(243 239 230 / 0.16); --cobalt: #7ea4ff; --orange: #ff9150; --gold: #ffcf4d; --focus: #ffcf4d; --name: #f3efe6;
+    --desk-pane: rgb(9 34 27 / 0.84); --desk-pane-solid: #09221b; --desk-text: #f4eedd; --desk-dim: #b3cabd;
+    --desk-line: rgb(142 230 180 / 0.24); --desk-shadow: rgb(2 13 10 / 0.7); --desk-on-acc: #061a15;
+    --desk-1: var(--gold); --desk-2: color-mix(in oklab, var(--cobalt) 85%, #fff); --desk-3: #ff9cc6; --desk-4: #8ee6b4; --desk-5: color-mix(in oklab, var(--orange) 90%, #fff);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --ground: #0c0f16; --raise: rgb(14 19 30 / 0.76); --raise-solid: #121827; --text: #f3efe6; --dim: #a9b0bf;
   --line: rgb(243 239 230 / 0.16); --cobalt: #7ea4ff; --orange: #ff9150; --gold: #ffcf4d; --focus: #ffcf4d; --name: #f3efe6;
+  --desk-pane: rgb(9 34 27 / 0.84); --desk-pane-solid: #09221b; --desk-text: #f4eedd; --desk-dim: #b3cabd;
+  --desk-line: rgb(142 230 180 / 0.24); --desk-shadow: rgb(2 13 10 / 0.7); --desk-on-acc: #061a15;
+  --desk-1: var(--gold); --desk-2: color-mix(in oklab, var(--cobalt) 85%, #fff); --desk-3: #ff9cc6; --desk-4: #8ee6b4; --desk-5: color-mix(in oklab, var(--orange) 90%, #fff);
   color-scheme: dark;
 }
 
