@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Patrick Fanella</title>
+  <meta name="description" content="Patrick Fanella, senior backend and full-stack engineer. The new site is being built in public: here is what is coming.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body class="landing">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  <a class="skip" href="#coming">Skip to what's coming</a>
+
+  <header class="bar">
+    <a class="mark" href="/" data-bleed="y">patrickfanella.co</a>
+    <nav aria-label="Main">
+      <a href="#coming" data-bleed="c">What's coming</a>
+      <a href="/motion/" data-bleed="o">Motion</a>
+      <a href="https://github.com/PatrickFanella" data-bleed="y">GitHub</a>
+      <button type="button" class="switch" data-theme-switch data-splash="y" aria-pressed="false" aria-label="Dark theme"><i aria-hidden="true"></i><span>Light</span></button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="name">
+      <h1 id="name" class="name" data-pour-in><span data-fit><span data-word>Patrick</span> <span data-word>Fanella</span></span></h1>
+      <div class="tank">
+        <div class="intro panel">
+          <p class="role">Senior backend and full-stack engineer</p>
+          <p>I build and run services in Go, Python and TypeScript on PostgreSQL. At DeliverZero I built the inventory, returns and partner integrations that cut manual operations work by about 25%. Chicago or remote, and interviewing now.</p>
+          <p class="dim">I'm rebuilding this site so you can watch my software run instead of reading about it. This page is the first piece. The ink is a fluid simulation running on your graphics card. It pours from the letters of my name, and the pointer stirs it.</p>
+          <div class="actions">
+            <a class="btn primary" href="#coming" data-bleed="o" data-splash="o">See what's coming</a>
+            <a class="btn" href="/motion/" data-bleed="c" data-splash="c">The motion set</a>
+          </div>
+        </div>
+        <dl class="readout" data-ink-readout aria-label="Ink simulation">
+          <div><dt>Solver</dt><dd>Stable fluids, WebGL2</dd></div>
+          <div><dt>Grid</dt><dd data-k="grid">…</dd></div>
+          <div><dt>Rate</dt><dd data-k="fps">…</dd></div>
+          <div><dt>GPU</dt><dd data-k="gpu">…</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section id="coming" class="coming" aria-labelledby="coming-h">
+      <div class="coming-head">
+        <h2 id="coming-h">What's coming</h2>
+        <p>The finished site is a set of working pieces, built in this order. Each one runs in your browser, so you can check the claim yourself.</p>
+        <p class="dim">The <a href="https://patrickfanella.co">current portfolio</a> stays up until they're done.</p>
+      </div>
+      <ol class="plan">
+        <li>
+          <details data-unfold class="panel" data-rise>
+            <summary data-bleed="y">
+              <span class="n">1</span>
+              <span class="t"><b>The desk</b><span>A tiling terminal desktop that boots in your tab.</span></span>
+              <span class="chip run">Prototype running</span>
+            </summary>
+            <div class="more">
+              <p>PostgreSQL 18.6 starts in the browser, loads 50,008 clips from Clpr and runs its search query twice: once reading every row, once through the full-text index. The timings on screen are measured on your machine, just then. There's a shell you can type into, and the panes sit on this same ink.</p>
+              <p class="dim">Runs on: PGlite (PostgreSQL compiled to WebAssembly) in a worker, WebGL2.</p>
+            </div>
+          </details>
+        </li>
+        <li>
+          <details data-unfold class="panel" data-rise>
+            <summary data-bleed="o">
+              <span class="n">2</span>
+              <span class="t"><b>Clpr, running live</b><span>My production search code answering your searches.</span></span>
+              <span class="chip proven">Proven in a spike</span>
+            </summary>
+            <div class="more">
+              <p>Clpr's own Go search handler, compiled to WebAssembly, talks to that in-browser database through the same driver it uses in production. You search; you see the SQL it sent, the query plan and the round trip, byte by byte.</p>
+              <p class="dim">The spike works today at 9.3 MB compressed. It ships once it's under 6 MB.</p>
+            </div>
+          </details>
+        </li>
+        <li>
+          <details data-unfold class="panel" data-rise>
+            <summary data-bleed="c">
+              <span class="n">3</span>
+              <span class="t"><b>Read the code</b><span>Case studies set beside the real source.</span></span>
+              <span class="chip planned">Planned</span>
+            </summary>
+            <div class="more">
+              <p>Each case study is the actual code, pinned to a commit, with notes on the lines that matter: why it's written that way, what it costs and what I'd change. The first one walks through how Clpr ranks and pages its search results.</p>
+            </div>
+          </details>
+        </li>
+        <li>
+          <details data-unfold class="panel" data-rise>
+            <summary data-bleed="y">
+              <span class="n">4</span>
+              <span class="t"><b>The projects</b><span>Everything from the current site, moved over.</span></span>
+              <span class="chip moving">Moving over</span>
+            </summary>
+            <div class="more">
+              <p>The 25 projects on the current portfolio, each with what it is, how it's built and how far along it is. Nothing in development will be described as finished.</p>
+            </div>
+          </details>
+        </li>
+        <li>
+          <details data-unfold class="panel" data-rise>
+            <summary data-bleed="o">
+              <span class="n">5</span>
+              <span class="t"><b>One way of moving</b><span>A shared set of transitions and interactions.</span></span>
+              <span class="chip progress">In progress</span>
+            </summary>
+            <div class="more">
+              <p>Every page will move the same way: letters that pour, links that bleed ink, presses that splash, rows that unfold in place and pages that hand over to each other. You're looking at the first version. Each one has a reduced-motion version that leaves the page complete and still.</p>
+              <p><a href="/motion/" data-bleed="o">See every animation on its own</a></p>
+            </div>
+          </details>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Patrick Fanella. Software, sound, culture.</p>
+    <nav aria-label="Contact">
+      <a href="mailto:patrick@subcult.tv" data-bleed="y">patrick@subcult.tv</a>
+      <a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a>
+      <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
+    </nav>
+  </footer>
+  <script type="module" src="/src/landing.ts"></script>
+</body>
+</html>
