@@ -15,8 +15,14 @@ for (const l of splitLetters(name, 'ooyycccccyyooo')) { l.dataset.pour = '1'; l.
 const panes = [...document.querySelectorAll<HTMLElement>('[data-pane]')]
 const tags = [...document.querySelectorAll<HTMLButtonElement>('[data-go]')]
 
-/** Move focus to pane n (1 to 5); on a stacked layout the browser scrolls it into view. */
-function go(n: number) { panes[n - 1]?.focus() }
+/** Move focus to pane n (1 to 5). On a stacked layout its top lands just under the sticky bar,
+ *  even when the pane is taller than the window, where focus() alone may leave it under the bar. */
+function go(n: number) {
+  const p = panes[n - 1]
+  if (!p) return
+  p.focus({ preventScroll: true })
+  p.scrollIntoView({ block: 'start' })
+}
 
 // Alt+1 to Alt+5. Match the physical key, since Alt+digit types a symbol on macOS.
 addEventListener('keydown', (e) => {
@@ -34,7 +40,14 @@ document.addEventListener('focusin', (e) => {
   for (const t of tags) t.setAttribute('aria-current', String(t.dataset.go === pane.dataset.pane))
 })
 
+// The engine redraws the mask on window scroll only. On the tiled desktop the panes scroll inside
+// themselves, and element scroll events do not bubble, so catch them on the way down.
+addEventListener('scroll', () => ink?.invalidate(), { capture: true, passive: true })
 addEventListener('resize', () => ink?.invalidate())
+
+// The sticky bar wraps to more lines on a phone; the scroll padding that keeps a focused pane clear of it follows its height.
+const bar = document.querySelector<HTMLElement>('.bar')!
+new ResizeObserver(() => document.documentElement.style.setProperty('--bar-h', `${bar.offsetHeight}px`)).observe(bar)
 
 // The tank opens already poured, so the desk lands complete. With reduced motion it stays one still frame.
 document.fonts.load('900 100px "Big Shoulders Display Variable"').catch(() => []).then(() => document.fonts.ready).then(() => {

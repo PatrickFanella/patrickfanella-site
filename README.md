@@ -26,7 +26,7 @@ CI (`.github/workflows/ci.yml`) runs `npm ci` and `npm run build` on every push 
 - `src/boot.ts`: start-up shared by every page: fonts, theme switch, ink, readout.
 - `src/desk/desk.ts`: the desk page: pours the name from the about pane and moves focus between panes.
 - `src/styles/site.css`: tokens (colour, type, four durations, two curves), layout, rise, view transitions and reduced motion.
-- `src/styles/desk.css`: the desk's tiling layout. Its colours are the `--desk-*` tokens in `site.css`.
+- `src/styles/desk.css`: the desk's tiling layout. Its colours are the `--desk-*` tokens in `site.css`. Panes 1, 2 and 5 take their accents from the gold, cobalt and orange inks. Panes 3 and 4 keep the prototype's pink and green, so the five pane buttons stay distinct.
 - `docs/`: the plan, the original design doc and the prototypes the roadmap builds from.
 
 ## Motion set

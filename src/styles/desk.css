@@ -40,8 +40,9 @@
   border-bottom: 1px solid var(--desk-line); font: 400 0.75rem/1.2 var(--mono); color: var(--desk-dim); white-space: nowrap; overflow: hidden;
   transition: border-color var(--t-2) var(--ease-out);
 }
-.ptitle h2 { margin: 0; display: flex; align-items: center; gap: 10px; padding-right: 12px; font: inherit; font-weight: 600; color: var(--desk-text); }
-.ptitle h2 i { align-self: stretch; display: flex; align-items: center; justify-content: center; width: 30px; background: var(--acc); color: var(--desk-on-acc); font-style: normal; font-weight: 700; }
+/* Pane 1's title is a plain label, not a heading, so the page's h1 (the name) is its first heading. */
+.pname { margin: 0; display: flex; align-items: center; gap: 10px; padding-right: 12px; font: inherit; font-weight: 600; color: var(--desk-text); }
+.pname i { align-self: stretch; display: flex; align-items: center; justify-content: center; width: 30px; background: var(--acc); color: var(--desk-on-acc); font-style: normal; font-weight: 700; }
 .ptitle > span { align-self: center; padding-right: 12px; overflow: hidden; text-overflow: ellipsis; }
 .pane:focus-within .ptitle { border-bottom-color: var(--acc); }
 .pbody { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px 16px; scrollbar-width: thin; scrollbar-color: var(--desk-line) transparent; }
@@ -51,7 +52,8 @@
 .cmdline { margin: 0 0 8px; font: 400 0.8125rem/1.4 var(--mono); color: var(--desk-dim); }
 .ps1 { color: var(--desk-4); }
 .desk-name {
-  margin: 0; font: 900 clamp(4.2rem, 7.4vw, 7.5rem)/0.84 var(--display); text-transform: uppercase; letter-spacing: 0.004em;
+  /* Also bounded by height, so the about pane fits a short laptop window without scrolling. */
+  margin: 0; font: 900 clamp(4.2rem, min(7.4vw, 11.5vh), 7.5rem)/0.84 var(--display); text-transform: uppercase; letter-spacing: 0.004em;
   color: var(--desk-1); view-transition-name: name;
 }
 .desk-name [data-word] { display: block; width: max-content; }
@@ -89,7 +91,8 @@
   .wm {
     min-height: 0;
     grid-template-columns: minmax(0, 34fr) minmax(0, 30fr) minmax(0, 20fr) minmax(0, 16fr);
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    /* The lower row takes the height projects needs first; psql, empty for now, gets the rest. */
+    grid-template-rows: minmax(0, 1fr) auto;
     grid-template-areas: "about psql psql psql" "about projects log process";
   }
   .about { grid-area: about; }
@@ -98,8 +101,9 @@
   .log { grid-area: log; }
   .process { grid-area: process; }
 }
-/* Stacked layouts scroll, so a pane focused with Alt+n stops clear of the sticky top bar. */
-@media (max-width: 1099px) { .pane { scroll-margin-top: 110px; } }
+/* Stacked layouts scroll, so a pane focused with Alt+n stops clear of the sticky top bar.
+   desk.ts sets --bar-h to the bar's real height, which grows when it wraps on a phone. */
+@media (max-width: 1099px) { html { scroll-padding-top: calc(var(--bar-h, 110px) + 12px); } }
 /* Tablet: about across the top, the rest two by two; the page scrolls. */
 @media (min-width: 700px) and (max-width: 1099px) {
   .wm { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "about about" "projects psql" "log process"; }
