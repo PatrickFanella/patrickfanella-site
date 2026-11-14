@@ -1,0 +1,122 @@
+/* The desk: a tiling layout of translucent panes floating on the ink tank.
+   Colours come from the --desk-* tokens in site.css. Here the shared tokens are pointed at them,
+   so the top bar, footer and theme switch take the desk's colours without their own rules. */
+.desk {
+  --raise: var(--desk-pane); --raise-solid: var(--desk-pane-solid); --line: var(--desk-line);
+  --text: var(--desk-text); --dim: var(--desk-dim); --focus: var(--desk-1);
+  display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh;
+}
+
+/* Pane switcher in the top bar: one button per pane, in its accent. */
+.bar .tags { display: flex; gap: 4px; padding: 4px; background: var(--raise); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.tags button {
+  width: 30px; height: 30px; padding: 0; font: 700 0.75rem/1 var(--mono); color: var(--acc); cursor: pointer;
+  background: transparent; border: 1px solid var(--line);
+  transition: background-color var(--t-2) var(--ease-out), color var(--t-2) var(--ease-out), border-color var(--t-2) var(--ease-out), transform var(--t-1) var(--ease-out);
+}
+.tags button:hover { border-color: var(--acc); }
+.tags button:active { transform: scale(0.94); }
+.tags button[aria-current="true"] { background: var(--acc); border-color: var(--acc); color: var(--desk-on-acc); }
+
+.wm { position: relative; z-index: 1; flex: 1; display: grid; gap: 18px; padding: 8px var(--gutter-r) 18px var(--gutter); grid-template-columns: minmax(0, 1fr); }
+[data-pane="1"] { --acc: var(--desk-1); }
+[data-pane="2"] { --acc: var(--desk-2); }
+[data-pane="3"] { --acc: var(--desk-3); }
+[data-pane="4"] { --acc: var(--desk-4); }
+[data-pane="5"] { --acc: var(--desk-5); }
+
+.pane {
+  position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; color: var(--desk-text);
+  background: var(--desk-pane); border: 1px solid var(--desk-line); box-shadow: 6px 6px 0 var(--desk-shadow);
+  backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  transition: border-color var(--t-2) var(--ease-out), box-shadow var(--t-2) var(--ease-out);
+}
+/* The pane holding focus takes its accent; Alt+1 to Alt+5 focus the pane itself. */
+.pane:focus-within { border-color: var(--acc); box-shadow: 7px 7px 0 color-mix(in oklab, var(--acc) 50%, transparent); }
+.pane:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+
+.ptitle {
+  flex: none; display: flex; justify-content: space-between; align-items: stretch; gap: 12px; min-height: 30px;
+  border-bottom: 1px solid var(--desk-line); font: 400 0.75rem/1.2 var(--mono); color: var(--desk-dim); white-space: nowrap; overflow: hidden;
+  transition: border-color var(--t-2) var(--ease-out);
+}
+.ptitle h2 { margin: 0; display: flex; align-items: center; gap: 10px; padding-right: 12px; font: inherit; font-weight: 600; color: var(--desk-text); }
+.ptitle h2 i { align-self: stretch; display: flex; align-items: center; justify-content: center; width: 30px; background: var(--acc); color: var(--desk-on-acc); font-style: normal; font-weight: 700; }
+.ptitle > span { align-self: center; padding-right: 12px; overflow: hidden; text-overflow: ellipsis; }
+.pane:focus-within .ptitle { border-bottom-color: var(--acc); }
+.pbody { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px 16px; scrollbar-width: thin; scrollbar-color: var(--desk-line) transparent; }
+.pane a { color: var(--acc); }
+
+/* about */
+.cmdline { margin: 0 0 8px; font: 400 0.8125rem/1.4 var(--mono); color: var(--desk-dim); }
+.ps1 { color: var(--desk-4); }
+.desk-name {
+  margin: 0; font: 900 clamp(4.2rem, 7.4vw, 7.5rem)/0.84 var(--display); text-transform: uppercase; letter-spacing: 0.004em;
+  color: var(--desk-1); view-transition-name: name;
+}
+.desk-name [data-word] { display: block; width: max-content; }
+.desk-name [data-ink-letter] { display: inline-block; }
+.about .role { margin: 18px 0 8px; font: 700 1.65rem/1.1 var(--display); text-transform: uppercase; letter-spacing: 0.02em; }
+.about .pitch { max-width: 38rem; text-wrap: pretty; }
+.links { display: flex; flex-wrap: wrap; gap: 4px 22px; margin: 16px 0 0; padding: 0; list-style: none; font: 600 0.875rem/1.2 var(--mono); }
+.links a { display: inline-block; padding: 8px 0; text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
+
+/* projects */
+.work { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.work li { display: grid; gap: 2px; padding-bottom: 8px; border-bottom: 1px solid var(--desk-line); }
+.work li:last-child { border-bottom: 0; padding-bottom: 0; }
+.work h3 { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font: 800 1.45rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.01em; }
+.work h3 a { text-decoration: none; }
+.work h3 a:hover, .work h3 a:focus-visible { text-decoration: underline; }
+.work h3 span { font: 500 0.6875rem/1 var(--mono); text-transform: none; letter-spacing: 0; color: var(--desk-dim); white-space: nowrap; }
+.work p { font-size: 0.875rem; line-height: 1.45; }
+.projects .pbody { padding-block: 12px; }
+.more-work { margin-top: 10px; font: 400 0.75rem/1.4 var(--mono); color: var(--desk-dim); }
+
+/* panes that are not running yet */
+.empty { font: 400 0.8125rem/1.55 var(--mono); color: var(--desk-dim); max-width: 46ch; }
+.empty .ps1 { margin-right: 1ch; }
+
+/* The panes tile in after the hand-over. The about pane holds still: the name lands in it. */
+@media (prefers-reduced-motion: no-preference) {
+  .wm .pane:not(.about) { animation: tile var(--t-3) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 55ms + 120ms); }
+}
+@keyframes tile { from { opacity: 0; transform: scale(0.97); } }
+
+/* Desktop: the desk fills the window. About on the left, psql across the top, three panes under it. */
+@media (min-width: 1100px) {
+  .desk { height: 100vh; height: 100dvh; min-height: 680px; }
+  .wm {
+    min-height: 0;
+    grid-template-columns: minmax(0, 34fr) minmax(0, 30fr) minmax(0, 20fr) minmax(0, 16fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "about psql psql psql" "about projects log process";
+  }
+  .about { grid-area: about; }
+  .projects { grid-area: projects; }
+  .psql { grid-area: psql; }
+  .log { grid-area: log; }
+  .process { grid-area: process; }
+}
+/* Stacked layouts scroll, so a pane focused with Alt+n stops clear of the sticky top bar. */
+@media (max-width: 1099px) { .pane { scroll-margin-top: 110px; } }
+/* Tablet: about across the top, the rest two by two; the page scrolls. */
+@media (min-width: 700px) and (max-width: 1099px) {
+  .wm { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "about about" "projects psql" "log process"; }
+  .about { grid-area: about; }
+  .projects { grid-area: projects; }
+  .psql { grid-area: psql; }
+  .log { grid-area: log; }
+  .process { grid-area: process; }
+  .desk-name [data-word] { display: inline-block; }
+}
+/* Phone: one column, in pane order. */
+@media (max-width: 699px) {
+  .wm { gap: 14px; }
+  .pane { box-shadow: 4px 4px 0 var(--desk-shadow); }
+  .pane:focus-within { box-shadow: 5px 5px 0 color-mix(in oklab, var(--acc) 50%, transparent); }
+  .desk-name { font-size: clamp(3.4rem, 19vw, 5.5rem); }
+  /* No room beside the mark, and phones rarely have the keys it stands for: the panes simply stack. */
+  .bar .tags { display: none; }
+  .psql .pbody, .log .pbody, .process .pbody { min-height: 96px; }
+}
