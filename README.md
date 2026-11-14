@@ -20,6 +20,10 @@ The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx 
 
 CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser tests on every push and pull request.
 
+## Preview
+
+Every green build of `main` is published privately at https://pf-preview.subcult.tv, behind the homelab's Authelia sign-in. The CI `deploy` job pushes the built files to the `deploy` branch (one commit, replaced each time); a timer on the homelab checks that branch every minute, reads it with a read-only deploy key, and serves the newest build. The preview sends the production content security policy plus `'wasm-unsafe-eval'` and `worker-src 'self'` for the desk, and `X-Robots-Tag: noindex`. `/REVISION` names the commit it was built from.
+
 ## Layout
 
 The pages are built with Astro as static HTML. There is no client router and no UI framework, and no Astro code ships to the browser. Each page loads its script as a plain TypeScript module, which Astro bundles with Vite.

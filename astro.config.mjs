@@ -33,6 +33,12 @@ const modulePreload = {
   },
 }
 
+// The content security policy the site is served with: patrickfanella.co's production policy, plus
+// 'wasm-unsafe-eval' and worker-src for PostgreSQL on the desk. The homelab preview sends the same
+// header (patrickfanella-preview's origin.Caddyfile on Almaz); keep the two in step. `astro preview`
+// sends it too, so the browser tests fail on any violation.
+const CSP = "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self' 'unsafe-inline'"
+
 // Static output: /, /desk/ and /motion/ as directories. No client router and no UI framework;
 // the pages hand over with native cross-document view transitions (site.css).
 export default defineConfig({
@@ -40,5 +46,14 @@ export default defineConfig({
   // Keep the HTML as written, so the built markup matches the source.
   compressHTML: false,
   integrations: [modulePreload],
-  vite: { build: { target: 'es2022' } },
+  server: { headers: { 'Content-Security-Policy': CSP } },
+  vite: {
+    build: {
+      target: 'es2022',
+      // Never inline assets as data: URLs, or small scripts into the page. Small font subsets would
+      // land in the CSS as data:font/woff2, which font-src 'self' blocks, and an inline script
+      // breaks script-src 'self'.
+      assetsInlineLimit: 0,
+    },
+  },
 })
