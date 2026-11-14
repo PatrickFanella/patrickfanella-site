@@ -15,9 +15,9 @@ concurrency:
 
 jobs:
   build:
-    name: Typecheck and build
+    name: Build and test in Chromium
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -30,3 +30,7 @@ jobs:
         run: npm ci
       - name: Typecheck and build
         run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Browser tests
+        run: npx playwright test

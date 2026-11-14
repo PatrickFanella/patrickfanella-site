@@ -12,9 +12,12 @@ npm ci
 npm run dev        # http://localhost:5173
 npm run build      # typecheck, then build to dist/
 npm run preview
+npm run test:e2e   # build, serve dist/ and run the browser tests in headless Chromium
 ```
 
-CI (`.github/workflows/ci.yml`) runs `npm ci` and `npm run build` on every push and pull request.
+The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame, that the page works without WebGL2, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. Set `E2E_PORT` to serve on a port other than 4173.
+
+CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser tests on every push and pull request.
 
 ## Layout
 
