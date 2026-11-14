@@ -1,0 +1,16 @@
+---
+import Project from '../../layouts/Project.astro'
+import catalog from '../../../../../content/portfolio.json'
+const { projects } = catalog
+---
+<Project title="Projects, Patrick Fanella" description={`${projects.length} projects by Patrick Fanella, each with what it is, how it's built and how far along it is.`} current>
+  <main id="main" class="project">
+    <div class="project-head panel">
+      <h1 class="title" data-pour-in><span data-fit><span data-word>Projects</span></span></h1>
+      <p>{projects.length} projects, each with what it is, how it's built and how far along it is.</p>
+    </div>
+    <ul class="cards">
+      {projects.map((p) => <li><a class="panel" href={`/projects/${p.slug}/`} data-bleed="c"><b style={`view-transition-name: p-${p.slug}`}>{p.title}</b><span>{p.summary}</span></a></li>)}
+    </ul>
+  </main>
+</Project>

@@ -1,0 +1,30 @@
+---
+import Project from '../../layouts/Project.astro'
+import catalog from '../../../../../content/portfolio.json'
+
+export function getStaticPaths() {
+  return catalog.projects.map((p) => ({ params: { slug: p.slug }, props: { p } }))
+}
+const { p } = Astro.props
+const meta = [p.category, p.periodLabel, p.deliveryStatus].filter(Boolean).join(' · ')
+---
+<Project title={`${p.title}, Patrick Fanella`} description={p.summary}>
+  <main id="main" class="project">
+    <div class="project-head panel">
+      <p class="meta">{meta}</p>
+      <h1 class="title" data-pour-in style={`view-transition-name: p-${p.slug}`}><span data-fit>{p.title.split(/\s+/).map((w, i) => <>{i > 0 && ' '}<span data-word>{w}</span></>)}</span></h1>
+      <p>{p.summary}</p>
+      <ul class="stack" aria-label="Stack">{(p.stack ?? []).map((s) => <li>{s}</li>)}</ul>
+      <div class="actions">
+        {p.liveUrl && <a class="btn primary" href={p.liveUrl} data-bleed="o" data-splash="o">Open it</a>}
+        {p.repoUrl && <a class="btn" href={p.repoUrl} data-bleed="c" data-splash="c">Source</a>}
+      </div>
+    </div>
+    <div class="body">
+      {p.problem && <section class="panel" data-rise><h2>The problem</h2><p>{p.problem}</p></section>}
+      <section class="panel" data-rise><h2>What I built</h2><p>{p.description}</p>{p.highlights?.length > 0 && <ul>{p.highlights.map((h) => <li>{h}</li>)}</ul>}</section>
+      {p.architecture?.length > 0 && <section class="panel" data-rise><h2>How it's built</h2>{p.architecture.map((a) => <p>{a}</p>)}</section>}
+      {p.lessons?.length > 0 && <details data-unfold class="panel" data-rise><summary data-bleed="y">What I learned</summary><ul>{p.lessons.map((l) => <li>{l}</li>)}</ul></details>}
+    </div>
+  </main>
+</Project>
