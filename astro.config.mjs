@@ -48,6 +48,9 @@ export default defineConfig({
   integrations: [modulePreload],
   server: { headers: { 'Content-Security-Policy': CSP } },
   vite: {
+    // PGlite code-splits inside the module worker; keep its assets beside the package in dev.
+    worker: { format: 'es' },
+    optimizeDeps: { exclude: ['@electric-sql/pglite'] },
     build: {
       target: 'es2022',
       // Never inline assets as data: URLs, or small scripts into the page. Small font subsets would

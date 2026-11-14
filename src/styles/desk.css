@@ -75,6 +75,28 @@
 .projects .pbody { padding-block: 12px; }
 .more-work { margin-top: 10px; font: 400 0.75rem/1.4 var(--mono); color: var(--desk-dim); }
 
+/* psql: the session on the left, the timing panel on the right. Both use the pane's pink accent
+   and the desk's green for numbers, which clear 4.5:1 on a pane in both themes. */
+.psql-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem); gap: 16px; align-items: start; }
+.psql-out { margin: 0; min-width: 0; overflow-x: auto; font: 400 0.6875rem/1.6 var(--mono); color: var(--desk-text); scrollbar-width: thin; scrollbar-color: var(--desk-line) transparent; }
+.psql-out .ps1 { color: var(--acc); font-weight: 600; }
+.psql-out .k { color: var(--acc); font-weight: 600; }
+.psql-out .s, .psql-out .n, .psql-out .g { color: var(--desk-4); }
+.psql-out .c { color: var(--desk-dim); }
+.psql-out .w { color: var(--desk-5); font-weight: 600; }
+.psql-out .hl { color: var(--acc); font-weight: 700; }
+.bench { display: grid; gap: 12px; padding: 12px; border: 1px solid var(--desk-line); font: 400 0.75rem/1.4 var(--mono); }
+.bcap { color: var(--desk-dim); }
+.blabel b { color: var(--desk-text); }
+.blabel span { display: block; color: var(--desk-dim); }
+.bnum { margin-top: 4px; font: 900 2.4rem/1 var(--display); color: var(--acc); font-variant-numeric: tabular-nums; }
+.bnum small { margin-left: 0.2em; font-size: 0.4em; letter-spacing: 0.02em; }
+.idx .bnum { color: var(--desk-4); }
+.bbar { height: 8px; margin-top: 6px; background: var(--desk-line); }
+.bbar i { display: block; height: 100%; width: 0; background: var(--acc); transition: width var(--t-3) var(--ease-out); }
+.idx .bbar i { background: var(--desk-4); }
+.bnote { color: var(--desk-dim); text-wrap: pretty; }
+
 /* panes that are not running yet */
 .empty { font: 400 0.8125rem/1.55 var(--mono); color: var(--desk-dim); max-width: 46ch; }
 .empty .ps1 { margin-right: 1ch; }
@@ -114,6 +136,8 @@
   .process { grid-area: process; }
   .desk-name [data-word] { display: inline-block; }
 }
+/* Tablet and phone: psql gets half the width or less, so the timing panel goes under the session. */
+@media (max-width: 1099px) { .psql-body { grid-template-columns: minmax(0, 1fr); } }
 /* Phone: one column, in pane order. */
 @media (max-width: 699px) {
   .wm { gap: 14px; }
