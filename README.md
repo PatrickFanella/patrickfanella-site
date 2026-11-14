@@ -4,7 +4,7 @@ The rebuild of patrickfanella.co, started 2026-11-14. It is not deployed yet; th
 
 Three static pages so far:
 
-- `/` explains what is coming. The ink behind it is a fluid simulation that pours from the letters of the name.
+- `/` explains what is coming. The ink behind it is a fluid simulation that pours from the letters of the name. It runs on WebGPU compute where the browser gives a hardware adapter, and on WebGL2 everywhere else; the readout under the intro names the path in use.
 - `/desk/` is the desk: translucent panes tiled on the same ink. The name hands over from `/` into the about pane. The projects pane lists three projects; the psql, log and process panes are empty until PostgreSQL runs in the tab. Alt+1 to Alt+5 move focus between panes.
 - `/motion/` shows each animation in the motion set on its own, with its timing and its reduced-motion version.
 
@@ -23,8 +23,10 @@ CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser t
 ## Layout
 
 - `src/ink/shaders.ts`: stable fluids (advection, vorticity confinement, buoyancy, Jacobi pressure solve) in WebGL2 fragment shaders, plus the two looks: pigment on paper (light) and ink that glows (dark).
+- `src/ink/wgsl.ts`: the same solver and looks as WebGPU compute shaders.
+- `src/ink/webgl.ts` and `src/ink/webgpu.ts`: the two paths. Both take the same tunables and step input from the engine. WebGPU runs a 320-row grid against 256 on WebGL2. It is used only with a hardware adapter whose first frame runs cleanly offscreen; otherwise WebGL2 takes the canvas. Add `?ink=webgl2` or `?ink=webgpu` to the URL to pick a path; the second also accepts a software adapter.
 - `src/ink/mask.ts`: draws the page into the solver's mask. Letters marked `data-ink-letter` are solid and pour from their feet once they carry `data-pour`. Elements marked `data-ink-solid` are solid rectangles.
-- `src/ink/engine.ts`: the frame loop and the API the pages use: `setEmitters`, `burst`, `stir`, `setTheme`, `preroll`. Up to four bursts run at once, each with a direction, spread and length.
+- `src/ink/engine.ts`: the frame loop, choosing a path, and the API the pages use: `setEmitters`, `burst`, `stir`, `setTheme`, `preroll`, and `ready`, which pages wait on before the pour starts. Up to four bursts run at once, each with a direction, spread and length.
 - `src/motion/motion.ts`: the motion set. Pour-in, bleed, splash, stir, unfold and fitting the name to the width.
 - `src/boot.ts`: start-up shared by every page: fonts, theme switch, ink, readout.
 - `src/desk/desk.ts`: the desk page: pours the name from the about pane and moves focus between panes.
@@ -46,7 +48,7 @@ CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser t
 | Theme switch | The switch in the top bar | 420 ms view transition |
 | Focus | Tab, Shift+Tab | 240 ms |
 
-With `prefers-reduced-motion: reduce`, the solver runs ahead and the page shows one still frame, letters start in place, and transitions and view transitions are off. Without WebGL2 the page falls back to a static wash in the same three inks.
+With `prefers-reduced-motion: reduce`, the solver runs ahead and the page shows one still frame, letters start in place, and transitions and view transitions are off. Without WebGPU or WebGL2 the page falls back to a static wash in the same three inks.
 
 ## Licence
 

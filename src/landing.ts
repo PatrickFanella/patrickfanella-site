@@ -15,7 +15,8 @@ unfold()
 
 // Start once the name has its final size. With motion the tank starts empty and fills as each
 // letter lands; with reduced motion the solver runs ahead and the page shows one still frame.
-faces.then(() => {
+// The name stays hidden until the solver is ready too, so the first splashes are not lost.
+void Promise.all([faces, ink?.ready]).then(() => {
   layout()
   if (!ink) { pourIn(letters, null); return }
   if (reduced()) {

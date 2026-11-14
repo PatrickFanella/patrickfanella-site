@@ -22,10 +22,9 @@ export function boot(): Page {
   const canvas = document.getElementById('ink') as HTMLCanvasElement | null
   let ink: Ink | null = null
   if (canvas) {
-    try { ink = createInk(canvas, currentTheme()) } catch (err) {
-      root.classList.add('no-ink')
-      console.info('Ink is off:', (err as Error).message)
-    }
+    // Neither WebGPU nor WebGL2 can draw it: show the static wash instead.
+    const off = (err: Error) => { root.classList.add('no-ink'); console.info('Ink is off:', err.message) }
+    try { ink = createInk(canvas, currentTheme(), off) } catch (err) { off(err as Error) }
   }
   systemDark.addEventListener('change', () => ink?.setTheme(currentTheme()))
   wireThemeSwitch(ink)
@@ -59,11 +58,12 @@ function readout(ink: Ink) {
   if (!el) return
   const paint = () => {
     const i = ink.info()
+    el.querySelector('[data-k=path]')!.textContent = `Stable fluids, ${i.path}`
     el.querySelector('[data-k=grid]')!.textContent = i.grid
     el.querySelector('[data-k=fps]')!.textContent = i.running ? `${Math.round(i.fps)} fps` : 'still frame'
     // "ANGLE (AMD, AMD Radeon Graphics (radeonsi ...), OpenGL ES 3.2)" reads as "AMD Radeon Graphics".
     const parts = i.renderer.replace(/^ANGLE \((.*)\)$/, '$1').split(',')
-    el.querySelector('[data-k=gpu]')!.textContent = (parts[1] ?? parts[0]).replace(/\s*\(.*$/, '').trim()
+    el.querySelector('[data-k=gpu]')!.textContent = (parts[1] ?? parts[0]).replace(/\s*\(.*$/, '').trim() || '…'
   }
-  paint(); setInterval(paint, 1000)
+  paint(); void ink.ready.then(paint); setInterval(paint, 1000)
 }
