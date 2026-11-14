@@ -1,9 +1,10 @@
 // The desk: tiled panes on the ink tank. The name hands over from the landing page into the
-// about pane (view-transition-name: name) and pours from there. Panes 3 to 5 are empty until
-// PostgreSQL runs in the tab.
+// about pane (view-transition-name: name) and pours from there. The psql pane starts PostgreSQL in a
+// worker; panes 4 and 5 are empty for now.
 import { boot } from '../boot'
 import { reduced, splitLetters } from '../motion/motion'
 import '../styles/desk.css'
+import { startPsql } from './psql'
 
 const { ink } = boot()
 
@@ -11,6 +12,8 @@ const { ink } = boot()
 // The name arrives in place, so its letters pour at once instead of dropping in.
 const name = document.getElementById('name')!
 for (const l of splitLetters(name, 'ooyycccccyyooo')) { l.dataset.pour = '1'; l.classList.add('landed') }
+
+startPsql(document.querySelector<HTMLElement>('section.psql')!)
 
 const panes = [...document.querySelectorAll<HTMLElement>('[data-pane]')]
 const tags = [...document.querySelectorAll<HTMLButtonElement>('[data-go]')]

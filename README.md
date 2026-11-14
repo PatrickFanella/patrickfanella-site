@@ -5,7 +5,7 @@ The rebuild of patrickfanella.co, started 2026-11-14. It is not deployed yet; th
 Three static pages so far:
 
 - `/` explains what is coming. The ink behind it is a fluid simulation that pours from the letters of the name. It runs on WebGPU compute where the browser gives a hardware adapter, and on WebGL2 everywhere else; the readout under the intro names the path in use.
-- `/desk/` is the desk: translucent panes tiled on the same ink. The name hands over from `/` into the about pane. The projects pane lists three projects; the psql, log and process panes are empty until PostgreSQL runs in the tab. Alt+1 to Alt+5 move focus between panes.
+- `/desk/` is the desk: translucent panes tiled on the same ink. The name hands over from `/` into the about pane. The projects pane lists three projects. The psql pane starts PostgreSQL 18.6 (PGlite) in a worker, loads 50,008 generated clips and runs Clpr's search query without and then with its GIN index. It shows the query plan, the rows and the median of three runs each, measured in the tab. Until PostgreSQL answers, or if it cannot start, it shows Clpr's recorded run and says so. The log and process panes are empty for now. Alt+1 to Alt+5 move focus between panes.
 - `/motion/` shows each animation in the motion set on its own, with its timing and its reduced-motion version.
 
 ```bash
@@ -16,7 +16,7 @@ npm run preview
 npm run test:e2e   # build, serve dist/ and run the browser tests in headless Chromium
 ```
 
-The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame, that the page works without WebGL2, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. Set `E2E_PORT` to serve on a port other than 4173.
+The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame, that the page works without WebGL2, that the desk measures the search in a worker and falls back to the recorded run when the worker is blocked, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. Set `E2E_PORT` to serve on a port other than 4173.
 
 CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser tests on every push and pull request.
 
@@ -30,6 +30,8 @@ CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser t
 - `src/motion/motion.ts`: the motion set. Pour-in, bleed, splash, stir, unfold and fitting the name to the width.
 - `src/boot.ts`: start-up shared by every page: fonts, theme switch, ink, readout.
 - `src/desk/desk.ts`: the desk page: pours the name from the about pane and moves focus between panes.
+- `src/desk/pg.worker.ts`: PostgreSQL (PGlite, bundled from npm) in a module worker. It seeds the clips, times the query three times without and with the index, and posts each step.
+- `src/desk/psql.ts`: the psql pane and its timing panel. `src/desk/recorded.ts` holds Clpr's recorded run; `src/desk/pg-protocol.ts` holds the query and the messages.
 - `src/styles/site.css`: tokens (colour, type, four durations, two curves), layout, rise, view transitions and reduced motion.
 - `src/styles/desk.css`: the desk's tiling layout. Its colours are the `--desk-*` tokens in `site.css`. Panes 1, 2 and 5 take their accents from the gold, cobalt and orange inks. Panes 3 and 4 keep the prototype's pink and green, so the five pane buttons stay distinct.
 - `docs/`: the plan, the original design doc and the prototypes the roadmap builds from.
