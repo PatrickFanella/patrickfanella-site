@@ -36,12 +36,16 @@ test.describe('PostgreSQL on the desk', () => {
     let release!: () => void
     const held = new Promise<void>((r) => { release = r })
     await page.route('**/pg.worker-*.js', async (route) => { await held; await route.continue() })
-    // Record the longest gap between animation frames. PostgreSQL on the main thread holds a frame
-    // for seconds while it seeds; in the worker the ink keeps drawing. The ink's own start-up also
-    // stalls for seconds under SwiftShader, so `quiet_` marks the last frame after a gap of 1 s or more.
+    // Record the longest main-thread task and the longest gap between animation frames. PostgreSQL on
+    // the main thread runs its seed as one task lasting seconds; in the worker no task gets near that.
+    // Frame gaps alone cannot tell the two apart on a two-core runner: while the worker compiles
+    // PGlite, SwiftShader's compositor waits about 2 s for a core with no main-thread task over 50 ms.
+    // The ink's own start-up also stalls for seconds under SwiftShader, so `quiet_` marks the last
+    // frame after a gap of 1 s or more.
     await page.addInitScript(() => {
-      const w = window as unknown as { gap_: number; quiet_: number; last_: number }
-      w.gap_ = 0; w.quiet_ = w.last_ = performance.now()
+      const w = window as unknown as { gap_: number; quiet_: number; last_: number; long_: number }
+      w.gap_ = 0; w.long_ = 0; w.quiet_ = w.last_ = performance.now()
+      new PerformanceObserver((l) => { for (const e of l.getEntries()) w.long_ = Math.max(w.long_, e.duration) }).observe({ type: 'longtask' })
       const tick = (now: number) => {
         const d = now - w.last_; w.last_ = now
         w.gap_ = Math.max(w.gap_, d)
@@ -63,11 +67,12 @@ test.describe('PostgreSQL on the desk', () => {
       const w = window as unknown as { quiet_: number; last_: number }, now = performance.now()
       return now - w.quiet_ >= 4000 && now - w.last_ < 1000
     }, null, { timeout: 120_000, polling: 100 })
-    await page.evaluate(() => { (window as unknown as { gap_: number }).gap_ = 0 })
+    await page.evaluate(() => { const w = window as unknown as { gap_: number; long_: number }; w.gap_ = 0; w.long_ = 0 })
     release()
     await expect(page.locator(psql)).toHaveAttribute('data-pg', 'live', { timeout: 240_000 })
-    const gap = await page.evaluate(() => (window as unknown as { gap_: number }).gap_)
-    expect(gap, 'longest frame gap while PostgreSQL started, in ms').toBeLessThan(1000)
+    const { gap, long } = await page.evaluate(() => { const w = window as unknown as { gap_: number; long_: number }; return { gap: w.gap_, long: w.long_ } })
+    expect(long, 'longest main-thread task while PostgreSQL started, in ms').toBeLessThan(1000)
+    expect(gap, 'longest frame gap while PostgreSQL started, in ms').toBeLessThan(5000)
 
     await expect(page.locator('[data-pg-cap]')).toHaveText('Measured in this tab, median of 3 batches')
     // Decimals follow the clock: two in Chromium for a batch of several runs, fewer for a single slow run.
