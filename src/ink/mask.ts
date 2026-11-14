@@ -17,6 +17,22 @@ export function inkFromCode(code: string | undefined): InkId {
   return INK_CODE[code ?? ''] ?? 0
 }
 
+/** Distance from the top of an inline-block letter's box to its baseline, in CSS px. */
+function baselineOffset(ctx: CanvasRenderingContext2D, ch: string, cs: CSSStyleDeclaration) {
+  ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`
+  const m = ctx.measureText(ch)
+  const asc = m.fontBoundingBoxAscent, desc = m.fontBoundingBoxDescent
+  const lh = parseFloat(cs.lineHeight) || asc + desc
+  return (lh - (asc + desc)) / 2 + asc
+}
+
+let probe: CanvasRenderingContext2D | null = null
+/** Viewport y of a letter's baseline: where its foot meets the water. */
+export function letterBaseline(el: HTMLElement) {
+  probe ??= document.createElement('canvas').getContext('2d')
+  return el.getBoundingClientRect().top + baselineOffset(probe!, el.textContent ?? '', getComputedStyle(el))
+}
+
 const emitStyle = (ink: InkId, strength: number) =>
   `rgb(0,${Math.round(255 * strength)},${Math.round(127.5 * ink * strength)})`
 
@@ -60,10 +76,7 @@ export function drawMask(ctx: CanvasRenderingContext2D, w: number, h: number, ex
     const cs = getComputedStyle(el)
     ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`
     const ch = cs.textTransform === 'uppercase' ? (el.textContent ?? '').toUpperCase() : (el.textContent ?? '')
-    const m = ctx.measureText(ch)
-    const asc = m.fontBoundingBoxAscent, desc = m.fontBoundingBoxDescent
-    const lh = parseFloat(cs.lineHeight) || asc + desc
-    const base = r.top + (lh - (asc + desc)) / 2 + asc
+    const base = r.top + baselineOffset(ctx, ch, cs)
     const pour = bottomLine && el.dataset.pour ? Math.min(1, Number(el.dataset.pour) || 1) : 0
     if (pour > 0) {
       ctx.save()

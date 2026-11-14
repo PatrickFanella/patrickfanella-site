@@ -16,8 +16,12 @@ export interface Ink {
   /** Redraw the mask on the next frame: call after layout, scroll or emitter changes. */
   invalidate(): void
   setEmitters(list: Emitter[]): void
-  /** A burst at a viewport point: pushes the water outward and drops ink there. */
-  burst(x: number, y: number, ink: InkId, amount?: number): void
+  /**
+   * A burst at a viewport point: pushes the water outward and drops ink there.
+   * `rx` and `ry` are its half-width and half-height in CSS px (default 57, round).
+   * Bursts queue and run one per solver step.
+   */
+  burst(x: number, y: number, ink: InkId, amount?: number, rx?: number, ry?: number): void
   /** Stir as if the pointer moved by (dx, dy) CSS px at (x, y). */
   stir(x: number, y: number, dx: number, dy: number): void
   setTheme(theme: Theme): void
@@ -150,7 +154,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
 
   // Input gathered between steps.
   const ptr = { x: -1, y: -1, ax: 0, ay: 0 }
-  let burstQ: { x: number; y: number; ink: InkId; amount: number } | null = null
+  const bursts: { x: number; y: number; ink: InkId; amount: number; r: number[] }[] = []
   let scrollV = 0
   let time = 0
 
@@ -158,13 +162,13 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
     if (maskDirty) uploadMask()
     const asp = [simW / simH, 1], T = [1 / simW, 1 / simH], scale = simH / 256
     const ptrV = [ptr.ax * 9, ptr.ay * 9]; ptr.ax = 0; ptr.ay = 0
-    const b = burstQ; burstQ = null
+    const b = bursts.shift()
     const bpos = b ? [b.x / innerWidth, 1 - b.y / innerHeight] : [-9, -9]
     run('advect', { uVel: vel.r, uMask: mask, uAsp: asp, uDt: dt, uDamp: P.damp }, vel.w); vel.swap()
     run('curl', { uVel: vel.r, uT: T }, curl)
     run('force', {
       uVel: vel.r, uCurl: curl, uDye: dye.r, uMask: mask, uT: T, uAsp: asp, uPtr: [ptr.x, ptr.y], uPtrV: ptrV,
-      uBurst: bpos, uBurstK: b ? 0.9 * b.amount : 0, uDt: dt, uTime: time, uGrav: P.grav, uConf: P.conf * scale,
+      uBurst: bpos, uBurstR: b ? b.r : [1, 1], uBurstK: b ? 0.9 * b.amount : 0, uDt: dt, uTime: time, uGrav: P.grav, uConf: P.conf * scale,
       uPtrR: P.ptrR, uSway: P.sway, uPush: P.push, uScroll: scrollV,
     }, vel.w); vel.swap()
     scrollV *= 0.5
@@ -173,7 +177,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
     run('gradient', { uP: prs.r, uVel: vel.r, uMask: mask, uT: T }, vel.w); vel.swap()
     run('dye', {
       uDye: dye.r, uVel: vel.r, uMask: mask, uAsp: asp, uDt: dt, uDecay: Math.pow(P.decay, dt * 60), uTime: time,
-      uRate: P.rate, uCap: P.cap, uBurst: bpos, uBurstInk: b ? INK_RGB[b.ink] : [0, 0, 0], uBurstAmt: b ? 1.4 * b.amount : 0,
+      uRate: P.rate, uCap: P.cap, uBurst: bpos, uBurstR: b ? b.r : [1, 1], uBurstInk: b ? INK_RGB[b.ink] : [0, 0, 0], uBurstAmt: b ? 1.4 * b.amount : 0,
     }, dye.w); dye.swap()
     time += dt
   }
@@ -220,7 +224,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme): Ink {
   return {
     invalidate() { maskDirty = true },
     setEmitters(list) { emitters = list; maskDirty = true },
-    burst(x, y, ink, amount = 1) { burstQ = { x, y, ink, amount } },
+    burst(x, y, ink, amount = 1, rx = 57, ry = rx) { if (bursts.length < 24) bursts.push({ x, y, ink, amount, r: [rx / innerHeight, ry / innerHeight] }) },
     stir(x, y, dx, dy) { ptr.x = x / innerWidth; ptr.y = 1 - y / innerHeight; ptr.ax += dx / innerHeight; ptr.ay -= dy / innerHeight },
     setTheme(t) { look = LOOK[t]; if (!running) draw() },
     setRunning(on) { wanted = on; if (on && !document.hidden) start(); else { stop(); draw() } },

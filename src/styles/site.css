@@ -108,7 +108,11 @@ main, .foot { position: relative; z-index: 1; }
 .name [data-fit] { display: inline-block; }
 .name [data-word] { display: inline-block; }
 .name [data-ink-letter] { display: inline-block; }
-.pouring [data-ink-letter] { animation: pour-in var(--t-4) var(--ease-spring) both; animation-delay: calc(var(--i) * 55ms + 120ms); }
+/* The name waits, hidden, until pour-in starts, so it does not flash in place first.
+   If the script never runs it appears after 3 s; with JavaScript off, a noscript style shows it at once. */
+[data-pour-in]:not(.pouring):not(.poured) [data-word] { visibility: hidden; animation: show-late 0s 3s forwards; }
+@keyframes show-late { to { visibility: visible; } }
+.pouring [data-ink-letter] { animation: pour-in var(--t-4) var(--ease-spring) both; animation-delay: calc(var(--i) * 60ms); }
 @keyframes pour-in {
   from { transform: translateY(-0.55em) scaleY(1.12); opacity: 0; }
   35% { opacity: 1; }

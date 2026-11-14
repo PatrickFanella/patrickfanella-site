@@ -47,7 +47,7 @@ void main() {
   // the pointer, one radial burst, the push under each emitter and scroll drag.
   force: HEAD + `
 uniform sampler2D uVel, uCurl, uDye, uMask;
-uniform vec2 uT, uAsp, uPtr, uPtrV, uBurst; uniform float uDt, uTime, uGrav, uConf, uPtrR, uSway, uPush, uBurstK, uScroll;
+uniform vec2 uT, uAsp, uPtr, uPtrV, uBurst, uBurstR; uniform float uDt, uTime, uGrav, uConf, uPtrR, uSway, uPush, uBurstK, uScroll;
 void main() {
   vec4 m = texture(uMask, uv);
   if (m.r > .5) { o = vec4(0.); return; }
@@ -64,8 +64,8 @@ void main() {
   v.y += uScroll;
   vec2 q = (uv - uPtr) * uAsp;
   v += uPtrV * exp(-dot(q, q) / uPtrR);
-  vec2 b = (uv - uBurst) * uAsp;
-  v += uBurstK * b / (length(b) + .02) * exp(-dot(b, b) / .004);
+  vec2 b = (uv - uBurst) * uAsp, bn = b / uBurstR;
+  v += uBurstK * b / (length(b) + .02) * exp(-dot(bn, bn));
   float s = length(v); if (s > 2.5) v *= 2.5 / s;
   o = vec4(v, 0., 1.);
 }`,
@@ -107,7 +107,7 @@ void main() {
   // fed in pulses under each emitter, and dropped by a burst.
   dye: HEAD + NOISE + `
 uniform sampler2D uDye, uVel, uMask;
-uniform vec2 uAsp, uBurst; uniform vec3 uBurstInk; uniform float uDt, uDecay, uTime, uRate, uCap, uBurstAmt;
+uniform vec2 uAsp, uBurst, uBurstR; uniform vec3 uBurstInk; uniform float uDt, uDecay, uTime, uRate, uCap, uBurstAmt;
 void main() {
   vec4 m = texture(uMask, uv);
   if (m.r > .5) { o = vec4(0., 0., 0., 1.); return; }
@@ -120,8 +120,8 @@ void main() {
     vec3 w = vec3(1. - min(id, 1.), 1. - abs(id - 1.), max(id - 1., 0.));
     d += m.g * pulse * uRate * uDt * w * max(0., 1. - (d.r + d.g + d.b) / uCap);
   }
-  vec2 b = (uv - uBurst) * uAsp;
-  d += uBurstInk * uBurstAmt * exp(-dot(b, b) / .0016);
+  vec2 b = (uv - uBurst) * uAsp / (uBurstR * .63);
+  d += uBurstInk * uBurstAmt * exp(-dot(b, b));
   o = vec4(d, 1.);
 }`,
 

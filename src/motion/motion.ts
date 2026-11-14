@@ -1,7 +1,7 @@
 // The motion set. Each export is one named animation; /motion/ shows them all.
 // Every one checks reduced motion and leaves the page complete without it.
 import type { Ink } from '../ink/engine'
-import { inkFromCode, type Emitter, type InkId } from '../ink/mask'
+import { inkFromCode, letterBaseline, type Emitter, type InkId } from '../ink/mask'
 
 export const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -27,23 +27,41 @@ export function splitLetters(el: HTMLElement, inks: string) {
   return letters
 }
 
+/** Where the spring curve first reaches the resting position: the moment a letter hits. */
+export const IMPACT = 0.22
+
+const ms = (v: string) => (v.endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000) || 0
+
 /**
- * pour-in: the letters drop into place one after another, and each starts to
- * pour the moment it lands. Duration 620 ms per letter, 55 ms stagger.
+ * pour-in: the letters drop into place left to right, 60 ms apart. The moment
+ * each one hits, its ink splashes out along its foot and it starts to pour.
+ * 620 ms per letter on a spring curve, which reaches rest 22% of the way in.
  */
 export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false } = {}) {
   for (const l of letters) { delete l.dataset.pour; l.classList.remove('landed') }
-  if (reduced()) { for (const l of letters) { l.dataset.pour = '1'; l.classList.add('landed') } ink?.invalidate(); return Promise.resolve() }
   const host = letters[0]?.closest<HTMLElement>('[data-pour-in]')
-  if (host) { host.classList.remove('pouring'); if (replay) void host.offsetWidth; host.classList.add('pouring') }
+  if (reduced()) { host?.classList.add('poured'); for (const l of letters) { l.dataset.pour = '1'; l.classList.add('landed') } ink?.invalidate(); return Promise.resolve() }
+  if (host) { host.classList.remove('pouring', 'poured'); if (replay) void host.offsetWidth; host.classList.add('pouring') }
   let live = true
   const track = () => { if (!live) return; ink?.invalidate(); requestAnimationFrame(track) }
   requestAnimationFrame(track)
+  const hit = (l: HTMLElement) => {
+    if (l.dataset.pour) return
+    l.dataset.pour = '1'
+    ink?.invalidate()
+    if (!ink) return
+    const r = l.getBoundingClientRect()
+    if (r.bottom < 0 || r.top > innerHeight) return
+    ink.burst(r.left + r.width / 2, letterBaseline(l) + 4, inkFromCode(l.dataset.inkLetter), 1.15, r.width * 0.62, r.height * 0.09)
+  }
   return Promise.all(letters.map((l) => new Promise<void>((done) => {
-    const land = () => { l.classList.add('landed'); l.dataset.pour = '1'; ink?.invalidate(); done() }
+    const cs = getComputedStyle(l)
+    const at = ms(cs.animationDelay) + ms(cs.animationDuration) * IMPACT
+    const t = setTimeout(() => hit(l), at)
+    const land = () => { clearTimeout(t); hit(l); l.classList.add('landed'); done() }
     l.addEventListener('animationend', land, { once: true })
-    setTimeout(land, 2400) // a backstop if the animation never runs
-  }))).then(() => { live = false })
+    setTimeout(land, at + 2400) // a backstop if the animation never runs
+  }))).then(() => { live = false; host?.classList.add('poured') })
 }
 
 /**

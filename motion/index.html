@@ -6,6 +6,7 @@
   <title>Motion set, Patrick Fanella</title>
   <meta name="description" content="Every transition and interaction on patrickfanella.co, one at a time, with its timing and its reduced-motion version.">
   <meta name="color-scheme" content="light dark">
+  <noscript><style>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body class="motion-page">
@@ -37,8 +38,8 @@
       <li class="spec panel" data-rise>
         <div class="spec-text">
           <h2>Pour-in</h2>
-          <p>Letters drop into place one after another, and each starts to pour ink the moment it lands.</p>
-          <dl><dt>Trigger</dt><dd>Page load</dd><dt>Timing</dt><dd>620 ms per letter, 55 ms apart, spring curve</dd><dt>Reduced</dt><dd>Letters in place, ink already poured</dd></dl>
+          <p>Letters drop into place from left to right. The moment each one hits, its ink splashes out along its foot and starts to pour.</p>
+          <dl><dt>Trigger</dt><dd>Page load</dd><dt>Timing</dt><dd>620 ms per letter, 60 ms apart, spring curve; ink splashes as each letter hits</dd><dt>Reduced</dt><dd>Letters in place, ink already poured</dd></dl>
         </div>
         <div class="stage">
           <p class="demo-word" data-pour-in id="demo-pour"><span data-fit><span data-word>Ink</span></span></p>
