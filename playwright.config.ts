@@ -5,8 +5,10 @@ const port = Number(process.env.E2E_PORT ?? 4173)
 
 export default defineConfig({
   testDir: 'e2e',
-  // SwiftShader runs the solver on the CPU, which is slow, so each test gets a minute.
-  timeout: 60_000,
+  // SwiftShader runs the solver on the CPU. On a two-core hosted runner the page can take tens of
+  // seconds to settle, and the reduced-motion preroll blocks the main thread for longer.
+  timeout: 180_000,
+  expect: { timeout: 30_000 },
   forbidOnly: !!process.env.CI,
   reporter: process.env.CI ? [['list'], ['github']] : 'list',
   use: { baseURL: `http://127.0.0.1:${port}` },

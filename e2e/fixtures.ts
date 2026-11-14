@@ -14,5 +14,5 @@ export { expect }
 
 /** Wait until pour-in has finished, so every letter is in its resting place. */
 export async function poured(page: Page) {
-  await expect(page.locator('[data-pour-in]')).toHaveClass(/\bpoured\b/, { timeout: 10_000 })
+  await expect(page.locator('[data-pour-in]')).toHaveClass(/\bpoured\b/, { timeout: 60_000 })
 }

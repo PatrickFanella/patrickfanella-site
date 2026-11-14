@@ -16,7 +16,7 @@ test('the name pours in and is fitted to the width', async ({ page }) => {
   expect(fit.ratio).toBeLessThanOrEqual(1)
   // The solver is running, so the readout shows a grid and a frame rate.
   await expect(page.locator('[data-k=grid]')).toHaveText(/^\d+ × \d+$/)
-  await expect(page.locator('[data-k=fps]')).toHaveText(/^\d+ fps$/, { timeout: 5_000 })
+  await expect(page.locator('[data-k=fps]')).toHaveText(/^\d+ fps$/)
 })
 
 test.describe('with reduced motion', () => {
