@@ -15,8 +15,9 @@ export const COUNT_SQL = `SELECT count(*)::int AS n FROM clips c
 /** The search Clpr's demo recorded: "world record" as prefix terms. */
 export const QUERY = "'world':* & 'record':*"
 
-/** A plan and its Execution Time in ms. A measured run also says how many runs its time averages. */
-export interface Run { plan: string[]; exec: number; runs?: number }
+/** A plan and its Execution Time in ms. A measured run also says how many runs its time averages,
+ *  and the median of three batches carries all three batch means, in the order they ran. */
+export interface Run { plan: string[]; exec: number; runs?: number; batches?: number[] }
 export interface Row { title: string; creator: string; votes: number }
 
 export type PgEvent =

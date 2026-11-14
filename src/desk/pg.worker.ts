@@ -47,7 +47,8 @@ async function batch(pg: PGlite, tsq: string): Promise<Run> {
 async function median3(pg: PGlite, tsq: string): Promise<Run> {
   const runs: Run[] = []
   for (let k = 0; k < 3; k++) runs.push(await batch(pg, tsq))
-  return runs.sort((a, b) => a.exec - b.exec)[1]
+  const batches = runs.map((r) => r.exec)
+  return { ...runs.sort((a, b) => a.exec - b.exec)[1], batches }
 }
 
 async function main() {

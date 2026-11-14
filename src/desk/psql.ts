@@ -9,7 +9,7 @@ const ms = (n: number) => n.toFixed(2)
 /** A measured time with only the decimals the clock supports. Each reading is off by up to one tick,
  *  so a mean of n readings `step` apart is good to about step / 2√n at worst. Below that bound the
  *  figure is shown as "< bound", not as a number. */
-const measured = (exec: number, step: number, runs = 1) => {
+export const measured = (exec: number, step: number, runs = 1) => {
   const bound = step / (2 * Math.sqrt(runs))
   const dp = Math.min(2, Math.max(0, Math.ceil(-Math.log10(bound))))
   // A ratio needs both times well clear of the bound: at five times it, a time is good to about 20%.
@@ -61,16 +61,27 @@ export function tidyPlan(plan: string[]): string[] {
   return out
 }
 
-interface Shown { run: Run; rows: Row[]; total: number; of: number }
+/** A measured run also carries the clock's step, so its times are shown at the clock's resolution. */
+interface Shown { run: Run; rows: Row[]; total: number; of: number; step?: number }
 
 function renderSession(pre: HTMLElement, s: Shown, status: string) {
   pre.replaceChildren()
   const sql = `EXPLAIN (ANALYZE, COSTS OFF, BUFFERS OFF)\n${SEARCH_SQL};  -- $1 = ${QUERY}`.split('\n')
   sql.forEach((l, i) => line(pre, ...(i === 0 ? [['ps1', 'clpr=#'] as Part, ' '] : []), ...mark(l, SQL_RE, ['s', 'c', 'k', 'n'])))
   line(pre)
-  for (const l of tidyPlan(s.run.plan)) {
-    if (l.startsWith(' Execution Time')) line(pre, ' Execution Time: ', ['hl', l.slice(' Execution Time: '.length)])
-    else line(pre, ...mark(l, PLAN_RE, ['g', 'w', 'n']))
+  for (let l of tidyPlan(s.run.plan)) {
+    // A measured plan is the last run of the median batch, read on a coarse clock, so its node times
+    // and Execution Time often read 0.000. Drop the node times, as TIMING OFF would, and show the
+    // batch's mean in place of that one run's Execution Time, as the timing panel does.
+    if (s.step) {
+      l = l.replace(/actual time=[\d.]+\.\.[\d.]+ /, 'actual ')
+      const plan = /^ Planning Time: ([\d.]+) ms$/.exec(l)
+      if (plan) l = ` Planning Time: ${measured(parseFloat(plan[1]), s.step).text} ms`
+    }
+    if (!l.startsWith(' Execution Time')) { line(pre, ...mark(l, PLAN_RE, ['g', 'w', 'n'])); continue }
+    if (!s.step) { line(pre, ' Execution Time: ', ['hl', l.slice(' Execution Time: '.length)]); continue }
+    const n = s.run.runs ?? 1
+    line(pre, ' Execution Time: ', ['hl', `${measured(s.run.exec, s.step, n).text} ms`], ['c', ` (mean of ${fmt(n)} ${n === 1 ? 'run' : 'runs'})`])
   }
   line(pre)
   line(pre, ['c', ` ${'title'.padEnd(33)} ${'creator'.padEnd(12)} votes`])
@@ -112,25 +123,34 @@ export function startPsql(pane: HTMLElement) {
     renderSession(pre, { run: recordedIdx.run, rows: recordedIdx.found, total: recordedIdx.total, of: recordedIdx.rows }, status)
   }
 
-  let state: 'starting' | 'live' | 'failed' = 'starting'
+  // 'slow' is still starting: PostgreSQL has not answered yet, and the pane says it is still loading.
+  let state: 'starting' | 'slow' | 'live' | 'failed' = 'starting'
   const set = (s: typeof state) => { state = s; pane.dataset.pg = s }
   set('starting')
   sub.textContent = 'recorded run'
   showRecorded("PostgreSQL is starting in this tab. Until it answers, these are Clpr's recorded times.", `${recordedStatus}. Starting PostgreSQL in this tab.`)
 
   let worker: Worker | null = null
-  // A fetch of PGlite's files that hangs never errors, so give up if PostgreSQL has not answered by then.
-  const watchdog = setTimeout(() => fail('PostgreSQL did not answer within 120 s'), 120_000)
-  const fail = (why: string) => {
+  const starting = () => state === 'starting' || state === 'slow'
+  // PGlite fetches about 15 MB of WebAssembly and data before it answers, which takes minutes on a slow
+  // link. No deadline can tell that from a hung fetch, so past one the pane only says it is still
+  // loading, and a later answer still replaces the recorded run.
+  const slow = setTimeout(() => {
     if (state !== 'starting') return
-    clearTimeout(watchdog); set('failed'); worker?.terminate()
+    set('slow')
+    q('[data-pg-note]').textContent = "PostgreSQL is still loading in this tab. Until it answers, these are Clpr's recorded times."
+    progress('PostgreSQL is still loading in this tab.')
+  }, 30_000)
+  const fail = (why: string) => {
+    if (!starting()) return
+    clearTimeout(slow); set('failed'); worker?.terminate()
     console.info('PostgreSQL is off:', why)
     sub.textContent = 'recorded run'
     showRecorded("PostgreSQL could not start in this tab, so these are Clpr's recorded times.", `${recordedStatus}. PostgreSQL could not start in this tab.`)
   }
   // Progress goes on the last line of the recorded session until the measured run replaces it.
   const progress = (text: string) => {
-    if (state !== 'starting') return
+    if (!starting()) return
     pre.lastChild?.remove(); pre.lastChild?.remove()
     line(pre, ['c', `-- ${recordedStatus}. ${text}`])
   }
@@ -138,9 +158,9 @@ export function startPsql(pane: HTMLElement) {
   let version = '', rows = 0, step = 1, seq: Run | null = null
   const tick = () => Number(step.toPrecision(1))
   const onEvent = (m: PgEvent) => {
-    if (state !== 'starting') return
+    if (!starting()) return
     switch (m.ev) {
-      case 'ready': clearTimeout(watchdog); version = m.version; step = m.step; progress(`PostgreSQL ${version} is up in ${fmt(Math.round(m.ms))} ms; inserting clips.`); break
+      case 'ready': clearTimeout(slow); version = m.version; step = m.step; progress(`PostgreSQL ${version} is up in ${fmt(Math.round(m.ms))} ms; inserting clips.`); break
       case 'seed': rows = m.rows; progress(`Inserted ${fmt(rows)} generated clips in ${fmt(Math.round(m.ms))} ms; timing the query.`); break
       case 'index': progress(`Built the GIN index in ${fmt(Math.round(m.ms))} ms; timing the query again.`); break
       case 'bench':
@@ -154,13 +174,19 @@ export function startPsql(pane: HTMLElement) {
         {
           const a = measured(seq.exec, step, seq.runs), b = measured(m.run.exec, step, m.run.runs)
           figures(seq.exec, m.run.exec, [a.text, b.text])
+          // Each figure is the middle of three batch means; keep all three, so a test can check the median.
+          for (const [k, r] of [['seq', seq], ['idx', m.run]] as const) {
+            const el = q(`[data-pg-${k}]`)
+            el.dataset.batches = (r.batches ?? []).join(' '); el.dataset.runs = String(r.runs ?? 1)
+          }
+          bench.dataset.step = String(step)
           // Two significant figures at most: the ratio of two means is rougher than either.
           const x = seq.exec / m.run.exec, sig = (v: number) => String(Number(v.toPrecision(2)))
           const ratio = a.rough || b.rough ? 'One time is too close to what this tab\'s clock can resolve, so there is no ratio.'
             : `The index answers ${x >= 1 ? `about ${sig(x)} times faster` : `about ${sig(1 / x)} times slower`} on the same ${fmt(rows)} rows.`
           q('[data-pg-note]').textContent = `${ratio} This tab's clock ticks every ${tick()} ms, so each batch repeats the query for 50 ms and takes the mean. Clpr's recorded demo: ${ms(recordedSeq.run.exec)} ms without the index at ${fmt(recordedSeq.rows)} rows, ${ms(recordedIdx.run.exec)} ms with it at ${fmt(recordedIdx.rows)}.`
         }
-        renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows }, `measured in this tab by PostgreSQL ${version}: the last run of a batch, on a clock that ticks every ${tick()} ms`)
+        renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows, step }, `measured in this tab by PostgreSQL ${version}: the plan of the median batch's last run, on a clock that ticks every ${tick()} ms`)
         // Nothing sends it more queries yet, so free the WebAssembly instance and the 50,008 rows.
         worker?.terminate(); worker = null
         break

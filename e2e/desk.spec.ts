@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
 import { test, expect } from './fixtures'
+import { measured } from '../src/desk/psql'
 
 // The desk shares boot.ts with the other pages, so a markup change on one page can break it
 // without a merge conflict. These run it the same way as / and /motion/.
@@ -79,10 +80,23 @@ test.describe('PostgreSQL on the desk', () => {
     await expect(page.locator('[data-pg-seq]')).toHaveText(/^\d+(\.\d{1,2})?$/)
     await expect(page.locator('[data-pg-idx]')).toHaveText(/^(< )?\d+(\.\d{1,2})?$/)
     await expect(page.locator('[data-pg-note]')).toContainText("This tab's clock ticks every")
+    // Each figure is the middle of its three batch means, shown at the clock's resolution.
+    const step = Number(await page.locator('.bench').getAttribute('data-step'))
+    const shown: Record<string, string> = {}
+    for (const kind of ['seq', 'idx']) {
+      const fig = page.locator(`[data-pg-${kind}]`)
+      const batches = (await fig.getAttribute('data-batches'))!.split(' ').map(Number)
+      expect(batches, `${kind} batch means`).toHaveLength(3)
+      const mid = [...batches].sort((a, b) => a - b)[1]
+      shown[kind] = measured(mid, step, Number(await fig.getAttribute('data-runs'))).text
+      await expect(fig).toHaveText(shown[kind])
+    }
     await expect(page.locator('[data-pg-seq-note]')).toHaveText('seq scan, 50,008 rows')
     await expect(page.locator('[data-pg-sub]')).toHaveText(/^live in this tab, PostgreSQL \d+\.\d+/)
     const out = page.locator('.psql-out')
-    await expect(out).toContainText('Execution Time:')
+    // The session's Execution Time is the same batch mean as the panel's, not one run's coarse reading.
+    await expect(out).toContainText(`Execution Time: ${shown.idx} ms (mean of `)
+    await expect(out).not.toContainText(/0\.000 ms|actual time=/)
     await expect(out).toContainText('idx_clips_search_vector')
     await expect(out).toContainText('speedrun world record attempt')
     await expect(out).toContainText('chat reacts to the world record')
@@ -91,6 +105,25 @@ test.describe('PostgreSQL on the desk', () => {
 
     const { violations } = await new AxeBuilder({ page }).include(psql).analyze()
     expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([])
+  })
+
+  test('keeps waiting for a slow download and still measures the search', async ({ page }) => {
+    // A slow link: PGlite's WebAssembly is still downloading when the pane stops saying "starting".
+    // The fake clock jumps the page past that mark; the worker keeps real time.
+    let release!: () => void
+    const held = new Promise<void>((r) => { release = r })
+    await page.route('**/pglite-*.wasm', async (route) => { await held; await route.continue() })
+    await page.clock.install()
+    await page.goto('/desk/')
+    await expect(page.locator(psql)).toHaveAttribute('data-pg', 'starting')
+    await page.clock.fastForward('02:05')
+    await expect(page.locator(psql)).toHaveAttribute('data-pg', 'slow')
+    await expect(page.locator('[data-pg-note]')).toHaveText("PostgreSQL is still loading in this tab. Until it answers, these are Clpr's recorded times.")
+    await expect(page.locator('[data-pg-seq]')).toHaveText('14.55')
+    await expect(page.locator('.psql-out')).toContainText('PostgreSQL is still loading in this tab.')
+    release()
+    await expect(page.locator(psql)).toHaveAttribute('data-pg', 'live', { timeout: 240_000 })
+    await expect(page.locator('[data-pg-cap]')).toHaveText('Measured in this tab, median of 3 batches')
   })
 
   /** The pane fell back to the recorded run and says PostgreSQL could not start. */
