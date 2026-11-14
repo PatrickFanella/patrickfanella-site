@@ -34,3 +34,44 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Browser tests
         run: npx playwright test
+
+  # The private preview at pf-preview.subcult.tv. Every green build of main is pushed as plain files
+  # to the `deploy` branch; a timer on the homelab checks that branch every minute and serves the
+  # newest build behind Authelia. The branch holds one commit, replaced on each deploy.
+  deploy:
+    name: Publish the preview build
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    concurrency:
+      group: deploy-preview
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Push the build to the deploy branch
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$SHA" > dist/REVISION
+          cd dist
+          git init -q -b deploy
+          git add -A
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -qm "Build of main $SHA"
+          auth=$(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)
+          git -c http.extraheader="AUTHORIZATION: basic $auth" push -qf "https://github.com/$REPO.git" deploy
