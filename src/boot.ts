@@ -39,7 +39,8 @@ export function boot(): Page {
 function wireThemeSwitch(ink: Ink | null) {
   const btn = document.querySelector<HTMLButtonElement>('[data-theme-switch]')
   if (!btn) return
-  const label = () => { const dark = currentTheme() === 'dark'; btn.setAttribute('aria-pressed', String(dark)); btn.querySelector('span')!.textContent = dark ? 'Dark' : 'Light' }
+  // The name is "Theme: Light" or "Theme: Dark", so it always contains the word on screen.
+  const label = () => { const dark = currentTheme() === 'dark'; btn.toggleAttribute('data-dark', dark); btn.querySelector('[data-theme-name]')!.textContent = dark ? 'Dark' : 'Light' }
   label()
   btn.addEventListener('click', () => {
     const next: Theme = currentTheme() === 'dark' ? 'light' : 'dark'
