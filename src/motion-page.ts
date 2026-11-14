@@ -24,7 +24,8 @@ document.addEventListener('click', (e) => {
   if (b) replay[b.dataset.replay!]?.()
 })
 
-document.fonts.load('900 100px "Big Shoulders Display Variable"').catch(() => []).then(() => document.fonts.ready).then(() => {
+const faces = document.fonts.load('900 100px "Big Shoulders Display Variable"').catch(() => []).then(() => document.fonts.ready)
+void Promise.all([faces, ink?.ready]).then(() => {
   layout()
   if (!ink) { void pourIn(letters, null); return }
   if (reduced()) { void pourIn(letters, ink); ink.preroll(240, 1500); return }
