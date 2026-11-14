@@ -15,11 +15,12 @@ export const COUNT_SQL = `SELECT count(*)::int AS n FROM clips c
 /** The search Clpr's demo recorded: "world record" as prefix terms. */
 export const QUERY = "'world':* & 'record':*"
 
-export interface Run { plan: string[]; exec: number }
+/** A plan and its Execution Time in ms. A measured run also says how many runs its time averages. */
+export interface Run { plan: string[]; exec: number; runs?: number }
 export interface Row { title: string; creator: string; votes: number }
 
 export type PgEvent =
-  | { ev: 'ready'; ms: number; version: string }
+  | { ev: 'ready'; ms: number; version: string; step: number }
   | { ev: 'seed'; ms: number; rows: number }
   | { ev: 'bench'; kind: 'seq'; run: Run }
   | { ev: 'index'; ms: number }

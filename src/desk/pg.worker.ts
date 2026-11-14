@@ -6,6 +6,12 @@ import { SEARCH_SQL, COUNT_SQL, QUERY, type Run, type PgEvent } from './pg-proto
 
 const post = (m: PgEvent) => postMessage(m)
 
+// When Emscripten cannot fetch or compile PGlite's WebAssembly, it rejects a promise inside
+// PGlite.create() that nothing awaits, so create() never settles and main().catch never runs. The
+// main thread's Worker.onerror does not see an unhandled rejection either, so report it from here.
+self.addEventListener('unhandledrejection', (e) => post({ ev: 'error', message: String(e.reason) }))
+self.addEventListener('error', (e) => post({ ev: 'error', message: e.message }))
+
 async function explain(pg: PGlite, tsq: string): Promise<Run> {
   const r = await pg.query<{ 'QUERY PLAN': string }>(`EXPLAIN (ANALYZE, COSTS OFF, BUFFERS OFF) ${SEARCH_SQL}`, [tsq])
   const plan = r.rows.map((x) => x['QUERY PLAN'])
@@ -13,10 +19,34 @@ async function explain(pg: PGlite, tsq: string): Promise<Run> {
   return { plan, exec: exec ? parseFloat(exec[1]) : NaN }
 }
 
-/** The middle of three runs, so one run slowed by a garbage collection or a cold cache does not set the figure. */
+/** How far apart this clock's readings are. Outside cross-origin isolation a worker's performance.now
+ *  is coarse (0.1 ms in Chromium, 1 ms in Firefox and Safari), and PostgreSQL reads its clock from it. */
+function clockStep(): number {
+  const steps: number[] = []
+  let last = performance.now()
+  const end = last + 50
+  while (steps.length < 9) {
+    const now = performance.now()
+    if (now > last) { steps.push(now - last); last = now }
+    if (now > end) break
+  }
+  return steps.length ? steps.sort((a, b) => a - b)[steps.length >> 1] : 1
+}
+
+/** One batch: the query repeated for at least 50 ms, and the mean of PostgreSQL's Execution Times.
+ *  Each time is rounded to the clock's step, but the runs start at arbitrary points between ticks, so
+ *  the rounding averages out and the mean is finer than one tick. */
+async function batch(pg: PGlite, tsq: string): Promise<Run> {
+  const start = performance.now()
+  let last: Run, sum = 0, n = 0
+  do { last = await explain(pg, tsq); sum += last.exec; n++ } while (performance.now() - start < 50)
+  return { plan: last.plan, exec: sum / n, runs: n }
+}
+
+/** The middle of three batches, so one batch slowed by a garbage collection or a cold cache does not set the figure. */
 async function median3(pg: PGlite, tsq: string): Promise<Run> {
   const runs: Run[] = []
-  for (let k = 0; k < 3; k++) runs.push(await explain(pg, tsq))
+  for (let k = 0; k < 3; k++) runs.push(await batch(pg, tsq))
   return runs.sort((a, b) => a.exec - b.exec)[1]
 }
 
@@ -24,7 +54,7 @@ async function main() {
   let t = performance.now()
   const pg = await PGlite.create()
   const version = (await pg.query<{ server_version: string }>('SHOW server_version')).rows[0].server_version
-  post({ ev: 'ready', ms: performance.now() - t, version })
+  post({ ev: 'ready', ms: performance.now() - t, version, step: clockStep() })
 
   // Clpr's search columns: the three moderation flags and the generated tsvector the GIN index covers.
   t = performance.now()

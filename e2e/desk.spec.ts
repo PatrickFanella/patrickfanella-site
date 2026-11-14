@@ -1,4 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
+import type { Page } from '@playwright/test'
 import { test, expect } from './fixtures'
 
 // The desk shares boot.ts with the other pages, so a markup change on one page can break it
@@ -35,11 +36,18 @@ test.describe('PostgreSQL on the desk', () => {
     let release!: () => void
     const held = new Promise<void>((r) => { release = r })
     await page.route('**/pg.worker-*.js', async (route) => { await held; await route.continue() })
-    // Count animation frames: the main thread stays free while the worker seeds and queries.
+    // Record the longest gap between animation frames. PostgreSQL on the main thread holds a frame
+    // for seconds while it seeds; in the worker the ink keeps drawing. The ink's own start-up also
+    // stalls for seconds under SwiftShader, so `quiet_` marks the last frame after a gap of 1 s or more.
     await page.addInitScript(() => {
-      const w = window as unknown as { frames_: number }
-      w.frames_ = 0
-      const tick = () => { w.frames_++; requestAnimationFrame(tick) }
+      const w = window as unknown as { gap_: number; quiet_: number; last_: number }
+      w.gap_ = 0; w.quiet_ = w.last_ = performance.now()
+      const tick = (now: number) => {
+        const d = now - w.last_; w.last_ = now
+        w.gap_ = Math.max(w.gap_, d)
+        if (d >= 1000) w.quiet_ = now
+        requestAnimationFrame(tick)
+      }
       requestAnimationFrame(tick)
     })
     await page.goto('/desk/')
@@ -49,15 +57,23 @@ test.describe('PostgreSQL on the desk', () => {
     await expect(page.locator('[data-pg-idx]')).toHaveText('3.50')
     await expect(page.locator('[data-pg-note]')).toContainText("Until it answers, these are Clpr's recorded times.")
 
-    const before = await page.evaluate(() => (window as unknown as { frames_: number }).frames_)
+    // Release the worker once the ink has drawn for 4 s without a 1 s stall, so start-up is not counted.
+    // Poll on a timer, not on frames, so a stall in progress counts too.
+    await page.waitForFunction(() => {
+      const w = window as unknown as { quiet_: number; last_: number }, now = performance.now()
+      return now - w.quiet_ >= 4000 && now - w.last_ < 1000
+    }, null, { timeout: 120_000, polling: 100 })
+    await page.evaluate(() => { (window as unknown as { gap_: number }).gap_ = 0 })
     release()
     await expect(page.locator(psql)).toHaveAttribute('data-pg', 'live', { timeout: 240_000 })
-    const during = await page.evaluate(() => (window as unknown as { frames_: number }).frames_) - before
-    expect(during).toBeGreaterThan(5)
+    const gap = await page.evaluate(() => (window as unknown as { gap_: number }).gap_)
+    expect(gap, 'longest frame gap while PostgreSQL started, in ms').toBeLessThan(1000)
 
-    await expect(page.locator('[data-pg-cap]')).toHaveText('Measured in this tab, median of 3 runs')
-    await expect(page.locator('[data-pg-seq]')).toHaveText(/^\d+\.\d\d$/)
-    await expect(page.locator('[data-pg-idx]')).toHaveText(/^\d+\.\d\d$/)
+    await expect(page.locator('[data-pg-cap]')).toHaveText('Measured in this tab, median of 3 batches')
+    // Decimals follow the clock: two in Chromium for a batch of several runs, fewer for a single slow run.
+    await expect(page.locator('[data-pg-seq]')).toHaveText(/^\d+(\.\d{1,2})?$/)
+    await expect(page.locator('[data-pg-idx]')).toHaveText(/^(< )?\d+(\.\d{1,2})?$/)
+    await expect(page.locator('[data-pg-note]')).toContainText("This tab's clock ticks every")
     await expect(page.locator('[data-pg-seq-note]')).toHaveText('seq scan, 50,008 rows')
     await expect(page.locator('[data-pg-sub]')).toHaveText(/^live in this tab, PostgreSQL \d+\.\d+/)
     const out = page.locator('.psql-out')
@@ -72,10 +88,9 @@ test.describe('PostgreSQL on the desk', () => {
     expect(violations.map((v) => `${v.id}: ${v.help}`)).toEqual([])
   })
 
-  test('keeps the recorded run when the worker cannot start', async ({ page, errors }) => {
-    await page.route('**/pg.worker-*.js', (route) => route.abort())
-    await page.goto('/desk/')
-    await expect(page.locator(psql)).toHaveAttribute('data-pg', 'failed')
+  /** The pane fell back to the recorded run and says PostgreSQL could not start. */
+  async function fellBack(page: Page) {
+    await expect(page.locator(psql)).toHaveAttribute('data-pg', 'failed', { timeout: 120_000 })
     await expect(page.locator('[data-pg-cap]')).toHaveText("Recorded on Clpr's demo, 14 Nov 2026")
     await expect(page.locator('[data-pg-seq]')).toHaveText('14.55')
     await expect(page.locator('[data-pg-seq-note]')).toHaveText('seq scan, 30,008 rows')
@@ -83,7 +98,32 @@ test.describe('PostgreSQL on the desk', () => {
     await expect(page.locator('[data-pg-note]')).toHaveText("PostgreSQL could not start in this tab, so these are Clpr's recorded times.")
     await expect(page.locator('.psql-out')).toContainText('Execution Time: 3.495 ms')
     await expect(page.locator('.psql-out')).toContainText('PostgreSQL could not start in this tab.')
+  }
+
+  test('keeps the recorded run when the worker cannot start', async ({ page, errors }) => {
+    await page.route('**/pg.worker-*.js', (route) => route.abort())
+    await page.goto('/desk/')
+    await fellBack(page)
     // The blocked request is the point of this test; any other console error still fails it.
     errors.splice(0, errors.length, ...errors.filter((e) => !/Failed to load resource/.test(e)))
+  })
+
+  // These two fail inside the worker, where Emscripten's rejection never reaches Worker.onerror.
+  test("keeps the recorded run when PGlite's WebAssembly is missing", async ({ page, errors }) => {
+    await page.route('**/pglite-*.wasm', (route) => route.fulfill({ status: 404, body: 'not found' }))
+    await page.goto('/desk/')
+    await fellBack(page)
+    errors.splice(0, errors.length, ...errors.filter((e) => !/Failed to load resource|WebAssembly/.test(e)))
+  })
+
+  test("keeps the recorded run under a policy without 'wasm-unsafe-eval'", async ({ page, errors }) => {
+    // The production policy the preview deploy has to avoid: scripts and workers from this origin only.
+    await page.route('**/*', async (route) => {
+      const res = await route.fetch()
+      await route.fulfill({ response: res, headers: { ...res.headers(), 'content-security-policy': "script-src 'self'; worker-src 'self'" } })
+    })
+    await page.goto('/desk/')
+    await fellBack(page)
+    errors.splice(0, errors.length, ...errors.filter((e) => !/Content Security Policy|WebAssembly|wasm/i.test(e)))
   })
 })

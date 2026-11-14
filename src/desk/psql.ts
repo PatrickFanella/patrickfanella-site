@@ -6,6 +6,15 @@ import { RECORDED_ON, recordedIdx, recordedSeq } from './recorded'
 
 const fmt = (n: number) => n.toLocaleString('en-US')
 const ms = (n: number) => n.toFixed(2)
+/** A measured time with only the decimals the clock supports. Each reading is off by up to one tick,
+ *  so a mean of n readings `step` apart is good to about step / 2√n at worst. Below that bound the
+ *  figure is shown as "< bound", not as a number. */
+const measured = (exec: number, step: number, runs = 1) => {
+  const bound = step / (2 * Math.sqrt(runs))
+  const dp = Math.min(2, Math.max(0, Math.ceil(-Math.log10(bound))))
+  // A ratio needs both times well clear of the bound: at five times it, a time is good to about 20%.
+  return { text: exec < bound ? `< ${bound.toFixed(dp)}` : exec.toFixed(dp), below: exec < bound, rough: exec < 5 * bound }
+}
 const scanName = (r: Run) => /Seq Scan/.test(r.plan.join('\n')) ? 'seq scan' : /Index Scan/.test(r.plan.join('\n')) ? 'index scan' : 'scan'
 
 type Part = string | [cls: string, text: string]
@@ -79,7 +88,8 @@ export function startPsql(pane: HTMLElement) {
   const body = pane.querySelector<HTMLElement>('.pbody')!
   const sub = pane.querySelector<HTMLElement>('[data-pg-sub]')!
   const pre = document.createElement('pre')
-  pre.className = 'psql-out'; pre.tabIndex = 0; pre.setAttribute('aria-label', "psql session running Clpr's search query")
+  // A named, focusable region, so keyboard users can scroll it; aria-label is not allowed on a bare pre.
+  pre.className = 'psql-out'; pre.tabIndex = 0; pre.setAttribute('role', 'region'); pre.setAttribute('aria-label', "psql session running Clpr's search query")
   const bench = document.createElement('div')
   bench.className = 'bench'; bench.setAttribute('role', 'group'); bench.setAttribute('aria-label', 'The same search with and without the GIN index')
   bench.innerHTML = BENCH
@@ -87,8 +97,8 @@ export function startPsql(pane: HTMLElement) {
   const q = <T extends HTMLElement>(s: string) => bench.querySelector<T>(s)!
   const bars = bench.querySelectorAll<HTMLElement>('.bbar i')
 
-  const figures = (seq: number, idx: number) => {
-    q('[data-pg-seq]').textContent = ms(seq); q('[data-pg-idx]').textContent = ms(idx)
+  const figures = (seq: number, idx: number, text = [ms(seq), ms(idx)]) => {
+    q('[data-pg-seq]').textContent = text[0]; q('[data-pg-idx]').textContent = text[1]
     const top = Math.max(seq, idx)
     bars[0].style.width = `${Math.max(1.5, seq / top * 100)}%`; bars[1].style.width = `${Math.max(1.5, idx / top * 100)}%`
   }
@@ -109,9 +119,11 @@ export function startPsql(pane: HTMLElement) {
   showRecorded("PostgreSQL is starting in this tab. Until it answers, these are Clpr's recorded times.", `${recordedStatus}. Starting PostgreSQL in this tab.`)
 
   let worker: Worker | null = null
+  // A fetch of PGlite's files that hangs never errors, so give up if PostgreSQL has not answered by then.
+  const watchdog = setTimeout(() => fail('PostgreSQL did not answer within 120 s'), 120_000)
   const fail = (why: string) => {
     if (state !== 'starting') return
-    set('failed'); worker?.terminate()
+    clearTimeout(watchdog); set('failed'); worker?.terminate()
     console.info('PostgreSQL is off:', why)
     sub.textContent = 'recorded run'
     showRecorded("PostgreSQL could not start in this tab, so these are Clpr's recorded times.", `${recordedStatus}. PostgreSQL could not start in this tab.`)
@@ -123,29 +135,34 @@ export function startPsql(pane: HTMLElement) {
     line(pre, ['c', `-- ${recordedStatus}. ${text}`])
   }
 
-  let version = '', rows = 0, seq: Run | null = null
+  let version = '', rows = 0, step = 1, seq: Run | null = null
+  const tick = () => Number(step.toPrecision(1))
   const onEvent = (m: PgEvent) => {
     if (state !== 'starting') return
     switch (m.ev) {
-      case 'ready': version = m.version; progress(`PostgreSQL ${version} is up in ${fmt(Math.round(m.ms))} ms; inserting clips.`); break
+      case 'ready': clearTimeout(watchdog); version = m.version; step = m.step; progress(`PostgreSQL ${version} is up in ${fmt(Math.round(m.ms))} ms; inserting clips.`); break
       case 'seed': rows = m.rows; progress(`Inserted ${fmt(rows)} generated clips in ${fmt(Math.round(m.ms))} ms; timing the query.`); break
       case 'index': progress(`Built the GIN index in ${fmt(Math.round(m.ms))} ms; timing the query again.`); break
       case 'bench':
-        if (m.kind === 'seq') { seq = m.run; progress(`Without the index: ${ms(m.run.exec)} ms. Building the GIN index.`); break }
+        if (m.kind === 'seq') { seq = m.run; progress(`Without the index: ${measured(m.run.exec, step, m.run.runs).text} ms. Building the GIN index.`); break }
         if (!seq) break
         set('live')
         sub.textContent = `live in this tab, PostgreSQL ${version}`
-        q('[data-pg-cap]').textContent = 'Measured in this tab, median of 3 runs'
+        q('[data-pg-cap]').textContent = 'Measured in this tab, median of 3 batches'
         q('[data-pg-seq-note]').textContent = `${scanName(seq)}, ${fmt(rows)} rows`
         q('[data-pg-idx-note]').textContent = `${scanName(m.run)}, ${fmt(rows)} rows`
-        figures(seq.exec, m.run.exec)
         {
-          const x = seq.exec / m.run.exec
-          const faster = x >= 1 ? `The index answers ${x >= 10 ? Math.round(x) : x.toFixed(1)} times faster` : `The index answers ${(1 / x).toFixed(1)} times slower`
-          q('[data-pg-note]').textContent = `${faster} on the same ${fmt(rows)} rows. Clpr's recorded demo: ${ms(recordedSeq.run.exec)} ms without the index at ${fmt(recordedSeq.rows)} rows, ${ms(recordedIdx.run.exec)} ms with it at ${fmt(recordedIdx.rows)}.`
+          const a = measured(seq.exec, step, seq.runs), b = measured(m.run.exec, step, m.run.runs)
+          figures(seq.exec, m.run.exec, [a.text, b.text])
+          // Two significant figures at most: the ratio of two means is rougher than either.
+          const x = seq.exec / m.run.exec, sig = (v: number) => String(Number(v.toPrecision(2)))
+          const ratio = a.rough || b.rough ? 'One time is too close to what this tab\'s clock can resolve, so there is no ratio.'
+            : `The index answers ${x >= 1 ? `about ${sig(x)} times faster` : `about ${sig(1 / x)} times slower`} on the same ${fmt(rows)} rows.`
+          q('[data-pg-note]').textContent = `${ratio} This tab's clock ticks every ${tick()} ms, so each batch repeats the query for 50 ms and takes the mean. Clpr's recorded demo: ${ms(recordedSeq.run.exec)} ms without the index at ${fmt(recordedSeq.rows)} rows, ${ms(recordedIdx.run.exec)} ms with it at ${fmt(recordedIdx.rows)}.`
         }
-        // The worker stays up with its database, for the searches the shell will send it.
-        renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows }, `measured in this tab by PostgreSQL ${version}`)
+        renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows }, `measured in this tab by PostgreSQL ${version}: the last run of a batch, on a clock that ticks every ${tick()} ms`)
+        // Nothing sends it more queries yet, so free the WebAssembly instance and the 50,008 rows.
+        worker?.terminate(); worker = null
         break
       case 'error': fail(m.message); break
     }
