@@ -24,6 +24,7 @@ export function decodeWire(bytes: Uint8Array, direction: 'sent' | 'received'): W
     let at = offset + header
     const need = (size: number) => { if (size < 0 || at + size > end) throw new Error('Incomplete protocol field') }
     const u16 = () => { need(2); const n = view.getUint16(at); at += 2; return n }
+    const i16 = () => { need(2); const n = view.getInt16(at); at += 2; return n }
     const i32 = () => { need(4); const n = view.getInt32(at); at += 4; return n }
     const string = () => {
       const start = at
@@ -60,7 +61,7 @@ export function decodeWire(bytes: Uint8Array, direction: 'sent' | 'received'): W
       else if (type === 'Z') { need(1); message.detail = `transaction status ${String.fromCharCode(bytes[at])}` }
       else if (type === 'T') {
         const columns = Array.from({ length: u16() }, () => {
-          const name = string(), table = i32(), column = u16(), oid = i32(), size = u16(), modifier = i32(), format = u16()
+          const name = string(), table = i32(), column = u16(), oid = i32(), size = i16(), modifier = i32(), format = u16()
           return `${name}: OID ${oid}, ${format === 1 ? 'binary' : 'text'} (table ${table}, column ${column}, size ${size}, modifier ${modifier})`
         })
         message.detail = columns.join('; ')

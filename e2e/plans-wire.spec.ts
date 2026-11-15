@@ -29,6 +29,18 @@ test('wire decoding respects frame boundaries, direction, nulls, UTF-8 bytes and
   expect(() => decodeWire(new Uint8Array([...frame('Q', [65]), ...frame('S', [])]), 'sent')).toThrow('Incomplete protocol field')
 })
 
+test('RowDescription preserves signed type sizes and unsigned format codes', () => {
+  const column = (name: string, oid: number, size: number, format: number) => [
+    ...bytes(name), ...int32(0), ...int16(0), ...int32(oid), ...int16(size), ...int32(-1), ...int16(format),
+  ]
+  const message = new Uint8Array(frame('T', [...int16(2), ...column('title', 1043, -1, 0), ...column('votes', 23, 4, 1)]))
+  const [decoded] = decodeWire(message, 'received')
+  expect(decoded.name).toBe('RowDescription')
+  expect(decoded.bytes).toBe(message.length)
+  expect(decoded.detail).toContain('title: OID 1043, text (table 0, column 0, size -1, modifier -1)')
+  expect(decoded.detail).toContain('votes: OID 23, binary (table 0, column 0, size 4, modifier -1)')
+})
+
 test('capture records exact reply byte counts and server parameter OIDs for reused statements', async () => {
   let response = new Uint8Array([...frame('1', []), ...frame('t', [...int16(1), ...int32(23)]), ...frame('n', []), ...frame('Z', [73])])
   const capture = captureDatabase({ execProtocolRaw: async () => response } as unknown as Pick<PGlite, 'execProtocolRaw'>)
@@ -76,6 +88,8 @@ test('live wire and plan panels capture traffic, grow to 50,008 clips, and shrin
     await expect(wire).toContainText(`${name} (`)
   }
   await expect(wire).toContainText('bytes sent')
+  await expect(wire).toContainText('size -1')
+  await expect(wire).not.toContainText('size 65535')
   await wire.locator('li').filter({ hasText: /^Parse \(P\)/ }).first().getByText('Raw message hex', { exact: true }).click()
   await expect(wire.locator('details[open] pre')).toContainText('50 00')
   const { violations: wireViolations } = await new AxeBuilder({ page }).include('section.psql').analyze()
