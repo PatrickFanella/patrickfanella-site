@@ -10,7 +10,7 @@ A portfolio that shows the work running instead of describing it. A 30-second re
 
 - The landing page: the name pours a live fluid simulation (WebGL2, stable fluids) as each letter lands, with a short plan of what is coming.
 - The motion set (`/motion/`): pour-in, bleed, splash, stir, rise, unfold, hand-over, theme switch and focus, each with a reduced-motion version.
-- Light (ink on paper) and dark (ink that glows) themes, phone layouts, and a static fallback without WebGL2.
+- Light and dark themes with the same Ember smoke pigments, phone layouts, and a matching static fallback without WebGL2.
 
 ## What is coming, in order
 

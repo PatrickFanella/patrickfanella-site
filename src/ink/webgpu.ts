@@ -111,7 +111,7 @@ export async function createWebGPU(canvas: HTMLCanvasElement, soft: boolean, onL
 
   let ctx: GPUCanvasContext | null = null
   function paint(view: GPUTextureView, l: Look) {
-    sd.set([...l.ground, 0, ...l.a, 0, ...l.b, 0, ...l.c, 0, 1 / dyeW, 1 / dyeH, l.dark, l.gain, l.toe])
+    sd.set([...l.ground, 0, ...l.a, 0, ...l.b, 0, ...l.c, 0, 1 / dyeW, 1 / dyeH, l.gain, l.toe])
     device.queue.writeBuffer(sbuf, 0, sd)
     const key = 'show:' + dye.r.id
     let g = groups.get(key)

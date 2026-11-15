@@ -1,5 +1,5 @@
 /* Layout: one ink tank fixed behind the whole page; the name pours into it, and
-   everything else floats over it on panels. Light is ink on paper, dark is ink that glows. */
+   everything else floats over it on panels. Both themes use the same Ember pigments. */
 :root {
   --ground: #e9eff2;
   --raise: rgb(248 250 251 / 0.84);
@@ -12,6 +12,8 @@
   --gold: #8a6500;
   --focus: #2353d6;
   --name: #0e1422;
+  /* Ember smoke and its static fallback: identical pigments in both themes. */
+  --ink-a: #ca5148; --ink-b: #d29528; --ink-c: #8055aa;
 
   /* The desk: translucent bottle-green panes over the ink. One accent per pane, in pane order.
      Text and accents pass 4.5:1 on a pane even with pure black or white ink behind it. */
@@ -82,9 +84,9 @@ p { margin: 0; }
 .no-ink #ink { display: none; }
 .no-ink body {
   background:
-    radial-gradient(60% 50% at 20% 70%, color-mix(in oklab, var(--cobalt) 35%, transparent), transparent 70%),
-    radial-gradient(50% 45% at 75% 60%, color-mix(in oklab, var(--orange) 30%, transparent), transparent 70%),
-    radial-gradient(40% 35% at 55% 85%, color-mix(in oklab, var(--gold) 30%, transparent), transparent 70%), var(--ground);
+    radial-gradient(60% 50% at 20% 70%, color-mix(in oklab, var(--ink-a) 35%, transparent), transparent 70%),
+    radial-gradient(50% 45% at 75% 60%, color-mix(in oklab, var(--ink-b) 30%, transparent), transparent 70%),
+    radial-gradient(40% 35% at 55% 85%, color-mix(in oklab, var(--ink-c) 30%, transparent), transparent 70%), var(--ground);
 }
 .bar { z-index: 3; }
 main, .foot { position: relative; z-index: 1; }

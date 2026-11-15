@@ -127,7 +127,7 @@ export function createWebGL(canvas: HTMLCanvasElement, onLost: () => void): Back
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.FLOAT, texel)
     },
     draw(l: Look) {
-      run('show', { uDye: dye.r, uDT: [1 / dyeW, 1 / dyeH], uGround: l.ground, uA: l.a, uB: l.b, uC: l.c, uDark: l.dark, uGain: l.gain, uToe: l.toe }, null)
+      run('show', { uDye: dye.r, uDT: [1 / dyeW, 1 / dyeH], uGround: l.ground, uA: l.a, uB: l.b, uC: l.c, uGain: l.gain, uToe: l.toe }, null)
     },
   }
 }
