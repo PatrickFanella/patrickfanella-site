@@ -99,7 +99,7 @@ const BENCH = `<p class="bcap" data-pg-cap></p>
 export interface SearchResult { total: number; time: string; top?: string; timing?: string }
 export interface Psql { search(words: string): Promise<SearchResult> }
 
-export function startPsql(pane: HTMLElement): Psql {
+export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => void = () => {}): Psql {
   const body = pane.querySelector<HTMLElement>('.pbody')!
   const sub = pane.querySelector<HTMLElement>('[data-pg-sub]')!
   const pre = document.createElement('pre')
@@ -157,6 +157,7 @@ export function startPsql(pane: HTMLElement): Psql {
     clearTimeout(slow); set('failed'); worker?.terminate(); worker = null
     for (const request of pending.values()) request.reject(new Error('PostgreSQL is unavailable in this tab.'))
     pending.clear()
+    onProgress({ ev: 'error', message: why })
     console.info('PostgreSQL is off:', why)
     sub.textContent = 'recorded run'
     showRecorded("PostgreSQL could not start in this tab, so these are Clpr's recorded times.", `${recordedStatus}. PostgreSQL could not start in this tab.`)
@@ -173,6 +174,7 @@ export function startPsql(pane: HTMLElement): Psql {
   let version = '', rows = 0, step = 1, seq: Run | null = null
   const tick = () => Number(step.toPrecision(1))
   const onEvent = (m: PgEvent) => {
+    onProgress(m)
     if (m.ev === 'search' || m.ev === 'search-error') {
       const request = pending.get(m.id)
       if (!request) return
@@ -241,9 +243,10 @@ export function startPsql(pane: HTMLElement): Psql {
     } catch (err) { fail(String(err)) }
   }
   const clpr = startClpr(pane, { pre, bench, sub, recorded, startBenchmark, stopBenchmark })
+  const statsTimer = setInterval(() => { if (state === 'live') worker?.postMessage({ ev: 'stats' }) }, 1000)
   addEventListener('pagehide', (event) => {
     if (event.persisted) return
-    clearTimeout(slow); worker?.terminate(); worker = null
+    clearTimeout(slow); clearInterval(statsTimer); worker?.terminate(); worker = null
     for (const request of pending.values()) request.reject(new Error('The desk was closed.'))
     pending.clear()
   }, { once: true })

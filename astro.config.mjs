@@ -42,6 +42,10 @@ const CSP = "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src '
 // Static output: /, /desk/ and /motion/ as directories. No client router and no UI framework;
 // the pages hand over with native cross-document view transitions (site.css).
 export default defineConfig({
+  redirects: {
+    '/projects/transcript-create': '/projects/rekolekt/',
+    '/projects/discord-spywatcher': '/projects/backline/',
+  },
   build: { format: 'directory' },
   // Keep the HTML as written, so the built markup matches the source.
   compressHTML: false,

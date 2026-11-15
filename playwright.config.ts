@@ -20,6 +20,10 @@ export default defineConfig({
       // Hosted runners have no GPU. SwiftShader runs WebGL2 on the CPU, the same on every machine.
       launchOptions: { args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] },
     },
+  }, {
+    name: 'firefox-case-study',
+    testMatch: ['case-study.spec.ts', 'clpr-study.spec.ts'],
+    use: { ...devices['Desktop Firefox'], reducedMotion: 'reduce' },
   }],
   webServer: {
     // --ignore-lock keeps the server in the foreground. Without it, astro preview detaches into the

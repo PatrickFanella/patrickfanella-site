@@ -1,0 +1,23 @@
+---
+import ContentPage from '../../layouts/ContentPage.astro'
+import catalog from '../../content/portfolio.json'
+import provenance from '../../content/portfolio-provenance.json'
+const groups = [
+  { title: 'Selected work', projects: catalog.projects.filter(project => project.selected || project.classification === 'flagship') },
+  { title: 'Earlier work and experiments', projects: catalog.projects.filter(project => !project.selected && project.classification !== 'flagship') },
+]
+---
+<ContentPage title="Projects | Patrick Fanella" description="Applications, archives, research and tools by Patrick Fanella, with their technology and delivery status.">
+  <h1>Projects</h1>
+  <p class="lead">{catalog.projects.length} projects from the portfolio catalog. Delivery status comes from the source record; previews and work in development are labeled as such.</p>
+  {groups.map(group => <section aria-label={group.title}>
+    <h2 class="group-title">{group.title}</h2>
+    <ul class="project-list">{group.projects.map(project => <li><article id={project.slug}>
+      <h3><a href={`/projects/${project.slug}/`} data-project-name={project.slug}>{project.title}</a></h3><p>{project.summary}</p>
+      <dl><div><dt>Status</dt><dd>{project.deliveryStatus ?? 'Status not stated in source'}</dd></div>
+        <div><dt>Stack</dt><dd>{project.stack.join(', ') || 'Not specified in source'}</dd></div></dl>
+      {project.liveUrl && <a href={project.liveUrl}>Visit {project.title}</a>}
+    </article></li>)}</ul>
+  </section>)}
+  <p class="source-note">Catalog from the pinned portfolio source, commit <code>{provenance.commit.slice(0, 7)}</code>.</p>
+</ContentPage>
