@@ -161,3 +161,10 @@
 .shell-output > div { margin-top: 14px; }
 .shell-command { color: var(--desk-dim); }
 .brow[hidden] { display: none; }
+.bench[hidden] { display: none; }
+.clpr-controls { grid-column: 1 / -1; display: grid; gap: 8px; font: 400 0.75rem/1.5 var(--mono); overflow-wrap: anywhere; }
+.clpr-controls p { color: var(--desk-dim); }
+.clpr-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.clpr-buttons button { padding: 8px; font: inherit; color: var(--desk-text); border: 1px solid var(--desk-line); background: var(--desk-pane); cursor: pointer; }
+.clpr-buttons button:disabled { opacity: 0.6; cursor: default; }
+.clpr-buttons button:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }

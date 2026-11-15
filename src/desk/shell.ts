@@ -33,7 +33,7 @@ export function startShell(form: HTMLFormElement, psql: Psql) {
     const [verb, ...args] = command.split(/\s+/)
     try {
       switch (verb.toLowerCase()) {
-        case 'help': say('help · projects · resume · contact · search <words>. Search uses prefix terms joined with AND against generated clips in this tab.'); break
+        case 'help': say('help · projects · resume · contact · search <words>. Start Clpr live mode in the psql pane to run its Go search handler on eight fixture clips. The SQL benchmark is a separate mode with generated clips.'); break
         case 'projects':
           say('Clpr: Twitch clip search and moderation. HasanAra: searchable broadcast archive. Undertow: browser music-video editor (live beta).')
           link('Browse all projects and delivery statuses', 'https://patrickfanella.co/projects'); break
@@ -42,8 +42,8 @@ export function startShell(form: HTMLFormElement, psql: Psql) {
         case 'search': {
           if (!args.length) { say('Usage: search <words>, for example search world record.'); break }
           const result = await psql.search(args.join(' '))
-          say(`${result.total.toLocaleString('en-US')} matches · ${result.time} ms (mean query time). ${result.top ? `Top hit: ${result.top}` : 'No matching clips.'}`)
-          link('Query, plan and results in the psql pane', '#p3')
+          say(`${result.total.toLocaleString('en-US')} matches · ${result.time} ms (${result.timing ?? 'mean query time'}). ${result.top ? `Top hit: ${result.top}` : 'No matching clips.'}`)
+          link('Search output in the psql pane', '#p3')
           break
         }
         default: say('Unknown command. Type help for the command list.')
