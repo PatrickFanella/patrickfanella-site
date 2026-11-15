@@ -30,6 +30,8 @@ jobs:
         run: npm ci
       - name: Typecheck and build
         run: npm run build
+      - name: Check project route coverage
+        run: node scripts/check-project-paths.mjs
       - name: Install browsers
         run: npx playwright install --with-deps chromium firefox
       - name: Browser tests

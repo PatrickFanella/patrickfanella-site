@@ -1,5 +1,6 @@
 import { boot } from './boot'
 import { reduced } from './motion/motion'
+import './project-transition'
 
 const { ink } = boot()
 void ink?.ready.then(() => {
