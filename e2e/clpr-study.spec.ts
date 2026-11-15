@@ -6,13 +6,14 @@ test.use({ reducedMotion: 'reduce' })
 const source = (await readFile(new URL('../src/content/case-studies/search_repository.go', import.meta.url), 'utf8')).split('\n')
 const pin = '1eab1a62535e562e327fbf4b197c094e81abe619'
 
-test('ranking study cites the exact source and separates costs and proposals without scripts', async ({ browser }) => {
+test('ranking study cites the exact source and explains decisions and tradeoffs without scripts', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
   await page.goto('/case-studies/clpr-search/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('How Clpr ranks and pages a clip search')
-  await expect(page.locator('.review-status')).toContainText('Draft for Patrick’s review')
-  await expect(page.locator('.review-status')).toContainText('not latency measurements')
+  await expect(page.locator('.study-scope')).toContainText('A walkthrough of the choices in this implementation')
+  await expect(page.locator('.study-scope')).toContainText('not latency measurements')
+  await expect(page.locator('main')).not.toContainText('Draft for Patrick')
   for (let number = 174; number <= 221; number++) {
     const line = page.locator(`.line[data-line="${number}"]`)
     await expect(line.locator('.line-text')).toHaveText(source[number - 1])
@@ -23,8 +24,8 @@ test('ranking study cites the exact source and separates costs and proposals wit
   for (const [index, [start, end]] of ranges.entries()) {
     const note = page.locator('.note').nth(index)
     await expect(note.locator('.line-label a')).toHaveAttribute('href', new RegExp(`/blob/${pin}/.*#L${start}-L${end}$`))
-    await expect(note).toContainText('Cost.')
-    await expect(note).toContainText('What I would change.')
+    await expect(note).toContainText('Tradeoff.')
+    await expect(note).toContainText('When I would revisit it.')
   }
   await context.close()
 })

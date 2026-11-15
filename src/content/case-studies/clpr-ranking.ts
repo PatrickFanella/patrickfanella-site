@@ -1,36 +1,36 @@
 import { clprSearch, type CaseStudy } from './clpr-search'
 
-// Proposed editorial judgments. Patrick must approve the rendered page before publication (#22).
+// Owner direction: explain the choices and why they fit, with conditional alternatives (#22).
 export const clprRanking: CaseStudy = {
   ...clprSearch,
   title: 'How Clpr ranks and pages a clip search',
-  description: 'The PostgreSQL search path, read through four choices: ranking, exact counts, transcript snippets and OFFSET paging.',
+  description: 'Four decisions behind Clpr’s PostgreSQL search: relevance before popularity, exact totals, phrase-specific snippets and numbered pages.',
   excerptStart: 174,
   excerptEnd: 221,
   notes: [
     {
       id: 'ranking', label: 'Rank first, then votes and recency', startLine: 174, endLine: 180,
-      body: 'Relevance sorting uses ts_rank only when the parsed query is nonempty. Equal ranks fall through to vote score and creation time. Popular sorting starts with votes; the default is newest first.',
-      cost: 'The relevance branch asks PostgreSQL to order matches by a computed rank. These lines establish the sort policy, not its speed or whether readers prefer its results. None of the branches includes a unique final tie-breaker.',
-      change: 'I would add the clip ID as the final sort key and test tied ranks, votes and timestamps. Then I would evaluate ranking changes against a small set of queries with expected results, rather than treating a faster query as better relevance.',
+      body: 'For relevance sorting, the query puts the text match first, then uses votes and recency to order equal ranks. That gives each signal a clear job: matching the query takes priority over popularity. Keeping the ordering in SQL lets PostgreSQL select the requested page in that order. Popular and newest-first sorts remain explicit options for a different browsing intent.',
+      cost: 'This chooses a defined ordering of signals instead of blending them with adjustable weights. PostgreSQL must compute the rank for relevance sorting, and clips equal on all listed keys have no specified final order.',
+      change: 'If the product needs a different balance between relevance and popularity, I would compare candidate rankings on queries with expected results before changing the policy. If stable ties become part of the pagination contract, I would add the clip ID as the final key.',
     },
     {
-      id: 'count', label: 'Wait for an exact count before fetching a page', startLine: 182, endLine: 188,
-      body: 'The repository executes COUNT(*) with the assembled filters and waits for that result before it submits the page query below. A count error ends the search here.',
-      cost: 'The first page depends on completing a separate exact-total query. The source proves that sequencing; it does not tell us what fraction of request time the count consumes, and a count and a row query can use different plans.',
-      change: 'I would measure count and page retrieval separately. If the interface only needs a next-page control, I would fetch one extra row and make exact totals optional, explicitly changing the response contract rather than presenting an estimate as exact.',
+      id: 'count', label: 'Give the page an exact filtered total', startLine: 182, endLine: 188,
+      body: 'The count query reuses the assembled filters, so its total describes the same selection as the page query. An exact total supports numbered-page navigation: the reader can know how much matched, rather than only whether another page exists. Keeping the count separate also makes that part of the response explicit.',
+      cost: 'The repository waits for COUNT(*) before fetching the page, so the response includes a separate database operation. That is the work accepted for an exact total; its latency needs to be measured separately from fetching the rows.',
+      change: 'If navigation changes to “load more,” the requirement changes with it. I would then consider fetching one extra row to report whether more results exist, while making the exact count optional. That would be a different response contract, not a drop-in replacement for numbered pages.',
     },
     {
       id: 'snippets', label: 'Build transcript snippets only for a phrase search', startLine: 190, endLine: 198,
-      body: 'Without a transcript phrase, the selected snippet column is NULL. With one, a correlated transcript lookup calls ts_headline with phraseto_tsquery. Bound options mark matches with U+E000 and U+E001 and request an 8-to-24-word excerpt.',
-      cost: 'The phrase path asks for transcript lookup and headline generation in the result projection. The non-phrase path avoids that expression. These lines do not measure its cost, guarantee the displayed excerpt length, or show how the client renders the markers.',
-      change: 'I would measure snippet work separately from matching, then test a missing transcript, a long transcript and text containing the marker characters. I would keep the markers as data and verify safe client rendering before changing the excerpt format.',
+      body: 'A transcript phrase calls for evidence of where it matched. This branch uses PostgreSQL’s phrase query and headline functions to select that context, with marker characters around matching words and a requested 8-to-24-word excerpt. Searches without a transcript phrase select NULL instead, keeping snippet generation tied to the feature that needs it.',
+      cost: 'Phrase searches include a transcript lookup and headline generation in the result projection. That adds work where the excerpt is useful, while the non-phrase path avoids the expression. The marker format also gives the client a rendering contract to handle.',
+      change: 'If the product needs several excerpts or richer transcript navigation, I would compare that requirement with the current single-snippet projection. I would measure headline generation before moving it elsewhere, and include checks for long transcripts, missing text and marker handling.',
     },
     {
-      id: 'paging', label: 'Use page numbers to calculate an OFFSET', startLine: 200, endLine: 221,
-      body: 'The offset is (page − 1) × limit. The query reuses the filters and sort, binds limit and offset after the other arguments, and selects the clip fields plus the optional transcript snippet.',
-      cost: 'The SQL requests that many ordered rows be skipped before the page is returned; deeper pages request larger skips. There is no cursor or snapshot shared with the earlier count in this excerpt. Source inspection cannot quantify deep-page latency or promise a stable view while clips change.',
-      change: 'I would first add the unique tie-breaker above, then compare shallow and deep pages on representative data. If deep paging matters, I would prototype a cursor containing the active sort values and ID. Relevance cursors would also need to retain the query and filters; they would not preserve arbitrary page-number jumps.',
+      id: 'paging', label: 'Make numbered pages map directly to the query', startLine: 200, endLine: 221,
+      body: 'LIMIT and OFFSET give a page number a direct meaning: skip (page − 1) × limit rows, then return the requested page. A reader can jump to a numbered page without first obtaining a cursor from the previous one. The query keeps the existing filters and sort and binds the pagination values alongside the other arguments.',
+      cost: 'Larger page numbers request larger skips. The interface gets direct page access in exchange for that work; the query does not provide a frozen view of results while clips change. Whether deep pages are expensive enough to matter is a measurement question.',
+      change: 'For a sequential feed where deep traversal matters more than page-number jumps, I would evaluate cursor paging. That design would carry the active sort values, query, filters and a unique tie-breaker. I would compare representative shallow and deep requests before trading away direct page access.',
     },
   ],
 }
