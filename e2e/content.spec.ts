@@ -24,3 +24,12 @@ for (const colorScheme of ['light', 'dark'] as const) test(`projects fit mobile 
   expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
+
+test('content navigation points only to published routes', async ({ page }) => {
+  await page.goto('/projects/')
+  for (const link of await page.locator('nav a[href^="/"]').all()) {
+    const href = await link.getAttribute('href')
+    const response = await page.request.get(href!)
+    expect(response.status(), `Navigation destination ${href}`).toBe(200)
+  }
+})

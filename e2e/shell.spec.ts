@@ -19,7 +19,7 @@ test.describe('desk shell', () => {
     await expect(log).toHaveAttribute('aria-live', 'polite')
     await expect(log).toContainText('search <words>')
     await expect(log.getByRole('link', { name: 'Browse all projects and delivery statuses' })).toHaveAttribute('href', '/projects/')
-    await expect(log.getByRole('link', { name: 'Read the résumé and download the PDF' })).toHaveAttribute('href', '/resume/')
+    await expect(log.getByRole('link', { name: 'Read the résumé and download the PDF' })).toHaveAttribute('href', 'https://patrickfanella.co/resume')
     await expect(log.getByRole('link', { name: 'patrick@subcult.tv' })).toHaveAttribute('href', 'mailto:patrick@subcult.tv')
     await expect(log).toContainText('Unknown command. Type help')
     await expect(log).toContainText('Usage: search <words>')
