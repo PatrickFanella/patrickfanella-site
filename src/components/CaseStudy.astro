@@ -70,7 +70,10 @@ function annotation(start: number, note?: CaseStudyNote): ShikiTransformer {
 /* In-flow grid is the no-JS / no-anchor fallback. The script reserves measured row height before
    anchoring so long notes can never collide with the following excerpt. */
 @supports (top: anchor(top)) {
-  .excerpt-row.anchored .note { position: absolute; top: anchor(top); left: var(--note-left); width: var(--note-width); }
+  /* CSS must switch to in-flow notes immediately, before the resize handler clears offsets. */
+  @media (min-width: 801px) {
+    .excerpt-row.anchored .note { position: absolute; top: anchor(top); left: var(--note-left); width: var(--note-width); }
+  }
 }
 @media (max-width: 800px) {
   .excerpt-row { grid-template-columns: minmax(0, 1fr); gap: 0; }

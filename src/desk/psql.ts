@@ -101,6 +101,7 @@ export interface Psql { search(words: string): Promise<SearchResult> }
 
 export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => void = () => {}): Psql {
   const body = pane.querySelector<HTMLElement>('.pbody')!
+  const inspector = pane.querySelector<HTMLElement>('[data-inspector]')!
   const sub = pane.querySelector<HTMLElement>('[data-pg-sub]')!
   const pre = document.createElement('pre')
   // A named, focusable region, so keyboard users can scroll it; aria-label is not allowed on a bare pre.
@@ -108,7 +109,7 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
   const bench = document.createElement('div')
   bench.className = 'bench'; bench.setAttribute('role', 'group'); bench.setAttribute('aria-label', 'The same search with and without the GIN index')
   bench.innerHTML = BENCH
-  body.classList.add('psql-body'); body.replaceChildren(pre, bench)
+  body.classList.add('psql-body'); body.replaceChildren(pre, bench, inspector)
   const q = <T extends HTMLElement>(s: string) => bench.querySelector<T>(s)!
   const bars = bench.querySelectorAll<HTMLElement>('.bbar i')
 
