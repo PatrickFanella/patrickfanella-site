@@ -15,5 +15,8 @@ addEventListener('pagereveal', ((event: PageRevealEvent) => {
   const from = nav?.activation?.from?.url
   selectProject(location.pathname.startsWith('/projects/') && location.pathname !== '/projects/'
     ? path(location.href) : from ? path(from) : '')
-  void event.viewTransition.finished.finally(() => selectProject(''))
+  // Navigation can legitimately abort a transition (for example a quick return).
+  // Clean up on either outcome without leaving a rejected promise behind.
+  const cleanup = () => selectProject('')
+  void event.viewTransition.finished.then(cleanup, cleanup)
 }) as EventListener)

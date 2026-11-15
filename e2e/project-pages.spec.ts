@@ -60,3 +60,14 @@ for (const colorScheme of ['light', 'dark'] as const) test(`project detail fits 
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
   await page.screenshot({ path: test.info().outputPath(`project-${colorScheme}-phone.png`), fullPage: true })
 })
+
+// Returning before the hand-over finishes cancels it; that must not reject on the page.
+test('an interrupted hand-over cleans up its project name', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/projects/')
+  await page.getByRole('link', { name: 'Clpr', exact: true }).click()
+  await page.waitForURL('/projects/clpr/')
+  await page.getByRole('link', { name: 'All projects', exact: true }).click()
+  await expect(page).toHaveURL('/projects/#clpr')
+  await expect.poll(() => page.locator('[data-project-name="clpr"]').evaluate(el => el.style.viewTransitionName)).toBe('')
+})
