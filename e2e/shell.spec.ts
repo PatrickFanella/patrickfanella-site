@@ -30,6 +30,7 @@ test.describe('desk shell', () => {
 
   test('searches use the live worker, refresh psql, and recover after no matches', async ({ page }) => {
     await page.goto('/desk/')
+    await page.getByRole('button', { name: 'Run SQL benchmark' }).click()
     await expect(page.locator('section.psql')).toHaveAttribute('data-pg', 'live', { timeout: 240_000 })
     const input = page.getByRole('textbox', { name: 'Desk command' })
     const log = page.getByRole('log', { name: 'Command output' })
@@ -52,6 +53,7 @@ test.describe('desk shell', () => {
     const held = new Promise<void>(r => { release = r })
     await page.route('**/pg.worker-*.js', async route => { await held; await route.continue() })
     await page.goto('/desk/')
+    await page.getByRole('button', { name: 'Run SQL benchmark' }).click()
     const input = page.getByRole('textbox', { name: 'Desk command' })
     await input.fill('search world record'); await input.press('Enter')
     await expect(page.getByRole('log')).toContainText('PostgreSQL is still starting')

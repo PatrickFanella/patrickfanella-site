@@ -1,6 +1,6 @@
 // The desk: tiled panes on the ink tank. The name hands over from the landing page into the
-// about pane (view-transition-name: name) and pours from there. The psql pane starts PostgreSQL in a
-// worker; panes 4 and 5 are empty for now.
+// about pane (view-transition-name: name) and pours from there. The psql pane offers opt-in Clpr
+// and SQL workers; panes 4 and 5 are empty for now.
 import { boot } from '../boot'
 import { reduced, splitLetters } from '../motion/motion'
 import '../styles/desk.css'

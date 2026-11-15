@@ -1,8 +1,9 @@
 // The psql pane: Clpr's search query, its plan and rows, and the timing panel beside them.
-// It opens on Clpr's recorded run, starts PostgreSQL in a module worker, and swaps in the times
-// measured in this tab once both medians are in. If the worker cannot start, the recorded run stays.
+// It opens on Clpr's recorded run. The visitor can start the SQL benchmark or Clpr's Go handler
+// in a module worker. If a worker cannot start, the recorded run stays.
 import { QUERY, SEARCH_SQL, searchTerms, type PgEvent, type Row, type Run } from './pg-protocol'
 import { RECORDED_ON, recordedIdx, recordedSeq } from './recorded'
+import { startClpr } from './clpr'
 
 const fmt = (n: number) => n.toLocaleString('en-US')
 const ms = (n: number) => n.toFixed(2)
@@ -95,7 +96,7 @@ const BENCH = `<p class="bcap" data-pg-cap></p>
 <div class="brow idx"><p class="blabel"><b>GIN index</b> <span data-pg-idx-note></span></p><p class="bnum"><span data-pg-idx></span><small>ms</small></p><div class="bbar" aria-hidden="true"><i></i></div></div>
 <p class="bnote" data-pg-note role="status"></p>`
 
-export interface SearchResult { total: number; time: string; top?: string }
+export interface SearchResult { total: number; time: string; top?: string; timing?: string }
 export interface Psql { search(words: string): Promise<SearchResult> }
 
 export function startPsql(pane: HTMLElement): Psql {
@@ -118,6 +119,8 @@ export function startPsql(pane: HTMLElement): Psql {
   }
   const recordedStatus = `recorded run from Clpr's demo, ${RECORDED_ON}`
   const showRecorded = (note: string, status: string) => {
+    bench.hidden = false
+    q<HTMLElement>('.seq').hidden = false
     q('[data-pg-cap]').textContent = `Recorded on Clpr's demo, ${RECORDED_ON}`
     q('[data-pg-seq-note]').textContent = `seq scan, ${fmt(recordedSeq.rows)} rows`
     q('[data-pg-idx-note]').textContent = `index scan, ${fmt(recordedIdx.rows)} rows`
@@ -127,23 +130,28 @@ export function startPsql(pane: HTMLElement): Psql {
   }
 
   // 'slow' is still starting: PostgreSQL has not answered yet, and the pane says it is still loading.
-  let state: 'starting' | 'slow' | 'live' | 'failed' = 'starting'
+  let state: 'idle' | 'starting' | 'slow' | 'live' | 'failed' = 'idle'
   const set = (s: typeof state) => { state = s; pane.dataset.pg = s }
-  set('starting')
+  set('idle')
   sub.textContent = 'recorded run'
-  showRecorded("PostgreSQL is starting in this tab. Until it answers, these are Clpr's recorded times.", `${recordedStatus}. Starting PostgreSQL in this tab.`)
+  const recorded = () => {
+    sub.textContent = 'recorded run'
+    showRecorded('Choose Clpr live mode to run the Go handler, or the SQL benchmark to compare index timings.', recordedStatus)
+  }
+  recorded()
 
   let worker: Worker | null = null
   const starting = () => state === 'starting' || state === 'slow'
   // PGlite fetches about 15 MB of WebAssembly and data before it answers, which takes minutes on a slow
   // link. No deadline can tell that from a hung fetch, so past one the pane only says it is still
   // loading, and a later answer still replaces the recorded run.
-  const slow = setTimeout(() => {
+  let slow: ReturnType<typeof setTimeout> | undefined
+  const markSlow = () => {
     if (state !== 'starting') return
     set('slow')
     q('[data-pg-note]').textContent = "PostgreSQL is still loading in this tab. Until it answers, these are Clpr's recorded times."
     progress('PostgreSQL is still loading in this tab.')
-  }, 30_000)
+  }
   const fail = (why: string) => {
     if (state === 'failed') return
     clearTimeout(slow); set('failed'); worker?.terminate(); worker = null
@@ -216,12 +224,23 @@ export function startPsql(pane: HTMLElement): Psql {
     }
   }
 
-  try {
-    // A real module file from this origin, not a blob URL, so a `worker-src 'self'` policy allows it.
-    worker = new Worker(new URL('./pg.worker.ts', import.meta.url), { type: 'module', name: 'postgres' })
-    worker.onmessage = (e: MessageEvent<PgEvent>) => onEvent(e.data)
-    worker.onerror = (e) => { e.preventDefault(); fail(e.message || 'the worker script did not load') }
-  } catch (err) { fail((err as Error).message) }
+  const stopBenchmark = () => {
+    clearTimeout(slow); worker?.terminate(); worker = null; set('idle')
+    for (const request of pending.values()) request.reject(new Error('The SQL benchmark stopped.'))
+    pending.clear()
+  }
+  const startBenchmark = () => {
+    stopBenchmark(); set('starting')
+    showRecorded("PostgreSQL is starting in this tab. Until it answers, these are Clpr's recorded times.", `${recordedStatus}. Starting PostgreSQL in this tab.`)
+    slow = setTimeout(markSlow, 30_000)
+    try {
+      // No worker, Wasm or database data is requested until the visitor starts this mode.
+      worker = new Worker(new URL('./pg.worker.ts', import.meta.url), { type: 'module', name: 'postgres' })
+      worker.onmessage = (e: MessageEvent<PgEvent>) => onEvent(e.data)
+      worker.onerror = (e) => { e.preventDefault(); fail(e.message || 'the worker script did not load') }
+    } catch (err) { fail(String(err)) }
+  }
+  const clpr = startClpr(pane, { pre, bench, sub, recorded, startBenchmark, stopBenchmark })
   addEventListener('pagehide', (event) => {
     if (event.persisted) return
     clearTimeout(slow); worker?.terminate(); worker = null
@@ -230,6 +249,8 @@ export function startPsql(pane: HTMLElement): Psql {
   }, { once: true })
   return {
     search(words) {
+      if (clpr.active) return clpr.search(words)
+      if (state === 'idle') return Promise.reject(new Error('Start Clpr live mode or the SQL benchmark in the psql pane first.'))
       if (!searchTerms(words)) return Promise.reject(new Error('Use search followed by words or numbers.'))
       if (state !== 'live' || !worker) return Promise.reject(new Error(state === 'failed'
         ? 'PostgreSQL is unavailable in this tab; the psql pane shows a recorded run.'

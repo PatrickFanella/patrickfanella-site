@@ -56,6 +56,7 @@ test.describe('PostgreSQL on the desk', () => {
       requestAnimationFrame(tick)
     })
     await page.goto('/desk/')
+    await page.getByRole('button', { name: 'Run SQL benchmark' }).click()
     await expect(page.locator(psql)).toHaveAttribute('data-pg', 'starting')
     await expect(page.locator('[data-pg-cap]')).toHaveText("Recorded on Clpr's demo, 14 Nov 2026")
     await expect(page.locator('[data-pg-seq]')).toHaveText('14.55')
@@ -115,6 +116,7 @@ test.describe('PostgreSQL on the desk', () => {
     await page.route('**/pglite-*.wasm', async (route) => { await held; await route.continue() })
     await page.clock.install()
     await page.goto('/desk/')
+    await page.getByRole('button', { name: 'Run SQL benchmark' }).click()
     await expect(page.locator(psql)).toHaveAttribute('data-pg', 'starting')
     await page.clock.fastForward('02:05')
     await expect(page.locator(psql)).toHaveAttribute('data-pg', 'slow')
@@ -141,6 +143,7 @@ test.describe('PostgreSQL on the desk', () => {
   test('keeps the recorded run when the worker cannot start', async ({ page, errors }) => {
     await page.route('**/pg.worker-*.js', (route) => route.abort())
     await page.goto('/desk/')
+    await page.getByRole('button', { name: 'Run SQL benchmark' }).click()
     await fellBack(page)
     // The blocked request is the point of this test; any other console error still fails it.
     errors.splice(0, errors.length, ...errors.filter((e) => !/Failed to load resource/.test(e)))
@@ -150,6 +153,7 @@ test.describe('PostgreSQL on the desk', () => {
   test("keeps the recorded run when PGlite's WebAssembly is missing", async ({ page, errors }) => {
     await page.route('**/pglite-*.wasm', (route) => route.fulfill({ status: 404, body: 'not found' }))
     await page.goto('/desk/')
+    await page.getByRole('button', { name: 'Run SQL benchmark' }).click()
     await fellBack(page)
     errors.splice(0, errors.length, ...errors.filter((e) => !/Failed to load resource|WebAssembly/.test(e)))
   })
@@ -161,6 +165,7 @@ test.describe('PostgreSQL on the desk', () => {
       await route.fulfill({ response: res, headers: { ...res.headers(), 'content-security-policy': "script-src 'self'; worker-src 'self'" } })
     })
     await page.goto('/desk/')
+    await page.getByRole('button', { name: 'Run SQL benchmark' }).click()
     await fellBack(page)
     errors.splice(0, errors.length, ...errors.filter((e) => !/Content Security Policy|WebAssembly|wasm/i.test(e)))
   })

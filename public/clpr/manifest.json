@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "repository": "subculture-collective/clpr",
+  "commit": "112bea9863d21f6e2cb5131f2952bc5f23d5b092",
+  "date": "2026-11-14T22:55:25-06:00",
+  "goVersion": "go1.26.11",
+  "buildTags": [
+    "nomsgpack"
+  ],
+  "builtInClprCI": true,
+  "sourceDirty": false,
+  "ciRun": "https://github.com/subculture-collective/clpr/actions/runs/43678858472",
+  "wasm": {
+    "bytes": 25158142,
+    "gzipBytes": 5125657,
+    "sha256": "21bd6d0aab11225132a1984ddad01206322ecc41c7eb99cb1386b97b9ba594f9"
+  },
+  "migrationCount": 155,
+  "files": {
+    "search.wasm.gz": {
+      "bytes": 5125657,
+      "sha256": "78004d5975e123ef3b5b7e62e17844bec428c77a8daf43479f6fda427fbbdd4e"
+    },
+    "migrations.json": {
+      "bytes": 395773,
+      "sha256": "448b865ea8c80c0cbf7c906ad8f74d56f14adffdc9bcc2f3f834979eda6ace63"
+    },
+    "wasm_exec.js": {
+      "bytes": 16992,
+      "sha256": "0c949f4996f9a89698e4b5c586de32249c3b69b7baadb64d220073cc04acba14"
+    },
+    "GO-LICENSE": {
+      "bytes": 1453,
+      "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+    }
+  }
+}
