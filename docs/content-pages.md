@@ -31,3 +31,13 @@ Checks: `npm run build`; `npx playwright test e2e/content.spec.ts` checks every 
 JavaScript, mobile overflow, and accessibility in both themes.
 `npx playwright test e2e/project-pages.spec.ts` checks all detail pages without scripts, images,
 metadata, legacy redirects, list navigation, name hand-over and mobile accessibility.
+
+The project hand-over listener runs as a scoped, classic external blocking script in the head, before
+the first rendering opportunity. A render expectation points to the footer so the selected
+name is parsed before the incoming snapshot. The script is served from this origin to obey
+the preview's CSP without allowing inline scripts. This follows Chrome’s cross-document guidance:
+https://developer.chrome.com/docs/web-platform/view-transitions/cross-document
+The shared page head contains the view-transition opt-in rule before external stylesheets load;
+the returning catalog had no active transition at reveal when this rule lived only in CSS files.
+The outgoing detail title keeps its name when returning to the catalog. Both event paths
+handle the expected ready rejection on skipped transitions and clean up names on completion.

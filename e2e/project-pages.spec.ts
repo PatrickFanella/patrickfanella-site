@@ -41,6 +41,10 @@ test('list links, return link and legacy redirects reach the right project', asy
 
 test('the selected name participates in the cross-document hand-over', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.route('**/projects/**', async route => {
+    const response = await route.fetch()
+    await route.fulfill({ response, headers: { ...response.headers(), 'content-security-policy': "script-src 'self'" } })
+  })
   await page.goto('/projects/')
   // Capture the outgoing name after pageswap listeners run; survives navigation in sessionStorage.
   await page.evaluate(() => addEventListener('pageswap', event => {
@@ -50,6 +54,12 @@ test('the selected name participates in the cross-document hand-over', async ({ 
   await expect(page).toHaveURL('/projects/clpr/')
   await expect.poll(() => page.evaluate(() => sessionStorage.getItem('outgoing-project'))).toBe('true:project-name')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Clpr')
+  await page.evaluate(() => addEventListener('pageswap', event => {
+    sessionStorage.setItem('returning-project', `${!!event.viewTransition}:${getComputedStyle(document.querySelector('[data-project-name="clpr"]')!).viewTransitionName}`)
+  }))
+  await page.getByRole('link', { name: 'All projects', exact: true }).click()
+  await expect(page).toHaveURL('/projects/#clpr')
+  await expect.poll(() => page.evaluate(() => sessionStorage.getItem('returning-project'))).toBe('true:project-name')
 })
 
 for (const colorScheme of ['light', 'dark'] as const) test(`project detail fits mobile and passes axe in ${colorScheme}`, async ({ page }) => {
@@ -64,6 +74,10 @@ for (const colorScheme of ['light', 'dark'] as const) test(`project detail fits 
 // Returning before the hand-over finishes cancels it; that must not reject on the page.
 test('an interrupted hand-over cleans up its project name', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
+  // Force ready to reject, rather than relying on navigation timing to cancel it.
+  await page.addInitScript(() => addEventListener('pagereveal', ((event: PageRevealEvent) => {
+    event.viewTransition?.skipTransition()
+  }) as EventListener))
   await page.goto('/projects/')
   await page.getByRole('link', { name: 'Clpr', exact: true }).click()
   await page.waitForURL('/projects/clpr/')

@@ -19,6 +19,8 @@ const { title, description, bodyClass, noscript = true } = Astro.props
   <title>{title}</title>
   <meta name="description" content={description}>
   <meta name="color-scheme" content="light dark">
+  <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
+  <style is:inline>@view-transition { navigation: auto; }</style>
   {noscript && <noscript><style is:inline>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <slot name="head" />
