@@ -20,6 +20,11 @@ inventing historical comparisons, benchmarks or a universal “best” algorithm
 The original screenshots in `docs/reviews/` record the version submitted for approval; the
 `clpr-search-decisions-*` screenshots show the revised decision walkthrough.
 
+Both study pages use an opaque reading surface in the existing theme color, with a border and
+responsive padding. It covers the title, notes, source and source captions. The smoke canvas stays
+behind the page and is visible in the surrounding gutters; its brightness cannot change the text
+background. Fonts, motion, square corners and the rest of the palette stay with the site tokens.
+
 Checks: `npm run build`; `npx playwright test e2e/case-study.spec.ts e2e/clpr-study.spec.ts`.
 Chromium and Firefox compare the rendered text with every source line, validate the source pin
 and annotation links, read the study without scripts, check note placement at 1440 and 390 px,

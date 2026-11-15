@@ -5,8 +5,8 @@ import '@fontsource-variable/hanken-grotesk'
 import '@fontsource-variable/martian-mono'
 import '../styles/site.css'
 import '../styles/content-pages.css'
-interface Props { title: string; description: string; resume?: boolean }
-const { title, description, resume = false } = Astro.props
+interface Props { title: string; description: string; resume?: boolean; readingSurface?: boolean }
+const { title, description, resume = false, readingSurface = false } = Astro.props
 ---
 <Page title={title} description={description} bodyClass={`content-page${resume ? ' resume-page' : ''}`}>
   <a class="skip" href="#content">Skip to content</a>
@@ -17,7 +17,7 @@ const { title, description, resume = false } = Astro.props
       <button type="button" class="switch" data-theme-switch data-splash="y"><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
     </nav>
   </header>
-  <main id="content" class="content-main"><slot /></main>
+  <main id="content" class:list={['content-main', { 'reading-surface': readingSurface }]}><slot /></main>
   <footer class="foot"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Code studies</a></nav></footer>
   <Fragment slot="head"><slot name="head" /><script>import '../content-page.ts'</script></Fragment>
 </Page>

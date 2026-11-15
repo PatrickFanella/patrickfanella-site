@@ -1,4 +1,12 @@
 .content-main { position: relative; z-index: 1; max-width: 1080px; width: 100%; margin: 3rem auto; padding: 0 var(--gutter); }
+/* Long-form source and notes need a stable background at every ink density. The opaque surface
+   uses the existing light/dark tokens; smoke remains visible in the surrounding gutters. */
+.content-main.reading-surface {
+  width: calc(100% - var(--gutter) - var(--gutter-r));
+  padding: clamp(16px, 3vw, 40px);
+  background: var(--raise-solid);
+  border: 1px solid var(--line);
+}
 .content-main h1 { font: 900 clamp(3.5rem, 9vw, 7rem)/.95 var(--display); text-transform: uppercase; margin: 0 0 1rem; }
 .lead { font-size: 1.2rem; max-width: 65ch; margin-bottom: 2.5rem; }
 .group-title { font: 800 2.25rem/1.1 var(--display); margin: 2rem 0 1rem; }
