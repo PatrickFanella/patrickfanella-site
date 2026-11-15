@@ -1,12 +1,34 @@
 """Almaz only: publish the existing CI deploy branch by an atomic symlink swap."""
 import argparse
 import fcntl
+import hashlib
 import os
 from pathlib import Path
 import re
 import shutil
 import subprocess
 import tarfile
+
+
+IMMUTABLE = re.compile(r'(?:_astro/.+[.-][A-Za-z0-9_-]{8}\.[A-Za-z0-9]+|clpr/[a-f0-9]{40}/.+)')
+
+
+def publish_assets(release, assets):
+    # Hard links publish complete files atomically and outlive release pruning.
+    # Stable manifests stay in the selected release, with revalidation headers.
+    for namespace in ['_astro', 'clpr']:
+        for source in (release / namespace).rglob('*'):
+            relative = source.relative_to(release)
+            if not source.is_file() or not IMMUTABLE.fullmatch(relative.as_posix()):
+                continue
+            target = assets / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                os.link(source, target)
+            except FileExistsError:
+                with source.open('rb') as original, target.open('rb') as published:
+                    if hashlib.file_digest(original, 'sha256').digest() != hashlib.file_digest(published, 'sha256').digest():
+                        raise RuntimeError(f'Immutable asset changed at the same URL: {relative}')
 
 
 def main():
@@ -50,6 +72,7 @@ def main():
     revision = (release / 'REVISION').read_text().strip()
     if not re.fullmatch('[a-f0-9]{40}', revision) or (args.expected_source and revision != args.expected_source):
         raise RuntimeError('The release is not the expected source revision')
+    publish_assets(release, data / 'assets')
     target = f'releases/{build}'
     if (data / 'current').is_symlink() and os.readlink(data / 'current') == target:
         print(f'Already serving source {revision}')

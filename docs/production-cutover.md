@@ -10,6 +10,8 @@ Almaz owns ingress for `patrickfanella.co`. Its edge Caddy routes the frontend t
 
 The main CI pipeline records Clpr, builds once, tests that artifact and publishes it to the `deploy` branch. `/REVISION` identifies the source commit. The production updater uses the existing read-only GitHub deploy key and atomically changes `site-data/current` after checking the release. It retains five releases plus the current and previous selections. `patrickfanella-site-update.timer` checks once a minute. Disable that timer before selecting an older release, or it will select the latest tested build again.
 
+Before switching pages, the updater publishes hashed Astro bundles and commit-pinned Clpr payloads into `site-data/assets`. Caddy serves those URLs from this shared store, so an older open desk can still start its lazy worker after a deployment or release pruning. Publishing refuses different bytes at an existing immutable URL. The automatic updater never prunes this store; it is intentional retained compatibility data. HTML, `/clpr/manifest.json` and the recording build metadata always come from the current release with `no-cache`. CI exercises an actual Caddy container across a release switch and removal of the old release directory.
+
 ## First activation
 
 Run commands from this repository on Kvant with the normal host aliases. Qualify the exact source commit in hosted CI before activating it. Install `deploy/` into the Almaz project directory owned by `onnwee` (UID/GID 1000); never copy a local build into production. Install the two systemd units into `/etc/systemd/system`, then run `systemctl daemon-reload`.
