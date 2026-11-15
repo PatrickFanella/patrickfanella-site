@@ -7,6 +7,8 @@ import Page from '../layouts/Page.astro'
   <header class="bar">
     <a class="mark" href="/" data-bleed="y">patrickfanella.co</a>
     <nav aria-label="Main">
+      <a href="/projects/" data-bleed="c">Projects</a>
+      <a href="/resume/" data-bleed="y">Résumé</a>
       <a href="#coming" data-bleed="c">What's coming</a>
       <a href="/desk/" data-bleed="y">Desk</a>
       <a href="/motion/" data-bleed="o">Motion</a>
@@ -52,9 +54,9 @@ import Page from '../layouts/Page.astro'
               <span class="chip run">Prototype running</span>
             </summary>
             <div class="more">
-              <p>PostgreSQL 18.6 starts in the browser, loads 50,008 clips from Clpr and runs its search query twice: once reading every row, once through the full-text index. The timings on screen are measured on your machine, just then. There's a shell you can type into, and the panes sit on this same ink.</p>
+              <p>PostgreSQL 18.6 starts in the browser, loads 50,008 generated clips with Clpr’s search columns and runs its search query twice: once reading every row, once through the full-text index. The timings on screen are measured on your machine, just then. There's a shell you can type into, and the panes sit on this same ink.</p>
               <p class="dim">Runs on: PGlite (PostgreSQL compiled to WebAssembly) in a worker, WebGL2.</p>
-              <p><a href="/desk/" data-bleed="y">Open the desk</a>. The panes are in place; PostgreSQL is not running in them yet.</p>
+              <p><a href="/desk/" data-bleed="y">Open the desk</a>. Run a search in the shell and inspect its plan in psql.</p>
             </div>
           </details>
         </li>
@@ -79,7 +81,7 @@ import Page from '../layouts/Page.astro'
               <span class="chip planned">Planned</span>
             </summary>
             <div class="more">
-              <p>Each case study is the actual code, pinned to a commit, with notes on the lines that matter: why it's written that way, what it costs and what I'd change. The first one walks through how Clpr ranks and pages its search results.</p>
+              <p>Each case study is the actual code, pinned to a commit, with notes on the lines that matter: why it's written that way, what it costs and what I'd change. The <a href="/case-studies/">source-linked layout sample</a> is ready; the first full study on Clpr’s ranking and pagination follows separately.</p>
             </div>
           </details>
         </li>
@@ -91,7 +93,7 @@ import Page from '../layouts/Page.astro'
               <span class="chip moving">Moving over</span>
             </summary>
             <div class="more">
-              <p>The 25 projects on the current portfolio, each with what it is, how it's built and how far along it is. Nothing in development will be described as finished.</p>
+              <p>The <a href="/projects/">full catalog of 40 projects</a> now lists summaries, stacks and delivery status, including earlier work and experiments. Individual project pages are next.</p>
             </div>
           </details>
         </li>

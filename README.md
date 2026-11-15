@@ -2,10 +2,13 @@
 
 The rebuild of patrickfanella.co, started 2026-11-14. It is not deployed yet; the live site still comes from `subculture-collective/patrickfanella-co`. What is planned and in what order: [docs/plan.md](docs/plan.md) and the pinned roadmap issue.
 
-Three static pages so far:
+Six static pages so far:
 
 - `/` explains what is coming. The ink behind it is a fluid simulation that pours from the letters of the name. It runs on WebGPU compute where the browser gives a hardware adapter, and on WebGL2 everywhere else; the readout under the intro names the path in use.
-- `/desk/` is the desk: translucent panes tiled on the same ink. The name hands over from `/` into the about pane. The projects pane lists three projects. The psql pane starts PostgreSQL 18.6 (PGlite) in a worker, loads 50,008 generated clips and runs Clpr's search query without and then with its GIN index. It shows the query plan, the rows and the median of three timed batches each, measured in the tab. A batch repeats the query for 50 ms and takes the mean, because browsers round a worker's clock to 0.1 ms or 1 ms; a time too close to that resolution is shown as a bound, with no ratio. The plan's Execution Time is the same batch mean. Until PostgreSQL answers, or if it cannot start, it shows Clpr's recorded run and says so. A slow download is not treated as a failure: after 30 s the pane says PostgreSQL is still loading, and the measured run still replaces the recorded one when it arrives. The log and process panes are empty for now. Alt+1 to Alt+5 move focus between panes.
+- `/desk/` is the desk: translucent panes tiled on the same ink. The name hands over from `/` into the about pane. The projects pane lists three projects. The psql pane starts PostgreSQL 18.6 (PGlite) in a worker, loads 50,008 generated clips and runs Clpr's search query without and then with its GIN index. It shows the query plan, the rows and the median of three timed batches each, measured in the tab. A batch repeats the query for 50 ms and takes the mean, because browsers round a worker's clock to 0.1 ms or 1 ms; a time too close to that resolution is shown as a bound, with no ratio. The plan's Execution Time is the same batch mean. Until PostgreSQL answers, or if it cannot start, it shows Clpr's recorded run and says so. A slow download is not treated as a failure: after 30 s the pane says PostgreSQL is still loading, and the measured run still replaces the recorded one when it arrives. The shell accepts `help`, `projects`, `resume`, `contact` and `search <words>`, with command history and accessible output. Searches use prefix terms joined with AND, update the psql session, and keep recorded results separate from live searches. The log shows startup events on the page Performance clock. The process pane refreshes the ink and database statistics every second. Alt+1 to Alt+5 move focus between panes.
+- `/projects/` lists the full 40-entry catalog from a pinned portfolio commit, with summaries, stacks and original delivery status. It works without JavaScript; missing status stays explicitly unstated. See [catalog sync](docs/content-pages.md).
+- `/resume/` matches the existing résumé facts and offers the unchanged same-origin PDF, plus a print stylesheet. See [résumé sources](docs/resume-page.md).
+- `/case-studies/` demonstrates exact source lines pinned to a Clpr commit, with build-time syntax highlighting, line links and notes beside the relevant excerpt or below it on phones. See [layout and source provenance](docs/case-study-layout.md). The full ranking/pagination study remains #22.
 - `/motion/` shows each animation in the motion set on its own, with its timing and its reduced-motion version.
 
 ```bash
@@ -16,9 +19,9 @@ npm run preview
 npm run test:e2e   # build, serve dist/ and run the browser tests in headless Chromium
 ```
 
-The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame within 3 s of the fonts loading, that the page works without WebGL2, that the desk measures the search in a worker while the ink keeps drawing, that a slow download still reaches the measured run, that it falls back to the recorded run when the worker script, PGlite's WebAssembly or a policy without `'wasm-unsafe-eval'` stops it, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. They serve `dist/` with `astro preview`. Set `E2E_PORT` to serve on a port other than 4173.
+The browser tests in `e2e/` use Playwright. Install the browsers once with `npx playwright install chromium firefox`. They check that the name pours in and fits the width, that reduced motion gives a still frame within 3 s of the fonts loading, that the page works without WebGL2, that the desk measures the search in a worker while the ink keeps drawing, that a slow download still reaches the measured run, that it falls back to the recorded run when the worker script, PGlite's WebAssembly or a policy without `'wasm-unsafe-eval'` stops it, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. They serve `dist/` with `astro preview`. Set `E2E_PORT` to serve on a port other than 4173.
 
-CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser tests on every push and pull request.
+CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run build` and the browser tests on every push and pull request. Chromium covers the complete site; Firefox additionally checks the source layout, including its no-JavaScript fallback.
 
 ## Preview
 
@@ -28,7 +31,7 @@ Every green build of `main` is published privately at https://pf-preview.subcult
 
 The pages are built with Astro as static HTML. There is no client router and no UI framework, and no Astro code ships to the browser. Each page loads its script as a plain TypeScript module, which Astro bundles with Vite.
 
-- `src/pages/`: `/`, `/desk/` and `/motion/`.
+- `src/pages/`: the six static routes above. `ContentPage.astro` adds shared content navigation and static fonts/CSS for the new content routes.
 - `src/layouts/Page.astro`: the head, body class and ink canvas every page shares.
 - `src/ink/shaders.ts`: stable fluids (advection, vorticity confinement, buoyancy, Jacobi pressure solve) in WebGL2 fragment shaders. Both themes blend the same Ember pigments (brick `#CA5148`, amber `#D29528`, plum `#8055AA`) over their ground; `src/ink/engine.ts` holds those RGB values. The static fallback uses matching `--ink-*` tokens in `site.css`.
 - `src/ink/wgsl.ts`: the same solver and looks as WebGPU compute shaders.
@@ -38,7 +41,7 @@ The pages are built with Astro as static HTML. There is no client router and no 
 - `src/motion/motion.ts`: the motion set. Pour-in, bleed, splash, stir, unfold and fitting the name to the width.
 - `src/boot.ts`: start-up shared by every page: fonts, theme switch, ink, readout.
 - `src/desk/desk.ts`: the desk page: pours the name from the about pane and moves focus between panes.
-- `src/desk/pg.worker.ts`: PostgreSQL (PGlite, bundled from npm) in a module worker. It seeds the clips, times three batches of the query without and with the index, and posts each step. It reports failures inside PGlite's start-up, which never reach the page's `Worker.onerror`. The pane stops the worker after the run.
+- `src/desk/pg.worker.ts`: PostgreSQL (PGlite, bundled from npm) in a module worker. It seeds the clips, times three batches of the query without and with the index, and posts each step. It reports failures inside PGlite's start-up, which never reach the page's `Worker.onerror`. The worker remains available for shell searches and database statistics until the visitor leaves the page.
 - `src/desk/psql.ts`: the psql pane and its timing panel. `src/desk/recorded.ts` holds Clpr's recorded run; `src/desk/pg-protocol.ts` holds the query and the messages.
 - `src/styles/site.css`: tokens (colour, type, four durations, two curves), layout, rise, view transitions and reduced motion.
 - `src/styles/desk.css`: the desk's tiling layout. Its colours are the `--desk-*` tokens in `site.css`, separate from the smoke palette. Panes 1, 2 and 5 keep their gold, cobalt and orange accents. Panes 3 and 4 keep the prototype's pink and green, so the five pane buttons stay distinct.
