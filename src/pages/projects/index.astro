@@ -13,7 +13,7 @@ const groups = [
   {groups.map(group => <section aria-label={group.title}>
     <h2 class="group-title">{group.title}</h2>
     <ul class="project-list">{group.projects.map(project => <li><article id={project.slug}>
-      <h3>{project.title}</h3><p>{project.summary}</p>
+      <h3><a href={`/projects/${project.slug}/`} data-project-name={project.slug}>{project.title}</a></h3><p>{project.summary}</p>
       <dl><div><dt>Status</dt><dd>{project.deliveryStatus ?? 'Status not stated in source'}</dd></div>
         <div><dt>Stack</dt><dd>{project.stack.join(', ') || 'Not specified in source'}</dd></div></dl>
       {project.liveUrl && <a href={project.liveUrl}>Visit {project.title}</a>}

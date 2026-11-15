@@ -19,5 +19,5 @@ const { title, description, resume = false } = Astro.props
   </header>
   <main id="content" class="content-main"><slot /></main>
   <footer class="foot"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Code studies</a></nav></footer>
-  <Fragment slot="head"><script>import '../content-page.ts'</script></Fragment>
+  <Fragment slot="head"><slot name="head" /><script>import '../content-page.ts'</script></Fragment>
 </Page>

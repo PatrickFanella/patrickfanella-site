@@ -12,3 +12,21 @@
 .project-list article > a { grid-column: 2; justify-self: start; }
 .source-note { font: .75rem/1.6 var(--mono); color: var(--dim); margin-top: 2rem; overflow-wrap: anywhere; }
 @media (max-width: 600px) { .project-list article { grid-template-columns: minmax(0, 1fr); } .project-list dl, .project-list article > a { grid-column: 1; } }
+
+.project-detail { overflow-wrap: anywhere; }
+.project-detail header { margin-top: 2rem; }
+.project-detail .lead { margin-bottom: 1.5rem; }
+.project-facts { display: grid; gap: .5rem; margin: 1.5rem 0; }
+.project-facts div { display: grid; grid-template-columns: 6ch minmax(0, 1fr); gap: 1rem; }
+.project-facts dt, .project-detail figcaption { font: .75rem/1.6 var(--mono); color: var(--dim); }
+.project-facts dd { margin: 0; }
+.project-links { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
+.project-detail section { max-width: 70ch; margin: 2.5rem 0; }
+.project-detail h2 { font: 800 2rem/1.1 var(--display); margin: 0 0 1rem; }
+.project-detail section p + p, .project-detail li + li { margin-top: .75rem; }
+.project-detail figure { margin: 2rem 0; }
+.project-detail img { display: block; width: 100%; height: auto; max-height: 44rem; object-fit: contain; background: var(--raise-solid); border: 1px solid var(--line); }
+.project-detail figcaption { margin-top: .75rem; }
+::view-transition-group(project-name) { animation-duration: var(--t-4); animation-timing-function: var(--ease-out); }
+::view-transition-old(project-name), ::view-transition-new(project-name) { height: 100%; object-fit: contain; object-position: left top; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(project-name), ::view-transition-old(project-name), ::view-transition-new(project-name) { animation: none !important; } }
