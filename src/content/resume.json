@@ -1,0 +1,96 @@
+{
+  "target_role": "Senior full-stack and backend engineer",
+  "source_resume": "Patrick_Fanella_Resume_Full_Stack.pdf",
+  "headline": "Senior full-stack and backend engineer",
+  "compact_spacing": true,
+  "profile": "Senior full-stack and backend engineer building Go, Python, and TypeScript services with React interfaces. At DeliverZero, built inventory, returns, and partner integrations that reduced manual operations work by about 25%. Independent work covers searchable media, browser rendering, and self-hosted tools that I test, deploy, and operate.",
+  "skills": [
+    [
+      "Languages",
+      "Go, Python, TypeScript, SQL"
+    ],
+    [
+      "Product",
+      "React, React Native/Expo, WebCodecs, Web Audio, accessibility, Playwright"
+    ],
+    [
+      "Backend and data",
+      "PostgreSQL, PostGIS, Redis, OpenSearch, FastAPI, REST APIs, durable jobs"
+    ],
+    [
+      "Delivery",
+      "Docker, Linux, CI/CD, migrations, observability, backup and recovery"
+    ]
+  ],
+  "studio_bullets": [
+    "Built and operate clpr.tv, a Twitch discovery app with a Go API, React client, PostgreSQL, hybrid keyword/vector search, playlists, and moderation.",
+    "Built HasanAra and its Rekolekt core, combining a React transcript-search frontend with Python/FastAPI services, durable GPU transcription jobs, PostgreSQL, and OpenSearch.",
+    "Built Undertow, a React music-video editor with layered WebGL visuals, timed lyrics, and local MP4 export through fixed-step WebCodecs rendering and seekable Blob chunks.",
+    "Built Tadooer, a self-hosted planner with queued task edits, CalDAV ETag conflicts, and server-authoritative focus sessions across web and prerelease desktop/mobile clients.",
+    "Built a Go MCP server and plugin bridge for Super Productivity, with typed tool contracts, dry-run-first bulk changes, local file IPC, and protocol/package checks.",
+    "Deliver container releases through CI, browser tests, monitored services, documented rollback, and verified backup and restore procedures."
+  ],
+  "deliverzero_bullets": [
+    "Built tracking, returns, inventory, and dashboard workflows supporting launches across three markets through delivery-platform, POS, and partner API integrations.",
+    "Built replenishment monitoring, exception routing, and self-service partner workflows that reduced manual operations work by approximately 25%.",
+    "Designed idempotent integrations, retries, reconciliation, and partner test harnesses for thousands of weekly inventory and customer-status updates.",
+    "Delivered internal and partner reporting on reuse impact, including water, waste, and emissions metrics."
+  ],
+  "name": "Patrick Fanella",
+  "location": "Chicago, IL",
+  "availability": "Remote or Chicago hybrid",
+  "phone": "630-408-4979",
+  "email": "fanella.patrick@gmail.com",
+  "website": "https://patrickfanella.co",
+  "github": "https://github.com/PatrickFanella",
+  "linkedin": "https://linkedin.com/in/patrick-fanella",
+  "roles": [
+    {
+      "employer": "Subculture Collective",
+      "location": "Chicago",
+      "dates": "May 2023 – Present",
+      "title": "Founder and engineer",
+      "intro": "Founder and engineer at subcult.tv, an independent open-source studio. I design, build, deploy and run each product.",
+      "bullets": [
+        "Built and operate clpr.tv, a Twitch discovery app with a Go API, React client, PostgreSQL, hybrid keyword/vector search, playlists, and moderation.",
+        "Built HasanAra and its Rekolekt core, combining a React transcript-search frontend with Python/FastAPI services, durable GPU transcription jobs, PostgreSQL, and OpenSearch.",
+        "Built Undertow, a React music-video editor with layered WebGL visuals, timed lyrics, and local MP4 export through fixed-step WebCodecs rendering and seekable Blob chunks.",
+        "Built Tadooer, a self-hosted planner with queued task edits, CalDAV ETag conflicts, and server-authoritative focus sessions across web and prerelease desktop/mobile clients.",
+        "Built a Go MCP server and plugin bridge for Super Productivity, with typed tool contracts, dry-run-first bulk changes, local file IPC, and protocol/package checks.",
+        "Deliver container releases through CI, browser tests, monitored services, documented rollback, and verified backup and restore procedures."
+      ]
+    },
+    {
+      "employer": "DeliverZero",
+      "location": "Chicago / New York / Denver",
+      "dates": "Jun 2022 – Jun 2023",
+      "title": "Full-stack engineer",
+      "intro": "Full-stack engineer, working directly with the CTO at a reusable food-container startup",
+      "bullets": [
+        "Built tracking, returns, inventory, and dashboard workflows supporting launches across three markets through delivery-platform, POS, and partner API integrations.",
+        "Built replenishment monitoring, exception routing, and self-service partner workflows that reduced manual operations work by approximately 25%.",
+        "Designed idempotent integrations, retries, reconciliation, and partner test harnesses for thousands of weekly inventory and customer-status updates.",
+        "Delivered internal and partner reporting on reuse impact, including water, waste, and emissions metrics."
+      ]
+    }
+  ],
+  "otherRoles": [
+    {
+      "employer": "Retail Data Systems",
+      "location": "Lisle, IL",
+      "dates": "Nov 2023 – Mar 2026",
+      "title": "Support specialist",
+      "bullets": [
+        "Supported hardware and software for four point-of-sale platforms installed at 13,000+ locations."
+      ]
+    }
+  ],
+  "earlier": "Earlier: assistant executive housekeeper at Boyne Resorts in Big Sky, MT, leading 40+ staff across four hotels; landscaping team lead; kitchen supervisor; assistant audio engineer.",
+  "provenance": {
+    "repository": "subculture-collective/patrickfanella-co",
+    "commit": "9ed782785c7366b04bf0c626b39f8a6fcf1e3b54",
+    "content": "docs/resume-content.json",
+    "pdf": "web/public/assets/patrick_fanella_resume.pdf",
+    "pdfSha256": "70e0e1008d580f82b8b4a1639047022a46310372052133726932e53b3cdf517e"
+  }
+}
