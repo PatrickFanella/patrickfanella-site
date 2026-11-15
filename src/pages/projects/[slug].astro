@@ -1,0 +1,59 @@
+---
+import ContentPage from '../../layouts/ContentPage.astro'
+import catalog from '../../content/portfolio.json'
+import provenance from '../../content/portfolio-provenance.json'
+import assets from '../../content/project-assets-provenance.json'
+
+export function getStaticPaths() {
+  return catalog.projects.map(project => ({ params: { slug: project.slug }, props: { project } }))
+}
+const { project } = Astro.props
+const url = `https://patrickfanella.co/projects/${project.slug}/`
+const image = `https://patrickfanella.co/assets/projects/social/${project.slug}.png`
+const source = `https://github.com/${provenance.repository}/blob/${provenance.commit}/${provenance.file}`
+---
+<ContentPage title={`${project.title} | Patrick Fanella`} description={project.summary}>
+  <Fragment slot="head">
+    <link rel="canonical" href={url} />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={`${project.title} | Patrick Fanella`} />
+    <meta property="og:description" content={project.summary} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={project.thumbnailAlt ?? `${project.title} project image`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${project.title} | Patrick Fanella`} />
+    <meta name="twitter:description" content={project.summary} />
+    <meta name="twitter:image" content={image} />
+  </Fragment>
+  <article class="project-detail">
+    <a href={`/projects/#${project.slug}`}>All projects</a>
+    <header>
+      <h1 data-project-name={project.slug}>{project.title}</h1>
+      <p class="lead">{project.description || project.summary}</p>
+      <dl class="project-facts">
+        <div><dt>Status</dt><dd>{project.deliveryStatus ?? 'Status not stated in source'}</dd></div>
+        <div><dt>Role</dt><dd>{project.role}</dd></div>
+        <div><dt>Period</dt><dd>{project.periodLabel ?? project.year}</dd></div>
+        <div><dt>Stack</dt><dd>{project.stack.join(', ') || 'Not specified in source'}</dd></div>
+      </dl>
+      <nav class="project-links" aria-label="Project links">
+        {project.liveUrl && <a href={project.liveUrl}>Visit {project.title}</a>}
+        {project.repoUrl && <a href={project.repoUrl}>Repository</a>}
+        {project.sourceUrl && <a href={project.sourceUrl}>Download source</a>}
+      </nav>
+    </header>
+    {project.problem && <section><h2>The problem</h2><p>{project.problem}</p></section>}
+    {project.highlights.length > 0 && <section><h2>What I built</h2><ul>{project.highlights.map(text => <li>{text}</li>)}</ul></section>}
+    {project.architecture.length > 0 && <section><h2>How it fits together</h2>{project.architecture.map(text => <p>{text}</p>)}</section>}
+    {project.media.map(media => <figure>
+      <img src={media.src} width={assets.files.find(file => file.path === media.src)?.width} height={assets.files.find(file => file.path === media.src)?.height} srcset={'srcSet' in media ? media.srcSet : undefined} sizes="(max-width: 1080px) 100vw, 1000px" alt={media.alt} loading="lazy" decoding="async" />
+      <figcaption>{media.caption}</figcaption>
+    </figure>)}
+    {project.lessons.length > 0 && <section><h2>What I learned</h2><ul>{project.lessons.map(text => <li>{text}</li>)}</ul></section>}
+    {project.relatedProjects && <section><h2>Related work</h2><ul>{project.relatedProjects.map(related => <li><a href={`/projects/${related.slug}/`}>{related.label}</a>: {related.relationship}</li>)}</ul></section>}
+    <p class="source-note">Content and delivery status from the <a href={source}>pinned portfolio catalog</a>, commit <code>{provenance.commit.slice(0, 7)}</code>. Image captions retain their recorded dates; this page does not report current service health.</p>
+  </article>
+</ContentPage>

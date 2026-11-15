@@ -1,0 +1,13 @@
+---
+import ContentPage from '../../layouts/ContentPage.astro'
+import CaseStudy from '../../components/CaseStudy.astro'
+import { clprRanking } from '../../content/case-studies/clpr-ranking'
+---
+<ContentPage title="How Clpr ranks and pages search | Patrick Fanella" description={clprRanking.description} readingSurface>
+  <p class="source-note study-scope">A walkthrough of the choices in this implementation: what each approach supports, the tradeoff it carries and the requirements that would lead me to revisit it. Performance tradeoffs are qualitative, not latency measurements.</p>
+  <CaseStudy study={clprRanking} />
+  <p class="source-note">This is a reading of the pinned PostgreSQL repository. Each note links to the exact lines it discusses. The archive’s path and hash appear below the excerpt. The source pin does not establish which backend currently serves clpr.tv.</p>
+  <p><a href="/case-studies/">Read the request setup</a> or <a href="/desk/">open the desk</a>.</p>
+  <script>import '../../case-study.ts'</script>
+</ContentPage>
+<style>.study-scope { border-left: 3px solid var(--line); padding-left: 1rem; margin: 0 0 2rem; }</style>

@@ -1,7 +1,7 @@
 ---
 import Page from '../../layouts/Page.astro'
 ---
-<Page title="The desk, Patrick Fanella" description="Patrick Fanella, senior backend and full-stack engineer. A tiling desk of panes on a live ink simulation, where PostgreSQL will run in your tab." bodyClass="desk" noscript={false}>
+<Page title="The desk, Patrick Fanella" description="Patrick Fanella, senior backend and full-stack engineer. A tiling desk of panes on a live ink simulation, where PostgreSQL runs in your tab." bodyClass="desk" noscript={false}>
   <a class="skip" href="#about">Skip to the desk</a>
 
   <header class="bar">
@@ -14,6 +14,8 @@ import Page from '../../layouts/Page.astro'
       <button type="button" data-go="5" style="--acc: var(--desk-5)" aria-label="Pane 5, process" aria-keyshortcuts="Alt+5">5</button>
     </nav>
     <nav aria-label="Main">
+      <a href="/projects/" data-bleed="c">Projects</a>
+      <a href="/resume/" data-bleed="y">Résumé</a>
       <a href="/#coming" data-bleed="c">What's coming</a>
       <a href="/desk/" aria-current="page" data-bleed="y">Desk</a>
       <a href="/motion/" data-bleed="o">Motion</a>
@@ -62,7 +64,7 @@ import Page from '../../layouts/Page.astro'
             <p>A music-video editor in the browser with timed lyrics and local MP4 export. I built the editor and its WebCodecs renderer.</p>
           </li>
         </ol>
-        <p class="more-work">The rest are on the <a href="https://patrickfanella.co">current portfolio</a> until they move here.</p>
+        <p class="more-work">Browse the <a href="/projects/">complete project catalog</a>.</p>
       </div>
     </section>
 
@@ -74,16 +76,16 @@ import Page from '../../layouts/Page.astro'
     </section>
 
     <section class="pane log" data-pane="4" tabindex="-1" aria-labelledby="p4" style="--i: 3">
-      <header class="ptitle"><h2 class="pname" id="p4"><i aria-hidden="true">4</i>log</h2><span>empty</span></header>
+      <header class="ptitle"><h2 class="pname" id="p4"><i aria-hidden="true">4</i>log</h2><span>needs JavaScript</span></header>
       <div class="pbody">
-        <p class="empty">Empty for now. This tab's start-up log will scroll here.</p>
+        <p class="empty">Startup events and measured times appear here when JavaScript is enabled.</p>
       </div>
     </section>
 
     <section class="pane process" data-pane="5" tabindex="-1" aria-labelledby="p5" style="--i: 4">
-      <header class="ptitle"><h2 class="pname" id="p5"><i aria-hidden="true">5</i>process</h2><span>empty</span></header>
+      <header class="ptitle"><h2 class="pname" id="p5"><i aria-hidden="true">5</i>process</h2><span>needs JavaScript</span></header>
       <div class="pbody">
-        <p class="empty">Empty for now. What this tab spends on drawing and on PostgreSQL will show here.</p>
+        <p class="empty">Live ink and PostgreSQL statistics appear here when JavaScript is enabled.</p>
       </div>
     </section>
   </main>

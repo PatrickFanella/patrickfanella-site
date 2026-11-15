@@ -1,0 +1,43 @@
+.content-main { position: relative; z-index: 1; max-width: 1080px; width: 100%; margin: 3rem auto; padding: 0 var(--gutter); }
+/* Keep enough of the theme surface behind long-form text for contrast while letting a little
+   smoke show through. The solid background is the fallback without color-mix support. */
+.content-main.reading-surface {
+  width: calc(100% - var(--gutter) - var(--gutter-r));
+  padding: clamp(16px, 3vw, 40px);
+  background: var(--raise-solid);
+  background: color-mix(in srgb, var(--raise-solid) 88%, transparent);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.content-main h1 { font: 900 clamp(3.5rem, 9vw, 7rem)/.95 var(--display); text-transform: uppercase; margin: 0 0 1rem; }
+.lead { font-size: 1.2rem; max-width: 65ch; margin-bottom: 2.5rem; }
+.group-title { font: 800 2.25rem/1.1 var(--display); margin: 2rem 0 1rem; }
+.project-list { list-style: none; padding: 0; margin: 0; }
+.project-list article { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(0, 2fr); gap: .75rem 2rem; padding: 1.5rem 0; border-top: 1px solid var(--line); }
+.project-list h3 { margin: 0; font: 800 1.9rem/1.1 var(--display); }
+.project-list dl { grid-column: 2; margin: 0; font-size: .875rem; }
+.project-list dl div { display: grid; grid-template-columns: 5ch minmax(0, 1fr); gap: 1rem; margin-bottom: .5rem; }
+.project-list dt { color: var(--dim); font-family: var(--mono); font-size: .7rem; padding-top: .2rem; }
+.project-list dd { margin: 0; }
+.project-list article > a { grid-column: 2; justify-self: start; }
+.source-note { font: .75rem/1.6 var(--mono); color: var(--dim); margin-top: 2rem; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .project-list article { grid-template-columns: minmax(0, 1fr); } .project-list dl, .project-list article > a { grid-column: 1; } }
+
+.project-detail { overflow-wrap: anywhere; }
+.project-detail header { margin-top: 2rem; }
+.project-detail .lead { margin-bottom: 1.5rem; }
+.project-facts { display: grid; gap: .5rem; margin: 1.5rem 0; }
+.project-facts div { display: grid; grid-template-columns: 6ch minmax(0, 1fr); gap: 1rem; }
+.project-facts dt, .project-detail figcaption { font: .75rem/1.6 var(--mono); color: var(--dim); }
+.project-facts dd { margin: 0; }
+.project-links { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
+.project-detail section { max-width: 70ch; margin: 2.5rem 0; }
+.project-detail h2 { font: 800 2rem/1.1 var(--display); margin: 0 0 1rem; }
+.project-detail section p + p, .project-detail li + li { margin-top: .75rem; }
+.project-detail figure { margin: 2rem 0; }
+.project-detail img { display: block; width: 100%; height: auto; max-height: 44rem; object-fit: contain; background: var(--raise-solid); border: 1px solid var(--line); }
+.project-detail figcaption { margin-top: .75rem; }
+::view-transition-group(project-name) { animation-duration: var(--t-4); animation-timing-function: var(--ease-out); }
+::view-transition-old(project-name), ::view-transition-new(project-name) { height: 100%; object-fit: contain; object-position: left top; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(project-name), ::view-transition-old(project-name), ::view-transition-new(project-name) { animation: none !important; } }

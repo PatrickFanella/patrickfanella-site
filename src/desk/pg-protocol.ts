@@ -20,7 +20,7 @@ export const QUERY = "'world':* & 'record':*"
 export interface Run { plan: string[]; exec: number; runs?: number; batches?: number[] }
 export interface Row { title: string; creator: string; votes: number }
 
-export type PgEvent =
+export type PgEvent = (
   | { ev: 'ready'; ms: number; version: string; step: number }
   | { ev: 'seed'; ms: number; rows: number }
   | { ev: 'bench'; kind: 'seq'; run: Run }
@@ -29,8 +29,12 @@ export type PgEvent =
   | { ev: 'search'; id: number; query: string; run: Run; rows: Row[]; total: number }
   | { ev: 'search-error'; id: number; message: string }
   | { ev: 'error'; message: string }
+  | { ev: 'worker' }
+  | { ev: 'schema'; ms: number }
+  | { ev: 'stats'; bytes: number; queries: number }
+) & { at?: number }
 
-export interface SearchRequest { ev: 'search'; id: number; words: string }
+export type PgRequest = { ev: 'search'; id: number; words: string } | { ev: 'stats' }
 
 /** Prefix terms, joined with AND as in Clpr; punctuation never becomes tsquery syntax. */
 export function searchTerms(words: string): string {
