@@ -2,7 +2,7 @@
 // main thread, where the ink draws. PGlite is bundled from npm and served from this origin, so the
 // worker runs under `worker-src 'self'`; WebAssembly still needs 'wasm-unsafe-eval' in script-src.
 import { PGlite } from '@electric-sql/pglite'
-import { SEARCH_SQL, COUNT_SQL, QUERY, type Run, type PgEvent } from './pg-protocol'
+import { SEARCH_SQL, COUNT_SQL, QUERY, searchTerms, type SearchRequest, type Run, type PgEvent } from './pg-protocol'
 
 const post = (m: PgEvent) => postMessage(m)
 
@@ -84,6 +84,25 @@ async function main() {
   const idx = await median3(pg, QUERY)
   const found = (await pg.query<{ title: string; creator_name: string; vote_score: number }>(SEARCH_SQL, [QUERY])).rows
   const total = (await pg.query<{ n: number }>(COUNT_SQL, [QUERY])).rows[0].n
+
+  // Serialize requests so the displayed plan, rows and count always belong to one search.
+  let queue = Promise.resolve()
+  self.onmessage = (event: MessageEvent<SearchRequest>) => {
+    const request = event.data
+    if (request.ev !== 'search') return
+    queue = queue.then(async () => {
+      try {
+        const query = searchTerms(request.words)
+        if (!query) throw new Error('Use search followed by words or numbers.')
+        const run = await batch(pg, query)
+        const matches = (await pg.query<{ title: string; creator_name: string; vote_score: number }>(SEARCH_SQL, [query])).rows
+        const count = (await pg.query<{ n: number }>(COUNT_SQL, [query])).rows[0].n
+        post({ ev: 'search', id: request.id, query, run, total: count,
+          rows: matches.map((r) => ({ title: r.title, creator: r.creator_name, votes: r.vote_score })) })
+      } catch (err) { post({ ev: 'search-error', id: request.id, message: err instanceof Error ? err.message : String(err) }) }
+    })
+  }
+  // Publish readiness only after the request listener exists.
   post({ ev: 'bench', kind: 'idx', run: idx, rows: found.map((r) => ({ title: r.title, creator: r.creator_name, votes: r.vote_score })), total })
 }
 
