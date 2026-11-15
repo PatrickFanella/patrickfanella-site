@@ -6,6 +6,8 @@ export interface CaseStudyNote {
   startLine: number
   endLine: number
   body: string
+  cost?: string
+  change?: string
 }
 
 export interface CaseStudy {

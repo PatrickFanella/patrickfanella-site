@@ -39,7 +39,10 @@ function annotation(start: number, note?: CaseStudyNote): ShikiTransformer {
       <div class="source" tabindex="0" role="region" aria-label={`Source lines ${start} to ${end}`}>
         <Code code={lines.slice(start - 1, end).join('\n') + '\n'} lang="go" themes={{ light: 'github-light-high-contrast', dark: 'github-dark-high-contrast' }} transformers={[annotation(start, note)]} />
       </div>
-      {note && <aside class="note" id={`note-${note.id}`} style={`position-anchor: --line-${note.id}`}><h2>{note.label}</h2><p class="line-label">Lines <a href={`${study.source}#L${note.startLine}-L${note.endLine}`}>{note.startLine}–{note.endLine}</a></p><p>{note.body}</p></aside>}
+      {note && <aside class="note" id={`note-${note.id}`} style={`position-anchor: --line-${note.id}`}><h2>{note.label}</h2><p class="line-label">Lines <a href={`${study.source}#L${note.startLine}-L${note.endLine}`}>{note.startLine}–{note.endLine}</a></p><p>{note.body}</p>
+        {note.cost && <p><strong>Cost.</strong> {note.cost}</p>}
+        {note.change && <p><strong>What I would change.</strong> {note.change}</p>}
+      </aside>}
     </section>)}
   </div>
   <p class="source-note">Commit <code>{study.commit}</code>, <code>{study.path}</code>. Archived source SHA-256: <code>{study.sha256}</code>.</p>

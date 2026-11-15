@@ -22,7 +22,7 @@ export default defineConfig({
     },
   }, {
     name: 'firefox-case-study',
-    testMatch: 'case-study.spec.ts',
+    testMatch: ['case-study.spec.ts', 'clpr-study.spec.ts'],
     use: { ...devices['Desktop Firefox'], reducedMotion: 'reduce' },
   }],
   webServer: {
