@@ -11,10 +11,11 @@ and paging (200–221). No timings or production-backend claims are inferred fro
 The proposed ranking evaluation, optional totals, snippet tests and cursor work are editorial
 recommendations for review, not claims that those changes shipped.
 
-Issue #22 requires Patrick to approve the rendered page’s claims and voice. The page is visibly
-marked as a draft and the PR stays a draft until that review. The approval remains outstanding;
-agent review and passing checks do not satisfy it. After approval, remove the review notice and
-the draft label on the study index, then mark the PR ready. Keep #22 open until approval and merge.
+Patrick explicitly approved the rendered study’s claims and voice on 2026-11-15 UTC after
+review artifacts were supplied in PR #45. That PR merged into `feat/resume-page` as `de12958`.
+The approval follow-up removes the draft labels while retaining the distinction between
+qualitative costs and measurements, and between proposed changes and shipped behavior.
+The screenshots in `docs/reviews/` record the version submitted for that approval.
 
 Checks: `npm run build`; `npx playwright test e2e/case-study.spec.ts e2e/clpr-study.spec.ts`.
 Chromium and Firefox compare the rendered text with every source line, validate the source pin

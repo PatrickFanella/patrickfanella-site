@@ -1,6 +1,6 @@
 import { clprSearch, type CaseStudy } from './clpr-search'
 
-// Proposed editorial judgments. Patrick must approve the rendered page before publication (#22).
+// Patrick approved the rendered claims and voice on 2026-11-15 UTC (#22).
 export const clprRanking: CaseStudy = {
   ...clprSearch,
   title: 'How Clpr ranks and pages a clip search',

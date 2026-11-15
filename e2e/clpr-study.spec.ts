@@ -11,8 +11,9 @@ test('ranking study cites the exact source and separates costs and proposals wit
   const page = await context.newPage()
   await page.goto('/case-studies/clpr-search/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('How Clpr ranks and pages a clip search')
-  await expect(page.locator('.review-status')).toContainText('Draft for Patrick’s review')
-  await expect(page.locator('.review-status')).toContainText('not latency measurements')
+  await expect(page.locator('.study-scope')).toContainText('The proposed changes below have not shipped')
+  await expect(page.locator('.study-scope')).toContainText('not latency measurements')
+  await expect(page.locator('main')).not.toContainText('Draft for Patrick')
   for (let number = 174; number <= 221; number++) {
     const line = page.locator(`.line[data-line="${number}"]`)
     await expect(line.locator('.line-text')).toHaveText(source[number - 1])
