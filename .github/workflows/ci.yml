@@ -69,12 +69,24 @@ jobs:
         run: npx playwright install --with-deps chromium firefox
       - name: Browser tests
         run: npx playwright test
+      - name: Mobile Lighthouse launch budgets
+        run: npm run lighthouse:ci
+      - name: Check isolated edge-route replacement and rollback
+        run: python3 deploy/test_edge_route.py
+      - name: Check lazy assets survive production release switches
+        run: python3 deploy/test_release_assets.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: test-results/lighthouse/
+          if-no-files-found: ignore
+          retention-days: 14
 
-  # The private preview at pf-preview.subcult.tv. Every green build of main is pushed as plain files
-  # to the `deploy` branch; a timer on the homelab checks that branch every minute and serves the
-  # newest build behind Authelia. The branch holds one commit, replaced on each deploy.
+  # Both origins read this tested artifact: production at patrickfanella.co and the
+  # private preview behind Authelia. The branch holds one commit, replaced on each deploy.
   deploy:
-    name: Publish the preview build
+    name: Publish the tested static build
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04

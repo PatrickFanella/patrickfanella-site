@@ -2,14 +2,19 @@
 // The shell every page shares: head, body class and the ink canvas. Each page keeps its own bar,
 // content and footer. It loads its script into the head slot, so the script tag sits in <head> as
 // it did in the Vite build; Astro bundles it with Vite.
+import displayFont from '@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2?url'
+import bodyFont from '@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url'
+import monoFont from '@fontsource-variable/martian-mono/files/martian-mono-latin-wght-normal.woff2?url'
 interface Props {
   title: string
   description: string
   bodyClass: string
   /** Pages that pour their name show it in place when scripts are off. */
   noscript?: boolean
+  ogType?: 'website' | 'article'
 }
-const { title, description, bodyClass, noscript = true } = Astro.props
+const { title, description, bodyClass, noscript = true, ogType = 'website' } = Astro.props
+const canonical = new URL(Astro.url.pathname, 'https://patrickfanella.co').href
 ---
 <!doctype html>
 <html lang="en">
@@ -18,7 +23,15 @@ const { title, description, bodyClass, noscript = true } = Astro.props
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{title}</title>
   <meta name="description" content={description}>
+  <link rel="canonical" href={canonical}>
+  <meta property="og:type" content={ogType}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:url" content={canonical}>
   <meta name="color-scheme" content="light dark">
+  <link rel="preload" as="font" type="font/woff2" href={displayFont} crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href={bodyFont} crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href={monoFont} crossorigin="anonymous">
   <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
   <style is:inline>@view-transition { navigation: auto; }</style>
   {noscript && <noscript><style is:inline>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>}

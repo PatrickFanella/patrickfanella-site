@@ -6,7 +6,7 @@ interface Target { tex: WebGLTexture; fbo: WebGLFramebuffer; w: number; h: numbe
 interface Pair { r: Target; w: Target; swap(): void }
 type Uniform = number | number[] | Float32Array | Target | { tex: WebGLTexture }
 
-export function createWebGL(canvas: HTMLCanvasElement, onLost: () => void): Backend {
+export async function createWebGL(canvas: HTMLCanvasElement, onLost: () => void): Promise<Backend> {
   const gl = canvas.getContext('webgl2', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance', preserveDrawingBuffer: false })
   if (!gl) throw new Error('WebGL2 is not available')
   if (!gl.getExtension('EXT_color_buffer_float') && !gl.getExtension('EXT_color_buffer_half_float')) throw new Error('No float render targets')
@@ -22,6 +22,9 @@ export function createWebGL(canvas: HTMLCanvasElement, onLost: () => void): Back
   const vs = compile(gl.VERTEX_SHADER, VERTEX)
   const progs = {} as Record<PassName, { p: WebGLProgram; u: Map<string, WebGLUniformLocation> }>
   for (const name of Object.keys(FRAGMENTS) as PassName[]) {
+    // Driver compilation/status queries can block, especially on a phone or a
+    // software GPU. Give input and painting a turn between independent passes.
+    await new Promise<void>(resolve => setTimeout(resolve, 0))
     const p = gl.createProgram()!
     gl.attachShader(p, vs); gl.attachShader(p, compile(gl.FRAGMENT_SHADER, FRAGMENTS[name]))
     gl.bindAttribLocation(p, 0, 'a'); gl.linkProgram(p)

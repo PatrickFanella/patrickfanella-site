@@ -53,7 +53,8 @@ test('Clpr runs all migrations and returns its real JSON through pgx', async ({ 
     await expect(sql).toContainText('Limit')
     await expect(sql).toContainText('Parameters ($1, $2, … in order)')
     await expect(sql).toContainText(words === 'world record' ? 'world:* & record:*' : `${words}:*`)
-    await sql.locator('summary').first().click()
+    // pgx may ping the connection before its SELECT; inspect the search statement.
+    await sql.locator('details').filter({ has: page.locator('pre').filter({ hasText: 'SELECT' }) }).first().locator('summary').click()
     await expect(sql.locator('details[open] pre')).toContainText('SELECT')
     await page.getByRole('tab', { name: 'Timing', exact: true }).click()
     const times = await page.locator('[data-timing] dd').evaluateAll(elements => elements.map(element => Number((element as HTMLElement).dataset.ms)))
