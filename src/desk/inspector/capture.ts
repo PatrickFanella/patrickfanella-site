@@ -1,8 +1,9 @@
 import type { PGlite } from '@electric-sql/pglite'
+import { decodeWire, type WireMessage } from './wire'
 
-export interface Parameter { format: 'text' | 'binary'; value: string | null }
+export interface Parameter { format: 'text' | 'binary'; value: string | null; oid?: number }
 export interface Statement { kind: 'prepare' | 'execute'; sql: string; params: Parameter[] }
-export interface DatabaseCall { ms: number; statements: Statement[] }
+export interface DatabaseCall { ms: number; statements: Statement[]; sent: WireMessage[]; received: WireMessage[] }
 
 const decoder = new TextDecoder()
 
@@ -10,6 +11,7 @@ const decoder = new TextDecoder()
  * not known from Bind alone, so decoding by byte length would guess their meaning. */
 export function captureDatabase(db: Pick<PGlite, 'execProtocolRaw'>) {
   const named = new Map<string, string>()
+  const types = new Map<string, number[]>()
   let calls: DatabaseCall[] | null = null
   function statements(bytes: Uint8Array): Statement[] {
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
@@ -47,6 +49,7 @@ export function captureDatabase(db: Pick<PGlite, 'execProtocolRaw'>) {
         })
         const sql = named.get(name)
         if (sql === undefined) throw new Error('Unknown prepared statement')
+        params.forEach((param, index) => { const oid = types.get(name)?.[index]; if (oid) param.oid = oid })
         found.push({ kind: 'execute', sql, params })
       } else if (type === 'Q') found.push({ kind: 'execute', sql: string(), params: [] })
       offset += 1 + length
@@ -57,9 +60,23 @@ export function captureDatabase(db: Pick<PGlite, 'execProtocolRaw'>) {
     proxy: {
       async execProtocolRaw(...args: Parameters<PGlite['execProtocolRaw']>) {
         const captured = statements(args[0])
+        const sent = decodeWire(args[0], 'sent')
         const start = performance.now()
-        try { return await db.execProtocolRaw(...args) }
-        finally { calls?.push({ ms: performance.now() - start, statements: captured }) }
+        let output: Uint8Array = new Uint8Array()
+        try { output = await db.execProtocolRaw(...args); return output }
+        finally {
+          const ms = performance.now() - start
+          const received = decodeWire(output, 'received')
+          // pgx prepares and describes one statement before binding it. Keep the
+          // server's parameter types, so EXPLAIN never guesses a binary value's type.
+          const prepared = sent.filter(message => message.type === 'P')
+          const described = received.filter(message => message.parameterTypes)
+          prepared.forEach((statement, index) => {
+            const name = statement.statementName
+            if (name !== undefined && described[index]?.parameterTypes) types.set(name, described[index].parameterTypes!)
+          })
+          calls?.push({ ms, statements: captured, sent, received })
+        }
       },
     },
     begin() { calls = [] },

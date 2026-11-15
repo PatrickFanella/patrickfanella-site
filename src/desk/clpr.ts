@@ -7,7 +7,7 @@ export function startClpr(pane: HTMLElement, options: {
   pre: HTMLElement; bench: HTMLElement; sub: HTMLElement
   stopBenchmark(): void; startBenchmark(): void; recorded(): void
 }) {
-  const inspector = startInspector(pane.querySelector<HTMLElement>('[data-inspector]')!)
+  const inspector = startInspector(pane.querySelector<HTMLElement>('[data-inspector]')!, rows => search(lastWords, rows))
   const controls = document.createElement('div'); controls.className = 'clpr-controls'
   const meta = document.createElement('p'); meta.dataset.clprMeta = ''
   const source = document.createElement('a')
@@ -19,7 +19,7 @@ export function startClpr(pane: HTMLElement, options: {
     const ci = document.createElement('a'); ci.href = manifest.ciRun; ci.textContent = 'Built in Clpr CI'
     provenance.append(ci)
   } else provenance.textContent = 'Built outside Clpr CI.'
-  provenance.append(' PostgreSQL and its extensions download with live mode. Searches stay in this tab; this demo uses Clpr’s PostgreSQL path and eight fixture clips.')
+  provenance.append(' PostgreSQL and its extensions download with live mode. Searches stay in this tab; this demo uses Clpr’s PostgreSQL path and eight fixture clips. The Plan tab can add generated clips.')
   const buttons = document.createElement('div'); buttons.className = 'clpr-buttons'
   const start = document.createElement('button'); start.type = 'button'; start.textContent = 'Start Clpr live mode'
   const stop = document.createElement('button'); stop.type = 'button'; stop.textContent = 'Stop live mode'; stop.disabled = true
@@ -33,6 +33,7 @@ export function startClpr(pane: HTMLElement, options: {
   const set = (value: typeof state) => { state = value; pane.dataset.clpr = value }
   set('idle')
   let worker: Worker | null = null, requestId = 0, shownId = 0
+  let lastWords = 'world record'
   let slow: ReturnType<typeof setTimeout> | undefined
   const pending = new Map<number, { resolve: (value: SearchResult) => void; reject: (error: Error) => void }>()
   const terminate = () => {
@@ -51,16 +52,17 @@ export function startClpr(pane: HTMLElement, options: {
     status.textContent = 'Clpr could not run in this tab. The recorded run is still available; retry with Start Clpr live mode.'
     console.info('Clpr live mode is off:', message)
   }
-  const search = (words: string): Promise<SearchResult> => {
+  const search = (words: string, rows?: number): Promise<SearchResult> => {
     if (!words.trim()) return Promise.reject(new Error('Use search followed by words or numbers.'))
     if (state !== 'live' || !worker) return Promise.reject(new Error(state === 'starting'
       ? 'Clpr is still starting. Try again when live mode is ready.'
       : 'Start Clpr live mode to run the Go search handler.'))
     const id = ++requestId
+    lastWords = words
     shownId = id
     return new Promise((resolve, reject) => {
       pending.set(id, { resolve, reject })
-      worker!.postMessage({ id, words })
+      worker!.postMessage({ id, words, rows })
     })
   }
   const onEvent = (event: ClprEvent) => {
@@ -79,6 +81,7 @@ export function startClpr(pane: HTMLElement, options: {
     pending.delete(event.id)
     try {
       if (event.id === shownId) {
+        status.textContent = `Clpr is live: all ${manifest.migrationCount} migrations applied, 8 fixture clips and ${(event.rows - 8).toLocaleString('en-US')} generated clips. Type search world record in the shell.`
         inspector.render(event)
         options.bench.hidden = true
         options.pre.hidden = true

@@ -1,5 +1,6 @@
 import type { ClprEvent } from '../clpr-protocol'
 import type { Statement } from './capture'
+import { startPlanView } from './plan-view'
 
 type Result = Extract<ClprEvent, { ev: 'result' }>
 
@@ -30,7 +31,8 @@ function summary(statement: Statement) {
 }
 
 /** HTML sections remain readable without script; only this module turns them into tabs. */
-export function startInspector(root: HTMLElement) {
+export function startInspector(root: HTMLElement, resize: (rows: number) => Promise<unknown>) {
+  const plans = startPlanView(root, resize)
   const tabs = root.querySelector<HTMLElement>('[data-inspector-tabs]')!
   const panels = [...root.querySelectorAll<HTMLElement>(':scope > section')]
   const buttons = panels.map(panel => {
@@ -60,10 +62,10 @@ export function startInspector(root: HTMLElement) {
   select(0)
   root.hidden = true
   return {
-    clear() { root.hidden = true },
+    clear() { root.hidden = true; plans.clear() },
     render(event: Result) {
       root.hidden = false
-      root.querySelector<HTMLElement>('[data-inspector-request]')!.textContent = `GET ${event.url} · HTTP ${event.response.status} · measured in this tab on eight fixture clips`
+      root.querySelector<HTMLElement>('[data-inspector-request]')!.textContent = `GET ${event.url} · HTTP ${event.response.status} · measured in this tab on ${event.rows.toLocaleString('en-US')} clips (8 fixtures, ${event.rows - 8} generated)`
       const response = root.querySelector<HTMLElement>('[data-inspector-response]')!
       response.replaceChildren()
       let body: unknown
@@ -107,6 +109,29 @@ export function startInspector(root: HTMLElement) {
       const explanation = document.createElement('p')
       explanation.textContent = `${event.calls.length} bridge calls. Inside time is wall time awaiting execProtocolRaw, including protocol work and PostgreSQL. Outside time is the request total minus those calls: Go, Gin, pgx, bridge and JavaScript overhead together. These parts are not measured separately. Browser clock rounding applies; these are fixture timings, not production latency.`
       timing.replaceChildren(values, explanation)
+      const wire = root.querySelector<HTMLElement>('[data-inspector-wire]')!
+      const wireNote = document.createElement('p')
+      wireNote.textContent = 'Actual PostgreSQL protocol bytes at the in-process pgx bridge, grouped by call. Counts include the type byte and four-byte length. These are not network packets or network latency.'
+      wire.replaceChildren(wireNote)
+      if (!event.calls.length) wire.append('This request made no PostgreSQL bridge calls.')
+      event.calls.forEach((call, index) => {
+        const heading = document.createElement('h4')
+        const sent = call.sent.reduce((sum, message) => sum + message.bytes, 0)
+        const received = call.received.reduce((sum, message) => sum + message.bytes, 0)
+        heading.textContent = `Call ${index + 1}: ${sent} bytes sent, ${received} bytes received; ${call.ms.toFixed(1)} ms`
+        wire.append(heading)
+        for (const [label, messages] of [['pgx → PostgreSQL', call.sent], ['PostgreSQL → pgx', call.received]] as const) {
+          const direction = document.createElement('p'); direction.textContent = label
+          const list = document.createElement('ol')
+          messages.forEach(message => {
+            const item = document.createElement('li'), details = document.createElement('details'), summary = document.createElement('summary')
+            item.append(`${message.name} (${message.type || 'untyped'}): ${message.bytes} bytes. ${message.detail}`)
+            summary.textContent = 'Raw message hex'; details.append(summary, pre(message.hex)); item.append(details); list.append(item)
+          })
+          wire.append(direction, list)
+        }
+      })
+      plans.render(event)
     },
   }
 }
