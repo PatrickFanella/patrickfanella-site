@@ -15,7 +15,7 @@
 @media (max-width: 600px) { .resume .skills div { grid-template-columns: minmax(0, 1fr); gap: .25rem; } }
 @media print {
   @page { size: letter; margin: .5in; }
-  html, body.resume-page { background: white !important; color: black !important; font: 9pt/1.3 var(--body); }
+  html, body.resume-page { background: white !important; color: black !important; font: 9pt/1.2 var(--body); }
   .resume-page :is(#ink, .bar, .foot, .skip, .resume-actions) { display: none !important; }
   .resume-page .content-main { max-width: none; width: auto; margin: 0; padding: 0; }
   .resume { max-width: none; }

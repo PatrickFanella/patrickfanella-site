@@ -8,7 +8,7 @@ with a download filename. Do not invent dates when updating these sources.
 
 `/resume/` renders without JavaScript. Fonts and CSS load statically; the optional Print résumé
 button uses a bundled event listener allowed by the site's CSP. The print stylesheet removes the
-navigation and ink, uses letter paper with half-inch margins, and allows one or two readable pages.
+navigation and ink, uses letter paper with half-inch margins, and fits the checked content on one letter page (the contract permits two).
 
 Checks: `npm run build`; `npx playwright test e2e/resume.spec.ts` compares the served PDF hash,
 checks the source roles and dates, renders print output, and checks mobile layout and accessibility.
