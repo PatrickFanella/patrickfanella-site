@@ -102,8 +102,6 @@ async function main() {
     const bytes = (await pg.query<{ bytes: number }>('SELECT pg_database_size(current_database())::float8 AS bytes')).rows[0].bytes
     post({ ev: 'stats', bytes, queries })
   }
-  await stats()
-
   // Serialize requests so the displayed plan, rows and count always belong to one search.
   let queue = Promise.resolve()
   self.onmessage = (event: MessageEvent<PgRequest>) => {
@@ -129,6 +127,7 @@ async function main() {
   }
   // Publish readiness only after the request listener exists.
   post({ ev: 'bench', kind: 'idx', run: idx, rows: found.map((r) => ({ title: r.title, creator: r.creator_name, votes: r.vote_score })), total })
+  await stats()
 }
 
 main().catch((err: unknown) => post({ ev: 'error', message: err instanceof Error ? err.message : String(err) }))

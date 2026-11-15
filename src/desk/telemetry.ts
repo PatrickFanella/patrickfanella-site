@@ -7,6 +7,10 @@ export function startTelemetry(ink: Ink | null): (event: PgEvent) => void {
   const processPane = document.querySelector<HTMLElement>('section.process')!
   logPane.querySelector('.ptitle > span')!.textContent = 'since navigation'
   processPane.querySelector('.ptitle > span')!.textContent = 'live, every second'
+  for (const [pane, label] of [[logPane, 'Startup log'], [processPane, 'Process statistics']] as const) {
+    const body = pane.querySelector<HTMLElement>('.pbody')!
+    body.tabIndex = 0; body.setAttribute('role', 'region'); body.setAttribute('aria-label', label)
+  }
   const log = document.createElement('ol'); log.className = 'boot-log'; log.setAttribute('aria-label', 'Startup events')
   logPane.querySelector('.pbody')!.replaceChildren(log)
   const stats = document.createElement('dl'); stats.className = 'process-stats'
