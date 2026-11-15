@@ -55,7 +55,7 @@ export interface StepInput {
   bA: Float32Array; bB: Float32Array; bC: Float32Array
 }
 
-export interface Look { ground: number[]; a: number[]; b: number[]; c: number[]; dark: number; gain: number; toe: number }
+export interface Look { ground: number[]; a: number[]; b: number[]; c: number[]; gain: number; toe: number }
 
 /** A solver: WebGL2 (webgl.ts) or WebGPU (webgpu.ts). */
 export interface Backend {
@@ -75,10 +75,15 @@ export interface Backend {
   draw(look: Look): void
 }
 
-// Ink colours. Light: absorption per RGB channel. Dark: emitted light.
+// The owner's Ember palette: the same sRGB pigments over either theme's ground.
+const EMBER = {
+  a: [202 / 255, 81 / 255, 72 / 255],   // brick #CA5148
+  b: [210 / 255, 149 / 255, 40 / 255],  // amber #D29528
+  c: [128 / 255, 85 / 255, 170 / 255],  // plum #8055AA
+}
 const LOOK: Record<Theme, Look> = {
-  light: { ground: [0.914, 0.937, 0.949], a: [2.81, 1.43, 0.13], b: [0.0, 1.02, 2.66], c: [0.0, 0.22, 2.53], dark: 0, gain: P.gain, toe: P.toe },
-  dark: { ground: [0.047, 0.059, 0.086], a: [0.22, 0.45, 1.25], b: [1.25, 0.46, 0.1], c: [1.15, 0.86, 0.22], dark: 1, gain: P.gain, toe: P.toe },
+  light: { ground: [0.914, 0.937, 0.949], ...EMBER, gain: P.gain, toe: P.toe },
+  dark: { ground: [0.047, 0.059, 0.086], ...EMBER, gain: P.gain, toe: P.toe },
 }
 const INK_RGB: Record<InkId, number[]> = { 0: [1, 0, 0], 1: [0, 1, 0], 2: [0, 0, 1] }
 

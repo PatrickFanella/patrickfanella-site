@@ -186,9 +186,9 @@ struct J { keep: f32 };
 
 export type ComputeName = keyof typeof COMPUTE
 
-// The two looks, as in the WebGL2 show pass: pigment on paper, or ink that glows.
+// The same Ember pigments and compositing as the WebGL2 show pass in both themes.
 export const SHOW = NOISE + `
-struct S { ground: vec4f, a: vec4f, b: vec4f, c: vec4f, dT: vec2f, dark: f32, gain: f32, toe: f32 };
+struct S { ground: vec4f, a: vec4f, b: vec4f, c: vec4f, dT: vec2f, gain: f32, toe: f32 };
 @group(0) @binding(0) var<uniform> s: S;
 @group(0) @binding(1) var samp: sampler;
 @group(0) @binding(2) var dyeT: texture_2d<f32>;
@@ -208,17 +208,9 @@ fn tot(p: vec2f) -> f32 { let q = textureSampleLevel(dyeT, samp, p, 0.).rgb; ret
   let px = i.pos.xy;
   let grain = .6 * vn(px * .9) + .4 * vn(px * .23);
   let dd = d * s.gain * (1. + .95 * edge) * (.86 + .28 * grain);
-  var col: vec3f;
-  if (s.dark > .5) {
-    let glow = dd.r * s.a.rgb + dd.g * s.b.rgb + dd.b * s.c.rgb;
-    col = 1. - (1. - s.ground.rgb) * exp(-glow * .55);
-    col = mix(col, col * col, .25);
-    col *= .97 + .05 * grain;
-  } else {
-    var A = dd.r * s.a.rgb + dd.g * s.b.rgb + dd.b * s.c.rgb;
-    let m = max(A.r, max(A.g, A.b));
-    A *= (2.05 * (1. - exp(-m / 2.05))) / max(m, 1e-4);
-    col = s.ground.rgb * exp(-A) * (.985 + .03 * grain);
-  }
+  let mass = dd.r + dd.g + dd.b;
+  let ink = (dd.r * s.a.rgb + dd.g * s.b.rgb + dd.b * s.c.rgb) / max(mass, 1e-5);
+  let opacity = 1. - exp(-mass * .85);
+  let col = mix(s.ground.rgb, ink, opacity) * (.99 + .02 * grain);
   return vec4f(col, 1.);
 }`

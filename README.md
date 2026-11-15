@@ -30,7 +30,7 @@ The pages are built with Astro as static HTML. There is no client router and no 
 
 - `src/pages/`: `/`, `/desk/` and `/motion/`.
 - `src/layouts/Page.astro`: the head, body class and ink canvas every page shares.
-- `src/ink/shaders.ts`: stable fluids (advection, vorticity confinement, buoyancy, Jacobi pressure solve) in WebGL2 fragment shaders, plus the two looks: pigment on paper (light) and ink that glows (dark).
+- `src/ink/shaders.ts`: stable fluids (advection, vorticity confinement, buoyancy, Jacobi pressure solve) in WebGL2 fragment shaders. Both themes blend the same Ember pigments (brick `#CA5148`, amber `#D29528`, plum `#8055AA`) over their ground; `src/ink/engine.ts` holds those RGB values. The static fallback uses matching `--ink-*` tokens in `site.css`.
 - `src/ink/wgsl.ts`: the same solver and looks as WebGPU compute shaders.
 - `src/ink/webgl.ts` and `src/ink/webgpu.ts`: the two paths. Both take the same tunables and step input from the engine. WebGPU runs a 320-row grid against 256 on WebGL2. It is used only with a hardware adapter whose first frame runs cleanly offscreen; otherwise WebGL2 takes the canvas. Add `?ink=webgl2` or `?ink=webgpu` to the URL to pick a path; the second also accepts a software adapter.
 - `src/ink/mask.ts`: draws the page into the solver's mask. Letters marked `data-ink-letter` are solid and pour from their feet once they carry `data-pour`. Elements marked `data-ink-solid` are solid rectangles.
@@ -41,7 +41,7 @@ The pages are built with Astro as static HTML. There is no client router and no 
 - `src/desk/pg.worker.ts`: PostgreSQL (PGlite, bundled from npm) in a module worker. It seeds the clips, times three batches of the query without and with the index, and posts each step. It reports failures inside PGlite's start-up, which never reach the page's `Worker.onerror`. The pane stops the worker after the run.
 - `src/desk/psql.ts`: the psql pane and its timing panel. `src/desk/recorded.ts` holds Clpr's recorded run; `src/desk/pg-protocol.ts` holds the query and the messages.
 - `src/styles/site.css`: tokens (colour, type, four durations, two curves), layout, rise, view transitions and reduced motion.
-- `src/styles/desk.css`: the desk's tiling layout. Its colours are the `--desk-*` tokens in `site.css`. Panes 1, 2 and 5 take their accents from the gold, cobalt and orange inks. Panes 3 and 4 keep the prototype's pink and green, so the five pane buttons stay distinct.
+- `src/styles/desk.css`: the desk's tiling layout. Its colours are the `--desk-*` tokens in `site.css`, separate from the smoke palette. Panes 1, 2 and 5 keep their gold, cobalt and orange accents. Panes 3 and 4 keep the prototype's pink and green, so the five pane buttons stay distinct.
 - `docs/`: the plan, the original design doc and the prototypes the roadmap builds from.
 
 ## Motion set

@@ -5,7 +5,7 @@ import { inkFromCode, letterBaseline, type Emitter, type InkId } from '../ink/ma
 
 export const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/** Wrap each letter of the target's words in a span the ink can see. `inks` is one code per letter: c cobalt, o orange, y gold. */
+/** Wrap each letter of the target's words in a span the ink can see. Legacy codes c, o, y select the three palette channels. */
 export function splitLetters(el: HTMLElement, inks: string) {
   if (el.dataset.split) return [...el.querySelectorAll<HTMLElement>('[data-ink-letter]')]
   el.dataset.split = '1'

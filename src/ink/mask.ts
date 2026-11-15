@@ -1,7 +1,7 @@
 // Draws the page into the mask texture the solver reads (see shaders.ts).
 // The ink canvas is fixed to the viewport, so element rects map straight onto it.
 
-export type InkId = 0 | 1 | 2 // cobalt, orange, gold
+export type InkId = 0 | 1 | 2 // brick, amber, plum
 
 export interface Emitter {
   /** Viewport rect whose bottom edge lets ink go. */

@@ -4,7 +4,7 @@
 // The mask texture is drawn from the page itself (see mask.ts):
 //   R  solid: the fluid flows around it and no ink is drawn there
 //   G  emitter strength: ink enters here and is pushed downward
-//   B  which ink an emitter holds, as B / G: 0 cobalt, 0.5 orange, 1 gold
+//   B  which ink an emitter holds, as B / G: 0 brick, 0.5 amber, 1 plum
 
 const HEAD = `#version 300 es
 precision highp float; precision highp sampler2D;
@@ -136,11 +136,10 @@ void main() {
   o = vec4(d, 1.);
 }`,
 
-  // Two looks from the same ink. Light: pigment on paper, absorbed per channel
-  // (Beer-Lambert). Dark: the inks give off light over a deep ground.
+  // The same Ember pigments in both themes; only the ground changes.
   show: HEAD + NOISE + `
 uniform sampler2D uDye; uniform vec2 uDT;
-uniform vec3 uGround, uA, uB, uC; uniform float uDark, uGain, uToe;
+uniform vec3 uGround, uA, uB, uC; uniform float uGain, uToe;
 float tot(vec2 p) { vec3 d = texture(uDye, p).rgb; return d.r + d.g + d.b; }
 void main() {
   vec3 d = texture(uDye, uv).rgb;
@@ -151,18 +150,10 @@ void main() {
   vec2 px = gl_FragCoord.xy;
   float grain = .6 * vn(px * .9) + .4 * vn(px * .23);
   vec3 dd = d * uGain * (1. + .95 * edge) * (.86 + .28 * grain);
-  vec3 col;
-  if (uDark > .5) {
-    vec3 glow = dd.r * uA + dd.g * uB + dd.b * uC;
-    col = 1. - (1. - uGround) * exp(-glow * .55);
-    col = mix(col, col * col, .25);
-    col *= .97 + .05 * grain;
-  } else {
-    vec3 A = dd.r * uA + dd.g * uB + dd.b * uC;
-    float s = max(A.r, max(A.g, A.b));
-    A *= (2.05 * (1. - exp(-s / 2.05))) / max(s, 1e-4);
-    col = uGround * exp(-A) * (.985 + .03 * grain);
-  }
+  float mass = dd.r + dd.g + dd.b;
+  vec3 ink = (dd.r * uA + dd.g * uB + dd.b * uC) / max(mass, 1e-5);
+  float opacity = 1. - exp(-mass * .85);
+  vec3 col = mix(uGround, ink, opacity) * (.99 + .02 * grain);
   o = vec4(col, 1.);
 }`,
 } as const
