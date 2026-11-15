@@ -84,7 +84,6 @@ async function main() {
   const idx = await median3(pg, QUERY)
   const found = (await pg.query<{ title: string; creator_name: string; vote_score: number }>(SEARCH_SQL, [QUERY])).rows
   const total = (await pg.query<{ n: number }>(COUNT_SQL, [QUERY])).rows[0].n
-  post({ ev: 'bench', kind: 'idx', run: idx, rows: found.map((r) => ({ title: r.title, creator: r.creator_name, votes: r.vote_score })), total })
 
   // Serialize requests so the displayed plan, rows and count always belong to one search.
   let queue = Promise.resolve()
@@ -103,6 +102,8 @@ async function main() {
       } catch (err) { post({ ev: 'search-error', id: request.id, message: err instanceof Error ? err.message : String(err) }) }
     })
   }
+  // Publish readiness only after the request listener exists.
+  post({ ev: 'bench', kind: 'idx', run: idx, rows: found.map((r) => ({ title: r.title, creator: r.creator_name, votes: r.vote_score })), total })
 }
 
 main().catch((err: unknown) => post({ ev: 'error', message: err instanceof Error ? err.message : String(err) }))
