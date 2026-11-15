@@ -22,11 +22,20 @@ test('case study preserves exact pinned lines and aligns notes without overflow'
   await expect(page.getByText('Note: Normalize query')).toHaveCount(1)
   expect(createHash('sha256').update(await readFile(sourceFile)).digest('hex')).toBe('073e770bbd98884ad051bf7f906776f746fa0a6568c7da62142cbd4b786d10fc')
   await expect(page.locator('.line[data-line="38"] .line-number')).toHaveAttribute('href', /#L38$/)
+  await page.evaluate(() => document.fonts.ready)
   const normalizeRow = page.locator('.excerpt-row[data-note="normalize-query"]')
   const codeBox = await normalizeRow.locator('.source').boundingBox()
   const noteBox = await normalizeRow.locator('.note').boundingBox()
   expect(codeBox && noteBox && noteBox.x).toBeGreaterThan(codeBox?.x ?? 0)
   expect(await page.locator('html').evaluate((el) => el.scrollWidth)).toBe(1440)
+  for (const row of await page.locator('.excerpt-row[data-note]').all()) {
+    const note = await row.locator('.note').boundingBox()
+    const line = await row.locator('[style*="anchor-name"]').boundingBox()
+    if (await row.evaluate(el => el.classList.contains('anchored'))) expect(Math.abs(note!.y - line!.y)).toBeLessThan(2)
+    const bounds = await row.boundingBox()
+    expect(note!.y + note!.height).toBeLessThanOrEqual(bounds!.y + bounds!.height + 1)
+  }
+  await page.screenshot({ path: test.info().outputPath('case-study-desktop.png'), fullPage: true })
   await page.setViewportSize({ width: 390, height: 844 })
   await expect(page.locator('html').evaluate((el) => el.scrollWidth)).resolves.toBe(390)
   for (const row of await page.locator('.excerpt-row[data-note]').all()) {
