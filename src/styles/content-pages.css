@@ -1,0 +1,14 @@
+.content-main { position: relative; z-index: 1; max-width: 1080px; width: 100%; margin: 3rem auto; padding: 0 var(--gutter); }
+.content-main h1 { font: 900 clamp(3.5rem, 9vw, 7rem)/.95 var(--display); text-transform: uppercase; margin: 0 0 1rem; }
+.lead { font-size: 1.2rem; max-width: 65ch; margin-bottom: 2.5rem; }
+.group-title { font: 800 2.25rem/1.1 var(--display); margin: 2rem 0 1rem; }
+.project-list { list-style: none; padding: 0; margin: 0; }
+.project-list article { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(0, 2fr); gap: .75rem 2rem; padding: 1.5rem 0; border-top: 1px solid var(--line); }
+.project-list h3 { margin: 0; font: 800 1.9rem/1.1 var(--display); }
+.project-list dl { grid-column: 2; margin: 0; font-size: .875rem; }
+.project-list dl div { display: grid; grid-template-columns: 5ch minmax(0, 1fr); gap: 1rem; margin-bottom: .5rem; }
+.project-list dt { color: var(--dim); font-family: var(--mono); font-size: .7rem; padding-top: .2rem; }
+.project-list dd { margin: 0; }
+.project-list article > a { grid-column: 2; justify-self: start; }
+.source-note { font: .75rem/1.6 var(--mono); color: var(--dim); margin-top: 2rem; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .project-list article { grid-template-columns: minmax(0, 1fr); } .project-list dl, .project-list article > a { grid-column: 1; } }

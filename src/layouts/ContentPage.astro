@@ -1,0 +1,23 @@
+---
+import Page from './Page.astro'
+import '@fontsource-variable/big-shoulders-display'
+import '@fontsource-variable/hanken-grotesk'
+import '@fontsource-variable/martian-mono'
+import '../styles/site.css'
+import '../styles/content-pages.css'
+interface Props { title: string; description: string; resume?: boolean }
+const { title, description, resume = false } = Astro.props
+---
+<Page title={title} description={description} bodyClass={`content-page${resume ? ' resume-page' : ''}`}>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="bar">
+    <a class="mark" href="/" data-bleed="y">patrickfanella.co</a>
+    <nav aria-label="Main">
+      <a href="/desk/">Desk</a><a href="/projects/" aria-current={Astro.url.pathname === '/projects/' ? 'page' : undefined}>Projects</a><a href="/resume/" aria-current={resume ? 'page' : undefined}>Résumé</a>
+      <button type="button" class="switch" data-theme-switch data-splash="y"><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
+    </nav>
+  </header>
+  <main id="content" class="content-main"><slot /></main>
+  <footer class="foot"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Code studies</a></nav></footer>
+  <Fragment slot="head"><script>import '../content-page.ts'</script></Fragment>
+</Page>
