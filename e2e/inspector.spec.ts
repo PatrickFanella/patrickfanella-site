@@ -52,7 +52,7 @@ test('inspector sections and their purpose exist without JavaScript', async ({ b
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
   await page.goto('/desk/')
-  for (const title of ['Response', 'SQL', 'Timing']) {
+  for (const title of ['Response', 'SQL', 'Timing', 'Wire', 'Plan']) {
     await expect(page.getByRole('region', { name: title, exact: true })).toBeVisible()
   }
   await expect(page.getByRole('tab')).toHaveCount(0)
@@ -71,8 +71,8 @@ test('inspector tabs work by keyboard on a narrow dark desk and clear on stop', 
   await expect(sql).toBeFocused(); await expect(sql).toHaveAttribute('aria-selected', 'true')
   await expect(page.locator('#inspector-response')).toBeHidden()
   await sql.press('End')
-  await expect(page.getByRole('tab', { name: 'Timing', exact: true })).toBeFocused()
-  await page.getByRole('tab', { name: 'Timing', exact: true }).press('Home')
+  await expect(page.getByRole('tab', { name: 'Plan', exact: true })).toBeFocused()
+  await page.getByRole('tab', { name: 'Plan', exact: true }).press('Home')
   await expect(response).toBeFocused()
   expect(await page.locator('[data-inspector]').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
   await page.screenshot({ path: test.info().outputPath('inspector-phone-dark.png'), fullPage: true })

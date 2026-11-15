@@ -1,5 +1,5 @@
 <div class="inspector" data-inspector>
-  <p data-inspector-request>Start Clpr live mode and type a search in the shell to inspect its response, SQL and timing.</p>
+  <p data-inspector-request>Start Clpr live mode and type a search in the shell to inspect its response, SQL, wire messages, timing and plans.</p>
   <div data-inspector-tabs hidden aria-label="Search inspector"></div>
   <section id="inspector-response" aria-labelledby="inspector-response-title" tabindex="0">
     <h3 id="inspector-response-title">Response</h3>
@@ -12,5 +12,26 @@
   <section id="inspector-timing" aria-labelledby="inspector-timing-title" tabindex="0">
     <h3 id="inspector-timing-title">Timing</h3>
     <div data-inspector-timing><p>Time inside PostgreSQL calls and time outside them will be measured in this tab.</p></div>
+  </section>
+  <section id="inspector-wire" aria-labelledby="inspector-wire-title" tabindex="0">
+    <h3 id="inspector-wire-title">Wire</h3>
+    <div data-inspector-wire><p>Each pgx-to-PostgreSQL bridge call will show its decoded messages in both directions, byte counts and raw hex.</p></div>
+  </section>
+  <section id="inspector-plan" aria-labelledby="inspector-plan-title" tabindex="0">
+    <h3 id="inspector-plan-title">Plan</h3>
+    <p>Compare sequential and GIN plans for the captured clip search. Eight labelled fixtures stay in the table at every size; extra clips are generated in this tab.</p>
+    <form data-plan-size>
+      <label for="plan-rows">Table size</label>
+      <select id="plan-rows" name="rows">
+        <option value="8">8 clips</option>
+        <option value="1008">1,008 clips</option>
+        <option value="10008">10,008 clips</option>
+        <option value="30008">30,008 clips</option>
+        <option value="50008">50,008 clips</option>
+      </select>
+      <button type="submit">Resize and compare plans</button>
+    </form>
+    <p data-plan-status role="status">Live mode will run EXPLAIN ANALYZE on the captured query. Resizing runs VACUUM FULL and ANALYZE before planning.</p>
+    <div data-plan-output></div>
   </section>
 </div>

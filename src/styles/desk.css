@@ -184,6 +184,21 @@
 .inspector dd { margin: 0 0 8px; font-variant-numeric: tabular-nums; }
 .inspector details { margin: 8px 0; }
 .inspector summary { cursor: pointer; color: var(--acc); }
+.inspector form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-block: 12px; }
+.inspector select { max-width: 100%; padding: 8px; color: var(--desk-text); background: var(--desk-pane-solid); border: 1px solid var(--desk-line); font: inherit; }
+.inspector select:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+.inspector :disabled { cursor: wait; opacity: 0.6; }
+.inspector table { width: 100%; border-collapse: collapse; margin-block: 12px; font-size: 0.6875rem; font-variant-numeric: tabular-nums; }
+.inspector :is(th, td) { padding: 6px 4px; text-align: left; border-bottom: 1px solid var(--desk-line); }
+.inspector caption { text-align: left; color: var(--desk-dim); }
+.plan-chart { display: block; width: 100%; height: auto; overflow: visible; }
+.plan-chart text { fill: var(--desk-text); font: 11px var(--mono); }
+.plan-axis { fill: none; stroke: var(--desk-dim); }
+.plan-seq { color: var(--acc); }
+.plan-gin { color: var(--desk-4); }
+.plan-line { fill: none; stroke: currentColor; stroke-width: 2; }
+.plan-line.plan-gin { stroke-dasharray: 6 4; }
+.plan-dot { fill: currentColor; }
 
 .boot-log { list-style: none; padding: 0; margin: 0; font: 400 0.6875rem/1.7 var(--mono); overflow-wrap: anywhere; }
 .boot-log span { color: var(--desk-4); font-variant-numeric: tabular-nums; }

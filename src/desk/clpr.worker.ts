@@ -6,6 +6,7 @@ import { ltree } from '@electric-sql/pglite/contrib/ltree'
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto'
 import { artifactBase, manifest, type ClprEvent, type ClprRequest, type ClprResponse } from './clpr-protocol'
 import { captureDatabase } from './inspector/capture'
+import { clipSearch, inspectPlans, resizeClips } from './inspector/plans'
 
 declare global {
   var pglite: Pick<PGlite, 'execProtocolRaw'>
@@ -90,14 +91,26 @@ async function main() {
   post({ ev: 'ready', migrations: migrations.length, rows: fixtures.length, version })
   // PGlite's wire-protocol connection is single-client; serialize requests in this worker.
   let requests = Promise.resolve()
+  let rows = fixtures.length
   self.onmessage = ({ data }: MessageEvent<ClprRequest>) => {
     requests = requests.then(async () => {
+      if (data.rows !== undefined) {
+        await resizeClips(pg, data.rows)
+        rows = (await pg.query<{ n: number }>('SELECT count(*)::int AS n FROM clips')).rows[0].n
+      }
       const url = `/api/v1/search?${new URLSearchParams({ q: data.words, type: 'clips' })}`
       capture.begin()
       const start = performance.now()
       const response = await goHandle('GET', url)
       const ms = performance.now() - start
-      post({ ev: 'result', id: data.id, url, response, ms, calls: capture.finish() })
+      const calls = capture.finish()
+      const statement = clipSearch(calls.flatMap(call => call.statements))
+      let plan, planError
+      if (statement) {
+        try { plan = await inspectPlans(pg, statement, rows) }
+        catch (error) { planError = error instanceof Error ? error.message : String(error) }
+      }
+      post({ ev: 'result', id: data.id, url, response, ms, calls, rows, plan, planError })
     }).catch(fail)
   }
 }
