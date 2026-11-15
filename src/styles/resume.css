@@ -33,3 +33,4 @@
   .resume p, .resume li { orphans: 2; widows: 2; }
   .resume .job-meta { break-after: avoid; }
 }
+.resume-actions button[hidden] { display: inline-block; visibility: hidden; }

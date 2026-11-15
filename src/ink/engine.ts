@@ -225,8 +225,8 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     if (wanted && !document.hidden) start(); else draw()
     settle()
   }
-  function useGL() {
-    be = createWebGL(canvas, stop)
+  async function useGL() {
+    be = await createWebGL(canvas, stop)
     resize(); begin()
   }
   function failed(err: Error) {
@@ -240,7 +240,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     if (gave) return
     gave = true
     console.info(`Ink on WebGL2: ${why}`)
-    try { useGL() } catch (err) { failed(err as Error) }
+    void useGL().catch((err: Error) => failed(err))
   }
   // WebGPU failing mid-run (a lost device, a throw, repeated GPU errors) hands over to WebGL2
   // on a fresh canvas: a canvas keeps the first API it was given. Only the running WebGPU
@@ -258,7 +258,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     failed(err)
   }
 
-  if (pick === 'webgl2' || !('gpu' in navigator)) useGL()
+  if (pick === 'webgl2' || !('gpu' in navigator)) void useGL().catch((err: Error) => failed(err))
   else {
     const timer = setTimeout(() => toGL('WebGPU took too long to start'), GPU_WAIT_MS)
     // The first step runs on the real grid before the canvas is handed over, so a

@@ -1,0 +1,14 @@
+[Unit]
+Description=Publish the tested patrickfanella.co static release
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=onnwee
+Group=onnwee
+WorkingDirectory=/opt/server/projects/patrickfanella-site
+ExecStart=/usr/bin/python3 /opt/server/projects/patrickfanella-site/update.py
+Nice=10
+NoNewPrivileges=true
+PrivateTmp=true

@@ -55,10 +55,11 @@ addEventListener('resize', () => ink?.invalidate())
 const bar = document.querySelector<HTMLElement>('.bar')!
 new ResizeObserver(() => document.documentElement.style.setProperty('--bar-h', `${bar.offsetHeight}px`)).observe(bar)
 
-// The tank opens already poured, so the desk lands complete. With reduced motion it stays one still frame.
+// Text lands complete immediately. Normal ink develops in frames rather than
+// blocking interaction on a synchronous preroll; reduced motion gets one still.
 document.fonts.load('900 100px "Big Shoulders Display Variable"').catch(() => []).then(() => document.fonts.ready).then(() => {
   if (!ink) return
   ink.invalidate()
-  ink.preroll(reduced() ? 240 : 120, 1500)
-  if (!reduced()) ink.setRunning(true)
+  if (reduced()) ink.preroll(240, 1500)
+  else ink.setRunning(true)
 })

@@ -5,10 +5,10 @@ import '@fontsource-variable/hanken-grotesk'
 import '@fontsource-variable/martian-mono'
 import '../styles/site.css'
 import '../styles/content-pages.css'
-interface Props { title: string; description: string; resume?: boolean; readingSurface?: boolean }
-const { title, description, resume = false, readingSurface = false } = Astro.props
+interface Props { title: string; description: string; resume?: boolean; readingSurface?: boolean; ogType?: 'website' | 'article' }
+const { title, description, resume = false, readingSurface = false, ogType = 'website' } = Astro.props
 ---
-<Page title={title} description={description} bodyClass={`content-page${resume ? ' resume-page' : ''}`}>
+<Page title={title} description={description} ogType={ogType} bodyClass={`content-page${resume ? ' resume-page' : ''}`}>
   <a class="skip" href="#content">Skip to content</a>
   <header class="bar">
     <a class="mark" href="/" data-bleed="y">patrickfanella.co</a>
