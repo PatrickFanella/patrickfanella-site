@@ -5,9 +5,10 @@ import { pg_trgm } from '@electric-sql/pglite/contrib/pg_trgm'
 import { ltree } from '@electric-sql/pglite/contrib/ltree'
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto'
 import { artifactBase, manifest, type ClprEvent, type ClprRequest, type ClprResponse } from './clpr-protocol'
+import { captureDatabase } from './inspector/capture'
 
 declare global {
-  var pglite: PGlite
+  var pglite: Pick<PGlite, 'execProtocolRaw'>
   var goReady: boolean | undefined
   var goHandle: (method: string, url: string) => Promise<ClprResponse>
   var Go: new () => { importObject: WebAssembly.Imports; run(instance: WebAssembly.Instance): Promise<void> }
@@ -77,7 +78,8 @@ async function main() {
   }
   await pg.exec('ANALYZE clips')
   post({ ev: 'progress', message: 'Starting Clpr’s Go search handler.' })
-  globalThis.pglite = pg
+  const capture = captureDatabase(pg)
+  globalThis.pglite = capture.proxy
   // Load the pinned toolchain's runtime as a same-origin module; no blob or eval is needed.
   await import(/* @vite-ignore */ artifactBase + 'wasm_exec.js')
   const go = new Go()
@@ -91,9 +93,11 @@ async function main() {
   self.onmessage = ({ data }: MessageEvent<ClprRequest>) => {
     requests = requests.then(async () => {
       const url = `/api/v1/search?${new URLSearchParams({ q: data.words, type: 'clips' })}`
+      capture.begin()
       const start = performance.now()
       const response = await goHandle('GET', url)
-      post({ ev: 'result', id: data.id, url, response, ms: performance.now() - start })
+      const ms = performance.now() - start
+      post({ ev: 'result', id: data.id, url, response, ms, calls: capture.finish() })
     }).catch(fail)
   }
 }

@@ -1,0 +1,16 @@
+<div class="inspector" data-inspector>
+  <p data-inspector-request>Start Clpr live mode and type a search in the shell to inspect its response, SQL and timing.</p>
+  <div data-inspector-tabs hidden aria-label="Search inspector"></div>
+  <section id="inspector-response" aria-labelledby="inspector-response-title" tabindex="0">
+    <h3 id="inspector-response-title">Response</h3>
+    <div data-inspector-response><p>The handler’s results, headers and JSON will appear here after a live search.</p></div>
+  </section>
+  <section id="inspector-sql" aria-labelledby="inspector-sql-title" tabindex="0">
+    <h3 id="inspector-sql-title">SQL</h3>
+    <div data-inspector-sql><p>Each statement and its parameters will be captured from pgx at the PostgreSQL bridge.</p></div>
+  </section>
+  <section id="inspector-timing" aria-labelledby="inspector-timing-title" tabindex="0">
+    <h3 id="inspector-timing-title">Timing</h3>
+    <div data-inspector-timing><p>Time inside PostgreSQL calls and time outside them will be measured in this tab.</p></div>
+  </section>
+</div>

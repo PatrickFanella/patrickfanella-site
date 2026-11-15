@@ -1,5 +1,6 @@
 ---
 import Page from '../../layouts/Page.astro'
+import Inspector from '../../desk/inspector/Inspector.astro'
 ---
 <Page title="The desk, Patrick Fanella" description="Patrick Fanella, senior backend and full-stack engineer. A tiling desk of panes on a live ink simulation, where PostgreSQL runs in your tab." bodyClass="desk" noscript={false}>
   <a class="skip" href="#about">Skip to the desk</a>
@@ -72,6 +73,7 @@ import Page from '../../layouts/Page.astro'
       <header class="ptitle"><h2 class="pname" id="p3"><i aria-hidden="true">3</i>psql</h2><span data-pg-sub>needs JavaScript</span></header>
       <div class="pbody">
         <p class="empty"><span class="ps1">clpr=#</span>Start Clpr live mode to run its Go search handler against PostgreSQL in this tab, or run the SQL benchmark to compare index timings on 50,008 generated clips. Both modes need JavaScript.</p>
+        <Inspector />
       </div>
     </section>
 

@@ -169,6 +169,22 @@
 .clpr-buttons button:disabled { opacity: 0.6; cursor: default; }
 .clpr-buttons button:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
 
+/* Inspector sections share the desk's type and accent; no new motion or palette. */
+.inspector { grid-column: 1 / -1; min-width: 0; font: 400 0.75rem/1.6 var(--mono); overflow-wrap: anywhere; }
+.inspector[hidden], .inspector [hidden], .psql-out[hidden] { display: none; }
+.inspector [role="tablist"] { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.inspector button { padding: 8px 12px; border: 1px solid var(--desk-line); background: var(--desk-pane); color: var(--desk-text); font: inherit; cursor: pointer; }
+.inspector button[aria-selected="true"] { border-color: var(--acc); color: var(--acc); }
+.inspector :is(button, section, pre):focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+.inspector h3 { margin: 12px 0; font: 700 1.2rem/1.2 var(--display); }
+.inspector h4 { margin: 14px 0 8px; font: 600 0.75rem/1.5 var(--mono); }
+.inspector pre { max-width: 100%; overflow-x: auto; padding: 8px; border: 1px solid var(--desk-line); font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+.inspector dl { margin: 8px 0; }
+.inspector dt { color: var(--desk-dim); }
+.inspector dd { margin: 0 0 8px; font-variant-numeric: tabular-nums; }
+.inspector details { margin: 8px 0; }
+.inspector summary { cursor: pointer; color: var(--acc); }
+
 .boot-log { list-style: none; padding: 0; margin: 0; font: 400 0.6875rem/1.7 var(--mono); overflow-wrap: anywhere; }
 .boot-log span { color: var(--desk-4); font-variant-numeric: tabular-nums; }
 .process-stats { margin: 0; font: 400 0.6875rem/1.6 var(--mono); overflow-wrap: anywhere; }

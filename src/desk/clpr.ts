@@ -1,11 +1,13 @@
 import { manifest, type ClprEvent } from './clpr-protocol'
 import type { SearchResult } from './psql'
+import { startInspector } from './inspector/inspector'
 
 /** Opt-in Clpr mode shares the psql output with the SQL benchmark, but owns its worker. */
 export function startClpr(pane: HTMLElement, options: {
   pre: HTMLElement; bench: HTMLElement; sub: HTMLElement
   stopBenchmark(): void; startBenchmark(): void; recorded(): void
 }) {
+  const inspector = startInspector(pane.querySelector<HTMLElement>('[data-inspector]')!)
   const controls = document.createElement('div'); controls.className = 'clpr-controls'
   const meta = document.createElement('p'); meta.dataset.clprMeta = ''
   const source = document.createElement('a')
@@ -34,6 +36,7 @@ export function startClpr(pane: HTMLElement, options: {
   let slow: ReturnType<typeof setTimeout> | undefined
   const pending = new Map<number, { resolve: (value: SearchResult) => void; reject: (error: Error) => void }>()
   const terminate = () => {
+    inspector.clear(); options.pre.hidden = false
     clearTimeout(slow); worker?.terminate(); worker = null
     for (const request of pending.values()) request.reject(new Error('Clpr live mode stopped.'))
     pending.clear()
@@ -75,11 +78,12 @@ export function startClpr(pane: HTMLElement, options: {
     if (!request) return
     pending.delete(event.id)
     try {
-      const body: unknown = JSON.parse(event.response.body)
       if (event.id === shownId) {
+        inspector.render(event)
         options.bench.hidden = true
-        options.pre.textContent = `GET ${event.url}\nHTTP ${event.response.status}\n\n${JSON.stringify(body, null, 2)}\n\n-- Clpr’s Go handler and pgx, measured in this tab: ${event.ms.toFixed(1)} ms request time.\n-- Eight fixture clips; PostgreSQL search path.`
+        options.pre.hidden = true
       }
+      const body: unknown = JSON.parse(event.response.body)
       if (event.response.status !== 200) throw new Error(`Clpr returned HTTP ${event.response.status}; see its JSON response in the psql pane.`)
       if (typeof body !== 'object' || body === null || !('counts' in body) || !('results' in body)) throw new Error('Clpr returned an unexpected response')
       const { counts, results } = body
