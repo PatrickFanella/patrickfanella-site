@@ -1,9 +1,10 @@
 # Live search inspector
 
 The desk’s Clpr live mode enhances five HTML sections into Response, SQL, Timing, Wire and Plan tabs.
-Without scripts, the sections explain what live mode will inspect. A live response replaces
-the recorded psql display; stopping, retrying or switching to the SQL benchmark hides the
-inspector and restores the recorded display. Changing tabs keeps the selected tab across searches.
+Without scripts, every section contains captured evidence from the committed recording. With
+scripts, tabs initially show the same recording. A live response replaces it; stopping, retrying
+or failing startup restores the recorded inspector. The SQL benchmark uses its separate, older
+recorded display while starting. Changing tabs keeps the selected tab across searches.
 Arrow keys, Home and End move through the tabs; Tab reaches the selected panel and its content.
 
 Response shows the returned clip titles, HTTP status, the handler’s header map and the complete
@@ -64,8 +65,9 @@ both alternatives retain complete JSON and separately labelled execution times, 
 browser clock rounding. There is no new animation.
 
 Capture lives in the opt-in worker and does not download PostgreSQL or Clpr on page load.
-Recorded inspector output is #16. Until that issue, the chart contains only measurements from
-this live session. The existing recorded benchmark remains available before live mode starts.
+The recorded chart covers all five sizes. Live searches start a fresh series. See
+[the recording procedure and budget gate](clpr-recording.md) for the CI artifact, source hashes,
+memory method and live-mode limits. The older recorded benchmark belongs to the SQL-only mode.
 
 Checks: npm run build; npx playwright test e2e/clpr.spec.ts e2e/inspector.spec.ts e2e/plans-wire.spec.ts.
 The three scripted searches are world record, zzzznomatch and cooking; each checks response,

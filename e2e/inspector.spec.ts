@@ -1,6 +1,7 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { captureDatabase } from '../src/desk/inspector/capture'
 import { test, expect } from './fixtures'
+import { recordedLiveGate } from './recording-policy'
 
 const bytes = (text: string) => [...new TextEncoder().encode(text), 0]
 const int16 = (value: number) => [value >>> 8 & 255, value & 255]
@@ -60,10 +61,12 @@ test('inspector sections and their purpose exist without JavaScript', async ({ b
 })
 
 test('inspector tabs work by keyboard on a narrow dark desk and clear on stop', async ({ page }) => {
+  test.skip(!recordedLiveGate.allowed, recordedLiveGate.reason)
   await page.setViewportSize({ width: 390, height: 844 })
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' })
   await page.goto('/desk/')
   await page.getByRole('button', { name: 'Start Clpr live mode' }).click()
+  await expect(page.locator('[data-inspector]')).toHaveAttribute('data-mode', 'live', { timeout: 180_000 })
   const response = page.getByRole('tab', { name: 'Response', exact: true })
   await expect(response).toBeVisible({ timeout: 180_000 })
   await response.focus(); await response.press('ArrowRight')
@@ -77,6 +80,6 @@ test('inspector tabs work by keyboard on a narrow dark desk and clear on stop', 
   expect(await page.locator('[data-inspector]').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
   await page.screenshot({ path: test.info().outputPath('inspector-phone-dark.png'), fullPage: true })
   await page.getByRole('button', { name: 'Stop live mode' }).click()
-  await expect(page.locator('[data-inspector]')).toBeHidden()
+  await expect(page.locator('[data-inspector]')).toHaveAttribute('data-mode', 'recorded')
   await expect(page.locator('.psql-out')).toContainText('recorded run')
 })

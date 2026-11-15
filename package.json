@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && tsc --noEmit && tsc --noEmit -p e2e && astro build",
+    "build": "node scripts/check-clpr-recording.mjs && astro check && tsc --noEmit && tsc --noEmit -p e2e && astro build",
+    "record:clpr": "npm run build && node scripts/record-clpr.mjs && npm run build",
     "typecheck": "astro check && tsc --noEmit && tsc --noEmit -p e2e",
     "preview": "astro preview",
     "test:e2e": "npm run build && playwright test"

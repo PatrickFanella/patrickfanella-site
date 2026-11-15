@@ -138,6 +138,7 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
   const recorded = () => {
     sub.textContent = 'recorded run'
     showRecorded('Choose Clpr live mode to run the Go handler, or the SQL benchmark to compare index timings.', recordedStatus)
+    pre.hidden = true; bench.hidden = true; inspector.hidden = false
   }
   recorded()
 
@@ -234,6 +235,7 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
   }
   const startBenchmark = () => {
     stopBenchmark(); set('starting')
+    inspector.hidden = true; pre.hidden = false
     showRecorded("PostgreSQL is starting in this tab. Until it answers, these are Clpr's recorded times.", `${recordedStatus}. Starting PostgreSQL in this tab.`)
     slow = setTimeout(markSlow, 30_000)
     try {

@@ -2,6 +2,9 @@ import AxeBuilder from '@axe-core/playwright'
 import { readFile } from 'node:fs/promises'
 import { test, expect } from './fixtures'
 import { manifest } from '../src/desk/clpr-protocol'
+import { recordedLiveGate } from './recording-policy'
+
+test.skip(!recordedLiveGate.allowed, recordedLiveGate.reason)
 
 test.use({ reducedMotion: 'reduce' })
 
@@ -76,7 +79,7 @@ test('Clpr runs all migrations and returns its real JSON through pgx', async ({ 
   await page.getByRole('button', { name: 'Stop live mode' }).click()
   await expect(page.locator('section.psql')).toHaveAttribute('data-clpr', 'idle')
   await expect(page.locator('.psql-out')).toContainText('recorded run')
-  await expect(page.locator('[data-inspector]')).toBeHidden()
+  await expect(page.locator('[data-inspector]')).toHaveAttribute('data-mode', 'recorded')
   await expect(page.getByRole('button', { name: 'Start Clpr live mode' })).toBeEnabled()
 })
 

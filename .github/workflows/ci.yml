@@ -15,8 +15,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  record:
+    name: Record Clpr and build static evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Install recording browser
+        run: npx playwright install --with-deps chromium
+      - name: Record the visitor worker and build its static evidence
+        run: npm run record:clpr
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: recorded-site
+          path: |
+            dist/
+            src/desk/inspector/recorded-run.json
+          if-no-files-found: error
+          retention-days: 14
+
   build:
     name: Build and test in Chromium
+    needs: record
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -29,8 +57,12 @@ jobs:
           cache: npm
       - name: Install
         run: npm ci
-      - name: Typecheck and build
-        run: npm run build
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: recorded-site
+          path: .
+      - name: Check the recorded data and types
+        run: node scripts/check-clpr-recording.mjs --built && npm run typecheck
       - name: Check project route coverage
         run: node scripts/check-project-paths.mjs
       - name: Install browsers
@@ -56,14 +88,10 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          node-version: 22
-          cache: npm
-      - name: Install
-        run: npm ci
-      - name: Build
-        run: npm run build
+          name: recorded-site
+          path: .
       - name: Push the build to the deploy branch
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}

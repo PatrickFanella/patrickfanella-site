@@ -1,0 +1,12 @@
+[
+  "astro.config.mjs",
+  "scripts/record-clpr.mjs",
+  "src/desk/inspector/recording-inputs.json",
+  "package-lock.json",
+  "public/clpr/manifest.json",
+  "src/desk/clpr.worker.ts",
+  "src/desk/clpr-protocol.ts",
+  "src/desk/inspector/capture.ts",
+  "src/desk/inspector/wire.ts",
+  "src/desk/inspector/plans.ts"
+]
