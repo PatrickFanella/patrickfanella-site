@@ -1,0 +1,4 @@
+{
+  "maxWasmGzipBytes": 6000000,
+  "maxPeakRssBytes": 2147483648
+}

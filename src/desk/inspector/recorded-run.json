@@ -1,0 +1,3748 @@
+{
+  "schemaVersion": 1,
+  "meta": {
+    "recordedAt": "2026-11-15T07:47:36.474Z",
+    "siteCommit": "d1a198fd40b939b216f2359e13ac771ad41ee57f",
+    "sourceFingerprint": "426da68ac623fecb01016c5c58352b993dd3198da7ad5be61119ebec26cd25a0",
+    "clprCommit": "112bea9863d21f6e2cb5131f2952bc5f23d5b092",
+    "workerSha256": "9de03613a59d0748bd703099c004f2b8a73c489286aaa896127f7ed959775169",
+    "browser": "159.0.8154.6",
+    "platform": "linux x64 7.0.0-1017-azure",
+    "ciRun": "https://github.com/PatrickFanella/patrickfanella-site/actions/runs/43691399532",
+    "wasmGzipBytes": 5125657,
+    "downloadBytes": 22889983,
+    "downloads": {
+      "/_astro/clpr.worker-C7fb4TbZ.js": 484768,
+      "/_astro/rolldown-runtime-WkwZ5CU-.js": 599,
+      "/clpr/112bea9863d21f6e2cb5131f2952bc5f23d5b092/migrations.json": 395773,
+      "/_astro/initdb-BJaOLL_I.wasm": 298788,
+      "/_astro/vector.tar-BQ2zxyHj.gz": 50946,
+      "/_astro/pg_trgm.tar-ColGje2J.gz": 15726,
+      "/clpr/112bea9863d21f6e2cb5131f2952bc5f23d5b092/search.wasm.gz": 5125657,
+      "/_astro/ltree.tar-BK8fCDwX.gz": 21970,
+      "/_astro/pgcrypto.tar-GTyNBmZP.gz": 1150012,
+      "/_astro/pglite-BE2Di5Vw.data": 6242272,
+      "/_astro/pglite-VfT9wtrq.wasm": 9086480,
+      "/clpr/112bea9863d21f6e2cb5131f2952bc5f23d5b092/wasm_exec.js": 16992
+    },
+    "startupMs": 4397.899999999994,
+    "memory": {
+      "metric": "sampled Chromium process-tree RSS",
+      "peakBytes": 1761021952,
+      "sampleIntervalMs": 50,
+      "samples": 756
+    },
+    "budget": {
+      "maxWasmGzipBytes": 6000000,
+      "maxPeakRssBytes": 2147483648
+    },
+    "postgres": "18.6",
+    "migrations": 155
+  },
+  "results": [
+    {
+      "ev": "result",
+      "id": 1,
+      "url": "/api/v1/search?q=world+record&type=clips",
+      "response": {
+        "status": 200,
+        "body": "{\"query\":\"world record\",\"results\":{\"clips\":[{\"id\":\"0572c84b-750c-4933-8012-1e66918c6ea2\",\"twitch_clip_id\":\"fixture-0\",\"twitch_clip_url\":\"https://example.invalid/clip/0\",\"embed_url\":\"https://example.invalid/clip/0\",\"title\":\"speedrun world record attempt\",\"creator_name\":\"runner_a\",\"broadcaster_name\":\"runner_a\",\"view_count\":0,\"created_at\":\"2026-11-01T00:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.48Z\",\"vote_score\":41,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"30c46fbc-eab9-4dbc-a896-03d5f406ff82\",\"twitch_clip_id\":\"fixture-1\",\"twitch_clip_url\":\"https://example.invalid/clip/1\",\"embed_url\":\"https://example.invalid/clip/1\",\"title\":\"chat reacts to the world record\",\"creator_name\":\"streamer_b\",\"broadcaster_name\":\"streamer_b\",\"view_count\":0,\"created_at\":\"2026-11-01T07:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.494Z\",\"vote_score\":33,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[]},\"counts\":{\"clips\":2,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":0},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":20,\"total_items\":2,\"total_pages\":1}}",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      },
+      "ms": 63,
+      "calls": [
+        {
+          "ms": 1.0999999999912689,
+          "statements": [],
+          "sent": [
+            {
+              "type": "",
+              "name": "StartupMessage",
+              "bytes": 41,
+              "detail": "",
+              "hex": "00 00 00 29 00 03 00 00 75 73 65 72 00 70 6f 73 74 67 72 65 73 00 64 61 74 61 62 61 73 65 00 70 6f 73 74 67 72 65 73 00 00"
+            }
+          ],
+          "received": [
+            {
+              "type": "R",
+              "name": "Authentication",
+              "bytes": 9,
+              "detail": "",
+              "hex": "52 00 00 00 08 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 24,
+              "detail": "in_hot_standby = off",
+              "hex": "53 00 00 00 17 69 6e 5f 68 6f 74 5f 73 74 61 6e 64 62 79 00 6f 66 66 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 26,
+              "detail": "integer_datetimes = on",
+              "hex": "53 00 00 00 19 69 6e 74 65 67 65 72 5f 64 61 74 65 74 69 6d 65 73 00 6f 6e 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 18,
+              "detail": "TimeZone = UTC",
+              "hex": "53 00 00 00 11 54 69 6d 65 5a 6f 6e 65 00 55 54 43 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 28,
+              "detail": "IntervalStyle = postgres",
+              "hex": "53 00 00 00 1b 49 6e 74 65 72 76 61 6c 53 74 79 6c 65 00 70 6f 73 74 67 72 65 73 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 24,
+              "detail": "search_path = public",
+              "hex": "53 00 00 00 17 73 65 61 72 63 68 5f 70 61 74 68 00 70 75 62 6c 69 63 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 21,
+              "detail": "is_superuser = on",
+              "hex": "53 00 00 00 14 69 73 5f 73 75 70 65 72 75 73 65 72 00 6f 6e 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 23,
+              "detail": "application_name = ",
+              "hex": "53 00 00 00 16 61 70 70 6c 69 63 61 74 69 6f 6e 5f 6e 61 6d 65 00 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 39,
+              "detail": "default_transaction_read_only = off",
+              "hex": "53 00 00 00 26 64 65 66 61 75 6c 74 5f 74 72 61 6e 73 61 63 74 69 6f 6e 5f 72 65 61 64 5f 6f 6e 6c 79 00 6f 66 66 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 27,
+              "detail": "scram_iterations = 4096",
+              "hex": "53 00 00 00 1a 73 63 72 61 6d 5f 69 74 65 72 61 74 69 6f 6e 73 00 34 30 39 36 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 24,
+              "detail": "DateStyle = ISO, MDY",
+              "hex": "53 00 00 00 17 44 61 74 65 53 74 79 6c 65 00 49 53 4f 2c 20 4d 44 59 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 36,
+              "detail": "standard_conforming_strings = on",
+              "hex": "53 00 00 00 23 73 74 61 6e 64 61 72 64 5f 63 6f 6e 66 6f 72 6d 69 6e 67 5f 73 74 72 69 6e 67 73 00 6f 6e 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 28,
+              "detail": "session_authorization = ",
+              "hex": "53 00 00 00 1b 73 65 73 73 69 6f 6e 5f 61 75 74 68 6f 72 69 7a 61 74 69 6f 6e 00 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 26,
+              "detail": "client_encoding = UTF8",
+              "hex": "53 00 00 00 19 63 6c 69 65 6e 74 5f 65 6e 63 6f 64 69 6e 67 00 55 54 46 38 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 25,
+              "detail": "server_version = 18.6",
+              "hex": "53 00 00 00 18 73 65 72 76 65 72 5f 76 65 72 73 69 6f 6e 00 31 38 2e 36 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 26,
+              "detail": "server_encoding = UTF8",
+              "hex": "53 00 00 00 19 73 65 72 76 65 72 5f 65 6e 63 6f 64 69 6e 67 00 55 54 46 38 00"
+            },
+            {
+              "type": "K",
+              "name": "BackendKeyData",
+              "bytes": 13,
+              "detail": "",
+              "hex": "4b 00 00 00 0c 00 00 00 2a 00 2b e1 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 0.6000000000058208,
+          "statements": [
+            {
+              "kind": "prepare",
+              "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+              "params": []
+            }
+          ],
+          "sent": [
+            {
+              "type": "P",
+              "name": "Parse",
+              "bytes": 222,
+              "detail": "statement \"stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b\"; SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1); parameter OIDs []",
+              "hex": "50 00 00 00 dd 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00 53 45 4c 45 43 54 20 43 4f 55 4e 54 28 2a 29 20 46 52 4f 4d 20 63 6c 69 70 73 20 63 20 57 48 45 52 45 20 63 2e 69 73 5f 72 65 6d 6f 76 65 64 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 69 73 5f 68 69 64 64 65 6e 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 64 6d 63 61 5f 72 65 6d 6f 76 65 64 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 73 65 61 72 63 68 5f 76 65 63 74 6f 72 20 40 40 20 74 6f 5f 74 73 71 75 65 72 79 28 27 65 6e 67 6c 69 73 68 27 2c 20 24 31 29 00 00 00",
+              "statementName": "stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b"
+            },
+            {
+              "type": "D",
+              "name": "Describe",
+              "bytes": 65,
+              "detail": "statement \"stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b\"",
+              "hex": "44 00 00 00 40 53 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "1",
+              "name": "ParseComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "31 00 00 00 04"
+            },
+            {
+              "type": "t",
+              "name": "ParameterDescription",
+              "bytes": 11,
+              "detail": "parameter OIDs [25]",
+              "hex": "74 00 00 00 0a 00 01 00 00 00 19",
+              "parameterTypes": [
+                25
+              ]
+            },
+            {
+              "type": "T",
+              "name": "RowDescription",
+              "bytes": 31,
+              "detail": "count: OID 20, text (table 0, column 0, size 8, modifier -1)",
+              "hex": "54 00 00 00 1e 00 01 63 6f 75 6e 74 00 00 00 00 00 00 00 00 00 00 14 00 08 ff ff ff ff 00 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 26,
+              "detail": "server_encoding = UTF8",
+              "hex": "53 00 00 00 19 73 65 72 76 65 72 5f 65 6e 63 6f 64 69 6e 67 00 55 54 46 38 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 21,
+              "detail": "is_superuser = on",
+              "hex": "53 00 00 00 14 69 73 5f 73 75 70 65 72 75 73 65 72 00 6f 6e 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 18,
+              "detail": "TimeZone = UTC",
+              "hex": "53 00 00 00 11 54 69 6d 65 5a 6f 6e 65 00 55 54 43 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 24,
+              "detail": "DateStyle = ISO, MDY",
+              "hex": "53 00 00 00 17 44 61 74 65 53 74 79 6c 65 00 49 53 4f 2c 20 4d 44 59 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 24,
+              "detail": "search_path = public",
+              "hex": "53 00 00 00 17 73 65 61 72 63 68 5f 70 61 74 68 00 70 75 62 6c 69 63 00"
+            },
+            {
+              "type": "S",
+              "name": "ParameterStatus",
+              "bytes": 26,
+              "detail": "client_encoding = UTF8",
+              "hex": "53 00 00 00 19 63 6c 69 65 6e 74 5f 65 6e 63 6f 64 69 6e 67 00 55 54 46 38 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 1.7000000000116415,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 97,
+              "detail": "portal \"\"; statement \"stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b\"; $1: \"world:* & record:*\" (text, 18 bytes); result formats [1]",
+              "hex": "42 00 00 00 60 00 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00 00 01 00 00 00 01 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 01 00 01"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 19,
+              "detail": "1 columns: 8 bytes; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 00 12 00 01 00 00 00 08 00 00 00 00 00 00 00 02"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 1",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 0.8000000000029104,
+          "statements": [
+            {
+              "kind": "prepare",
+              "sql": "\n\t\tSELECT\n\t\t\tc.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,\n\t\t\tc.title, c.creator_name, c.creator_id, c.broadcaster_name,\n\t\t\tc.broadcaster_id, c.game_id, c.game_name, c.language,\n\t\t\tc.thumbnail_url, c.duration, c.view_count, c.created_at,\n\t\t\tc.imported_at, c.vote_score, c.comment_count, c.favorite_count,\n\t\t\tc.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text\n\t\tFROM clips c\n\t\tWHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)\n\t\tORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC\n\t\tLIMIT $2 OFFSET $3\n\t",
+              "params": []
+            }
+          ],
+          "sent": [
+            {
+              "type": "P",
+              "name": "Parse",
+              "bytes": 726,
+              "detail": "statement \"stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e\"; \n\t\tSELECT\n\t\t\tc.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,\n\t\t\tc.title, c.creator_name, c.creator_id, c.broadcaster_name,\n\t\t\tc.broadcaster_id, c.game_id, c.game_name, c.language,\n\t\t\tc.thumbnail_url, c.duration, c.view_count, c.created_at,\n\t\t\tc.imported_at, c.vote_score, c.comment_count, c.favorite_count,\n\t\t\tc.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text\n\t\tFROM clips c\n\t\tWHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)\n\t\tORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC\n\t\tLIMIT $2 OFFSET $3\n\t; parameter OIDs []",
+              "hex": "50 00 00 02 d5 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00 0a 09 09 53 45 4c 45 43 54 0a 09 09 09 63 2e 69 64 2c 20 63 2e 74 77 69 74 63 68 5f 63 6c 69 70 5f 69 64 2c 20 63 2e 74 77 69 74 63 68 5f 63 6c 69 70 5f 75 72 6c 2c 20 63 2e 65 6d 62 65 64 5f 75 72 6c 2c 0a 09 09 09 63 2e 74 69 74 6c 65 2c 20 63 2e 63 72 65 61 74 6f 72 5f 6e 61 6d 65 2c 20 63 2e 63 72 65 61 74 6f 72 5f 69 64 2c 20 63 2e 62 72 6f 61 64 63 61 73 74 65 72 5f 6e 61 6d 65 2c 0a 09 09 09 63 2e 62 72 6f 61 64 63 61 73 74 65 72 5f 69 64 2c 20 63 2e 67 61 6d 65 5f 69 64 2c 20 63 2e 67 61 6d 65 5f 6e 61 6d 65 2c 20 63 2e 6c 61 6e 67 75 61 67 65 2c 0a 09 09 09 63 2e 74 68 75 6d 62 6e 61 69 6c 5f 75 72 6c 2c 20 63 2e 64 75 72 61 74 69 6f 6e 2c 20 63 2e 76 69 65 77 5f 63 6f 75 6e 74 2c 20 63 2e 63 72 65 61 74 65 64 5f 61 74 2c 0a 09 09 09 63 2e 69 6d 70 6f 72 74 65 64 5f 61 74 2c 20 63 2e 76 6f 74 65 5f 73 63 6f 72 65 2c 20 63 2e 63 6f 6d 6d 65 6e 74 5f 63 6f 75 6e 74 2c 20 63 2e 66 61 76 6f 72 69 74 65 5f 63 6f 75 6e 74 2c 0a 09 09 09 63 2e 69 73 5f 66 65 61 74 75 72 65 64 2c 20 63 2e 69 73 5f 6e 73 66 77 2c 20 63 2e 69 73 5f 72 65 6d 6f 76 65 64 2c 20 63 2e 72 65 6d 6f 76 65 64 5f 72 65 61 73 6f 6e 2c 20 4e 55 4c 4c 3a 3a 74 65 78 74 0a 09 09 46 52 4f 4d 20 63 6c 69 70 73 20 63 0a 09 09 57 48 45 52 45 20 63 2e 69 73 5f 72 65 6d 6f 76 65 64 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 69 73 5f 68 69 64 64 65 6e 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 64 6d 63 61 5f 72 65 6d 6f 76 65 64 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 73 65 61 72 63 68 5f 76 65 63 74 6f 72 20 40 40 20 74 6f 5f 74 73 71 75 65 72 79 28 27 65 6e 67 6c 69 73 68 27 2c 20 24 31 29 0a 09 09 4f 52 44 45 52 20 42 59 20 74 73 5f 72 61 6e 6b 28 63 2e 73 65 61 72 63 68 5f 76 65 63 74 6f 72 2c 20 74 6f 5f 74 73 71 75 65 72 79 28 27 65 6e 67 6c 69 73 68 27 2c 20 24 31 29 29 20 44 45 53 43 2c 20 63 2e 76 6f 74 65 5f 73 63 6f 72 65 20 44 45 53 43 2c 20 63 2e 63 72 65 61 74 65 64 5f 61 74 20 44 45 53 43 0a 09 09 4c 49 4d 49 54 20 24 32 20 4f 46 46 53 45 54 20 24 33 0a 09 00 00 00",
+              "statementName": "stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e"
+            },
+            {
+              "type": "D",
+              "name": "Describe",
+              "bytes": 65,
+              "detail": "statement \"stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e\"",
+              "hex": "44 00 00 00 40 53 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "1",
+              "name": "ParseComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "31 00 00 00 04"
+            },
+            {
+              "type": "t",
+              "name": "ParameterDescription",
+              "bytes": 19,
+              "detail": "parameter OIDs [25, 20, 20]",
+              "hex": "74 00 00 00 12 00 03 00 00 00 19 00 00 00 14 00 00 00 14",
+              "parameterTypes": [
+                25,
+                20,
+                20
+              ]
+            },
+            {
+              "type": "T",
+              "name": "RowDescription",
+              "bytes": 738,
+              "detail": "id: OID 2950, text (table 16525, column 1, size 16, modifier -1); twitch_clip_id: OID 1043, text (table 16525, column 2, size -1, modifier 104); twitch_clip_url: OID 25, text (table 16525, column 3, size -1, modifier -1); embed_url: OID 25, text (table 16525, column 4, size -1, modifier -1); title: OID 1043, text (table 16525, column 5, size -1, modifier 259); creator_name: OID 1043, text (table 16525, column 6, size -1, modifier 104); creator_id: OID 1043, text (table 16525, column 7, size -1, modifier 54); broadcaster_name: OID 1043, text (table 16525, column 8, size -1, modifier 104); broadcaster_id: OID 1043, text (table 16525, column 9, size -1, modifier 54); game_id: OID 1043, text (table 16525, column 10, size -1, modifier 54); game_name: OID 1043, text (table 16525, column 11, size -1, modifier 104); language: OID 1043, text (table 16525, column 12, size -1, modifier 14); thumbnail_url: OID 25, text (table 16525, column 13, size -1, modifier -1); duration: OID 701, text (table 16525, column 14, size 8, modifier -1); view_count: OID 23, text (table 16525, column 15, size 4, modifier -1); created_at: OID 1114, text (table 16525, column 16, size 8, modifier -1); imported_at: OID 1114, text (table 16525, column 17, size 8, modifier -1); vote_score: OID 23, text (table 16525, column 18, size 4, modifier -1); comment_count: OID 23, text (table 16525, column 19, size 4, modifier -1); favorite_count: OID 23, text (table 16525, column 20, size 4, modifier -1); is_featured: OID 16, text (table 16525, column 21, size 1, modifier -1); is_nsfw: OID 16, text (table 16525, column 22, size 1, modifier -1); is_removed: OID 16, text (table 16525, column 23, size 1, modifier -1); removed_reason: OID 25, text (table 16525, column 24, size -1, modifier -1); text: OID 25, text (table 0, column 0, size -1, modifier -1)",
+              "hex": "54 00 00 02 e1 00 19 69 64 00 00 00 40 8d 00 01 00 00 0b 86 00 10 ff ff ff ff 00 00 74 77 69 74 63 68 5f 63 6c 69 70 5f 69 64 00 00 00 40 8d 00 02 00 00 04 13 ff ff 00 00 00 68 00 00 74 77 69 74 63 68 5f 63 6c 69 70 5f 75 72 6c 00 00 00 40 8d 00 03 00 00 00 19 ff ff ff ff ff ff 00 00 65 6d 62 65 64 5f 75 72 6c 00 00 00 40 8d 00 04 00 00 00 19 ff ff ff ff ff ff 00 00 74 69 74 6c 65 00 00 00 40 8d 00 05 00 00 04 13 ff ff 00 00 01 03 00 00 63 72 65 61 74 6f 72 5f 6e 61 6d 65 00 00 00 40 8d 00 06 00 00 04 13 ff ff 00 00 00 68 00 00 63 72 65 61 74 6f 72 5f 69 64 00 00 00 40 8d 00 07 00 00 04 13 ff ff 00 00 00 36 00 00 62 72 6f 61 64 63 61 73 74 65 72 5f 6e 61 6d 65 00 00 00 40 8d 00 08 00 00 04 13 ff ff 00 00 00 68 00 00 62 72 6f 61 64 63 61 73 74 65 72 5f 69 64 00 00 00 40 8d 00 09 00 00 04 13 ff ff 00 00 00 36 00 00 67 61 6d 65 5f 69 64 00 00 00 40 8d 00 0a 00 00 04 13 ff ff 00 00 00 36 00 00 67 61 6d 65 5f 6e 61 6d 65 00 00 00 40 8d 00 0b 00 00 04 13 ff ff 00 00 00 68 00 00 6c 61 6e 67 75 61 67 65 00 00 00 40 8d 00 0c 00 00 04 13 ff ff 00 00 00 0e 00 00 74 68 75 6d 62 6e 61 69 6c 5f 75 72 6c 00 00 00 40 8d 00 0d 00 00 00 19 ff ff ff ff ff ff 00 00 64 75 72 61 74 69 6f 6e 00 00 00 40 8d 00 0e 00 00 02 bd 00 08 ff ff ff ff 00 00 76 69 65 77 5f 63 6f 75 6e 74 00 00 00 40 8d 00 0f 00 00 00 17 00 04 ff ff ff ff 00 00 63 72 65 61 74 65 64 5f 61 74 00 00 00 40 8d 00 10 00 00 04 5a 00 08 ff ff ff ff 00 00 69 6d 70 6f 72 74 65 64 5f 61 74 00 00 00 40 8d 00 11 00 00 04 5a 00 08 ff ff ff ff 00 00 76 6f 74 65 5f 73 63 6f 72 65 00 00 00 40 8d 00 12 00 00 00 17 00 04 ff ff ff ff 00 00 63 6f 6d 6d 65 6e 74 5f 63 6f 75 6e 74 00 00 00 40 8d 00 13 00 00 00 17 00 04 ff ff ff ff 00 00 66 61 76 6f 72 69 74 65 5f 63 6f 75 6e 74 00 00 00 40 8d 00 14 00 00 00 17 00 04 ff ff ff ff 00 00 69 73 5f 66 65 61 74 75 72 65 64 00 00 00 40 8d 00 15 00 00 00 10 00 01 ff ff ff ff 00 00 69 73 5f 6e 73 66 77 00 00 00 40 8d 00 16 00 00 00 10 00 01 ff ff ff ff 00 00 69 73 5f 72 65 6d 6f 76 65 64 00 00 00 40 8d 00 17 00 00 00 10 00 01 ff ff ff ff 00 00 72 65 6d 6f 76 65 64 5f 72 65 61 73 6f 6e 00 00 00 40 8d 00 18 00 00 00 19 ff ff ff ff ff ff 00 00 74 65 78 74 00 00 00 00 00 00 00 00 00 00 19 ff ff ff ff ff ff 00 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 3,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tSELECT\n\t\t\tc.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,\n\t\t\tc.title, c.creator_name, c.creator_id, c.broadcaster_name,\n\t\t\tc.broadcaster_id, c.game_id, c.game_name, c.language,\n\t\t\tc.thumbnail_url, c.duration, c.view_count, c.created_at,\n\t\t\tc.imported_at, c.vote_score, c.comment_count, c.favorite_count,\n\t\t\tc.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text\n\t\tFROM clips c\n\t\tWHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)\n\t\tORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC\n\t\tLIMIT $2 OFFSET $3\n\t",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000014",
+                  "oid": 20
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000000",
+                  "oid": 20
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 173,
+              "detail": "portal \"\"; statement \"stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e\"; $1: \"world:* & record:*\" (text, 18 bytes); $2: 0000000000000014 (binary, 8 bytes); $3: 0000000000000000 (binary, 8 bytes); result formats [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]",
+              "hex": "42 00 00 00 ac 00 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00 00 03 00 00 00 01 00 01 00 03 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 00 00 08 00 00 00 00 00 00 00 14 00 00 00 08 00 00 00 00 00 00 00 00 00 19 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 272,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 29 bytes, 8 bytes, NULL, 8 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 0f 00 19 00 00 00 10 05 72 c8 4b 75 0c 49 33 80 12 1e 66 91 8c 6e a2 00 00 00 09 66 69 78 74 75 72 65 2d 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1d 73 70 65 65 64 72 75 6e 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 20 61 74 74 65 6d 70 74 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 2a 7a aa 60 00 00 00 00 08 00 03 03 4a a2 b6 bc 80 00 00 00 04 00 00 00 29 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 278,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 31 bytes, 10 bytes, NULL, 10 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 15 00 19 00 00 00 10 30 c4 6f bc ea b9 4d bc a8 96 03 d5 f4 06 ff 82 00 00 00 09 66 69 78 74 75 72 65 2d 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1f 63 68 61 74 20 72 65 61 63 74 73 20 74 6f 20 74 68 65 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 30 58 b3 dc 00 00 00 00 08 00 03 03 4a a2 b6 f3 30 00 00 00 04 00 00 00 21 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 2",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 32 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 0.40000000000873115,
+          "statements": [
+            {
+              "kind": "prepare",
+              "sql": "\n\t\tINSERT INTO search_queries (user_id, query, result_count)\n\t\tVALUES ($1, $2, $3)\n\t",
+              "params": []
+            }
+          ],
+          "sent": [
+            {
+              "type": "P",
+              "name": "Parse",
+              "bytes": 151,
+              "detail": "statement \"stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f\"; \n\t\tINSERT INTO search_queries (user_id, query, result_count)\n\t\tVALUES ($1, $2, $3)\n\t; parameter OIDs []",
+              "hex": "50 00 00 00 96 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00 0a 09 09 49 4e 53 45 52 54 20 49 4e 54 4f 20 73 65 61 72 63 68 5f 71 75 65 72 69 65 73 20 28 75 73 65 72 5f 69 64 2c 20 71 75 65 72 79 2c 20 72 65 73 75 6c 74 5f 63 6f 75 6e 74 29 0a 09 09 56 41 4c 55 45 53 20 28 24 31 2c 20 24 32 2c 20 24 33 29 0a 09 00 00 00",
+              "statementName": "stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f"
+            },
+            {
+              "type": "D",
+              "name": "Describe",
+              "bytes": 65,
+              "detail": "statement \"stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f\"",
+              "hex": "44 00 00 00 40 53 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "1",
+              "name": "ParseComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "31 00 00 00 04"
+            },
+            {
+              "type": "t",
+              "name": "ParameterDescription",
+              "bytes": 19,
+              "detail": "parameter OIDs [2950, 25, 23]",
+              "hex": "74 00 00 00 12 00 03 00 00 0b 86 00 00 00 19 00 00 00 17",
+              "parameterTypes": [
+                2950,
+                25,
+                23
+              ]
+            },
+            {
+              "type": "n",
+              "name": "NoData",
+              "bytes": 5,
+              "detail": "",
+              "hex": "6e 00 00 00 04"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 0.8000000000029104,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tINSERT INTO search_queries (user_id, query, result_count)\n\t\tVALUES ($1, $2, $3)\n\t",
+              "params": [
+                {
+                  "format": "binary",
+                  "value": null,
+                  "oid": 2950
+                },
+                {
+                  "format": "text",
+                  "value": "world record",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "00000002",
+                  "oid": 23
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 105,
+              "detail": "portal \"\"; statement \"stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f\"; $1: NULL (binary); $2: \"world record\" (text, 12 bytes); $3: 00000002 (binary, 4 bytes); result formats []",
+              "hex": "42 00 00 00 68 00 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00 00 03 00 01 00 00 00 01 00 03 ff ff ff ff 00 00 00 0c 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 04 00 00 00 02 00 00"
+            },
+            {
+              "type": "D",
+              "name": "Describe",
+              "bytes": 7,
+              "detail": "portal \"\"",
+              "hex": "44 00 00 00 06 50 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "n",
+              "name": "NoData",
+              "bytes": 5,
+              "detail": "",
+              "hex": "6e 00 00 00 04"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 16,
+              "detail": "INSERT 0 1",
+              "hex": "43 00 00 00 0f 49 4e 53 45 52 54 20 30 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        }
+      ],
+      "rows": 8,
+      "plan": {
+        "rows": 8,
+        "natural": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 1.11,
+            "Total Cost": 1.12,
+            "Plan Rows": 1,
+            "Plan Width": 883,
+            "Actual Startup Time": 0.1,
+            "Actual Total Time": 0.1,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 1,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 1.11,
+                "Total Cost": 1.12,
+                "Plan Rows": 1,
+                "Plan Width": 883,
+                "Actual Startup Time": 0.1,
+                "Actual Total Time": 0.1,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 1,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Seq Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 0,
+                    "Total Cost": 1.1,
+                    "Plan Rows": 1,
+                    "Plan Width": 883,
+                    "Actual Startup Time": 0.1,
+                    "Actual Total Time": 0.1,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+                    "Rows Removed by Filter": 6,
+                    "Shared Hit Blocks": 1,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 2.5,
+          "Triggers": [],
+          "Execution Time": 0.2
+        },
+        "seq": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 1.11,
+            "Total Cost": 1.12,
+            "Plan Rows": 1,
+            "Plan Width": 883,
+            "Actual Startup Time": 0,
+            "Actual Total Time": 0,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 1,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 1.11,
+                "Total Cost": 1.12,
+                "Plan Rows": 1,
+                "Plan Width": 883,
+                "Actual Startup Time": 0,
+                "Actual Total Time": 0,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 1,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Seq Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 0,
+                    "Total Cost": 1.1,
+                    "Plan Rows": 1,
+                    "Plan Width": 883,
+                    "Actual Startup Time": 0,
+                    "Actual Total Time": 0,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+                    "Rows Removed by Filter": 6,
+                    "Shared Hit Blocks": 1,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.6,
+          "Triggers": [],
+          "Execution Time": 0
+        },
+        "gin": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 21.22,
+            "Total Cost": 21.22,
+            "Plan Rows": 1,
+            "Plan Width": 883,
+            "Actual Startup Time": 0.7,
+            "Actual Total Time": 0.8,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 4,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 21.22,
+                "Total Cost": 21.22,
+                "Plan Rows": 1,
+                "Plan Width": 883,
+                "Actual Startup Time": 0.7,
+                "Actual Total Time": 0.8,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 4,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 17.19,
+                    "Total Cost": 21.21,
+                    "Plan Rows": 1,
+                    "Plan Width": 883,
+                    "Actual Startup Time": 0.7,
+                    "Actual Total Time": 0.7,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Recheck Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 4,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "idx_clips_search_vector",
+                        "Startup Cost": 0,
+                        "Total Cost": 17.19,
+                        "Plan Rows": 1,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.7,
+                        "Actual Total Time": 0.7,
+                        "Actual Rows": 2,
+                        "Actual Loops": 1,
+                        "Disabled": false,
+                        "Index Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                        "Index Searches": 1,
+                        "Shared Hit Blocks": 3,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 20,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.4,
+          "Triggers": [],
+          "Execution Time": 0.9
+        }
+      }
+    },
+    {
+      "ev": "result",
+      "id": 2,
+      "url": "/api/v1/search?q=world+record&type=clips",
+      "response": {
+        "status": 200,
+        "body": "{\"query\":\"world record\",\"results\":{\"clips\":[{\"id\":\"0572c84b-750c-4933-8012-1e66918c6ea2\",\"twitch_clip_id\":\"fixture-0\",\"twitch_clip_url\":\"https://example.invalid/clip/0\",\"embed_url\":\"https://example.invalid/clip/0\",\"title\":\"speedrun world record attempt\",\"creator_name\":\"runner_a\",\"broadcaster_name\":\"runner_a\",\"view_count\":0,\"created_at\":\"2026-11-01T00:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.48Z\",\"vote_score\":41,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"30c46fbc-eab9-4dbc-a896-03d5f406ff82\",\"twitch_clip_id\":\"fixture-1\",\"twitch_clip_url\":\"https://example.invalid/clip/1\",\"embed_url\":\"https://example.invalid/clip/1\",\"title\":\"chat reacts to the world record\",\"creator_name\":\"streamer_b\",\"broadcaster_name\":\"streamer_b\",\"view_count\":0,\"created_at\":\"2026-11-01T07:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.494Z\",\"vote_score\":33,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[]},\"counts\":{\"clips\":2,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":0},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":20,\"total_items\":2,\"total_pages\":1}}",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      },
+      "ms": 19.10000000000582,
+      "calls": [
+        {
+          "ms": 3,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 97,
+              "detail": "portal \"\"; statement \"stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b\"; $1: \"world:* & record:*\" (text, 18 bytes); result formats [1]",
+              "hex": "42 00 00 00 60 00 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00 00 01 00 00 00 01 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 01 00 01"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 19,
+              "detail": "1 columns: 8 bytes; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 00 12 00 01 00 00 00 08 00 00 00 00 00 00 00 02"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 1",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 1.1000000000058208,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tSELECT\n\t\t\tc.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,\n\t\t\tc.title, c.creator_name, c.creator_id, c.broadcaster_name,\n\t\t\tc.broadcaster_id, c.game_id, c.game_name, c.language,\n\t\t\tc.thumbnail_url, c.duration, c.view_count, c.created_at,\n\t\t\tc.imported_at, c.vote_score, c.comment_count, c.favorite_count,\n\t\t\tc.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text\n\t\tFROM clips c\n\t\tWHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)\n\t\tORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC\n\t\tLIMIT $2 OFFSET $3\n\t",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000014",
+                  "oid": 20
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000000",
+                  "oid": 20
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 173,
+              "detail": "portal \"\"; statement \"stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e\"; $1: \"world:* & record:*\" (text, 18 bytes); $2: 0000000000000014 (binary, 8 bytes); $3: 0000000000000000 (binary, 8 bytes); result formats [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]",
+              "hex": "42 00 00 00 ac 00 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00 00 03 00 00 00 01 00 01 00 03 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 00 00 08 00 00 00 00 00 00 00 14 00 00 00 08 00 00 00 00 00 00 00 00 00 19 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 272,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 29 bytes, 8 bytes, NULL, 8 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 0f 00 19 00 00 00 10 05 72 c8 4b 75 0c 49 33 80 12 1e 66 91 8c 6e a2 00 00 00 09 66 69 78 74 75 72 65 2d 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1d 73 70 65 65 64 72 75 6e 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 20 61 74 74 65 6d 70 74 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 2a 7a aa 60 00 00 00 00 08 00 03 03 4a a2 b6 bc 80 00 00 00 04 00 00 00 29 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 278,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 31 bytes, 10 bytes, NULL, 10 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 15 00 19 00 00 00 10 30 c4 6f bc ea b9 4d bc a8 96 03 d5 f4 06 ff 82 00 00 00 09 66 69 78 74 75 72 65 2d 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1f 63 68 61 74 20 72 65 61 63 74 73 20 74 6f 20 74 68 65 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 30 58 b3 dc 00 00 00 00 08 00 03 03 4a a2 b6 f3 30 00 00 00 04 00 00 00 21 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 2",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 32 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 10.5,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tINSERT INTO search_queries (user_id, query, result_count)\n\t\tVALUES ($1, $2, $3)\n\t",
+              "params": [
+                {
+                  "format": "binary",
+                  "value": null,
+                  "oid": 2950
+                },
+                {
+                  "format": "text",
+                  "value": "world record",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "00000002",
+                  "oid": 23
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 105,
+              "detail": "portal \"\"; statement \"stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f\"; $1: NULL (binary); $2: \"world record\" (text, 12 bytes); $3: 00000002 (binary, 4 bytes); result formats []",
+              "hex": "42 00 00 00 68 00 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00 00 03 00 01 00 00 00 01 00 03 ff ff ff ff 00 00 00 0c 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 04 00 00 00 02 00 00"
+            },
+            {
+              "type": "D",
+              "name": "Describe",
+              "bytes": 7,
+              "detail": "portal \"\"",
+              "hex": "44 00 00 00 06 50 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "n",
+              "name": "NoData",
+              "bytes": 5,
+              "detail": "",
+              "hex": "6e 00 00 00 04"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 16,
+              "detail": "INSERT 0 1",
+              "hex": "43 00 00 00 0f 49 4e 53 45 52 54 20 30 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        }
+      ],
+      "rows": 1008,
+      "plan": {
+        "rows": 1008,
+        "natural": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 41.95,
+            "Total Cost": 41.97,
+            "Plan Rows": 7,
+            "Plan Width": 883,
+            "Actual Startup Time": 0.1,
+            "Actual Total Time": 0.1,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 6,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 41.95,
+                "Total Cost": 41.97,
+                "Plan Rows": 7,
+                "Plan Width": 883,
+                "Actual Startup Time": 0.1,
+                "Actual Total Time": 0.1,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 6,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 21.53,
+                    "Total Cost": 41.85,
+                    "Plan Rows": 7,
+                    "Plan Width": 883,
+                    "Actual Startup Time": 0.1,
+                    "Actual Total Time": 0.1,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Recheck Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 6,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "idx_clips_search_vector",
+                        "Startup Cost": 0,
+                        "Total Cost": 21.53,
+                        "Plan Rows": 7,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.1,
+                        "Actual Total Time": 0.1,
+                        "Actual Rows": 2,
+                        "Actual Loops": 1,
+                        "Disabled": false,
+                        "Index Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                        "Index Searches": 1,
+                        "Shared Hit Blocks": 5,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 6.8,
+          "Triggers": [],
+          "Execution Time": 0.1
+        },
+        "seq": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 63.72,
+            "Total Cost": 63.73,
+            "Plan Rows": 7,
+            "Plan Width": 883,
+            "Actual Startup Time": 6.7,
+            "Actual Total Time": 6.7,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 51,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 63.72,
+                "Total Cost": 63.73,
+                "Plan Rows": 7,
+                "Plan Width": 883,
+                "Actual Startup Time": 6.7,
+                "Actual Total Time": 6.7,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 51,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Seq Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 0,
+                    "Total Cost": 63.62,
+                    "Plan Rows": 7,
+                    "Plan Width": 883,
+                    "Actual Startup Time": 0,
+                    "Actual Total Time": 6.7,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+                    "Rows Removed by Filter": 1006,
+                    "Shared Hit Blocks": 51,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.5,
+          "Triggers": [],
+          "Execution Time": 6.7
+        },
+        "gin": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 41.95,
+            "Total Cost": 41.97,
+            "Plan Rows": 7,
+            "Plan Width": 883,
+            "Actual Startup Time": 0.1,
+            "Actual Total Time": 0.1,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 6,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 41.95,
+                "Total Cost": 41.97,
+                "Plan Rows": 7,
+                "Plan Width": 883,
+                "Actual Startup Time": 0.1,
+                "Actual Total Time": 0.1,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 6,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 21.53,
+                    "Total Cost": 41.85,
+                    "Plan Rows": 7,
+                    "Plan Width": 883,
+                    "Actual Startup Time": 0.1,
+                    "Actual Total Time": 0.1,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Recheck Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 6,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "idx_clips_search_vector",
+                        "Startup Cost": 0,
+                        "Total Cost": 21.53,
+                        "Plan Rows": 7,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.1,
+                        "Actual Total Time": 0.1,
+                        "Actual Rows": 2,
+                        "Actual Loops": 1,
+                        "Disabled": false,
+                        "Index Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                        "Index Searches": 1,
+                        "Shared Hit Blocks": 5,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 20,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.3,
+          "Triggers": [],
+          "Execution Time": 0.2
+        }
+      }
+    },
+    {
+      "ev": "result",
+      "id": 3,
+      "url": "/api/v1/search?q=world+record&type=clips",
+      "response": {
+        "status": 200,
+        "body": "{\"query\":\"world record\",\"results\":{\"clips\":[{\"id\":\"0572c84b-750c-4933-8012-1e66918c6ea2\",\"twitch_clip_id\":\"fixture-0\",\"twitch_clip_url\":\"https://example.invalid/clip/0\",\"embed_url\":\"https://example.invalid/clip/0\",\"title\":\"speedrun world record attempt\",\"creator_name\":\"runner_a\",\"broadcaster_name\":\"runner_a\",\"view_count\":0,\"created_at\":\"2026-11-01T00:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.48Z\",\"vote_score\":41,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"30c46fbc-eab9-4dbc-a896-03d5f406ff82\",\"twitch_clip_id\":\"fixture-1\",\"twitch_clip_url\":\"https://example.invalid/clip/1\",\"embed_url\":\"https://example.invalid/clip/1\",\"title\":\"chat reacts to the world record\",\"creator_name\":\"streamer_b\",\"broadcaster_name\":\"streamer_b\",\"view_count\":0,\"created_at\":\"2026-11-01T07:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.494Z\",\"vote_score\":33,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[]},\"counts\":{\"clips\":2,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":0},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":20,\"total_items\":2,\"total_pages\":1}}",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      },
+      "ms": 13.30000000000291,
+      "calls": [
+        {
+          "ms": 0.19999999999708962,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "-- ping",
+              "params": []
+            }
+          ],
+          "sent": [
+            {
+              "type": "Q",
+              "name": "Query",
+              "bytes": 13,
+              "detail": "-- ping",
+              "hex": "51 00 00 00 0c 2d 2d 20 70 69 6e 67 00"
+            }
+          ],
+          "received": [
+            {
+              "type": "I",
+              "name": "EmptyQueryResponse",
+              "bytes": 5,
+              "detail": "",
+              "hex": "49 00 00 00 04"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 3.3999999999941792,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 97,
+              "detail": "portal \"\"; statement \"stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b\"; $1: \"world:* & record:*\" (text, 18 bytes); result formats [1]",
+              "hex": "42 00 00 00 60 00 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00 00 01 00 00 00 01 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 01 00 01"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 19,
+              "detail": "1 columns: 8 bytes; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 00 12 00 01 00 00 00 08 00 00 00 00 00 00 00 02"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 1",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 3.3999999999941792,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tSELECT\n\t\t\tc.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,\n\t\t\tc.title, c.creator_name, c.creator_id, c.broadcaster_name,\n\t\t\tc.broadcaster_id, c.game_id, c.game_name, c.language,\n\t\t\tc.thumbnail_url, c.duration, c.view_count, c.created_at,\n\t\t\tc.imported_at, c.vote_score, c.comment_count, c.favorite_count,\n\t\t\tc.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text\n\t\tFROM clips c\n\t\tWHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)\n\t\tORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC\n\t\tLIMIT $2 OFFSET $3\n\t",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000014",
+                  "oid": 20
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000000",
+                  "oid": 20
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 173,
+              "detail": "portal \"\"; statement \"stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e\"; $1: \"world:* & record:*\" (text, 18 bytes); $2: 0000000000000014 (binary, 8 bytes); $3: 0000000000000000 (binary, 8 bytes); result formats [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]",
+              "hex": "42 00 00 00 ac 00 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00 00 03 00 00 00 01 00 01 00 03 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 00 00 08 00 00 00 00 00 00 00 14 00 00 00 08 00 00 00 00 00 00 00 00 00 19 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 272,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 29 bytes, 8 bytes, NULL, 8 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 0f 00 19 00 00 00 10 05 72 c8 4b 75 0c 49 33 80 12 1e 66 91 8c 6e a2 00 00 00 09 66 69 78 74 75 72 65 2d 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1d 73 70 65 65 64 72 75 6e 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 20 61 74 74 65 6d 70 74 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 2a 7a aa 60 00 00 00 00 08 00 03 03 4a a2 b6 bc 80 00 00 00 04 00 00 00 29 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 278,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 31 bytes, 10 bytes, NULL, 10 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 15 00 19 00 00 00 10 30 c4 6f bc ea b9 4d bc a8 96 03 d5 f4 06 ff 82 00 00 00 09 66 69 78 74 75 72 65 2d 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1f 63 68 61 74 20 72 65 61 63 74 73 20 74 6f 20 74 68 65 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 30 58 b3 dc 00 00 00 00 08 00 03 03 4a a2 b6 f3 30 00 00 00 04 00 00 00 21 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 2",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 32 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 0.19999999999708962,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tINSERT INTO search_queries (user_id, query, result_count)\n\t\tVALUES ($1, $2, $3)\n\t",
+              "params": [
+                {
+                  "format": "binary",
+                  "value": null,
+                  "oid": 2950
+                },
+                {
+                  "format": "text",
+                  "value": "world record",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "00000002",
+                  "oid": 23
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 105,
+              "detail": "portal \"\"; statement \"stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f\"; $1: NULL (binary); $2: \"world record\" (text, 12 bytes); $3: 00000002 (binary, 4 bytes); result formats []",
+              "hex": "42 00 00 00 68 00 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00 00 03 00 01 00 00 00 01 00 03 ff ff ff ff 00 00 00 0c 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 04 00 00 00 02 00 00"
+            },
+            {
+              "type": "D",
+              "name": "Describe",
+              "bytes": 7,
+              "detail": "portal \"\"",
+              "hex": "44 00 00 00 06 50 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "n",
+              "name": "NoData",
+              "bytes": 5,
+              "detail": "",
+              "hex": "6e 00 00 00 04"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 16,
+              "detail": "INSERT 0 1",
+              "hex": "43 00 00 00 0f 49 4e 53 45 52 54 20 30 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        }
+      ],
+      "rows": 10008,
+      "plan": {
+        "rows": 10008,
+        "natural": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 229.56,
+            "Total Cost": 229.61,
+            "Plan Rows": 20,
+            "Plan Width": 887,
+            "Actual Startup Time": 0.6,
+            "Actual Total Time": 0.6,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 7,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 229.56,
+                "Total Cost": 229.73,
+                "Plan Rows": 70,
+                "Plan Width": 887,
+                "Actual Startup Time": 0.6,
+                "Actual Total Time": 0.6,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 7,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 34.51,
+                    "Total Cost": 227.7,
+                    "Plan Rows": 70,
+                    "Plan Width": 887,
+                    "Actual Startup Time": 0.6,
+                    "Actual Total Time": 0.6,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Recheck Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 7,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "idx_clips_search_vector",
+                        "Startup Cost": 0,
+                        "Total Cost": 34.49,
+                        "Plan Rows": 70,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.6,
+                        "Actual Total Time": 0.6,
+                        "Actual Rows": 2,
+                        "Actual Loops": 1,
+                        "Disabled": false,
+                        "Index Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                        "Index Searches": 1,
+                        "Shared Hit Blocks": 6,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.4,
+          "Triggers": [],
+          "Execution Time": 0.6
+        },
+        "seq": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 628.14,
+            "Total Cost": 628.19,
+            "Plan Rows": 20,
+            "Plan Width": 887,
+            "Actual Startup Time": 11.8,
+            "Actual Total Time": 11.9,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 501,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 628.14,
+                "Total Cost": 628.31,
+                "Plan Rows": 70,
+                "Plan Width": 887,
+                "Actual Startup Time": 11.8,
+                "Actual Total Time": 11.8,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 501,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Seq Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 0,
+                    "Total Cost": 626.27,
+                    "Plan Rows": 70,
+                    "Plan Width": 887,
+                    "Actual Startup Time": 0,
+                    "Actual Total Time": 11.8,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+                    "Rows Removed by Filter": 10006,
+                    "Shared Hit Blocks": 501,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.4,
+          "Triggers": [],
+          "Execution Time": 11.9
+        },
+        "gin": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 229.56,
+            "Total Cost": 229.61,
+            "Plan Rows": 20,
+            "Plan Width": 887,
+            "Actual Startup Time": 0.4,
+            "Actual Total Time": 0.4,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 7,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 229.56,
+                "Total Cost": 229.73,
+                "Plan Rows": 70,
+                "Plan Width": 887,
+                "Actual Startup Time": 0.4,
+                "Actual Total Time": 0.4,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 7,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 34.51,
+                    "Total Cost": 227.7,
+                    "Plan Rows": 70,
+                    "Plan Width": 887,
+                    "Actual Startup Time": 0.4,
+                    "Actual Total Time": 0.4,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Recheck Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 7,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "idx_clips_search_vector",
+                        "Startup Cost": 0,
+                        "Total Cost": 34.49,
+                        "Plan Rows": 70,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.4,
+                        "Actual Total Time": 0.4,
+                        "Actual Rows": 2,
+                        "Actual Loops": 1,
+                        "Disabled": false,
+                        "Index Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                        "Index Searches": 1,
+                        "Shared Hit Blocks": 6,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 20,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.3,
+          "Triggers": [],
+          "Execution Time": 0.5
+        }
+      }
+    },
+    {
+      "ev": "result",
+      "id": 4,
+      "url": "/api/v1/search?q=world+record&type=clips",
+      "response": {
+        "status": 200,
+        "body": "{\"query\":\"world record\",\"results\":{\"clips\":[{\"id\":\"0572c84b-750c-4933-8012-1e66918c6ea2\",\"twitch_clip_id\":\"fixture-0\",\"twitch_clip_url\":\"https://example.invalid/clip/0\",\"embed_url\":\"https://example.invalid/clip/0\",\"title\":\"speedrun world record attempt\",\"creator_name\":\"runner_a\",\"broadcaster_name\":\"runner_a\",\"view_count\":0,\"created_at\":\"2026-11-01T00:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.48Z\",\"vote_score\":41,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"30c46fbc-eab9-4dbc-a896-03d5f406ff82\",\"twitch_clip_id\":\"fixture-1\",\"twitch_clip_url\":\"https://example.invalid/clip/1\",\"embed_url\":\"https://example.invalid/clip/1\",\"title\":\"chat reacts to the world record\",\"creator_name\":\"streamer_b\",\"broadcaster_name\":\"streamer_b\",\"view_count\":0,\"created_at\":\"2026-11-01T07:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.494Z\",\"vote_score\":33,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[]},\"counts\":{\"clips\":2,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":0},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":20,\"total_items\":2,\"total_pages\":1}}",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      },
+      "ms": 15,
+      "calls": [
+        {
+          "ms": 0,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "-- ping",
+              "params": []
+            }
+          ],
+          "sent": [
+            {
+              "type": "Q",
+              "name": "Query",
+              "bytes": 13,
+              "detail": "-- ping",
+              "hex": "51 00 00 00 0c 2d 2d 20 70 69 6e 67 00"
+            }
+          ],
+          "received": [
+            {
+              "type": "I",
+              "name": "EmptyQueryResponse",
+              "bytes": 5,
+              "detail": "",
+              "hex": "49 00 00 00 04"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 4.30000000000291,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 97,
+              "detail": "portal \"\"; statement \"stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b\"; $1: \"world:* & record:*\" (text, 18 bytes); result formats [1]",
+              "hex": "42 00 00 00 60 00 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00 00 01 00 00 00 01 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 01 00 01"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 19,
+              "detail": "1 columns: 8 bytes; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 00 12 00 01 00 00 00 08 00 00 00 00 00 00 00 02"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 1",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 3.7999999999883585,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tSELECT\n\t\t\tc.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,\n\t\t\tc.title, c.creator_name, c.creator_id, c.broadcaster_name,\n\t\t\tc.broadcaster_id, c.game_id, c.game_name, c.language,\n\t\t\tc.thumbnail_url, c.duration, c.view_count, c.created_at,\n\t\t\tc.imported_at, c.vote_score, c.comment_count, c.favorite_count,\n\t\t\tc.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text\n\t\tFROM clips c\n\t\tWHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)\n\t\tORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC\n\t\tLIMIT $2 OFFSET $3\n\t",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000014",
+                  "oid": 20
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000000",
+                  "oid": 20
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 173,
+              "detail": "portal \"\"; statement \"stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e\"; $1: \"world:* & record:*\" (text, 18 bytes); $2: 0000000000000014 (binary, 8 bytes); $3: 0000000000000000 (binary, 8 bytes); result formats [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]",
+              "hex": "42 00 00 00 ac 00 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00 00 03 00 00 00 01 00 01 00 03 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 00 00 08 00 00 00 00 00 00 00 14 00 00 00 08 00 00 00 00 00 00 00 00 00 19 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 272,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 29 bytes, 8 bytes, NULL, 8 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 0f 00 19 00 00 00 10 05 72 c8 4b 75 0c 49 33 80 12 1e 66 91 8c 6e a2 00 00 00 09 66 69 78 74 75 72 65 2d 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1d 73 70 65 65 64 72 75 6e 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 20 61 74 74 65 6d 70 74 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 2a 7a aa 60 00 00 00 00 08 00 03 03 4a a2 b6 bc 80 00 00 00 04 00 00 00 29 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 278,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 31 bytes, 10 bytes, NULL, 10 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 15 00 19 00 00 00 10 30 c4 6f bc ea b9 4d bc a8 96 03 d5 f4 06 ff 82 00 00 00 09 66 69 78 74 75 72 65 2d 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1f 63 68 61 74 20 72 65 61 63 74 73 20 74 6f 20 74 68 65 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 30 58 b3 dc 00 00 00 00 08 00 03 03 4a a2 b6 f3 30 00 00 00 04 00 00 00 21 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 2",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 32 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 0.40000000000873115,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tINSERT INTO search_queries (user_id, query, result_count)\n\t\tVALUES ($1, $2, $3)\n\t",
+              "params": [
+                {
+                  "format": "binary",
+                  "value": null,
+                  "oid": 2950
+                },
+                {
+                  "format": "text",
+                  "value": "world record",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "00000002",
+                  "oid": 23
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 105,
+              "detail": "portal \"\"; statement \"stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f\"; $1: NULL (binary); $2: \"world record\" (text, 12 bytes); $3: 00000002 (binary, 4 bytes); result formats []",
+              "hex": "42 00 00 00 68 00 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00 00 03 00 01 00 00 00 01 00 03 ff ff ff ff 00 00 00 0c 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 04 00 00 00 02 00 00"
+            },
+            {
+              "type": "D",
+              "name": "Describe",
+              "bytes": 7,
+              "detail": "portal \"\"",
+              "hex": "44 00 00 00 06 50 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "n",
+              "name": "NoData",
+              "bytes": 5,
+              "detail": "",
+              "hex": "6e 00 00 00 04"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 16,
+              "detail": "INSERT 0 1",
+              "hex": "43 00 00 00 0f 49 4e 53 45 52 54 20 30 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        }
+      ],
+      "rows": 30008,
+      "plan": {
+        "rows": 30008,
+        "natural": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 619.06,
+            "Total Cost": 619.11,
+            "Plan Rows": 20,
+            "Plan Width": 890,
+            "Actual Startup Time": 1.3,
+            "Actual Total Time": 1.3,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 8,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 619.06,
+                "Total Cost": 619.58,
+                "Plan Rows": 209,
+                "Plan Width": 890,
+                "Actual Startup Time": 1.3,
+                "Actual Total Time": 1.3,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 8,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 35.25,
+                    "Total Cost": 613.49,
+                    "Plan Rows": 209,
+                    "Plan Width": 890,
+                    "Actual Startup Time": 1.3,
+                    "Actual Total Time": 1.3,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Recheck Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 8,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "idx_clips_search_vector",
+                        "Startup Cost": 0,
+                        "Total Cost": 35.2,
+                        "Plan Rows": 209,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 1.2,
+                        "Actual Total Time": 1.2,
+                        "Actual Rows": 2,
+                        "Actual Loops": 1,
+                        "Disabled": false,
+                        "Index Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                        "Index Searches": 1,
+                        "Shared Hit Blocks": 7,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.7,
+          "Triggers": [],
+          "Execution Time": 1.3
+        },
+        "seq": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 1934.18,
+            "Total Cost": 1934.23,
+            "Plan Rows": 20,
+            "Plan Width": 890,
+            "Actual Startup Time": 12,
+            "Actual Total Time": 12,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 1553,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 1934.18,
+                "Total Cost": 1934.71,
+                "Plan Rows": 209,
+                "Plan Width": 890,
+                "Actual Startup Time": 12,
+                "Actual Total Time": 12,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 1553,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Seq Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 0,
+                    "Total Cost": 1928.62,
+                    "Plan Rows": 209,
+                    "Plan Width": 890,
+                    "Actual Startup Time": 0,
+                    "Actual Total Time": 11.9,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+                    "Rows Removed by Filter": 30006,
+                    "Shared Hit Blocks": 1553,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.5,
+          "Triggers": [],
+          "Execution Time": 12
+        },
+        "gin": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 619.06,
+            "Total Cost": 619.11,
+            "Plan Rows": 20,
+            "Plan Width": 890,
+            "Actual Startup Time": 0.8,
+            "Actual Total Time": 0.8,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 8,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 619.06,
+                "Total Cost": 619.58,
+                "Plan Rows": 209,
+                "Plan Width": 890,
+                "Actual Startup Time": 0.8,
+                "Actual Total Time": 0.8,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 8,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 35.25,
+                    "Total Cost": 613.49,
+                    "Plan Rows": 209,
+                    "Plan Width": 890,
+                    "Actual Startup Time": 0.8,
+                    "Actual Total Time": 0.8,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Recheck Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 8,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "idx_clips_search_vector",
+                        "Startup Cost": 0,
+                        "Total Cost": 35.2,
+                        "Plan Rows": 209,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.8,
+                        "Actual Total Time": 0.8,
+                        "Actual Rows": 2,
+                        "Actual Loops": 1,
+                        "Disabled": false,
+                        "Index Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                        "Index Searches": 1,
+                        "Shared Hit Blocks": 7,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 20,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.2,
+          "Triggers": [],
+          "Execution Time": 0.8
+        }
+      }
+    },
+    {
+      "ev": "result",
+      "id": 5,
+      "url": "/api/v1/search?q=world+record&type=clips",
+      "response": {
+        "status": 200,
+        "body": "{\"query\":\"world record\",\"results\":{\"clips\":[{\"id\":\"0572c84b-750c-4933-8012-1e66918c6ea2\",\"twitch_clip_id\":\"fixture-0\",\"twitch_clip_url\":\"https://example.invalid/clip/0\",\"embed_url\":\"https://example.invalid/clip/0\",\"title\":\"speedrun world record attempt\",\"creator_name\":\"runner_a\",\"broadcaster_name\":\"runner_a\",\"view_count\":0,\"created_at\":\"2026-11-01T00:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.48Z\",\"vote_score\":41,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false},{\"id\":\"30c46fbc-eab9-4dbc-a896-03d5f406ff82\",\"twitch_clip_id\":\"fixture-1\",\"twitch_clip_url\":\"https://example.invalid/clip/1\",\"embed_url\":\"https://example.invalid/clip/1\",\"title\":\"chat reacts to the world record\",\"creator_name\":\"streamer_b\",\"broadcaster_name\":\"streamer_b\",\"view_count\":0,\"created_at\":\"2026-11-01T07:00:00Z\",\"imported_at\":\"2026-11-15T07:47:02.494Z\",\"vote_score\":33,\"comment_count\":0,\"favorite_count\":0,\"is_featured\":false,\"is_nsfw\":false,\"is_removed\":false,\"is_hidden\":false,\"dmca_removed\":false,\"source_type\":\"\",\"source_platform\":\"\",\"duration_verified\":false}],\"creators\":[],\"games\":[],\"twitch_categories\":[],\"tags\":[]},\"counts\":{\"clips\":2,\"creators\":0,\"games\":0,\"twitch_categories\":0,\"tags\":0},\"facets\":{\"date_range\":{\"last_hour\":0,\"last_day\":0,\"last_week\":0,\"last_month\":0,\"older\":0}},\"meta\":{\"page\":1,\"limit\":20,\"total_items\":2,\"total_pages\":1}}",
+        "headers": {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      },
+      "ms": 8.099999999991269,
+      "calls": [
+        {
+          "ms": 0.09999999999126885,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "-- ping",
+              "params": []
+            }
+          ],
+          "sent": [
+            {
+              "type": "Q",
+              "name": "Query",
+              "bytes": 13,
+              "detail": "-- ping",
+              "hex": "51 00 00 00 0c 2d 2d 20 70 69 6e 67 00"
+            }
+          ],
+          "received": [
+            {
+              "type": "I",
+              "name": "EmptyQueryResponse",
+              "bytes": 5,
+              "detail": "",
+              "hex": "49 00 00 00 04"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 2.8999999999941792,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 97,
+              "detail": "portal \"\"; statement \"stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b\"; $1: \"world:* & record:*\" (text, 18 bytes); result formats [1]",
+              "hex": "42 00 00 00 60 00 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00 00 01 00 00 00 01 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 01 00 01"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 19,
+              "detail": "1 columns: 8 bytes; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 00 12 00 01 00 00 00 08 00 00 00 00 00 00 00 02"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 1",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 2.6000000000058208,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tSELECT\n\t\t\tc.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,\n\t\t\tc.title, c.creator_name, c.creator_id, c.broadcaster_name,\n\t\t\tc.broadcaster_id, c.game_id, c.game_name, c.language,\n\t\t\tc.thumbnail_url, c.duration, c.view_count, c.created_at,\n\t\t\tc.imported_at, c.vote_score, c.comment_count, c.favorite_count,\n\t\t\tc.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text\n\t\tFROM clips c\n\t\tWHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery('english', $1)\n\t\tORDER BY ts_rank(c.search_vector, to_tsquery('english', $1)) DESC, c.vote_score DESC, c.created_at DESC\n\t\tLIMIT $2 OFFSET $3\n\t",
+              "params": [
+                {
+                  "format": "text",
+                  "value": "world:* & record:*",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000014",
+                  "oid": 20
+                },
+                {
+                  "format": "binary",
+                  "value": "0000000000000000",
+                  "oid": 20
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 173,
+              "detail": "portal \"\"; statement \"stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e\"; $1: \"world:* & record:*\" (text, 18 bytes); $2: 0000000000000014 (binary, 8 bytes); $3: 0000000000000000 (binary, 8 bytes); result formats [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]",
+              "hex": "42 00 00 00 ac 00 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00 00 03 00 00 00 01 00 01 00 03 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 00 00 08 00 00 00 00 00 00 00 14 00 00 00 08 00 00 00 00 00 00 00 00 00 19 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 272,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 29 bytes, 8 bytes, NULL, 8 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 0f 00 19 00 00 00 10 05 72 c8 4b 75 0c 49 33 80 12 1e 66 91 8c 6e a2 00 00 00 09 66 69 78 74 75 72 65 2d 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1d 73 70 65 65 64 72 75 6e 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 20 61 74 74 65 6d 70 74 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 2a 7a aa 60 00 00 00 00 08 00 03 03 4a a2 b6 bc 80 00 00 00 04 00 00 00 29 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "D",
+              "name": "DataRow",
+              "bytes": 278,
+              "detail": "25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 31 bytes, 10 bytes, NULL, 10 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)",
+              "hex": "44 00 00 01 15 00 19 00 00 00 10 30 c4 6f bc ea b9 4d bc a8 96 03 d5 f4 06 ff 82 00 00 00 09 66 69 78 74 75 72 65 2d 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1f 63 68 61 74 20 72 65 61 63 74 73 20 74 6f 20 74 68 65 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 30 58 b3 dc 00 00 00 00 08 00 03 03 4a a2 b6 f3 30 00 00 00 04 00 00 00 21 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 14,
+              "detail": "SELECT 2",
+              "hex": "43 00 00 00 0d 53 45 4c 45 43 54 20 32 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        },
+        {
+          "ms": 0.39999999999417923,
+          "statements": [
+            {
+              "kind": "execute",
+              "sql": "\n\t\tINSERT INTO search_queries (user_id, query, result_count)\n\t\tVALUES ($1, $2, $3)\n\t",
+              "params": [
+                {
+                  "format": "binary",
+                  "value": null,
+                  "oid": 2950
+                },
+                {
+                  "format": "text",
+                  "value": "world record",
+                  "oid": 25
+                },
+                {
+                  "format": "binary",
+                  "value": "00000002",
+                  "oid": 23
+                }
+              ]
+            }
+          ],
+          "sent": [
+            {
+              "type": "B",
+              "name": "Bind",
+              "bytes": 105,
+              "detail": "portal \"\"; statement \"stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f\"; $1: NULL (binary); $2: \"world record\" (text, 12 bytes); $3: 00000002 (binary, 4 bytes); result formats []",
+              "hex": "42 00 00 00 68 00 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00 00 03 00 01 00 00 00 01 00 03 ff ff ff ff 00 00 00 0c 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 04 00 00 00 02 00 00"
+            },
+            {
+              "type": "D",
+              "name": "Describe",
+              "bytes": 7,
+              "detail": "portal \"\"",
+              "hex": "44 00 00 00 06 50 00"
+            },
+            {
+              "type": "E",
+              "name": "Execute",
+              "bytes": 10,
+              "detail": "portal \"\"; max rows 0 (0 means all)",
+              "hex": "45 00 00 00 09 00 00 00 00 00"
+            },
+            {
+              "type": "S",
+              "name": "Sync",
+              "bytes": 5,
+              "detail": "",
+              "hex": "53 00 00 00 04"
+            }
+          ],
+          "received": [
+            {
+              "type": "2",
+              "name": "BindComplete",
+              "bytes": 5,
+              "detail": "",
+              "hex": "32 00 00 00 04"
+            },
+            {
+              "type": "n",
+              "name": "NoData",
+              "bytes": 5,
+              "detail": "",
+              "hex": "6e 00 00 00 04"
+            },
+            {
+              "type": "C",
+              "name": "CommandComplete",
+              "bytes": 16,
+              "detail": "INSERT 0 1",
+              "hex": "43 00 00 00 0f 49 4e 53 45 52 54 20 30 20 31 00"
+            },
+            {
+              "type": "Z",
+              "name": "ReadyForQuery",
+              "bytes": 6,
+              "detail": "transaction status I",
+              "hex": "5a 00 00 00 05 49"
+            }
+          ]
+        }
+      ],
+      "rows": 50008,
+      "plan": {
+        "rows": 50008,
+        "natural": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 1013.42,
+            "Total Cost": 1013.47,
+            "Plan Rows": 20,
+            "Plan Width": 891,
+            "Actual Startup Time": 1.7,
+            "Actual Total Time": 1.7,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 8,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 1013.42,
+                "Total Cost": 1014.29,
+                "Plan Rows": 349,
+                "Plan Width": 891,
+                "Actual Startup Time": 1.7,
+                "Actual Total Time": 1.7,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 8,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 36,
+                    "Total Cost": 1004.13,
+                    "Plan Rows": 349,
+                    "Plan Width": 891,
+                    "Actual Startup Time": 1.6,
+                    "Actual Total Time": 1.6,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Recheck Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 8,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "idx_clips_search_vector",
+                        "Startup Cost": 0,
+                        "Total Cost": 35.91,
+                        "Plan Rows": 349,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 1.5,
+                        "Actual Total Time": 1.5,
+                        "Actual Rows": 2,
+                        "Actual Loops": 1,
+                        "Disabled": false,
+                        "Index Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                        "Index Searches": 1,
+                        "Shared Hit Blocks": 7,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.6,
+          "Triggers": [],
+          "Execution Time": 1.7
+        },
+        "seq": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 3241.26,
+            "Total Cost": 3241.31,
+            "Plan Rows": 20,
+            "Plan Width": 891,
+            "Actual Startup Time": 16.1,
+            "Actual Total Time": 16.1,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 2606,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 3241.26,
+                "Total Cost": 3242.13,
+                "Plan Rows": 349,
+                "Plan Width": 891,
+                "Actual Startup Time": 16.1,
+                "Actual Total Time": 16.1,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 2606,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Seq Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 0,
+                    "Total Cost": 3231.97,
+                    "Plan Rows": 349,
+                    "Plan Width": 891,
+                    "Actual Startup Time": 0.1,
+                    "Actual Total Time": 16,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ '''world'':* & ''record'':*'::tsquery))",
+                    "Rows Removed by Filter": 50006,
+                    "Shared Hit Blocks": 2606,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 15,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.4,
+          "Triggers": [],
+          "Execution Time": 16.1
+        },
+        "gin": {
+          "Plan": {
+            "Node Type": "Limit",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 1013.42,
+            "Total Cost": 1013.47,
+            "Plan Rows": 20,
+            "Plan Width": 891,
+            "Actual Startup Time": 1.5,
+            "Actual Total Time": 1.5,
+            "Actual Rows": 2,
+            "Actual Loops": 1,
+            "Disabled": false,
+            "Shared Hit Blocks": 8,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Sort",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 1013.42,
+                "Total Cost": 1014.29,
+                "Plan Rows": 349,
+                "Plan Width": 891,
+                "Actual Startup Time": 1.5,
+                "Actual Total Time": 1.5,
+                "Actual Rows": 2,
+                "Actual Loops": 1,
+                "Disabled": false,
+                "Sort Key": [
+                  "(ts_rank(search_vector, '''world'':* & ''record'':*'::tsquery)) DESC",
+                  "vote_score DESC",
+                  "created_at DESC"
+                ],
+                "Sort Method": "quicksort",
+                "Sort Space Used": 17,
+                "Sort Space Type": "Memory",
+                "Shared Hit Blocks": 8,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "clips",
+                    "Alias": "c",
+                    "Startup Cost": 36,
+                    "Total Cost": 1004.13,
+                    "Plan Rows": 349,
+                    "Plan Width": 891,
+                    "Actual Startup Time": 1.5,
+                    "Actual Total Time": 1.5,
+                    "Actual Rows": 2,
+                    "Actual Loops": 1,
+                    "Disabled": false,
+                    "Recheck Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 8,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "idx_clips_search_vector",
+                        "Startup Cost": 0,
+                        "Total Cost": 35.91,
+                        "Plan Rows": 349,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 1.4,
+                        "Actual Total Time": 1.4,
+                        "Actual Rows": 2,
+                        "Actual Loops": 1,
+                        "Disabled": false,
+                        "Index Cond": "(search_vector @@ '''world'':* & ''record'':*'::tsquery)",
+                        "Index Searches": 1,
+                        "Shared Hit Blocks": 7,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 20,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.4,
+          "Triggers": [],
+          "Execution Time": 1.5
+        }
+      }
+    }
+  ]
+}

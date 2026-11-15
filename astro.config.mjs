@@ -2,6 +2,7 @@ import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
+import { createHash } from 'node:crypto'
 
 // Each page's script is one module that imports the shared boot chunk, so the browser finds the
 // chunk only once the entry has arrived. Vite's own build preloaded it. Without the preload, the
@@ -29,6 +30,18 @@ const modulePreload = {
         }
         await writeFile(file, html)
       }
+      // Bind recordings to the sources that produced this exact worker, rather
+      // than accidentally labelling a stale dist/ with a newer source hash.
+      const fingerprint = createHash('sha256')
+      for (const path of JSON.parse(await readFile('src/desk/inspector/recording-inputs.json', 'utf8'))) {
+        fingerprint.update(path).update('\0').update(await readFile(path)).update('\0')
+      }
+      const workers = (await readdir(join(out, '_astro'))).filter(path => /^clpr\.worker-.*\.js$/.test(path))
+      if (workers.length !== 1) throw new Error('Expected exactly one built Clpr worker')
+      await writeFile(join(out, '_astro/clpr-recording-build.json'), JSON.stringify({
+        sourceFingerprint: fingerprint.digest('hex'), worker: workers[0],
+        workerSha256: createHash('sha256').update(await readFile(join(out, '_astro', workers[0]))).digest('hex'),
+      }))
     },
   },
 }

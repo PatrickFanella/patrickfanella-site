@@ -7,7 +7,9 @@ export function startClpr(pane: HTMLElement, options: {
   pre: HTMLElement; bench: HTMLElement; sub: HTMLElement
   stopBenchmark(): void; startBenchmark(): void; recorded(): void
 }) {
-  const inspector = startInspector(pane.querySelector<HTMLElement>('[data-inspector]')!, rows => search(lastWords, rows))
+  const root = pane.querySelector<HTMLElement>('[data-inspector]')!
+  const allowed = root.dataset.liveAllowed === 'true'
+  const inspector = startInspector(root, rows => search(lastWords, rows))
   const controls = document.createElement('div'); controls.className = 'clpr-controls'
   const meta = document.createElement('p'); meta.dataset.clprMeta = ''
   const source = document.createElement('a')
@@ -21,11 +23,12 @@ export function startClpr(pane: HTMLElement, options: {
   } else provenance.textContent = 'Built outside Clpr CI.'
   provenance.append(' PostgreSQL and its extensions download with live mode. Searches stay in this tab; this demo uses Clpr’s PostgreSQL path and eight fixture clips. The Plan tab can add generated clips.')
   const buttons = document.createElement('div'); buttons.className = 'clpr-buttons'
-  const start = document.createElement('button'); start.type = 'button'; start.textContent = 'Start Clpr live mode'
+  const start = document.createElement('button'); start.type = 'button'; start.textContent = root.dataset.liveLabel!; start.disabled = !allowed
   const stop = document.createElement('button'); stop.type = 'button'; stop.textContent = 'Stop live mode'; stop.disabled = true
   const benchmark = document.createElement('button'); benchmark.type = 'button'; benchmark.textContent = 'Run SQL benchmark'
   const status = document.createElement('p'); status.setAttribute('role', 'status'); status.dataset.clprStatus = ''
-  status.textContent = 'Recorded evidence below. Start live mode to run Clpr’s Go search handler here.'
+  const idleStatus = allowed ? 'Recorded evidence below. Start live mode to run Clpr’s Go search handler here.' : root.dataset.liveReason!
+  status.textContent = idleStatus
   buttons.append(start, stop, benchmark); controls.append(meta, provenance, buttons, status)
   pane.querySelector('.pbody')!.prepend(controls)
 
@@ -41,7 +44,7 @@ export function startClpr(pane: HTMLElement, options: {
     clearTimeout(slow); worker?.terminate(); worker = null
     for (const request of pending.values()) request.reject(new Error('Clpr live mode stopped.'))
     pending.clear()
-    start.disabled = false; stop.disabled = true
+    start.disabled = !allowed; stop.disabled = true
   }
   const reset = () => {
     set('idle'); terminate(); options.recorded()
@@ -98,6 +101,8 @@ export function startClpr(pane: HTMLElement, options: {
     } catch (error) { request.reject(error instanceof Error ? error : new Error(String(error))) }
   }
   start.addEventListener('click', () => {
+    // Enforce the gate as well as disabling the control.
+    if (!allowed) { status.textContent = idleStatus; return }
     options.stopBenchmark(); options.recorded(); set('starting')
     start.disabled = true; stop.disabled = false
     status.textContent = 'Downloading the pinned Clpr build and starting PostgreSQL.'

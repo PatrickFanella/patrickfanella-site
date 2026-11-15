@@ -4,6 +4,7 @@ import { captureDatabase } from '../src/desk/inspector/capture'
 import { PGlite } from '@electric-sql/pglite'
 import { inspectPlans } from '../src/desk/inspector/plans'
 import { test, expect } from './fixtures'
+import { recordedLiveGate } from './recording-policy'
 
 const bytes = (text: string) => [...new TextEncoder().encode(text), 0]
 const int16 = (n: number) => [n >>> 8 & 255, n & 255]
@@ -77,10 +78,12 @@ test('GIN comparison restores all competing indexes and planner settings by roll
 })
 
 test('live wire and plan panels capture traffic, grow to 50,008 clips, and shrink back to eight', async ({ page }) => {
+  test.skip(!recordedLiveGate.allowed, recordedLiveGate.reason)
   test.setTimeout(300_000)
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/desk/')
   await page.getByRole('button', { name: 'Start Clpr live mode' }).click()
+  await expect(page.locator('[data-inspector]')).toHaveAttribute('data-mode', 'live', { timeout: 180_000 })
   await expect(page.getByRole('tab', { name: 'Wire', exact: true })).toBeVisible({ timeout: 180_000 })
   await page.getByRole('tab', { name: 'Wire', exact: true }).click()
   const wire = page.locator('[data-inspector-wire]')
@@ -133,5 +136,5 @@ test('live wire and plan panels capture traffic, grow to 50,008 clips, and shrin
   expect(violations).toEqual([])
   await page.screenshot({ path: test.info().outputPath('plan-phone-dark.png'), fullPage: true })
   await page.getByRole('button', { name: 'Stop live mode' }).click()
-  await expect(page.locator('[data-inspector]')).toBeHidden()
+  await expect(page.locator('[data-inspector]')).toHaveAttribute('data-mode', 'recorded')
 })
