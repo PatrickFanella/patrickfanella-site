@@ -76,7 +76,9 @@ p { margin: 0; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; animation: focus-in var(--t-2) var(--ease-out); }
 @keyframes focus-in { from { outline-offset: 9px; outline-color: transparent; } }
 
-#ink { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; touch-action: pan-y; }
+/* The mask and pointer use innerWidth, including a classic scrollbar gutter. A percentage width
+   excludes that gutter and compresses the ink horizontally, pulling it away from the letters. */
+#ink { position: fixed; inset: 0; width: 100vw; height: 100%; display: block; z-index: 0; touch-action: pan-y; }
 .no-ink #ink { display: none; }
 .no-ink body {
   background:
