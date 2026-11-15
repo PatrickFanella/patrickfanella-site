@@ -1,7 +1,7 @@
 // The psql pane: Clpr's search query, its plan and rows, and the timing panel beside them.
 // It opens on Clpr's recorded run, starts PostgreSQL in a module worker, and swaps in the times
 // measured in this tab once both medians are in. If the worker cannot start, the recorded run stays.
-import { QUERY, SEARCH_SQL, type PgEvent, type Row, type Run } from './pg-protocol'
+import { QUERY, SEARCH_SQL, searchTerms, type PgEvent, type Row, type Run } from './pg-protocol'
 import { RECORDED_ON, recordedIdx, recordedSeq } from './recorded'
 
 const fmt = (n: number) => n.toLocaleString('en-US')
@@ -64,9 +64,9 @@ export function tidyPlan(plan: string[]): string[] {
 /** A measured run also carries the clock's step, so its times are shown at the clock's resolution. */
 interface Shown { run: Run; rows: Row[]; total: number; of: number; step?: number }
 
-function renderSession(pre: HTMLElement, s: Shown, status: string) {
+function renderSession(pre: HTMLElement, s: Shown, status: string, query = QUERY) {
   pre.replaceChildren()
-  const sql = `EXPLAIN (ANALYZE, COSTS OFF, BUFFERS OFF)\n${SEARCH_SQL};  -- $1 = ${QUERY}`.split('\n')
+  const sql = `EXPLAIN (ANALYZE, COSTS OFF, BUFFERS OFF)\n${SEARCH_SQL};  -- $1 = ${query}`.split('\n')
   sql.forEach((l, i) => line(pre, ...(i === 0 ? [['ps1', 'clpr=#'] as Part, ' '] : []), ...mark(l, SQL_RE, ['s', 'c', 'k', 'n'])))
   line(pre)
   for (let l of tidyPlan(s.run.plan)) {
@@ -95,7 +95,10 @@ const BENCH = `<p class="bcap" data-pg-cap></p>
 <div class="brow idx"><p class="blabel"><b>GIN index</b> <span data-pg-idx-note></span></p><p class="bnum"><span data-pg-idx></span><small>ms</small></p><div class="bbar" aria-hidden="true"><i></i></div></div>
 <p class="bnote" data-pg-note role="status"></p>`
 
-export function startPsql(pane: HTMLElement) {
+export interface SearchResult { total: number; time: string; top?: string }
+export interface Psql { search(words: string): Promise<SearchResult> }
+
+export function startPsql(pane: HTMLElement): Psql {
   const body = pane.querySelector<HTMLElement>('.pbody')!
   const sub = pane.querySelector<HTMLElement>('[data-pg-sub]')!
   const pre = document.createElement('pre')
@@ -142,8 +145,10 @@ export function startPsql(pane: HTMLElement) {
     progress('PostgreSQL is still loading in this tab.')
   }, 30_000)
   const fail = (why: string) => {
-    if (!starting()) return
-    clearTimeout(slow); set('failed'); worker?.terminate()
+    if (state === 'failed') return
+    clearTimeout(slow); set('failed'); worker?.terminate(); worker = null
+    for (const request of pending.values()) request.reject(new Error('PostgreSQL is unavailable in this tab.'))
+    pending.clear()
     console.info('PostgreSQL is off:', why)
     sub.textContent = 'recorded run'
     showRecorded("PostgreSQL could not start in this tab, so these are Clpr's recorded times.", `${recordedStatus}. PostgreSQL could not start in this tab.`)
@@ -155,9 +160,29 @@ export function startPsql(pane: HTMLElement) {
     line(pre, ['c', `-- ${recordedStatus}. ${text}`])
   }
 
+  let requestId = 0
+  const pending = new Map<number, { resolve: (r: SearchResult) => void; reject: (e: Error) => void }>()
   let version = '', rows = 0, step = 1, seq: Run | null = null
   const tick = () => Number(step.toPrecision(1))
   const onEvent = (m: PgEvent) => {
+    if (m.ev === 'search' || m.ev === 'search-error') {
+      const request = pending.get(m.id)
+      if (!request) return
+      pending.delete(m.id)
+      if (m.ev === 'search-error') { request.reject(new Error(m.message)); return }
+      const time = measured(m.run.exec, step, m.run.runs).text
+      renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows, step },
+        `measured in this tab by PostgreSQL ${version}; prefix terms joined with AND`, m.query)
+      // The initial comparison belongs to world record, not this search.
+      q('[data-pg-cap]').textContent = 'Your search, measured in this tab'
+      q<HTMLElement>('.seq').hidden = true
+      q('[data-pg-idx]').textContent = time
+      q('[data-pg-idx-note]').textContent = `${scanName(m.run)}, ${fmt(rows)} rows`
+      q('[data-pg-note]').textContent = `Prefix search with AND; ${fmt(m.total)} matches. Mean of ${fmt(m.run.runs ?? 1)} query runs, at this tab's clock resolution.`
+      request.resolve({ total: m.total, time, top: m.rows[0]?.title })
+      return
+    }
+    if (m.ev === 'error') { fail(m.message); return }
     if (!starting()) return
     switch (m.ev) {
       case 'ready': clearTimeout(slow); version = m.version; step = m.step; progress(`PostgreSQL ${version} is up in ${fmt(Math.round(m.ms))} ms; inserting clips.`); break
@@ -187,10 +212,7 @@ export function startPsql(pane: HTMLElement) {
           q('[data-pg-note]').textContent = `${ratio} This tab's clock ticks every ${tick()} ms, so each batch repeats the query for 50 ms and takes the mean. Clpr's recorded demo: ${ms(recordedSeq.run.exec)} ms without the index at ${fmt(recordedSeq.rows)} rows, ${ms(recordedIdx.run.exec)} ms with it at ${fmt(recordedIdx.rows)}.`
         }
         renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows, step }, `measured in this tab by PostgreSQL ${version}: the plan of the median batch's last run, on a clock that ticks every ${tick()} ms`)
-        // Nothing sends it more queries yet, so free the WebAssembly instance and the 50,008 rows.
-        worker?.terminate(); worker = null
         break
-      case 'error': fail(m.message); break
     }
   }
 
@@ -200,4 +222,23 @@ export function startPsql(pane: HTMLElement) {
     worker.onmessage = (e: MessageEvent<PgEvent>) => onEvent(e.data)
     worker.onerror = (e) => { e.preventDefault(); fail(e.message || 'the worker script did not load') }
   } catch (err) { fail((err as Error).message) }
+  addEventListener('pagehide', (event) => {
+    if (event.persisted) return
+    clearTimeout(slow); worker?.terminate(); worker = null
+    for (const request of pending.values()) request.reject(new Error('The desk was closed.'))
+    pending.clear()
+  }, { once: true })
+  return {
+    search(words) {
+      if (!searchTerms(words)) return Promise.reject(new Error('Use search followed by words or numbers.'))
+      if (state !== 'live' || !worker) return Promise.reject(new Error(state === 'failed'
+        ? 'PostgreSQL is unavailable in this tab; the psql pane shows a recorded run.'
+        : 'PostgreSQL is still starting. Try the search again when the psql pane says live.'))
+      const id = ++requestId
+      return new Promise((resolve, reject) => {
+        pending.set(id, { resolve, reject })
+        worker!.postMessage({ ev: 'search', id, words })
+      })
+    },
+  }
 }

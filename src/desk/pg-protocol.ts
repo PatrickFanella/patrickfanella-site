@@ -26,4 +26,14 @@ export type PgEvent =
   | { ev: 'bench'; kind: 'seq'; run: Run }
   | { ev: 'index'; ms: number }
   | { ev: 'bench'; kind: 'idx'; run: Run; rows: Row[]; total: number }
+  | { ev: 'search'; id: number; query: string; run: Run; rows: Row[]; total: number }
+  | { ev: 'search-error'; id: number; message: string }
   | { ev: 'error'; message: string }
+
+export interface SearchRequest { ev: 'search'; id: number; words: string }
+
+/** Prefix terms, joined with AND as in Clpr; punctuation never becomes tsquery syntax. */
+export function searchTerms(words: string): string {
+  const terms = words.slice(0, 200).match(/[\p{L}\p{N}]+/gu) ?? []
+  return terms.map((word) => `'${word}':*`).join(' & ')
+}

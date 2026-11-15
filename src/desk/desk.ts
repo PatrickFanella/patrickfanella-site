@@ -5,6 +5,7 @@ import { boot } from '../boot'
 import { reduced, splitLetters } from '../motion/motion'
 import '../styles/desk.css'
 import { startPsql } from './psql'
+import { startShell } from './shell'
 
 const { ink } = boot()
 
@@ -13,7 +14,8 @@ const { ink } = boot()
 const name = document.getElementById('name')!
 for (const l of splitLetters(name, 'ooyycccccyyooo')) { l.dataset.pour = '1'; l.classList.add('landed') }
 
-startPsql(document.querySelector<HTMLElement>('section.psql')!)
+const psql = startPsql(document.querySelector<HTMLElement>('section.psql')!)
+startShell(document.querySelector<HTMLFormElement>('[data-shell]')!, psql)
 
 const panes = [...document.querySelectorAll<HTMLElement>('[data-pane]')]
 const tags = [...document.querySelectorAll<HTMLButtonElement>('[data-go]')]
