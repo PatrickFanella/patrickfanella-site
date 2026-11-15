@@ -57,6 +57,7 @@ test('every panel contains complete recorded evidence without JavaScript or a wo
   page.on('request', request => { if (/\.wasm|\.data|\.tar\.gz|clpr\.worker-/.test(request.url())) large.push(request.url()) })
   await page.goto('/desk/')
   await expect(page.locator('section.psql')).toHaveCSS('opacity', '1')
+  await expect(page.locator('section.psql')).toHaveCSS('backdrop-filter', 'none')
   await expect(page.locator('[data-inspector-recording]')).toContainText(recording.meta.recordedAt.slice(0, 10))
   for (const title of ['Response', 'SQL', 'Timing', 'Wire', 'Plan']) await expect(page.getByRole('region', { name: title, exact: true })).toBeVisible()
   await expect(page.locator('[data-inspector-response]')).toContainText('2 returned clips')

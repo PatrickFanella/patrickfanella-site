@@ -5,6 +5,8 @@ Response, SQL, Timing and Wire show the `world record` request against eight fix
 Plan shows both alternatives at 8, 1,008, 10,008, 30,008 and 50,008 clips. The record contains
 the complete response, captured statements/parameters, wire frames and plans at every size.
 The initial inspector remains readable without JavaScript, a worker or a database download.
+Without scripts, panes use the existing solid background token, with no entrance motion or
+backdrop blur, so a long transcript does not depend on a large composited phone surface.
 With scripts, the sections become tabs. A live response replaces their contents; stop, retry
 and startup failure restore the same recorded HTML. The separate SQL benchmark retains its
 older, dated prototype comparison and is shown only when that mode is selected.
