@@ -36,8 +36,8 @@ export function startShell(form: HTMLFormElement, psql: Psql) {
         case 'help': say('help · projects · resume · contact · search <words>. Search uses prefix terms joined with AND against generated clips in this tab.'); break
         case 'projects':
           say('Clpr: Twitch clip search and moderation. HasanAra: searchable broadcast archive. Undertow: browser music-video editor (live beta).')
-          link('Browse all projects and delivery statuses', '/projects/'); break
-        case 'resume': say('Senior backend and full-stack engineer. Go, Python, TypeScript and PostgreSQL. Chicago or remote.'); link('Read the résumé and download the PDF', '/resume/'); break
+          link('Browse all projects and delivery statuses', 'https://patrickfanella.co/projects'); break
+        case 'resume': say('Senior backend and full-stack engineer. Go, Python, TypeScript and PostgreSQL. Chicago or remote.'); link('Read the résumé and download the PDF', 'https://patrickfanella.co/resume'); break
         case 'contact': link('patrick@subcult.tv', 'mailto:patrick@subcult.tv'); link('GitHub: PatrickFanella', 'https://github.com/PatrickFanella'); link('LinkedIn: Patrick Fanella', 'https://linkedin.com/in/patrick-fanella'); break
         case 'search': {
           if (!args.length) { say('Usage: search <words>, for example search world record.'); break }
