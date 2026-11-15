@@ -161,3 +161,10 @@
 .shell-output > div { margin-top: 14px; }
 .shell-command { color: var(--desk-dim); }
 .brow[hidden] { display: none; }
+
+.boot-log { list-style: none; padding: 0; margin: 0; font: 400 0.6875rem/1.7 var(--mono); overflow-wrap: anywhere; }
+.boot-log span { color: var(--desk-4); font-variant-numeric: tabular-nums; }
+.process-stats { margin: 0; font: 400 0.6875rem/1.6 var(--mono); overflow-wrap: anywhere; }
+.process-stats dt { color: var(--desk-dim); }
+.process-stats dd { margin: 0 0 5px; font-variant-numeric: tabular-nums; }
+@media (min-width: 1100px) { .wm { grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); } }
