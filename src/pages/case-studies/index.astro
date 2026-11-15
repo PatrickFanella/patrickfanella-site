@@ -1,0 +1,9 @@
+---
+import ContentPage from '../../layouts/ContentPage.astro'
+import CaseStudy from '../../components/CaseStudy.astro'
+import { clprSearch } from '../../content/case-studies/clpr-search'
+---
+<ContentPage title="Code study layout | Patrick Fanella" description="Clpr source pinned to a commit, with notes beside the relevant lines.">
+  <CaseStudy study={clprSearch} />
+  <script>import '../../case-study.ts'</script>
+</ContentPage>
