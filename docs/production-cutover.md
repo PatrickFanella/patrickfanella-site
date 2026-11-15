@@ -12,6 +12,10 @@ The main CI pipeline records Clpr, builds once, tests that artifact and publishe
 
 Before switching pages, the updater publishes hashed Astro bundles and commit-pinned Clpr payloads into `site-data/assets`. Caddy serves those URLs from this shared store, so an older open desk can still start its lazy worker after a deployment or release pruning. Publishing refuses different bytes at an existing immutable URL. The automatic updater never prunes this store; it is intentional retained compatibility data. HTML, `/clpr/manifest.json` and the recording build metadata always come from the current release with `no-cache`. CI exercises an actual Caddy container across a release switch and removal of the old release directory.
 
+## Frontend and brand candidate boundary
+
+Roadmap #1's frontend and brand implementation uses `portfolio/frontend-brand-integration`. Follow [the candidate preview procedure](candidate-preview.md) for exact-SHA local review and PRs into that branch. The private preview and production still consume main's same deploy artifact; merging into main publishes both. The final release remains gated by #72, #73 and #20 before #74.
+
 ## First activation
 
 Run commands from this repository on Kvant with the normal host aliases. Qualify the exact source commit in hosted CI before activating it. Install `deploy/` into the Almaz project directory owned by `onnwee` (UID/GID 1000); never copy a local build into production. Install the two systemd units into `/etc/systemd/system`, then run `systemctl daemon-reload`.
