@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
-import catalog from '../src/content/portfolio.json'
+import catalog from '../src/content/portfolio.json' with { type: 'json' }
 import { test, expect } from './fixtures'
 
 test('projects render the exact complete catalog without JavaScript', async ({ browser }) => {
