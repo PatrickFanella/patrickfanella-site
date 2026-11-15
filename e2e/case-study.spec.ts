@@ -53,6 +53,27 @@ for (const colorScheme of ['light', 'dark'] as const) test(`case study passes ax
   expect((await new AxeBuilder({ page }).analyze()).violations.map(v => ({ id: v.id, nodes: v.nodes.map(n => n.failureSummary) }))).toEqual([])
 })
 
+test('mobile notes ignore desktop anchor offsets before the resize handler cleans up', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/case-studies/')
+  // Preserve the state from a desktop layout while CSS has already switched to mobile.
+  // This is the interval before the queued resize handler removes the anchored class.
+  await page.locator('.excerpt-row[data-note]').evaluateAll(rows => {
+    for (const row of rows) {
+      row.classList.add('anchored')
+      const element = row as HTMLElement
+      element.style.setProperty('--note-left', '640px')
+      element.style.setProperty('--note-width', '380px')
+    }
+  })
+  expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)
+  for (const row of await page.locator('.excerpt-row[data-note]').all()) {
+    const source = await row.locator('.source').boundingBox(), note = await row.locator('.note').boundingBox()
+    expect(note!.y).toBeGreaterThan(source!.y)
+    expect(await row.locator('.note').evaluate(el => getComputedStyle(el).position)).toBe('static')
+  }
+})
+
 test('case study remains readable without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1440, height: 1000 } })
   const page = await context.newPage()
