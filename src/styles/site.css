@@ -47,8 +47,8 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ground: #0c0f16; --raise: rgb(14 19 30 / 0.76); --raise-solid: #121827; --text: #f3efe6; --dim: #a9b0bf;
-    --line: rgb(243 239 230 / 0.16); --cobalt: #7ea4ff; --orange: #ff9150; --gold: #ffcf4d; --focus: #ffcf4d; --name: #f3efe6;
+    --ground: #10131e; --raise: rgb(14 19 30 / 0.76); --raise-solid: #121827; --text: #f4f0e8; --dim: #c2c5d0;
+    --line: rgb(243 239 230 / 0.16); --cobalt: #7ea4ff; --orange: #ff9150; --gold: #ffcf4d; --focus: #ffcf4d; --name: #f4f0e8;
     --desk-pane: rgb(9 34 27 / 0.84); --desk-pane-solid: #09221b; --desk-text: #f4eedd; --desk-dim: #b3cabd;
     --desk-line: rgb(142 230 180 / 0.24); --desk-shadow: rgb(2 13 10 / 0.7); --desk-on-acc: #061a15;
     --desk-1: var(--gold); --desk-2: color-mix(in oklab, var(--cobalt) 85%, #fff); --desk-3: #ff9cc6; --desk-4: #8ee6b4; --desk-5: color-mix(in oklab, var(--orange) 90%, #fff);
@@ -56,8 +56,8 @@
   }
 }
 :root[data-theme="dark"] {
-  --ground: #0c0f16; --raise: rgb(14 19 30 / 0.76); --raise-solid: #121827; --text: #f3efe6; --dim: #a9b0bf;
-  --line: rgb(243 239 230 / 0.16); --cobalt: #7ea4ff; --orange: #ff9150; --gold: #ffcf4d; --focus: #ffcf4d; --name: #f3efe6;
+  --ground: #10131e; --raise: rgb(14 19 30 / 0.76); --raise-solid: #121827; --text: #f4f0e8; --dim: #c2c5d0;
+  --line: rgb(243 239 230 / 0.16); --cobalt: #7ea4ff; --orange: #ff9150; --gold: #ffcf4d; --focus: #ffcf4d; --name: #f4f0e8;
   --desk-pane: rgb(9 34 27 / 0.84); --desk-pane-solid: #09221b; --desk-text: #f4eedd; --desk-dim: #b3cabd;
   --desk-line: rgb(142 230 180 / 0.24); --desk-shadow: rgb(2 13 10 / 0.7); --desk-on-acc: #061a15;
   --desk-1: var(--gold); --desk-2: color-mix(in oklab, var(--cobalt) 85%, #fff); --desk-3: #ff9cc6; --desk-4: #8ee6b4; --desk-5: color-mix(in oklab, var(--orange) 90%, #fff);
@@ -286,3 +286,7 @@ main, .foot { position: relative; z-index: 1; }
   .specs-head { position: static; }
   .spec { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Compact selected PF uses the unchanged solid backup, never reduced strands. */
+.site-header .mark { gap: 8px; }
+.home-mark { display: block; flex: none; }
