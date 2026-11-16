@@ -16,6 +16,12 @@ Before switching pages, the updater publishes hashed Astro bundles and commit-pi
 
 Roadmap #1's frontend and brand implementation uses `portfolio/frontend-brand-integration`. Follow [the candidate preview procedure](candidate-preview.md) for exact-SHA local review and PRs into that branch. The private preview and production still consume main's same deploy artifact; merging into main publishes both. The final release remains gated by #72, #73 and #20 before #74.
 
+The [November 16 qualification record](qualification/2026-11-16/README.md) binds the candidate's
+runtime inputs, built files, selected brand and PDF hashes to its local checks. Its owner-review
+and release-preparation notes keep the remaining human/device gates and routine new-site rollback
+separate from the original cutover below. Read the final #72 completion comment for the hosted
+qualification head and artifact identity before using that candidate for release.
+
 ## First activation
 
 Run commands from this repository on Kvant with the normal host aliases. Qualify the exact source commit in hosted CI before activating it. Install `deploy/` into the Almaz project directory owned by `onnwee` (UID/GID 1000); never copy a local build into production. Install the two systemd units into `/etc/systemd/system`, then run `systemctl daemon-reload`.
