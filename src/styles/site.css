@@ -307,5 +307,5 @@ main, .foot { position: relative; z-index: 1; }
   .landing .intro .role { font-size: 1.65rem; }
   .landing .readout { display: none; }
   .landing .hero .actions { gap: 8px; }
-  .landing .hero .btn { padding-inline: 10px; font-size: .75rem; }
+  .landing .hero .btn { padding-inline: 8px; font-size: .75rem; max-width: 100%; line-height: 1.3; overflow-wrap: anywhere; }
 }
