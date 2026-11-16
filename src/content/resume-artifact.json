@@ -1,7 +1,7 @@
 {
   "path": "public/assets/patrick_fanella_resume.pdf",
   "filename": "Patrick_Fanella_Resume.pdf",
-  "sha256": "682d76d6d89101eceb9314d68818afe7fde4abeb61504ba8ce16964c5aa6e971",
+  "sha256": "6c9e4329e80485cc49cd4c2bc321f1410c27c8a0ee71ed3366156ddf655f3600",
   "pages": 1,
   "importedSource": {
     "repository": "subculture-collective/patrickfanella-co",
@@ -24,7 +24,7 @@
     },
     {
       "path": "scripts/render-resume.mjs",
-      "sha256": "5407b73c739fbfd1e9e32e1708e4a821fe1bb2dfd5ee3de4a624bdeccc8fb415"
+      "sha256": "e5a49d447d986dfca769c2770e2e288535deb895cffa12374bd7ef54106f1dd5"
     },
     {
       "path": "public/assets/brand/patrick/pf-solid-wavy.svg",

@@ -24,8 +24,8 @@ the later branded PDF export and its separate artifact provenance.
 ## Generated compact download (#67)
 
 The owner selected a centered name/contact header with left-aligned body text on November 16, 2026.
-The PDF uses the solid PF at 40% opacity and the approved ink scene at 12% opacity in a vertically
-compressed band about one-third down the page, tilted six degrees with the right side higher.
+The PDF uses the solid PF at 40% opacity and the approved ink scene at 20% opacity in a vertically
+compressed band about one-third down the page, tilted nine degrees with the right side higher.
 The artwork extends past both page edges; content
 margins remain unchanged. The web résumé uses the same centered header/contact alignment.
 Both selected SVGs are input-hashed in the PDF receipt. This presentation change does not change

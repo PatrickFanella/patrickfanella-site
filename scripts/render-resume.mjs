@@ -39,7 +39,7 @@ if (process.argv.includes('--check')) {
       header { text-align: center; border-bottom: 1pt solid #465064; padding-bottom: 10pt; }
       header img { position: absolute; left: 0; top: 8pt; width: 44pt; height: 44pt; opacity: .4; }
       .contact { text-align: center; } h1 { font: 900 32pt/1 Display, sans-serif; margin: 0; }
-      .ink-watermark { position: fixed; top: 2.3in; left: -.45in; width: 9.4in; height: 2.6in; object-fit: fill; transform: rotate(-6deg); opacity: .12; z-index: -1; }
+      .ink-watermark { position: fixed; top: 2.3in; left: -.45in; width: 9.4in; height: 2.6in; object-fit: fill; transform: rotate(-9deg); opacity: .2; z-index: -1; }
       h2 { font: 800 16pt/1.1 Display, sans-serif; margin: 12pt 0 5pt; } h3 { font-size: 11pt; margin: 8pt 0 2pt; }
       p { margin: 3pt 0; } ul { margin: 4pt 0; padding-left: 14pt; } li { margin: 3pt 0; }
       a { color: inherit; text-underline-offset: 2pt; } .meta { color: #465064; font-size: 9pt; }
