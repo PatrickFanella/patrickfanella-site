@@ -1,10 +1,11 @@
 ---
+import { recruitingEmail } from '../content/contact'
 import ContentPage from '../layouts/ContentPage.astro'
 ---
 <ContentPage title="Contact | Patrick Fanella" description="Contact Patrick Fanella about senior backend and full-stack engineering roles. Chicago or remote, and interviewing now.">
   <h1>Contact</h1>
   <p>Chicago or remote, and interviewing now for senior backend and full-stack engineering roles.</p>
-  <p><a href="mailto:patrick@subcult.tv">patrick@subcult.tv</a></p>
+  <p><a href={`mailto:${recruitingEmail}`}>{recruitingEmail}</a></p>
   <p>You can also find me on <a href="https://linkedin.com/in/patrick-fanella">LinkedIn</a> and <a href="https://github.com/PatrickFanella">GitHub</a>.</p>
   <p>Read my <a href="/resume/">résumé</a>, browse the <a href="/projects/">projects</a>, or inspect Clpr on the <a href="/desk/">desk</a>.</p>
 </ContentPage>
