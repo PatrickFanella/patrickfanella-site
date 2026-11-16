@@ -1,0 +1,60 @@
+{
+  "recordedAt": "2026-11-16T04:29:11.655094+00:00",
+  "runtimeSourceRevision": "1305a08e70b6970360a1cd5e391ea3018b8c04f1",
+  "runtimeInputsSha256": "c3c7760da548fe63bb3683f1c4c693cdd02cdbfcb51c6e9109ad1e8e6612ce23",
+  "builtFilesSha256": "2a51965e3de14d1b20005fb0128b40a9a012d7288b8de868b504f311c675026d",
+  "checks": [
+    {
+      "command": "E2E_PORT=4386 npm run test:e2e -- --workers=2",
+      "result": "PASS",
+      "tests": 105,
+      "browsers": [
+        "Chromium 159",
+        "Firefox"
+      ],
+      "scope": "Runtime source plus the qualification PR native-zoom test; build/type checks included."
+    },
+    {
+      "command": "node scripts/check-project-paths.mjs",
+      "result": "PASS",
+      "catalogPages": 40,
+      "legacyRedirects": 2
+    },
+    {
+      "command": "python3 deploy/test_edge_route.py",
+      "result": "PASS",
+      "tests": 1
+    },
+    {
+      "command": "python3 deploy/test_release_assets.py",
+      "result": "PASS",
+      "tests": 3
+    },
+    {
+      "command": "npm run render:resume (two renders), pypdf text/page/link checks, pdftoppm visual inspection",
+      "result": "PASS",
+      "pdfSha256": "6c9e4329e80485cc49cd4c2bc321f1410c27c8a0ee71ed3366156ddf655f3600",
+      "downloadPages": 1,
+      "fullWebPrintPages": 1,
+      "links": 4,
+      "extractedDownloadTextMatchesOriginal": true
+    },
+    {
+      "command": "Check every local build file and selected brand/PDF input against local-artifact.json",
+      "result": "PASS",
+      "files": 243
+    },
+    {
+      "command": "LIGHTHOUSE_OUTPUT=/tmp/pfqual-final/lighthouse-isolated npm run lighthouse:ci (after the browser suite)",
+      "result": "PASS",
+      "routes": 5,
+      "minimumPerformance": 0.95,
+      "minimumOtherCategories": 1,
+      "maximumCLS": 0
+    }
+  ],
+  "deviceResult": "INCONCLUSIVE: no physical devices or macOS Safari were available; the discovered Android emulator was owned by another session and was not driven.",
+  "ownerReview": "NOT RECORDED for the whole site. The selected resume treatment was approved during implementation.",
+  "publication": "NOT PERFORMED. Main remains the earlier production source.",
+  "graphics": "SwiftShader WebGL2 functional checks; no hardware ink performance claim."
+}

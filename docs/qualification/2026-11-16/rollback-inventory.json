@@ -1,0 +1,13 @@
+{
+  "host": "Almaz",
+  "operation": "read-only symlink/revision inventory",
+  "root": "/opt/server/projects/patrickfanella-site/site-data",
+  "current": {
+    "symlink": "releases/492e47eebe84608bee80d886aa17c0411c2a06ba",
+    "revision": "ff7ad87cb6d4c958f7feaa49033c8d028f0ca110"
+  },
+  "previous": null,
+  "immutableAssetsExist": true,
+  "activationPerformed": false,
+  "observedDate": "2026-11-16"
+}
