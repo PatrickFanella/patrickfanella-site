@@ -218,7 +218,7 @@ main, .foot { position: relative; z-index: 1; }
   margin: 0 var(--gutter-r) max(20px, env(safe-area-inset-bottom, 0px)) var(--gutter);
   padding: 14px 18px; background: var(--raise); border: 1px solid var(--line); font: 400 0.8125rem/1.4 var(--mono);
 }
-.foot nav { display: flex; flex-wrap: wrap; gap: 6px 20px; }
+.foot nav { overflow-wrap: anywhere; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px 20px; }
 
 /* ---------- page hand-over (cross-document view transitions) ----------
    The name keeps its place while the rest of the old page drains downward and the new one fills in. */
