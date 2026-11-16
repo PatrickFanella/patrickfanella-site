@@ -29,6 +29,25 @@ test('Alt+3 moves focus to the third pane', async ({ page }) => {
   await expect(page.locator('[data-pane="3"]')).toBeFocused()
 })
 
+test('project names and delivery labels fit their pane at phone and desktop widths', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  for (const width of [320, 390, 1100, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await page.goto('/desk/')
+    await page.evaluate(() => document.fonts.ready)
+    const body = page.locator('.projects .pbody')
+    await expect(body.locator('.work h3')).toHaveCount(4)
+    for (const fontSize of ['100%', '200%']) {
+      await page.evaluate(size => { document.documentElement.style.fontSize = size }, fontSize)
+      const overflow = await body.evaluate(el => el.scrollWidth - el.clientWidth)
+      expect(overflow, `projects pane at ${width}px and ${fontSize} text`).toBeLessThanOrEqual(1)
+      for (const heading of await body.locator('.work h3').all()) {
+        expect(await heading.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1)
+      }
+    }
+  }
+})
+
 // PostgreSQL runs in a worker. Under SwiftShader on a two-core runner the ink competes with it for
 // the CPU, so starting PostgreSQL and loading 50,008 rows can take minutes there.
 test.describe('PostgreSQL on the desk', () => {

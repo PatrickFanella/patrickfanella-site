@@ -20,3 +20,15 @@ The screenshots show real public application states. Undertow uses an isolated d
 project with original synthesized audio and approved portfolio artwork. No signed-in private task
 screen or private application data was captured. No new production-performance or audience claim
 is inferred from these screenshots or the pinned Desk fixtures.
+
+## Desk delivery-label follow-up
+
+The automated PR review found that the longer delivery statuses inherited a non-wrapping Desk
+heading layout. A focused browser regression reproduced 226 pixels of horizontal overflow at
+320 CSS pixels before the fix. The heading now wraps its flex items, and status text wraps within
+the available width with a readable multiline line height.
+
+- `npm run build`: passed after the CSS change.
+- `E2E_PORT=4388 npx playwright test e2e/desk.spec.ts --grep 'project names and delivery|loads without errors|Alt\+3' --workers=2 --reporter=line`: all four checks passed.
+- The regression checks the project pane and all four headings at 320, 390, 1100 and 1440 CSS pixels, at both 100% and 200% text, without horizontal overflow. The existing light/dark axe and keyboard-pane checks also pass.
+- `node scripts/lighthouse.mjs --local --paths=/desk/`: all budgets passed, with 100 in every category and CLS 0.00187. See `desk-wrap-lighthouse-summary.json`.
