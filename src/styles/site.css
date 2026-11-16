@@ -132,8 +132,8 @@ main, .foot { position: relative; z-index: 1; }
   margin: 0; font: 900 120px/0.86 var(--display); text-transform: uppercase; letter-spacing: 0.004em;
   color: var(--name); white-space: nowrap; view-transition-name: name;
 }
-.name [data-fit] { display: inline-block; }
-.name [data-word] { display: inline-block; }
+.name [data-fit] { display: inline-block; width: max-content; }
+.name [data-word] { display: inline-block; white-space: nowrap; }
 .name [data-ink-letter] { display: inline-block; }
 /* The name waits, hidden, until pour-in starts, so it does not flash in place first.
    If the script never runs it appears after 3 s; with JavaScript off, a noscript style shows it at once. */
@@ -218,7 +218,7 @@ main, .foot { position: relative; z-index: 1; }
   margin: 0 var(--gutter-r) max(20px, env(safe-area-inset-bottom, 0px)) var(--gutter);
   padding: 14px 18px; background: var(--raise); border: 1px solid var(--line); font: 400 0.8125rem/1.4 var(--mono);
 }
-.foot nav { display: flex; flex-wrap: wrap; gap: 6px 20px; }
+.foot nav { overflow-wrap: anywhere; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px 20px; }
 
 /* ---------- page hand-over (cross-document view transitions) ----------
    The name keeps its place while the rest of the old page drains downward and the new one fills in. */
@@ -309,3 +309,8 @@ main, .foot { position: relative; z-index: 1; }
   .landing .hero .actions { gap: 8px; }
   .landing .hero .btn { padding-inline: 8px; font-size: .75rem; max-width: 100%; line-height: 1.3; overflow-wrap: anywhere; }
 }
+
+/* Larger text may grow vertically; grid tracks and long links still fit the reading width. */
+.landing .coming { overflow-wrap: anywhere; }
+.landing .coming-head, .landing .featured-work, .landing .featured-copy,
+.landing .employment-feature, .landing .featured-more { grid-template-columns: minmax(0, 1fr); min-width: 0; }
