@@ -55,3 +55,59 @@ test.describe('with reduced motion', () => {
     expect(Date.now() - fontsAt).toBeLessThan(3000)
   })
 })
+
+
+test('selected work exposes supported ownership, dated media and direct destinations without disclosures', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } })
+  const page = await context.newPage()
+  await page.goto('/#coming')
+  await expect(page.locator('.employment-feature')).toContainText('approximately 25%')
+  await expect(page.locator('.employment-feature a')).toHaveAttribute('href', '/resume/#deliverzero')
+  await expect(page.locator('.featured-project')).toHaveCount(2)
+  for (const figure of await page.locator('.featured-project figure').all()) {
+    await expect(figure.locator('figcaption')).toContainText('November 5, 2026')
+    await expect(figure.locator('img')).toHaveAttribute('loading', 'lazy')
+    expect(await figure.locator('img').getAttribute('width')).toMatch(/^\d+$/)
+    await expect(figure.locator('img')).toHaveAttribute('srcset', /640w.*1280w/)
+  }
+  for (const link of await page.locator('.featured-work a[href^="/"]').all()) {
+    expect((await page.request.get((await link.getAttribute('href'))!)).status()).toBe(200)
+  }
+  expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)
+  await context.close()
+})
+
+
+for (const colorScheme of ['light', 'dark'] as const) for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }]) {
+  test(`hiring context fits the first screen before GPU readiness at ${viewport.width} in ${colorScheme}`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme })
+    await page.setViewportSize(viewport)
+    // No poured wait: hiring copy and actions must be usable during startup.
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    for (const selector of ['.role', '.hero-proof', '.intro > p:nth-child(2)', '.hero .actions a:first-child', '.hero .actions a:last-child']) {
+      const el = page.locator(selector)
+      await expect(el).toBeVisible()
+      const box = (await el.boundingBox())!
+      expect(box.y).toBeGreaterThanOrEqual(0)
+      expect(box.y + box.height).toBeLessThanOrEqual(viewport.height)
+    }
+    await expect(page.locator('.hero-proof')).toContainText('about 25%')
+    await expect(page.locator('.hero .actions a:first-child')).toHaveAttribute('href', '#coming')
+    expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(viewport.width)
+    await poured(page)
+    await page.screenshot({ path: test.info().outputPath(`hero-${colorScheme}-${viewport.width}.png`), fullPage: true })
+    await page.setViewportSize({ width: viewport.height, height: viewport.width })
+    expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(viewport.height)
+  })
+}
+
+test('larger text and no-JS hero keep every hiring action readable', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 320, height: 740 } })
+  const page = await context.newPage()
+  await page.goto('/')
+  await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
+  await expect(page.locator('.hero .actions')).toContainText('View selected work')
+  await expect(page.locator('.hero .actions')).toContainText('Résumé PDF')
+  expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(320)
+  await context.close()
+})

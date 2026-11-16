@@ -1,0 +1,15 @@
+---
+interface Props { nameTransition?: boolean }
+const { nameTransition = false } = Astro.props
+const path = Astro.url.pathname
+---
+<header class="bar site-header" data-site-header>
+  <a class:list={['mark', { 'is-name': nameTransition }]} href="/" aria-label="patrickfanella.co — Home" aria-current={path === '/' ? 'page' : undefined} data-bleed="y"><img class="home-mark" src="/assets/brand/patrick/pf-solid-wavy.svg" width="32" height="32" alt="" /><span class="home-long">patrickfanella.co</span></a>
+  <slot />
+  <nav aria-label="Main">
+    <a href="/projects/" aria-current={path === '/projects/' ? 'page' : path.startsWith('/projects/') ? 'location' : undefined} data-bleed="c">Work</a>
+    <a href="/resume/" aria-current={path === '/resume/' ? 'page' : undefined} data-bleed="y">Résumé</a>
+    <a href="/contact/" aria-current={path === '/contact/' ? 'page' : undefined} data-bleed="o">Contact</a>
+  </nav>
+  <button type="button" class="switch" data-theme-switch data-splash="y" hidden><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
+</header>

@@ -1,0 +1,16 @@
+---
+import assets from '../content/project-assets-provenance.json'
+import catalog from '../content/portfolio.json'
+
+interface Props {
+  media: (typeof catalog.projects)[number]['media'][number]
+  sizes: string
+  loading?: 'eager' | 'lazy'
+}
+const { media, sizes, loading = 'lazy' } = Astro.props
+const dimensions = assets.files.find(file => file.path === media.src)!
+---
+<figure>
+  <img src={media.src} width={dimensions.width} height={dimensions.height} srcset={'srcSet' in media ? media.srcSet : undefined} sizes={sizes} alt={media.alt} loading={loading} decoding="async" />
+  <figcaption>{media.caption}{!('capturedAt' in media) && ' Source snapshot: November 13, 2026.'}</figcaption>
+</figure>

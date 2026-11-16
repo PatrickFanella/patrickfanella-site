@@ -1,20 +1,11 @@
 ---
+import SiteHeader from '../../components/SiteHeader.astro'
+import { recruitingEmail } from '../../content/contact'
 import Page from '../../layouts/Page.astro'
 ---
 <Page title="Motion set, Patrick Fanella" description="Every transition and interaction on patrickfanella.co, one at a time, with its timing and its reduced-motion version." bodyClass="motion-page">
 
-  <header class="bar">
-    <a class="mark is-name" href="/" data-bleed="y">patrickfanella.co</a>
-    <nav aria-label="Main">
-      <a href="/projects/" data-bleed="c">Projects</a>
-      <a href="/resume/" data-bleed="y">Résumé</a>
-      <a href="/#coming" data-bleed="c">Explore the work</a>
-      <a href="/desk/" data-bleed="y">Desk</a>
-      <a href="/motion/" aria-current="page" data-bleed="o">Motion</a>
-      <a href="https://github.com/PatrickFanella" data-bleed="y">GitHub</a>
-      <button type="button" class="switch" data-theme-switch data-splash="y"><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
-    </nav>
-  </header>
+  <SiteHeader nameTransition />
 
   <main class="specs">
     <div class="specs-head panel">
@@ -134,7 +125,7 @@ import Page from '../../layouts/Page.astro'
   <footer class="foot">
     <p>Patrick Fanella. Software, sound, culture.</p>
     <nav aria-label="Contact">
-      <a href="mailto:patrick@subcult.tv" data-bleed="y">patrick@subcult.tv</a>
+      <a href={`mailto:${recruitingEmail}`} data-bleed="y">{recruitingEmail}</a>
       <a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a>
       <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
     </nav>

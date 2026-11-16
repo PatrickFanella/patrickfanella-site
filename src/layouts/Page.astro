@@ -12,8 +12,10 @@ interface Props {
   /** Pages that pour their name show it in place when scripts are off. */
   noscript?: boolean
   ogType?: 'website' | 'article'
+  socialImage?: string
+  socialAlt?: string
 }
-const { title, description, bodyClass, noscript = true, ogType = 'website' } = Astro.props
+const { title, description, bodyClass, noscript = true, ogType = 'website', socialImage = '/assets/brand/patrick/share-card.png', socialAlt = 'Patrick Fanella. Software, sound, culture. Ink in Motion identity.' } = Astro.props
 const canonical = new URL(Astro.url.pathname, 'https://patrickfanella.co').href
 ---
 <!doctype html>
@@ -28,6 +30,16 @@ const canonical = new URL(Astro.url.pathname, 'https://patrickfanella.co').href
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
   <meta property="og:url" content={canonical}>
+  <meta property="og:image" content={new URL(socialImage, 'https://patrickfanella.co').href}>
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content={socialAlt}>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={new URL(socialImage, 'https://patrickfanella.co').href}>
+  <meta name="twitter:image:alt" content={socialAlt}>
+  <link rel="apple-touch-icon" href="/assets/brand/patrick/apple-touch-icon.png">
   <meta name="color-scheme" content="light dark">
   <link rel="preload" as="font" type="font/woff2" href={displayFont} crossorigin="anonymous">
   <link rel="preload" as="font" type="font/woff2" href={bodyFont} crossorigin="anonymous">

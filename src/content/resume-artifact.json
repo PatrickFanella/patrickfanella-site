@@ -1,0 +1,46 @@
+{
+  "path": "public/assets/patrick_fanella_resume.pdf",
+  "filename": "Patrick_Fanella_Resume.pdf",
+  "sha256": "6c9e4329e80485cc49cd4c2bc321f1410c27c8a0ee71ed3366156ddf655f3600",
+  "pages": 1,
+  "importedSource": {
+    "repository": "subculture-collective/patrickfanella-co",
+    "commit": "9ed782785c7366b04bf0c626b39f8a6fcf1e3b54",
+    "content": "docs/resume-content.json",
+    "pdf": "web/public/assets/patrick_fanella_resume.pdf",
+    "pdfSha256": "70e0e1008d580f82b8b4a1639047022a46310372052133726932e53b3cdf517e"
+  },
+  "generator": "scripts/render-resume.mjs",
+  "chromium": "159.0.8154.6",
+  "subset": "Profile, skills, first three bullets per engineering role, and Retail Data Systems; full experience remains on the web.",
+  "inputs": [
+    {
+      "path": "src/content/resume.json",
+      "sha256": "ef2be77f86d7f123bcbb239838d494e57eeb2f8601c9ce9a2157cce96b087e7c"
+    },
+    {
+      "path": "src/content/contact.ts",
+      "sha256": "31acec54d8ebe958aa79487c0b88c5513e788c33d49407a43b31d1e96a67528c"
+    },
+    {
+      "path": "scripts/render-resume.mjs",
+      "sha256": "e5a49d447d986dfca769c2770e2e288535deb895cffa12374bd7ef54106f1dd5"
+    },
+    {
+      "path": "public/assets/brand/patrick/pf-solid-wavy.svg",
+      "sha256": "dfb0d29a33b4e7def3cbe823ac3d4cdd79586b8bc39f1ff9cb66192be933df57"
+    },
+    {
+      "path": "node_modules/@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2",
+      "sha256": "e9201eddf1d41d0b62253295d869ce3cf65768f7102b797f02c7f8c876b4a9d5"
+    },
+    {
+      "path": "node_modules/@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2",
+      "sha256": "075292b13a638821b34726b33e49b3b711c4b9bee9b42f2bb68fa3b6ec888f2b"
+    },
+    {
+      "path": "public/assets/brand/patrick/ink.svg",
+      "sha256": "3ee28120925d892bd7349bf00b5fe450ef1ed16f25d4709cd025759eb2fc5695"
+    }
+  ]
+}

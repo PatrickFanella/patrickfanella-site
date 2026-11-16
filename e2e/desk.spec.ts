@@ -15,6 +15,8 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await expect(page.locator('#name [data-ink-letter].landed')).toHaveCount(14)
       await expect(page.locator('[data-theme-switch]')).toHaveAccessibleName(colorScheme === 'dark' ? 'Theme: Dark' : 'Theme: Light')
       await expect(page.locator('[data-pane]')).toHaveCount(5)
+      // Contrast is measured after the existing tile entrance, not against its transparent frames.
+      for (const pane of await page.locator('.pane').all()) await expect(pane).toHaveCSS('opacity', '1')
       const { violations } = await new AxeBuilder({ page }).analyze()
       expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([])
     })
@@ -77,6 +79,8 @@ test.describe('PostgreSQL on the desk', () => {
     expect(gap, 'longest frame gap while PostgreSQL started, in ms').toBeLessThan(5000)
 
     await expect(page.locator('[data-pg-cap]')).toHaveText('Measured in this tab, median of 3 batches')
+    await expect(page.locator('[data-clpr-status]')).toContainText('SQL benchmark complete')
+    await expect(page.locator('[data-clpr-status]')).not.toContainText('Running')
     // Decimals follow the clock: two in Chromium for a batch of several runs, fewer for a single slow run.
     await expect(page.locator('[data-pg-seq]')).toHaveText(/^\d+(\.\d{1,2})?$/)
     await expect(page.locator('[data-pg-idx]')).toHaveText(/^(< )?\d+(\.\d{1,2})?$/)

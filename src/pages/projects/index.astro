@@ -1,23 +1,30 @@
 ---
 import ContentPage from '../../layouts/ContentPage.astro'
+import ProjectMedia from '../../components/ProjectMedia.astro'
 import catalog from '../../content/portfolio.json'
 import provenance from '../../content/portfolio-provenance.json'
+import { featuredProjects } from '../../content/project-presentation'
+const featuredSlugs = new Set(featuredProjects.map(({ slug }) => slug))
 const groups = [
-  { title: 'Selected work', projects: catalog.projects.filter(project => project.selected || project.classification === 'flagship') },
-  { title: 'Earlier work and experiments', projects: catalog.projects.filter(project => !project.selected && project.classification !== 'flagship') },
+  { title: 'Featured projects', projects: featuredProjects.map(({ project }) => project) },
+  { title: 'The complete directory, continued', projects: catalog.projects.filter(project => !featuredSlugs.has(project.slug)) },
 ]
 ---
 <ContentPage title="Projects | Patrick Fanella" description="Applications, archives, research and tools by Patrick Fanella, with their technology and delivery status.">
   <h1>Projects</h1>
   <p class="lead">{catalog.projects.length} projects from the portfolio catalog. Delivery status comes from the source record; previews and work in development are labeled as such.</p>
+  <p>Start with Clpr’s production search and Undertow’s browser editor, then browse the rest of the directory. This featured pair is the site’s editorial selection.</p>
   {groups.map(group => <section aria-label={group.title}>
     <h2 class="group-title">{group.title}</h2>
     <ul class="project-list">{group.projects.map(project => <li><article id={project.slug}>
-      <h3><a href={`/projects/${project.slug}/`} data-project-name={project.slug}>{project.title}</a></h3><p>{project.summary}</p>
-      <dl><div><dt>Status</dt><dd>{project.deliveryStatus ?? 'Status not stated in source'}</dd></div>
-        <div><dt>Stack</dt><dd>{project.stack.join(', ') || 'Not specified in source'}</dd></div></dl>
-      {project.liveUrl && <a href={project.liveUrl}>Visit {project.title}</a>}
+      {project.media[0] && <ProjectMedia media={project.media[0]} sizes="(max-width: 600px) calc(100vw - 32px), (max-width: 1080px) calc((100vw - 64px) / 3), 339px" />}
+      <div class="project-list-copy">
+        <h3><a href={`/projects/${project.slug}/`} data-project-name={project.slug}>{project.title}</a></h3><p>{project.summary}</p>
+        <dl><div><dt>Status</dt><dd>{project.deliveryStatus ?? 'Status not stated in source'}</dd></div>
+          <div><dt>Stack</dt><dd>{project.stack.join(', ') || 'Not specified in source'}</dd></div></dl>
+        {project.liveUrl && <a href={project.liveUrl}>Visit {project.title}</a>}
+      </div>
     </article></li>)}</ul>
   </section>)}
-  <p class="source-note">Catalog from the pinned portfolio source, commit <code>{provenance.commit.slice(0, 7)}</code>.</p>
+  <p class="source-note">Catalog from the pinned portfolio source, commit <code>{provenance.commit.slice(0, 7)}</code>, dated November 13, 2026. Screenshots retain their capture dates; diagrams describe the source snapshot, not current service health. The imported selection flags are unchanged.</p>
 </ContentPage>

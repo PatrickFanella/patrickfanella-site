@@ -9,6 +9,9 @@ import { responseMarkup, sqlMarkup, timingMarkup, wireMarkup, planMarkup } from 
 const recording = data as Recording
 const { meta } = recording
 const result = recording.results[0]
+const fixtureBody = JSON.parse(result.response.body) as { query: string; results: { clips: { title: string }[] } }
+const samplePlan = result.plan!
+
 const fingerprint = createHash('sha256')
 for (const path of inputs) fingerprint.update(path).update('\0').update(readFileSync(path)).update('\0')
 const actualManifest = { ...manifest, wasm: { ...manifest.wasm,
@@ -18,6 +21,14 @@ const gate = liveGate(meta, fingerprint.digest('hex'), actualManifest)
 const startLabel = `Start Clpr live mode (${(meta.downloadBytes / 1e6).toFixed(2)} MB download; ${Math.ceil(meta.memory.peakBytes / 1048576).toLocaleString('en-US')} MiB measured peak)`
 ---
 <div class="inspector" data-inspector data-mode="recorded" data-live-allowed={String(gate.allowed)} data-live-reason={gate.reason} data-live-label={startLabel}>
+  <div class="evidence-entry">
+    <h3>Try a clip search</h3>
+    <p><a href="https://clpr.tv">Clpr is the production app</a>. This Desk demonstrates its pinned PostgreSQL search path against eight labelled fixture clips.</p>
+    <p><strong>Recorded example: {fixtureBody.query}</strong>. {fixtureBody.results.clips.length} returned clips:</p>
+    <ul>{fixtureBody.results.clips.map(clip => <li>{clip.title}</li>)}</ul>
+    <p>Recorded plan comparison at {samplePlan.rows.toLocaleString('en-US')} clips: sequential cost {samplePlan.seq.Plan['Total Cost']}, GIN cost {samplePlan.gin.Plan['Total Cost']}. These are planner estimates, not milliseconds or production measurements. The Plan tab contains all five sizes and the captured plans.</p>
+    <p>The live example searches fixtures in this tab. The separate SQL benchmark loads generated data; it does not query the production service. Nothing heavy starts until you choose a live action.</p>
+  </div>
   <div data-inspector-recording>
     <p><strong>Recorded run</strong>, <time datetime={meta.recordedAt}>{meta.recordedAt.slice(0, 10)}</time>.
       {meta.ciRun ? <a href={meta.ciRun}>Recorded in CI</a> : 'Recorded locally in headless Chromium'} {meta.browser}, PostgreSQL {meta.postgres}; all {meta.migrations} migrations.</p>

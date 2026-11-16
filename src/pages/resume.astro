@@ -1,4 +1,5 @@
 ---
+import { recruitingEmail } from '../content/contact'
 import ContentPage from '../layouts/ContentPage.astro'
 import resume from '../content/resume.json'
 import '../styles/resume.css'
@@ -8,12 +9,13 @@ import '../styles/resume.css'
   <article class="resume">
     <header><h1>{resume.name}</h1><p class="resume-role">{resume.headline}</p>
       <p>{resume.location}. {resume.availability}.</p>
-      <ul class="resume-contact"><li><a href={`mailto:${resume.email}`}>{resume.email}</a></li><li><a href={`tel:${resume.phone}`}>{resume.phone}</a></li><li><a href={resume.github}>GitHub</a></li><li><a href={resume.linkedin}>LinkedIn</a></li></ul>
+      <ul class="resume-contact"><li><a href={`mailto:${recruitingEmail}`}>{recruitingEmail}</a></li><li><a href={`tel:${resume.phone}`}>{resume.phone}</a></li><li><a href={resume.github}>GitHub</a></li><li><a href={resume.linkedin}>LinkedIn</a></li></ul>
     </header>
     <section aria-labelledby="profile"><h2 id="profile">Profile</h2><p>{resume.profile}</p></section>
+    <section aria-labelledby="employment-impact"><h2 id="employment-impact">Employment impact</h2><p><strong>DeliverZero:</strong> {resume.deliverzero_bullets[1]} <a href="#deliverzero">Read the experience</a>.</p></section>
     <section aria-labelledby="skills"><h2 id="skills">Skills</h2><dl class="skills">{resume.skills.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section>
     <section aria-labelledby="experience"><h2 id="experience">Engineering experience</h2>
-      {resume.roles.map(role => <section class="resume-job"><h3>{role.employer}</h3><p class="job-meta">{role.location}. <span>{role.dates}</span></p><p>{role.intro}</p><ul>{role.bullets.map(bullet => <li>{bullet}</li>)}</ul></section>)}
+      {resume.roles.map(role => <section class="resume-job" id={role.employer === 'DeliverZero' ? 'deliverzero' : undefined}><h3>{role.employer}</h3><p class="job-meta">{role.location}. <span>{role.dates}</span></p><p>{role.intro}</p><ul>{role.bullets.map(bullet => <li>{bullet}</li>)}</ul></section>)}
     </section>
     <section aria-labelledby="other-experience"><h2 id="other-experience">Other experience</h2>
       {resume.otherRoles.map(role => <section class="resume-job"><h3>{role.employer}</h3><p class="job-meta">{role.location}. <span>{role.dates}</span></p><p>{role.title}</p><ul>{role.bullets.map(bullet => <li>{bullet}</li>)}</ul></section>)}

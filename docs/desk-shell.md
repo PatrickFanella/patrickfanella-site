@@ -16,3 +16,17 @@ recorded benchmark rows never answer a visitor search. Requests are serialized a
 pending command. Leaving the page frees the worker, except when the page enters the back-forward cache.
 
 Checks: `npm run build` and `npx playwright test e2e/shell.spec.ts`.
+
+The visible mode status follows committed output: the SQL controller reports progress,
+completion, search/no-match results, failure and cancellation through a typed callback.
+The Stop control names the active SQL benchmark or Clpr live mode. A completed SQL worker
+remains available for shell searches; a failed search can be retried without relabeling
+recorded evidence as live. Status copy distinguishes direct SQL over generated clips from
+Clpr's Go handler over fixtures (and any explicitly added generated clips).
+
+Each worker callback checks that its worker is still current before changing output or
+status. Switching, stopping and retrying terminate the previous worker and reject its
+pending requests. `e2e/desk-status.spec.ts` injects deterministic controller-boundary events
+for terminal and stale-callback regressions; those fixture times are not performance proof.
+`e2e/desk.spec.ts` also asserts completion after a real PostgreSQL benchmark, while
+`e2e/clpr.spec.ts` exercises the actual pinned Go worker, integrity failure and retry.

@@ -1,21 +1,13 @@
 ---
+import SiteHeader from '../components/SiteHeader.astro'
+import { recruitingEmail } from '../content/contact'
 import Page from '../layouts/Page.astro'
+import { employmentFeature, featuredProjects } from '../content/project-presentation'
 ---
 <Page title="Patrick Fanella" description="Patrick Fanella, senior backend and full-stack engineer. Working software, source-linked case studies, projects and résumé. Chicago or remote, and interviewing now." bodyClass="landing">
   <a class="skip" href="#coming">Skip to the work</a>
 
-  <header class="bar">
-    <a class="mark" href="/" data-bleed="y">patrickfanella.co</a>
-    <nav aria-label="Main">
-      <a href="/projects/" data-bleed="c">Projects</a>
-      <a href="/resume/" data-bleed="y">Résumé</a>
-      <a href="#coming" data-bleed="c">Explore the work</a>
-      <a href="/desk/" data-bleed="y">Desk</a>
-      <a href="/motion/" data-bleed="o">Motion</a>
-      <a href="https://github.com/PatrickFanella" data-bleed="y">GitHub</a>
-      <button type="button" class="switch" data-theme-switch data-splash="y"><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
-    </nav>
-  </header>
+  <SiteHeader />
 
   <main>
     <section class="hero" aria-labelledby="name">
@@ -23,12 +15,13 @@ import Page from '../layouts/Page.astro'
       <div class="tank">
         <div class="intro panel">
           <p class="role">Senior backend and full-stack engineer</p>
-          <p>I build and run services in Go, Python and TypeScript on PostgreSQL. At DeliverZero I built the inventory, returns and partner integrations that cut manual operations work by about 25%. Chicago or remote, and interviewing now.</p>
-          <p class="dim">Open the desk to inspect Clpr’s production search code and PostgreSQL running in your browser. Read the recorded evidence first, or start live mode to run your own search. The ink behind this page is a fluid simulation; the pointer stirs it.</p>
+          <p>Chicago or remote. Interviewing now.</p>
+          <p class="hero-proof">At DeliverZero, my inventory, returns and partner integrations cut manual operations work by about 25%.</p>
           <div class="actions">
-            <a class="btn primary" href="/desk/" data-bleed="o" data-splash="o">Open the desk</a>
-            <a class="btn" href="/motion/" data-bleed="c" data-splash="c">The motion set</a>
+            <a class="btn primary" href="#coming" data-bleed="o" data-splash="o">View selected work</a>
+            <a class="btn" href="/assets/patrick_fanella_resume.pdf" download="Patrick_Fanella_Resume.pdf">Résumé PDF</a>
           </div>
+          <p class="hero-depth"><a href="/desk/">Open the engineering Desk</a> to inspect recorded search evidence or opt in to run it.</p>
         </div>
         <dl class="readout" data-ink-readout aria-label="Ink simulation">
           <div><dt>Solver</dt><dd data-k="path">Stable fluids</dd></div>
@@ -41,83 +34,46 @@ import Page from '../layouts/Page.astro'
 
     <section id="coming" class="coming" aria-labelledby="coming-h">
       <div class="coming-head">
-        <h2 id="coming-h">Explore the work</h2>
+        <h2 id="coming-h">Selected work</h2>
         <p>Run the software, inspect its evidence, or read the source beside the decisions that shaped it.</p>
         <p class="dim">Looking for experience and results? Read the <a href="/resume/">résumé</a> or <a href="/contact/">get in touch</a>.</p>
       </div>
-      <ol class="plan">
-        <li>
-          <details data-unfold class="panel" data-rise>
-            <summary data-bleed="y">
-              <span class="n">1</span>
-              <span class="t"><b>The desk</b><span>A tiling terminal desktop that boots in your tab.</span></span>
-              <span class="chip run">Open the desk</span>
-            </summary>
-            <div class="more">
-              <p>PostgreSQL 18.6 starts in the browser, loads 50,008 generated clips with Clpr’s search columns and runs its search query twice: once reading every row, once through the full-text index. The timings on screen are measured on your machine, just then. There's a shell you can type into, and the panes sit on this same ink.</p>
-              <p class="dim">Runs on: PGlite (PostgreSQL compiled to WebAssembly) in a worker, WebGL2.</p>
-              <p><a href="/desk/" data-bleed="y">Open the desk</a>. Run a search in the shell and inspect its plan in psql.</p>
-            </div>
-          </details>
-        </li>
-        <li>
-          <details data-unfold class="panel" data-rise>
-            <summary data-bleed="o">
-              <span class="n">2</span>
-              <span class="t"><b>Clpr, running live</b><span>My production search code answering your searches.</span></span>
-              <span class="chip proven">Live and recorded</span>
-            </summary>
-            <div class="more">
-              <p>Clpr's own Go search handler, compiled to WebAssembly, talks to that in-browser database through the same driver it uses in production. You search; you see the SQL it sent, the query plan and the round trip, byte by byte.</p>
-              <p class="dim">Live mode is opt-in. Its button states the recorded download and memory costs; complete evidence is readable without running it.</p>
-            </div>
-          </details>
-        </li>
-        <li>
-          <details data-unfold class="panel" data-rise>
-            <summary data-bleed="c">
-              <span class="n">3</span>
-              <span class="t"><b>Read the code</b><span>Case studies set beside the real source.</span></span>
-              <span class="chip proven">Read the study</span>
-            </summary>
-            <div class="more">
-              <p>Each case study is the actual code, pinned to a commit, with notes on the lines that matter: why it's written that way, what it costs and what I'd change. Read <a href="/case-studies/clpr-search/">how Clpr ranks and pages search results</a>, with pinned source excerpts and notes on tradeoffs.</p>
-            </div>
-          </details>
-        </li>
-        <li>
-          <details data-unfold class="panel" data-rise>
-            <summary data-bleed="y">
-              <span class="n">4</span>
-              <span class="t"><b>The projects</b><span>Production systems, earlier work and experiments.</span></span>
-              <span class="chip moving">Browse the catalog</span>
-            </summary>
-            <div class="more">
-              <p>The <a href="/projects/">full catalog of 40 projects</a> now lists summaries, stacks and delivery status, including earlier work and experiments. Each project has its own page with source links, screenshots and delivery status.</p>
-            </div>
-          </details>
-        </li>
-        <li>
-          <details data-unfold class="panel" data-rise>
-            <summary data-bleed="o">
-              <span class="n">5</span>
-              <span class="t"><b>One way of moving</b><span>A shared set of transitions and interactions.</span></span>
-              <span class="chip progress">Explore the motion</span>
-            </summary>
-            <div class="more">
-              <p>The pages share one motion set: letters that pour, links that bleed ink, presses that splash, rows that unfold in place and pages that hand over to each other. Each one has a reduced-motion version that leaves the page complete and still.</p>
-              <p><a href="/motion/" data-bleed="o">See every animation on its own</a></p>
-            </div>
-          </details>
-        </li>
-      </ol>
+      <div class="featured-work">
+        <article class="employment-feature panel">
+          <p class="dim">Employment impact</p>
+          <h3>{employmentFeature.title}</h3>
+          <p>{employmentFeature.ownership}</p>
+          <p>{employmentFeature.outcome}</p>
+          <a href={employmentFeature.href}>Read the DeliverZero experience</a>
+        </article>
+        {featuredProjects.map(({ project, ownership, media, dimensions, study }) => <article class="featured-project panel">
+          <figure>
+            <img src={media.src} srcset={'srcSet' in media ? media.srcSet : undefined} sizes="(max-width: 860px) calc(100vw - 32px), 60vw" width={dimensions.width} height={dimensions.height} alt={media.alt} loading="lazy" decoding="async" />
+            <figcaption>{media.caption}</figcaption>
+          </figure>
+          <div class="featured-copy">
+            <h3><a href={`/projects/${project.slug}/`}>{project.title}</a></h3>
+            <p>{project.summary}</p><p>{ownership}</p>
+            <nav aria-label={`${project.title} destinations`}>
+              <a href={`/projects/${project.slug}/`}>Read the project</a>
+              {study && <a href={study}>Search decisions study</a>}
+              <a href={project.liveUrl}>Open {project.title}</a>
+            </nav>
+          </div>
+        </article>)}
+        <div class="featured-more panel">
+          <p><a href="/desk/">Open the engineering Desk</a>: read recorded search evidence, then opt in to run Clpr’s pinned search code in your browser.</p>
+          <p>For the data and search story, read <a href="/projects/hasanara/">HasanAra</a> and its <a href="/projects/rekolekt/">Rekolekt core</a>.</p>
+          <p><a href="/projects/">Browse all 40 projects</a> or <a href="/motion/">explore the motion set</a>.</p>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer class="foot">
     <p>Patrick Fanella. Software, sound, culture.</p>
     <nav aria-label="Contact">
-      <a href="mailto:patrick@subcult.tv" data-bleed="y">patrick@subcult.tv</a>
+      <a href={`mailto:${recruitingEmail}`} data-bleed="y">{recruitingEmail}</a>
       <a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a>
       <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
     </nav>

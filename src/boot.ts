@@ -28,6 +28,12 @@ export function boot(): Page {
   }
   systemDark.addEventListener('change', () => ink?.setTheme(currentTheme()))
   wireThemeSwitch(ink)
+  const header = document.querySelector<HTMLElement>('[data-site-header]')
+  if (header) {
+    const measure = () => root.style.setProperty('--site-header-height', `${header.getBoundingClientRect().height}px`)
+    measure()
+    new ResizeObserver(measure).observe(header)
+  }
   const bleeder = ink ? bleed(ink) : null
   if (ink) splash(ink)
   if (ink) readout(ink)
@@ -40,7 +46,7 @@ function wireThemeSwitch(ink: Ink | null) {
   if (!btn) return
   // The name is "Theme: Light" or "Theme: Dark", so it always contains the word on screen.
   const label = () => { const dark = currentTheme() === 'dark'; btn.toggleAttribute('data-dark', dark); btn.querySelector('[data-theme-name]')!.textContent = dark ? 'Dark' : 'Light' }
-  label()
+  label(); btn.hidden = false
   btn.addEventListener('click', () => {
     const next: Theme = currentTheme() === 'dark' ? 'light' : 'dark'
     const apply = () => { root.dataset.theme = next; try { localStorage.setItem(KEY, next) } catch { /* private window */ } ink?.setTheme(next); label() }

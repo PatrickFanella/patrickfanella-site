@@ -1,0 +1,58 @@
+{
+  "repository": "subculture-collective/subcult-tv",
+  "consumer": "PatrickFanella/patrickfanella-site",
+  "selection": "Ink in Motion / 06; solid wavy backup; approved vector scene",
+  "generator": "studio/brand-tools/patrick/ink-in-motion/build.py",
+  "files": [
+    {
+      "source": "studio/brand-tools/patrick/ink-in-motion/web/pf-primary.svg",
+      "target": "public/assets/brand/patrick/pf-primary.svg",
+      "sourceSha256": "e6fb07913429bc24b1d6d87f2e43bea2db70f4737175e66f14fedf44c7468615",
+      "sha256": "e6fb07913429bc24b1d6d87f2e43bea2db70f4737175e66f14fedf44c7468615",
+      "bytes": 90863
+    },
+    {
+      "source": "studio/brand-tools/patrick/ink-in-motion/web/pf-solid-wavy.svg",
+      "target": "public/assets/brand/patrick/pf-solid-wavy.svg",
+      "sourceSha256": "dfb0d29a33b4e7def3cbe823ac3d4cdd79586b8bc39f1ff9cb66192be933df57",
+      "sha256": "dfb0d29a33b4e7def3cbe823ac3d4cdd79586b8bc39f1ff9cb66192be933df57",
+      "bytes": 6643
+    },
+    {
+      "source": "studio/brand-tools/patrick/ink-in-motion/web/ink.svg",
+      "target": "public/assets/brand/patrick/ink.svg",
+      "sourceSha256": "3ee28120925d892bd7349bf00b5fe450ef1ed16f25d4709cd025759eb2fc5695",
+      "sha256": "3ee28120925d892bd7349bf00b5fe450ef1ed16f25d4709cd025759eb2fc5695",
+      "bytes": 133250
+    },
+    {
+      "source": "studio/brand-tools/patrick/ink-in-motion/web/favicon.svg",
+      "target": "public/assets/brand/patrick/favicon.svg",
+      "sourceSha256": "dfb0d29a33b4e7def3cbe823ac3d4cdd79586b8bc39f1ff9cb66192be933df57",
+      "sha256": "dfb0d29a33b4e7def3cbe823ac3d4cdd79586b8bc39f1ff9cb66192be933df57",
+      "bytes": 6643
+    },
+    {
+      "source": "studio/brand-tools/patrick/ink-in-motion/web/apple-touch-icon.png",
+      "target": "public/assets/brand/patrick/apple-touch-icon.png",
+      "sourceSha256": "1e993fae8d14e0ad1c5e659c42d340e4bb17db0d1b27e6a4d9e5840963b764ae",
+      "sha256": "1e993fae8d14e0ad1c5e659c42d340e4bb17db0d1b27e6a4d9e5840963b764ae",
+      "bytes": 1484
+    },
+    {
+      "source": "studio/brand-tools/patrick/ink-in-motion/web/share-card.svg",
+      "target": "public/assets/brand/patrick/share-card.svg",
+      "sourceSha256": "096dacc04817292e4e849d1b88a0ce0e89e882ad5ba643ac2fb9e39548ad9133",
+      "sha256": "096dacc04817292e4e849d1b88a0ce0e89e882ad5ba643ac2fb9e39548ad9133",
+      "bytes": 263979
+    },
+    {
+      "source": "studio/brand-tools/patrick/ink-in-motion/web/share-card.png",
+      "target": "public/assets/brand/patrick/share-card.png",
+      "sourceSha256": "a452313d630b6608046cced96bda0885aaed2036a7f2b7dff4c556cfde2b9b9d",
+      "sha256": "a452313d630b6608046cced96bda0885aaed2036a7f2b7dff4c556cfde2b9b9d",
+      "bytes": 320518
+    }
+  ],
+  "commit": "0b9e6f4bf88493a33a17c50d2f2623b4fabdebf7"
+}
