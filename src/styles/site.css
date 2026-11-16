@@ -247,7 +247,7 @@ main, .foot { position: relative; z-index: 1; }
 @media (max-width: 700px) {
   .name { white-space: normal; }
   .name [data-word] { display: block; }
-  .tank { flex-direction: column; align-items: stretch; min-height: 0; padding-top: 34vh; }
+  .tank { flex-direction: column; align-items: stretch; min-height: 0; padding-top: 20px; }
   .readout { min-width: 0; }
   .plan summary { grid-template-columns: 2.2rem minmax(0, 1fr); }
   .plan summary .chip { grid-column: 2; justify-self: start; }
@@ -296,3 +296,16 @@ main, .foot { position: relative; z-index: 1; }
 .featured-project img { display: block; width: 100%; height: auto; }
 .featured-project figcaption { padding: 12px 24px 0; font: .75rem/1.5 var(--mono); color: var(--dim); }
 .featured-copy nav { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+
+/* Keep hiring context readable while the glyphs pour; the ink has a visible band of its own. */
+.landing .hero .intro { gap: 10px; }
+.hero-depth { font-size: .875rem; }
+@media (max-width: 700px) {
+  .landing .hero .name { font-size: clamp(64px, 23vw, 120px); }
+  .landing .tank { gap: 16px; padding-bottom: 20px; }
+  .landing .intro { padding: 16px; font-size: 1rem; }
+  .landing .intro .role { font-size: 1.65rem; }
+  .landing .readout { display: none; }
+  .landing .hero .actions { gap: 8px; }
+  .landing .hero .btn { padding-inline: 10px; font-size: .75rem; }
+}
