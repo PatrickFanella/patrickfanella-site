@@ -12,3 +12,10 @@ navigation and ink, uses letter paper with half-inch margins, and fits the check
 
 Checks: `npm run build`; `npx playwright test e2e/resume.spec.ts` compares the served PDF hash,
 checks the source roles and dates, renders print output, and checks mobile layout and accessibility.
+
+The owner resolved recruiting contact issue #58 by retaining `resume.json`'s email.
+`src/content/contact.ts` exposes that value to the home/contact pages, shared footer,
+Motion, Desk and Desk shell; the imported source data and original PDF bytes remain intact.
+The web résumé places the existing approximate DeliverZero outcome before the skills
+inventory and provides `/resume/#deliverzero` as a stable employment anchor. #67 owns
+the later branded PDF export and its separate artifact provenance.

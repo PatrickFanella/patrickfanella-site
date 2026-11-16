@@ -40,3 +40,30 @@ for (const colorScheme of ['light', 'dark'] as const) test(`résumé is accessib
   expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
 })
+
+
+test('recruiting links agree across page types without JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  const page = await context.newPage()
+  for (const path of ['/', '/contact/', '/resume/', '/projects/', '/projects/clpr/', '/case-studies/clpr-search/', '/desk/', '/motion/']) {
+    await page.goto(path)
+    const links = page.locator('a[href^="mailto:"]')
+    expect(await links.count(), path).toBeGreaterThan(0)
+    for (const link of await links.all()) await expect(link).toHaveAttribute('href', `mailto:${resume.email}`)
+  }
+  await context.close()
+})
+
+test('supported DeliverZero outcome precedes skills and links to source experience without JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 320, height: 740 } })
+  const page = await context.newPage()
+  await page.goto('/resume/')
+  const impact = page.getByRole('region', { name: 'Employment impact' })
+  await expect(impact).toContainText(resume.deliverzero_bullets[1])
+  expect(await impact.evaluate(el => !!(el.compareDocumentPosition(document.querySelector('[aria-labelledby="skills"]')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true)
+  await impact.getByRole('link', { name: 'Read the experience' }).click()
+  await expect(page).toHaveURL('/resume/#deliverzero')
+  await expect(page.locator('#deliverzero').getByRole('heading')).toHaveText('DeliverZero')
+  expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(320)
+  await context.close()
+})

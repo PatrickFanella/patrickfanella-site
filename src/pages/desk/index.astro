@@ -1,5 +1,6 @@
 ---
 import SiteHeader from '../../components/SiteHeader.astro'
+import { recruitingEmail } from '../../content/contact'
 import Page from '../../layouts/Page.astro'
 import Inspector from '../../desk/inspector/Inspector.astro'
 ---
@@ -28,7 +29,7 @@ import Inspector from '../../desk/inspector/Inspector.astro'
         <p class="role">Senior backend and full-stack engineer</p>
         <p class="pitch">I build and run services in Go, Python and TypeScript on PostgreSQL. At DeliverZero I built the inventory, returns and partner integrations that cut manual operations work by about 25%. Chicago or remote, and interviewing now.</p>
         <ul class="links" aria-label="Contact and code">
-          <li><a href="mailto:patrick@subcult.tv" data-bleed="y">patrick@subcult.tv</a></li>
+          <li><a href={`mailto:${recruitingEmail}`} data-bleed="y">{recruitingEmail}</a></li>
           <li><a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a></li>
           <li><a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a></li>
           <li><a href="/resume/" data-bleed="y">Résumé</a></li>

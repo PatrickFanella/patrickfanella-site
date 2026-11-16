@@ -1,5 +1,6 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro'
+import { recruitingEmail } from '../content/contact'
 import Page from './Page.astro'
 import '@fontsource-variable/big-shoulders-display'
 import '@fontsource-variable/hanken-grotesk'
@@ -13,6 +14,6 @@ const { title, description, resume = false, readingSurface = false, ogType = 'we
   <a class="skip" href="#content">Skip to content</a>
   <SiteHeader />
   <main id="content" class:list={['content-main', { 'reading-surface': readingSurface }]}><slot /></main>
-  <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Code studies</a></nav></footer>
+  <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href={`mailto:${recruitingEmail}`}>{recruitingEmail}</a><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Code studies</a></nav></footer>
   <Fragment slot="head"><slot name="head" /><link rel="expect" href="#content-footer" blocking="render" /><script is:inline src="/project-transition.js"></script><script>import '../content-page.ts'</script></Fragment>
 </Page>

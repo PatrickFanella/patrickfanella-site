@@ -1,5 +1,6 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro'
+import { recruitingEmail } from '../content/contact'
 import Page from '../layouts/Page.astro'
 ---
 <Page title="Patrick Fanella" description="Patrick Fanella, senior backend and full-stack engineer. Working software, source-linked case studies, projects and résumé. Chicago or remote, and interviewing now." bodyClass="landing">
@@ -107,7 +108,7 @@ import Page from '../layouts/Page.astro'
   <footer class="foot">
     <p>Patrick Fanella. Software, sound, culture.</p>
     <nav aria-label="Contact">
-      <a href="mailto:patrick@subcult.tv" data-bleed="y">patrick@subcult.tv</a>
+      <a href={`mailto:${recruitingEmail}`} data-bleed="y">{recruitingEmail}</a>
       <a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a>
       <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
     </nav>
