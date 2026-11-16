@@ -257,7 +257,7 @@ main, .foot { position: relative; z-index: 1; }
 
 /* ---------- motion page ---------- */
 .bar .mark.is-name { view-transition-name: name; }
-.specs { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 32px; padding: 28px var(--gutter-r) 100px var(--gutter); }
+.specs { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 32px; padding: 28px var(--gutter-r) 100px var(--gutter); overflow-wrap: anywhere; }
 .specs-head { position: sticky; top: 76px; align-self: start; display: grid; gap: 14px; padding: 22px 24px; }
 .specs-head h1 { margin: 0; font: 900 clamp(3rem, 6vw, 5.5rem)/0.88 var(--display); text-transform: uppercase; }
 .tokens { margin: 4px 0 0; display: grid; gap: 4px; font: 400 0.75rem/1.4 var(--mono); }
@@ -285,6 +285,10 @@ main, .foot { position: relative; z-index: 1; }
   .specs { grid-template-columns: minmax(0, 1fr); }
   .specs-head { position: static; }
   .spec { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .spec dl { grid-template-columns: minmax(0, 1fr); }
+  .spec dd + dt { margin-top: .5em; }
 }
 
 /* Compact selected PF uses the unchanged solid backup, never reduced strands. */
