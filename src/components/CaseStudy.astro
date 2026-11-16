@@ -33,13 +33,17 @@ function annotation(start: number, note?: CaseStudyNote): ShikiTransformer {
 ---
 <article class="case-study" aria-labelledby="study-title">
   <header><h1 id="study-title">{study.title}</h1><p class="lead">{study.description}</p></header>
+  {study.notes.some(note => note.summary) && <nav class="decision-summary" aria-label="Search decisions">
+    <h2>Four search decisions</h2>
+    <ul>{study.notes.filter(note => note.summary).map(note => <li><a href={`#note-${note.id}`}>{note.label}</a><p>{note.summary}</p></li>)}</ul>
+  </nav>}
   <p class="source-label"><a href={`${study.source}#L${study.excerptStart}-L${study.excerptEnd}`}>Open pinned source on GitHub</a></p>
   <div class="study-grid" aria-label="Source and reading notes">
     {sections.map(({ note, start, end }) => <section class="excerpt-row" data-note={note?.id} aria-label={note ? `${note.label} annotation` : `Unannotated excerpt ${start} to ${end}`}>
       <div class="source" tabindex="0" role="region" aria-label={`Source lines ${start} to ${end}`}>
         <Code code={lines.slice(start - 1, end).join('\n') + '\n'} lang="go" themes={{ light: 'github-light-high-contrast', dark: 'github-dark-high-contrast' }} transformers={[annotation(start, note)]} />
       </div>
-      {note && <aside class="note" id={`note-${note.id}`} style={`position-anchor: --line-${note.id}`}><h2>{note.label}</h2><p class="line-label">Lines <a href={`${study.source}#L${note.startLine}-L${note.endLine}`}>{note.startLine}–{note.endLine}</a></p><p>{note.body}</p>
+      {note && <aside class="note" id={`note-${note.id}`} tabindex="-1" style={`position-anchor: --line-${note.id}`}><h2>{note.label}</h2><p class="line-label">Lines <a href={`${study.source}#L${note.startLine}-L${note.endLine}`}>{note.startLine}–{note.endLine}</a></p><p>{note.body}</p>
         {note.cost && <p><strong>Tradeoff.</strong> {note.cost}</p>}
         {note.change && <p><strong>When I would revisit it.</strong> {note.change}</p>}
       </aside>}
@@ -49,6 +53,10 @@ function annotation(start: number, note?: CaseStudyNote): ShikiTransformer {
 </article>
 <style>
 .case-study { max-width: 1200px; margin: 0 auto; }
+.decision-summary { max-width: 75ch; margin-bottom: 2rem; }
+.decision-summary h2 { font: 800 2rem/1.1 var(--display); }
+.decision-summary ul { padding-left: 1.25rem; display: grid; gap: 1rem; }
+.decision-summary p { margin: .25rem 0 0; }
 .case-study header { max-width: 800px; }
 .case-study h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
 .source-label, .line-label { font: .75rem/1.5 var(--mono); color: var(--dim); }
@@ -58,13 +66,13 @@ function annotation(start: number, note?: CaseStudyNote): ShikiTransformer {
 .source { min-width: 0; overflow: auto; border: 1px solid var(--line); background: var(--raise-solid); }
 .source :global(pre) { margin: 0; padding: .75rem; font: .75rem/1.75 var(--mono); tab-size: 4; background: transparent !important; }
 .source :global(pre > code) { display: grid; }
-.source :global(.line) { display: grid; grid-template-columns: 4ch max-content max-content; min-width: max-content; scroll-margin: 5rem; }
+.source :global(.line) { display: grid; grid-template-columns: 4ch max-content max-content; min-width: max-content; scroll-margin-top: var(--header-clearance); }
 .source :global(.line-number) { color: var(--dim); text-align: right; padding-right: 1ch; text-decoration: none; }
 .source :global(.line-number:hover) { text-decoration: underline; }
 .source :global(.line-text) { white-space: pre; }
 .source :global(.highlighted .line-text) { text-decoration: underline; text-decoration-color: var(--dim); text-underline-offset: 3px; }
 .source :global(.line-note-label) { color: var(--text); font-size: .8em; margin-left: 2ch; }
-.note { margin: 0; padding: .75rem 0 1.5rem; overflow-wrap: anywhere; }
+.note { scroll-margin-top: var(--header-clearance); margin: 0; padding: .75rem 0 1.5rem; overflow-wrap: anywhere; }
 .note h2 { font: 800 1.5rem/1.2 var(--display); margin: 0 0 .3rem; }
 .note p { margin: .5rem 0; }
 /* In-flow grid is the no-JS / no-anchor fallback. The script reserves measured row height before

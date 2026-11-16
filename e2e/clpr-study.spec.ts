@@ -55,3 +55,22 @@ test('the request setup links to the complete ranking study', async ({ page }) =
   await page.getByRole('link', { name: 'How Clpr ranks and pages a clip search', exact: true }).click()
   await expect(page).toHaveURL('/case-studies/clpr-search/')
 })
+
+
+for (const width of [1440, 390]) for (const zoom of [1, 2]) test(`decision links clear the sticky header at ${width}px and ${zoom * 100}% text`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 900 })
+  await page.goto('/case-studies/clpr-search/#note-paging')
+  if (zoom === 2) await page.addStyleTag({ content: 'html { font-size: 200%; }' })
+  await page.evaluate(() => document.fonts.ready)
+  for (const id of ['ranking', 'count', 'snippets', 'paging']) {
+    const link = page.locator(`.decision-summary a[href="#note-${id}"]`)
+    await link.focus(); await page.keyboard.press('Enter')
+    const target = page.locator(`#note-${id}`)
+    await expect(target).toBeFocused()
+    await expect.poll(async () => (await target.boundingBox())!.y - (await page.locator('[data-site-header]').boundingBox())!.height).toBeGreaterThanOrEqual(0)
+  }
+  const summary = await page.locator('.decision-summary').boundingBox()
+  const excerpt = await page.locator('.study-grid').boundingBox()
+  expect(summary!.y + summary!.height).toBeLessThan(excerpt!.y)
+  expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(width)
+})
