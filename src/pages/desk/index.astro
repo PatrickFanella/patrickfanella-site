@@ -1,4 +1,5 @@
 ---
+import SiteHeader from '../../components/SiteHeader.astro'
 import { recruitingEmail } from '../../content/contact'
 import Page from '../../layouts/Page.astro'
 import Inspector from '../../desk/inspector/Inspector.astro'
@@ -9,8 +10,7 @@ import Inspector from '../../desk/inspector/Inspector.astro'
   <noscript><style is:inline>.desk .wm .pane { animation: none; backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--desk-pane-solid); }</style></noscript>
   <a class="skip" href="#about">Skip to the desk</a>
 
-  <header class="bar">
-    <a class="mark" href="/" data-bleed="y">patrickfanella.co</a>
+  <SiteHeader>
     <nav class="tags" aria-label="Panes">
       <button type="button" data-go="1" style="--acc: var(--desk-1)" aria-label="Pane 1, about" aria-keyshortcuts="Alt+1" aria-current="true">1</button>
       <button type="button" data-go="2" style="--acc: var(--desk-2)" aria-label="Pane 2, projects" aria-keyshortcuts="Alt+2">2</button>
@@ -18,15 +18,7 @@ import Inspector from '../../desk/inspector/Inspector.astro'
       <button type="button" data-go="4" style="--acc: var(--desk-4)" aria-label="Pane 4, log" aria-keyshortcuts="Alt+4">4</button>
       <button type="button" data-go="5" style="--acc: var(--desk-5)" aria-label="Pane 5, process" aria-keyshortcuts="Alt+5">5</button>
     </nav>
-    <nav aria-label="Main">
-      <a href="/projects/" data-bleed="c">Projects</a>
-      <a href="/resume/" data-bleed="y">Résumé</a>
-      <a href="/#coming" data-bleed="c">Explore the work</a>
-      <a href="/desk/" aria-current="page" data-bleed="y">Desk</a>
-      <a href="/motion/" data-bleed="o">Motion</a>
-      <button type="button" class="switch" data-theme-switch data-splash="y"><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
-    </nav>
-  </header>
+  </SiteHeader>
 
   <main class="wm">
     <section class="pane about" id="about" data-pane="1" tabindex="-1" aria-labelledby="p1">

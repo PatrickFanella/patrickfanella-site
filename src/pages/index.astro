@@ -1,22 +1,12 @@
 ---
+import SiteHeader from '../components/SiteHeader.astro'
 import { recruitingEmail } from '../content/contact'
 import Page from '../layouts/Page.astro'
 ---
 <Page title="Patrick Fanella" description="Patrick Fanella, senior backend and full-stack engineer. Working software, source-linked case studies, projects and résumé. Chicago or remote, and interviewing now." bodyClass="landing">
   <a class="skip" href="#coming">Skip to the work</a>
 
-  <header class="bar">
-    <a class="mark" href="/" data-bleed="y">patrickfanella.co</a>
-    <nav aria-label="Main">
-      <a href="/projects/" data-bleed="c">Projects</a>
-      <a href="/resume/" data-bleed="y">Résumé</a>
-      <a href="#coming" data-bleed="c">Explore the work</a>
-      <a href="/desk/" data-bleed="y">Desk</a>
-      <a href="/motion/" data-bleed="o">Motion</a>
-      <a href="https://github.com/PatrickFanella" data-bleed="y">GitHub</a>
-      <button type="button" class="switch" data-theme-switch data-splash="y"><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
-    </nav>
-  </header>
+  <SiteHeader />
 
   <main>
     <section class="hero" aria-labelledby="name">
