@@ -5,6 +5,7 @@ export interface CaseStudyNote {
   label: string
   startLine: number
   endLine: number
+  summary?: string
   body: string
   cost?: string
   change?: string

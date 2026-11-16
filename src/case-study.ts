@@ -17,3 +17,14 @@ if (CSS.supports('top', 'anchor(top)')) {
   void document.fonts.ready.then(align)
   addEventListener('resize', align)
 }
+
+// Real fragment links work without scripts; script adds focus and repeats clearance after fonts
+// and optional source anchoring settle, including direct hash entry.
+function focusNote() {
+  const target = document.getElementById(location.hash.slice(1))
+  if (!target?.classList.contains('note')) return
+  target.focus({ preventScroll: true })
+  target.scrollIntoView({ block: 'start' })
+}
+addEventListener('hashchange', focusNote)
+void document.fonts.ready.then(() => requestAnimationFrame(focusNote))
