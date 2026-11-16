@@ -105,7 +105,7 @@ test('larger text and no-JS hero keep every hiring action readable', async ({ br
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 320, height: 740 } })
   const page = await context.newPage()
   await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await page.addStyleTag({ content: 'html { font-size: 200%; }' })
+  await page.evaluate(() => { document.documentElement.style.fontSize = '200%' })
   await expect(page.locator('.hero .actions')).toContainText('View selected work')
   await expect(page.locator('.hero .actions')).toContainText('Résumé PDF')
   expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(320)
