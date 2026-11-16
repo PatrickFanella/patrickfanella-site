@@ -4,6 +4,44 @@ import { test, expect } from './fixtures'
 
 test.use({ reducedMotion: 'reduce' })
 
+test('catalog features the editorial pair and keeps every anchor, link and available visual without JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } })
+  const page = await context.newPage()
+  await page.goto('/projects/')
+  const featured = page.getByRole('region', { name: 'Featured projects', exact: true })
+  await expect(featured.locator('article')).toHaveCount(2)
+  await expect(featured.locator('h3')).toHaveText(['Clpr', 'Undertow'])
+  await expect(page.locator('.project-list article')).toHaveCount(40)
+  for (const project of catalog.projects) {
+    const item = page.locator(`article[id="${project.slug}"]`)
+    const link = item.locator('a[data-project-name]')
+    await expect(link).toHaveAttribute('href', `/projects/${project.slug}/`)
+    expect((await page.request.get((await link.getAttribute('href'))!)).status()).toBe(200)
+    const media = project.media[0]
+    await expect(item.locator('figure')).toHaveCount(media ? 1 : 0)
+    if (!media) continue
+    const image = item.locator('img')
+    await expect(image).toHaveAttribute('alt', media.alt)
+    await expect(image).toHaveAttribute('loading', 'lazy')
+    expect(Number(await image.getAttribute('width'))).toBeGreaterThan(0)
+    expect(Number(await image.getAttribute('height'))).toBeGreaterThan(0)
+    await expect(item.locator('figcaption')).toContainText(media.caption)
+    await expect(item.locator('figcaption')).toContainText('2026')
+    const paths = [media.src, ...('srcSet' in media && media.srcSet ? media.srcSet.split(',').map(candidate => candidate.trim().split(' ')[0]) : [])]
+    for (const path of paths) expect((await page.request.get(path)).status(), path).toBe(200)
+  }
+  // Native lazy loading still resolves responsive media when the reader reaches it.
+  for (const slug of ['clpr', 'undertow']) {
+    const image = page.locator(`#${slug} img`)
+    await image.scrollIntoViewIfNeeded()
+    await expect.poll(() => image.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true)
+    expect(await image.evaluate((el: HTMLImageElement) => el.currentSrc)).toContain('-640.webp')
+    const response = await page.request.get((await image.getAttribute('srcset'))!.split(' ')[0])
+    expect((await response.body()).byteLength).toBeLessThan(100_000)
+  }
+  await context.close()
+})
+
 test('every catalog page has its content, social metadata and working local images without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
@@ -42,6 +80,8 @@ test('list links, return link and legacy redirects reach the right project', asy
 test('the selected name participates in the cross-document hand-over', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await page.route('**/projects/**', async route => {
+    // Apply the navigation policy only to documents, not newly visible /assets/projects/ media.
+    if (!route.request().isNavigationRequest()) return route.continue()
     const response = await route.fetch()
     await route.fulfill({ response, headers: { ...response.headers(), 'content-security-policy': "script-src 'self'" } })
   })

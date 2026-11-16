@@ -5,7 +5,15 @@ commit (the source repository is private) and records the repository, file, full
 An optional local clone path uses `git show` for the same commit and file, with no checkout mutation.
 Builds use the checked-in copy and do not fetch content from the network.
 
-The 40 catalog entries appear at `/projects/`: selected work first, then earlier work and experiments.
+The 40 catalog entries appear once each at `/projects/`: Clpr and Undertow first, then the remaining
+38 entries in source order. This small featured set comes from the site-owned `project-presentation.ts`,
+also used on the landing page. The 25 imported `selected` flags and pinned catalog bytes are unchanged.
+Rows show the first available captioned screenshot or diagram from each project's media; entries
+without media remain text rows rather than showing a placeholder or implying a product screenshot exists.
+`ProjectMedia.astro` uses the pinned asset dimensions and responsive screenshot variants with native
+lazy loading. Capture dates stay in their original captions; undated illustrations and diagrams are
+labelled with the source snapshot date (November 13, 2026, the pinned source commit's committer date),
+not a capture date or a statement about current runtime health.
 Every entry includes its original summary, stack and delivery status. Missing status is explicitly
 unstated, not inferred from screenshots or links. Pre-alpha and development labels are retained.
 CSS and fonts load without JavaScript. The optional script supplies ink, theme switching and motion.

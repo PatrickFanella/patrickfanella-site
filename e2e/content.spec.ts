@@ -23,6 +23,8 @@ for (const colorScheme of ['light', 'dark'] as const) test(`projects fit mobile 
   await page.goto('/projects/')
   expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+  await page.locator('#clpr').scrollIntoViewIfNeeded()
+  await page.screenshot({ path: test.info().outputPath(`catalog-${colorScheme}-phone.png`) })
 })
 
 test('content navigation points only to published routes', async ({ page }) => {
