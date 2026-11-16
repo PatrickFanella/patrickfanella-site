@@ -1,0 +1,65 @@
+{
+  "source": "public/assets/brand/patrick/favicon.svg",
+  "sourceSha256": "dfb0d29a33b4e7def3cbe823ac3d4cdd79586b8bc39f1ff9cb66192be933df57",
+  "generator": "scripts/generate-site-icons.mjs",
+  "note": "Site-owned format derivatives of the approved compact PF mark; original brand assets remain unchanged.",
+  "files": [
+    {
+      "path": "/favicon-16x16.png",
+      "width": 16,
+      "height": 16,
+      "sha256": "eb4464199d52b0289add936865b88d6d4b9384b41f2b325e442af57899c29d1e"
+    },
+    {
+      "path": "/favicon-32x32.png",
+      "width": 32,
+      "height": 32,
+      "sha256": "fa99747cf6bcca859ae4e0bc1ae79a920f5c8dd3803dee84ea3a9112345d74ff"
+    },
+    {
+      "path": "/favicon-48x48.png",
+      "width": 48,
+      "height": 48,
+      "sha256": "176c1678e49a3f14cc7c175866cfd3b09423d7a67e1088ac15f2faad0548bc38"
+    },
+    {
+      "path": "/favicon-96x96.png",
+      "width": 96,
+      "height": 96,
+      "sha256": "23946a6478c80c0a33275e4e39f4cdc6bb4b8798bc23f0a68cddb9661b35f242"
+    },
+    {
+      "path": "/favicon-192x192.png",
+      "width": 192,
+      "height": 192,
+      "sha256": "59c45d1aff883d1070778d3df7dfd589f84cf8662f0ce64e6cf78d38b647b5c0"
+    },
+    {
+      "path": "/favicon-512x512.png",
+      "width": 512,
+      "height": 512,
+      "sha256": "afcefd59d67959089dfbd06eccc989fee53936e2b2bf46592f8cafc21e701fd6"
+    },
+    {
+      "path": "/favicon.ico",
+      "sizes": [
+        16,
+        32,
+        48
+      ],
+      "sha256": "dc08099b7e31c2f69007812d735e5c74366e3c84e39e06b9d7ee70b6df16f379"
+    },
+    {
+      "path": "/favicon.svg",
+      "width": 512,
+      "height": 512,
+      "sha256": "dfb0d29a33b4e7def3cbe823ac3d4cdd79586b8bc39f1ff9cb66192be933df57"
+    },
+    {
+      "path": "/apple-touch-icon.png",
+      "width": 180,
+      "height": 180,
+      "sha256": "1e993fae8d14e0ad1c5e659c42d340e4bb17db0d1b27e6a4d9e5840963b764ae"
+    }
+  ]
+}

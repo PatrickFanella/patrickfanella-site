@@ -5,6 +5,7 @@
 import displayFont from '@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2?url'
 import bodyFont from '@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url'
 import monoFont from '@fontsource-variable/martian-mono/files/martian-mono-latin-wght-normal.woff2?url'
+import { iconHref, siteMetadata, structuredMetadata } from '../content/site-metadata'
 interface Props {
   title: string
   description: string
@@ -15,8 +16,10 @@ interface Props {
   socialImage?: string
   socialAlt?: string
 }
-const { title, description, bodyClass, noscript = true, ogType = 'website', socialImage = '/assets/brand/patrick/share-card.png', socialAlt = 'Patrick Fanella. Software, sound, culture. Ink in Motion identity.' } = Astro.props
-const canonical = new URL(Astro.url.pathname, 'https://patrickfanella.co').href
+const { title, description, bodyClass, noscript = true, ogType = 'website', socialImage = '/assets/brand/patrick/share-card.png', socialAlt = siteMetadata.socialAlt } = Astro.props
+const canonical = new URL(Astro.url.pathname, siteMetadata.origin).href
+const image = new URL(socialImage, siteMetadata.origin).href
+const structuredData = JSON.stringify(structuredMetadata(canonical, title, description)).replace(/</g, '\\u003c')
 ---
 <!doctype html>
 <html lang="en">
@@ -25,21 +28,33 @@ const canonical = new URL(Astro.url.pathname, 'https://patrickfanella.co').href
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{title}</title>
   <meta name="description" content={description}>
+  <meta name="author" content={siteMetadata.name}>
+  <meta name="application-name" content={siteMetadata.name}>
   <link rel="canonical" href={canonical}>
   <meta property="og:type" content={ogType}>
+  <meta property="og:site_name" content={siteMetadata.name}>
+  <meta property="og:locale" content="en_US">
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
   <meta property="og:url" content={canonical}>
-  <meta property="og:image" content={new URL(socialImage, 'https://patrickfanella.co').href}>
+  <meta property="og:image" content={image}>
+  <meta property="og:image:secure_url" content={image}>
+  <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content={socialAlt}>
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content={title}>
   <meta name="twitter:description" content={description}>
-  <meta name="twitter:image" content={new URL(socialImage, 'https://patrickfanella.co').href}>
+  <meta name="twitter:image" content={image}>
   <meta name="twitter:image:alt" content={socialAlt}>
-  <link rel="apple-touch-icon" href="/assets/brand/patrick/apple-touch-icon.png">
+  <link rel="icon" href={iconHref('/favicon.ico')} sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" href={iconHref('/favicon-96x96.png')} sizes="96x96" type="image/png">
+  <link rel="icon" href={iconHref('/favicon.svg')} sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href={iconHref('/apple-touch-icon.png')} sizes="180x180">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content={siteMetadata.lightColor} media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content={siteMetadata.darkColor} media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
   <link rel="preload" as="font" type="font/woff2" href={displayFont} crossorigin="anonymous">
   <link rel="preload" as="font" type="font/woff2" href={bodyFont} crossorigin="anonymous">
@@ -47,7 +62,7 @@ const canonical = new URL(Astro.url.pathname, 'https://patrickfanella.co').href
   <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
   <style is:inline>@view-transition { navigation: auto; }</style>
   {noscript && <noscript><style is:inline>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>}
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script type="application/ld+json" set:html={structuredData} />
   <slot name="head" />
 </head>
 <body class={bodyClass}>

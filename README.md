@@ -23,11 +23,13 @@ npm run test:e2e   # build, serve dist/ and run the browser tests in headless Ch
 
 The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame within 3 s of the fonts loading, that the page works without WebGL2, that the desk measures the search in a worker while the ink keeps drawing, that a slow download still reaches the measured run, that it falls back to the recorded run when the worker script, PGlite's WebAssembly or a policy without `'wasm-unsafe-eval'` stops it, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. They serve `dist/` with `astro preview`. Set `E2E_PORT` to serve on a port other than 4173.
 
-CI (`.github/workflows/ci.yml`) records Clpr through the visitor worker in headless Chromium, rebuilds from that evidence, and tests the resulting artifact on every push to main and pull request. It also enforces mobile Lighthouse budgets. The main-only deploy job publishes the same tested artifact for both static origins. Run `npm run record:clpr` on Linux to refresh the local recording.
+CI (`.github/workflows/ci.yml`) records Clpr through the visitor worker in headless Chromium, rebuilds from that evidence, and tests the resulting artifact on every push to main and pull request. It also enforces mobile Lighthouse budgets. The main-only deploy job publishes that tested artifact for production. Run `npm run record:clpr` on Linux to refresh the local recording.
 
-## Preview
+## Deployment and metadata
 
-Every green build of `main` is published privately at https://pf-preview.subcult.tv, behind the homelab's Authelia sign-in. The CI `deploy` job pushes the built files to the `deploy` branch (one commit, replaced each time); a timer on the homelab checks that branch every minute, reads it with a read-only deploy key, and serves the newest build. The preview sends the production content security policy plus `'wasm-unsafe-eval'` and `worker-src 'self'` for the desk, and `X-Robots-Tag: noindex`. `/REVISION` names the commit it was built from.
+Every green build of `main` publishes the tested files to the `deploy` branch. The Almaz updater reads that branch every minute and selects the production release at https://patrickfanella.co; `/REVISION` names its source commit. The private hosted preview was retired on November 16, 2026. Local `astro preview` remains available for development.
+
+The shared HTML metadata, structured profile, favicon fallbacks and home-screen manifest are described in [site-metadata.md](docs/site-metadata.md). Run `node scripts/generate-site-icons.mjs` to regenerate the recorded format derivatives from the approved compact PF artwork.
 
 ## Layout
 

@@ -15,10 +15,16 @@ function storedTheme(): Theme | null {
 const systemDark = matchMedia('(prefers-color-scheme: dark)')
 export const currentTheme = (): Theme => (root.dataset.theme as Theme | undefined) ?? (systemDark.matches ? 'dark' : 'light')
 
+function syncBrowserTheme() {
+  const color = getComputedStyle(root).getPropertyValue('--ground').trim()
+  for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')) meta.content = color
+}
+
 export interface Page { ink: Ink | null; bleeder: ReturnType<typeof bleed> | null }
 
 export function boot(): Page {
   const t = storedTheme(); if (t) root.dataset.theme = t
+  syncBrowserTheme()
   const canvas = document.getElementById('ink') as HTMLCanvasElement | null
   let ink: Ink | null = null
   if (canvas) {
@@ -26,7 +32,7 @@ export function boot(): Page {
     const off = (err: Error) => { root.classList.add('no-ink'); console.info('Ink is off:', err.message) }
     try { ink = createInk(canvas, currentTheme(), off) } catch (err) { off(err as Error) }
   }
-  systemDark.addEventListener('change', () => ink?.setTheme(currentTheme()))
+  systemDark.addEventListener('change', () => { ink?.setTheme(currentTheme()); syncBrowserTheme() })
   wireThemeSwitch(ink)
   const header = document.querySelector<HTMLElement>('[data-site-header]')
   if (header) {
@@ -49,7 +55,7 @@ function wireThemeSwitch(ink: Ink | null) {
   label(); btn.hidden = false
   btn.addEventListener('click', () => {
     const next: Theme = currentTheme() === 'dark' ? 'light' : 'dark'
-    const apply = () => { root.dataset.theme = next; try { localStorage.setItem(KEY, next) } catch { /* private window */ } ink?.setTheme(next); label() }
+    const apply = () => { root.dataset.theme = next; try { localStorage.setItem(KEY, next) } catch { /* private window */ } ink?.setTheme(next); syncBrowserTheme(); label() }
     if (!document.startViewTransition || reduced()) return apply()
     const r = btn.getBoundingClientRect()
     root.style.setProperty('--vt-x', `${r.left + r.width / 2}px`)
