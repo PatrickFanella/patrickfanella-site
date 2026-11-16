@@ -22,6 +22,12 @@ export function startClpr(pane: HTMLElement, options: {
     provenance.append(ci)
   } else provenance.textContent = 'Built outside Clpr CI.'
   provenance.append(' PostgreSQL and its extensions download with live mode. Searches stay in this tab; this demo uses Clpr’s PostgreSQL path and eight fixture clips. The Plan tab can add generated clips.')
+  const example = document.createElement('form'); example.className = 'clpr-example'
+  const label = document.createElement('label'); label.htmlFor = 'clpr-example'; label.textContent = 'Example search'
+  const input = document.createElement('input'); input.id = 'clpr-example'; input.name = 'query'; input.value = 'world record'; input.required = true
+  const sample = document.createElement('button'); sample.type = 'submit'; sample.dataset.clprExample = ''
+  sample.textContent = `Run example live (${root.dataset.liveLabel!.split('(')[1]}`; sample.disabled = !allowed
+  example.append(label, input, sample)
   const buttons = document.createElement('div'); buttons.className = 'clpr-buttons'
   const start = document.createElement('button'); start.type = 'button'; start.textContent = root.dataset.liveLabel!; start.disabled = !allowed
   const stop = document.createElement('button'); stop.type = 'button'; stop.textContent = 'Stop live mode'; stop.disabled = true
@@ -29,7 +35,7 @@ export function startClpr(pane: HTMLElement, options: {
   const status = document.createElement('p'); status.setAttribute('role', 'status'); status.dataset.clprStatus = ''
   const idleStatus = allowed ? 'Recorded evidence below. Start live mode to run Clpr’s Go search handler here.' : root.dataset.liveReason!
   status.textContent = idleStatus
-  buttons.append(start, stop, benchmark); controls.append(meta, provenance, buttons, status)
+  buttons.append(start, stop, benchmark); controls.append(example, meta, provenance, buttons, status)
   pane.querySelector('.pbody')!.prepend(controls)
 
   let mode: 'recorded' | 'clpr' | 'benchmark' = 'recorded'
@@ -37,7 +43,7 @@ export function startClpr(pane: HTMLElement, options: {
   const set = (value: typeof state) => { state = value; pane.dataset.clpr = value }
   set('idle')
   let worker: Worker | null = null, requestId = 0, shownId = 0
-  let lastWords = 'world record'
+  let lastWords = 'world record', startupWords = 'world record'
   let slow: ReturnType<typeof setTimeout> | undefined
   const pending = new Map<number, { resolve: (value: SearchResult) => void; reject: (error: Error) => void }>()
   const terminate = () => {
@@ -45,7 +51,7 @@ export function startClpr(pane: HTMLElement, options: {
     clearTimeout(slow); worker?.terminate(); worker = null
     for (const request of pending.values()) request.reject(new Error('Clpr live mode stopped.'))
     pending.clear()
-    start.disabled = !allowed; stop.disabled = true
+    start.disabled = !allowed; sample.disabled = !allowed; stop.disabled = true
   }
   const reset = () => {
     const benchmark = mode === 'benchmark'
@@ -81,7 +87,7 @@ export function startClpr(pane: HTMLElement, options: {
       status.textContent = `Clpr is live: all ${event.migrations} migrations applied, ${event.rows} fixture clips, PostgreSQL ${event.version}. Type search world record in the shell.`
       options.sub.textContent = `Clpr ${manifest.commit.slice(0, 7)}, live in this tab`
       // Show the same fixture request as the spike. Stopping during it is an ordinary cancellation.
-      void search('world record').catch(error => { if (state === 'live') fail(String(error)) })
+      void search(startupWords).catch(error => { if (state === 'live') fail(String(error)) }).finally(() => { sample.disabled = !allowed })
       return
     }
     const request = pending.get(event.id)
@@ -108,11 +114,12 @@ export function startClpr(pane: HTMLElement, options: {
       request.reject(error instanceof Error ? error : new Error(String(error)))
     }
   }
-  start.addEventListener('click', () => {
+  const startLive = (words: string) => {
+    startupWords = words
     // Enforce the gate as well as disabling the control.
     if (!allowed) { status.textContent = idleStatus; return }
     mode = 'clpr'; options.stopBenchmark(); options.recorded(); set('starting')
-    start.disabled = true; stop.disabled = false; stop.textContent = 'Stop live mode'
+    start.disabled = true; sample.disabled = true; stop.disabled = false; stop.textContent = 'Stop live mode'
     status.textContent = 'Downloading the pinned Clpr build and starting PostgreSQL.'
     slow = setTimeout(() => { status.textContent = 'Clpr is still loading. The recorded run remains below; Stop live mode cancels the download.' }, 30_000)
     try {
@@ -121,6 +128,16 @@ export function startClpr(pane: HTMLElement, options: {
       current.onmessage = (event: MessageEvent<ClprEvent>) => { if (worker === current) onEvent(event.data) }
       current.onerror = event => { event.preventDefault(); if (worker === current) fail(event.message || 'The worker did not load') }
     } catch (error) { fail(String(error)) }
+  }
+  start.addEventListener('click', () => startLive('world record'))
+  example.addEventListener('submit', event => {
+    event.preventDefault()
+    const words = input.value.trim()
+    if (!words || state === 'starting') return
+    if (state !== 'live') { startLive(words); return }
+    sample.disabled = true
+    void search(words).catch(() => { /* The existing search status reports the failure. */ })
+      .finally(() => { sample.disabled = !allowed })
   })
   stop.addEventListener('click', reset)
   benchmark.addEventListener('click', () => {

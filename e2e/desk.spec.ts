@@ -15,6 +15,8 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await expect(page.locator('#name [data-ink-letter].landed')).toHaveCount(14)
       await expect(page.locator('[data-theme-switch]')).toHaveAccessibleName(colorScheme === 'dark' ? 'Theme: Dark' : 'Theme: Light')
       await expect(page.locator('[data-pane]')).toHaveCount(5)
+      // Contrast is measured after the existing tile entrance, not against its transparent frames.
+      for (const pane of await page.locator('.pane').all()) await expect(pane).toHaveCSS('opacity', '1')
       const { violations } = await new AxeBuilder({ page }).analyze()
       expect(violations.map((v) => `${v.id}: ${v.help} (${v.nodes.map((n) => n.target.join(' ')).join(', ')})`)).toEqual([])
     })

@@ -29,9 +29,9 @@ test('the desk shows provenance without downloading a worker, Wasm or database',
   expect(large).toEqual([])
 })
 
-test('Clpr runs all migrations and returns its real JSON through pgx', async ({ page }) => {
+test('the example action runs all migrations and returns real JSON through pgx', async ({ page }) => {
   await page.goto('/desk/')
-  await page.getByRole('button', { name: 'Start Clpr live mode' }).click()
+  await page.getByRole('button', { name: 'Run example live' }).click()
   await expect(page.locator('section.psql')).toHaveAttribute('data-clpr', 'live', { timeout: 180_000 })
   await expect(page.locator('[data-clpr-status]')).toContainText(`all ${manifest.migrationCount} migrations applied, 8 fixture clips`)
   const output = page.locator('[data-inspector-response]')
