@@ -6,7 +6,7 @@ import artifact from '../src/content/resume-artifact.json' with { type: 'json' }
 import { test, expect } from './fixtures'
 
 test.use({ reducedMotion: 'reduce' })
-test('résumé matches its source, downloads the exact PDF and prints on one or two pages', async ({ page }, info) => {
+test('résumé matches its source, downloads the exact PDF and prints on one page', async ({ page }, info) => {
   await page.goto('/resume/')
   for (const role of [...resume.roles, ...resume.otherRoles]) {
     await expect(page.getByRole('heading', { name: role.employer, exact: true })).toBeVisible()
@@ -39,7 +39,7 @@ test('résumé matches its source, downloads the exact PDF and prints on one or 
   // Count actual page objects without a system PDF dependency, including Chromium's page tree.
   const pdf = (await readFile(print)).toString('latin1')
   const pages = (pdf.match(/\/Type \/Page\b/g) ?? []).length
-  expect(pages).toBeGreaterThanOrEqual(1); expect(pages).toBeLessThanOrEqual(2)
+  expect(pages).toBe(1)
   await info.attach('Print layout', { path: print, contentType: 'application/pdf' })
 })
 
