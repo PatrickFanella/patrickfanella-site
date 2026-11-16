@@ -1,9 +1,9 @@
 .resume { max-width: 800px; margin: 0 auto; }
-.resume header { margin-bottom: 2rem; }
+.resume header { margin-bottom: 2rem; text-align: center; }
 .resume h2 { margin: 2rem 0 .75rem; font: 800 2rem/1.1 var(--display); border-bottom: 1px solid var(--line); padding-bottom: .5rem; }
 .resume h3 { font: 800 1.6rem/1.2 var(--display); margin: 1rem 0 .25rem; }
 .resume-role { font: 700 1.6rem/1.2 var(--display); margin-bottom: .5rem; }
-.resume-contact { display: flex; flex-wrap: wrap; list-style: none; padding: 0; gap: .25rem 1.5rem; margin-top: .5rem; overflow-wrap: anywhere; }
+.resume-contact { display: flex; flex-wrap: wrap; justify-content: center; list-style: none; padding: 0; gap: .25rem 1.5rem; margin-top: .5rem; overflow-wrap: anywhere; }
 .resume .skills { margin: 0; }
 .resume .skills div { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: 1rem; margin: .5rem 0; }
 .resume .skills dt { font-weight: 700; }

@@ -8,7 +8,8 @@ const receipt = 'src/content/resume-artifact.json'
 const paths = ['src/content/resume.json', 'src/content/contact.ts', 'scripts/render-resume.mjs',
   'public/assets/brand/patrick/pf-solid-wavy.svg',
   'node_modules/@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2',
-  'node_modules/@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2']
+  'node_modules/@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2',
+  'public/assets/brand/patrick/ink.svg']
 const sources = await Promise.all(paths.map(async path => ({ path, sha256: hash(await readFile(path)) })))
 if (process.argv.includes('--check')) {
   const artifact = JSON.parse(await readFile(receipt, 'utf8'))
@@ -24,25 +25,31 @@ if (process.argv.includes('--check')) {
   const uri = async (path, type) => `data:${type};base64,${(await readFile(path)).toString('base64')}`
   const body = await uri(paths[4], 'font/woff2'), display = await uri(paths[5], 'font/woff2')
   const mark = await uri(paths[3], 'image/svg+xml')
+  // Stretch only this decorative PDF copy; the selected source artwork stays byte-identical.
+  const inkSvg = (await readFile(paths[6], 'utf8')).replace('<svg ', '<svg preserveAspectRatio="none" ')
+  const ink = `data:image/svg+xml;base64,${Buffer.from(inkSvg).toString('base64')}`
   const browser = await chromium.launch({ headless: true })
   try {
     const page = await browser.newPage()
     await page.setContent(`<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Patrick Fanella Resume</title><style>
       @font-face { font-family: Body; src: url('${body}'); font-weight: 100 900; }
       @font-face { font-family: Display; src: url('${display}'); font-weight: 100 900; }
-      @page { size: Letter; margin: 0.45in 0.55in; }
-      * { box-sizing: border-box; } body { margin: 0; color: #0e1422; font: 10.5pt/1.32 Body, sans-serif; }
-      header { display: flex; align-items: center; gap: 12pt; border-bottom: 1pt solid #465064; padding-bottom: 10pt; }
-      header img { width: 44pt; height: 44pt; } h1 { font: 900 32pt/1 Display, sans-serif; margin: 0; }
+      @page { size: Letter; margin: 0; }
+      * { box-sizing: border-box; } body { position: relative; isolation: isolate; margin: 0.45in 0.55in; color: #0e1422; font: 10.5pt/1.32 Body, sans-serif; }
+      header { text-align: center; border-bottom: 1pt solid #465064; padding-bottom: 10pt; }
+      header img { position: absolute; left: 0; top: 8pt; width: 44pt; height: 44pt; opacity: .4; }
+      .contact { text-align: center; } h1 { font: 900 32pt/1 Display, sans-serif; margin: 0; }
+      .ink-watermark { position: fixed; top: 2.3in; left: -.45in; width: 9.4in; height: 2.6in; object-fit: fill; transform: rotate(-6deg); opacity: .12; z-index: -1; }
       h2 { font: 800 16pt/1.1 Display, sans-serif; margin: 12pt 0 5pt; } h3 { font-size: 11pt; margin: 8pt 0 2pt; }
       p { margin: 3pt 0; } ul { margin: 4pt 0; padding-left: 14pt; } li { margin: 3pt 0; }
       a { color: inherit; text-underline-offset: 2pt; } .meta { color: #465064; font-size: 9pt; }
       section { break-inside: avoid; } dl { margin: 4pt 0; } dl div { display: flex; gap: 8pt; margin: 2pt 0; }
       dt { font-weight: 700; min-width: 85pt; } dd { margin: 0; }
     </style></head><body>
+      <img class="ink-watermark" src="${ink}" alt="">
       <header><img alt="" src="${mark}"><div><h1>${escape(resume.name)}</h1><p><strong>${escape(resume.headline)}</strong></p><p class="meta">${escape(resume.location)}. ${escape(resume.availability)}.</p></div></header>
-      <p><a href="mailto:${escape(resume.email)}">${escape(resume.email)}</a> | ${escape(resume.phone)} | <a href="${resume.website}">patrickfanella.co</a></p>
-      <p class="meta"><a href="${resume.github}">github.com/PatrickFanella</a> | <a href="${resume.linkedin}">linkedin.com/in/patrick-fanella</a></p>
+      <p class="contact"><a href="mailto:${escape(resume.email)}">${escape(resume.email)}</a> | ${escape(resume.phone)} | <a href="${resume.website}">patrickfanella.co</a></p>
+      <p class="meta contact"><a href="${resume.github}">github.com/PatrickFanella</a> | <a href="${resume.linkedin}">linkedin.com/in/patrick-fanella</a></p>
       <section><h2>Profile</h2><p>${escape(resume.profile)}</p></section>
       <section><h2>Skills</h2><dl>${resume.skills.map(([label,value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl></section>
       <h2>Engineering experience</h2>
