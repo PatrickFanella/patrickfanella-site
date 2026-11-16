@@ -97,6 +97,7 @@ const BENCH = `<p class="bcap" data-pg-cap></p>
 <p class="bnote" data-pg-note role="status"></p>`
 
 export interface SearchResult { total: number; time: string; top?: string; timing?: string }
+export interface BenchmarkStatus { state: 'idle' | 'running' | 'ready' | 'failed'; message: string }
 export interface Psql { search(words: string): Promise<SearchResult> }
 
 export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => void = () => {}): Psql {
@@ -142,6 +143,7 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
   }
   recorded()
 
+  let reportBenchmark: (status: BenchmarkStatus) => void = () => {}
   let worker: Worker | null = null
   const starting = () => state === 'starting' || state === 'slow'
   // PGlite fetches about 15 MB of WebAssembly and data before it answers, which takes minutes on a slow
@@ -163,12 +165,14 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
     console.info('PostgreSQL is off:', why)
     sub.textContent = 'recorded run'
     showRecorded("PostgreSQL could not start in this tab, so these are Clpr's recorded times.", `${recordedStatus}. PostgreSQL could not start in this tab.`)
+    reportBenchmark({ state: 'failed', message: 'SQL benchmark failed. These are recorded times; use Run SQL benchmark to retry.' })
   }
   // Progress goes on the last line of the recorded session until the measured run replaces it.
   const progress = (text: string) => {
     if (!starting()) return
     pre.lastChild?.remove(); pre.lastChild?.remove()
     line(pre, ['c', `-- ${recordedStatus}. ${text}`])
+    reportBenchmark({ state: 'running', message: `SQL benchmark: ${text} The output still shows recorded evidence until completion.` })
   }
 
   let requestId = 0
@@ -181,7 +185,10 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
       const request = pending.get(m.id)
       if (!request) return
       pending.delete(m.id)
-      if (m.ev === 'search-error') { request.reject(new Error(m.message)); return }
+      if (m.ev === 'search-error') {
+        reportBenchmark({ state: 'ready', message: 'SQL search failed. The last output remains; try another search.' })
+        request.reject(new Error(m.message)); return
+      }
       const time = measured(m.run.exec, step, m.run.runs).text
       renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows, step },
         `measured in this tab by PostgreSQL ${version}; prefix terms joined with AND`, m.query)
@@ -191,6 +198,7 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
       q('[data-pg-idx]').textContent = time
       q('[data-pg-idx-note]').textContent = `${scanName(m.run)}, ${fmt(rows)} rows`
       q('[data-pg-note]').textContent = `Prefix search with AND; ${fmt(m.total)} matches. Mean of ${fmt(m.run.runs ?? 1)} query runs, at this tab's clock resolution.`
+      reportBenchmark({ state: 'ready', message: `SQL search complete: ${fmt(m.total)} ${m.total === 1 ? 'match' : 'matches'} in ${fmt(rows)} generated clips. Direct SQL, measured in this tab.` })
       request.resolve({ total: m.total, time, top: m.rows[0]?.title })
       return
     }
@@ -224,6 +232,7 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
           q('[data-pg-note]').textContent = `${ratio} This tab's clock ticks every ${tick()} ms, so each batch repeats the query for 50 ms and takes the mean. Clpr's recorded demo: ${ms(recordedSeq.run.exec)} ms without the index at ${fmt(recordedSeq.rows)} rows, ${ms(recordedIdx.run.exec)} ms with it at ${fmt(recordedIdx.rows)}.`
         }
         renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows, step }, `measured in this tab by PostgreSQL ${version}: the plan of the median batch's last run, on a clock that ticks every ${tick()} ms`)
+        reportBenchmark({ state: 'ready', message: `SQL benchmark complete on ${fmt(rows)} generated clips. Direct SQL, measured in this tab; ready for a shell search.` })
         break
     }
   }
@@ -232,17 +241,20 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
     clearTimeout(slow); worker?.terminate(); worker = null; set('idle')
     for (const request of pending.values()) request.reject(new Error('The SQL benchmark stopped.'))
     pending.clear()
+    reportBenchmark({ state: 'idle', message: 'SQL benchmark stopped. Recorded evidence is available.' })
   }
-  const startBenchmark = () => {
-    stopBenchmark(); set('starting')
+  const startBenchmark = (report: (status: BenchmarkStatus) => void) => {
+    stopBenchmark(); reportBenchmark = report; set('starting')
     inspector.hidden = true; pre.hidden = false
     showRecorded("PostgreSQL is starting in this tab. Until it answers, these are Clpr's recorded times.", `${recordedStatus}. Starting PostgreSQL in this tab.`)
+    reportBenchmark({ state: 'running', message: 'Running the SQL benchmark on generated clips. This mode runs SQL directly; recorded times remain until completion.' })
     slow = setTimeout(markSlow, 30_000)
     try {
       // No worker, Wasm or database data is requested until the visitor starts this mode.
-      worker = new Worker(new URL('./pg.worker.ts', import.meta.url), { type: 'module', name: 'postgres' })
-      worker.onmessage = (e: MessageEvent<PgEvent>) => onEvent(e.data)
-      worker.onerror = (e) => { e.preventDefault(); fail(e.message || 'the worker script did not load') }
+      const current = new Worker(new URL('./pg.worker.ts', import.meta.url), { type: 'module', name: 'postgres' })
+      worker = current
+      current.onmessage = (e: MessageEvent<PgEvent>) => { if (worker === current) onEvent(e.data) }
+      current.onerror = (e) => { e.preventDefault(); if (worker === current) fail(e.message || 'the worker script did not load') }
     } catch (err) { fail(String(err)) }
   }
   const clpr = startClpr(pane, { pre, bench, sub, recorded, startBenchmark, stopBenchmark })
@@ -262,6 +274,7 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
         ? 'PostgreSQL is unavailable in this tab; the psql pane shows a recorded run.'
         : 'PostgreSQL is still starting. Try the search again when the psql pane says live.'))
       const id = ++requestId
+      reportBenchmark({ state: 'running', message: 'Running a direct SQL search on generated clips in this tab.' })
       return new Promise((resolve, reject) => {
         pending.set(id, { resolve, reject })
         worker!.postMessage({ ev: 'search', id, words })
