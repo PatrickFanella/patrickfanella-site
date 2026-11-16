@@ -1,0 +1,58 @@
+---
+import ContentPage from '../../layouts/ContentPage.astro'
+import ProjectMedia from '../../components/ProjectMedia.astro'
+import studies from '../../content/project-case-studies.json'
+import { selectedProjects } from '../../content/project-presentation'
+
+export function getStaticPaths() {
+  return studies.studies.map(study => ({ params: { slug: study.slug }, props: { study } }))
+}
+const { study } = Astro.props
+const project = selectedProjects.find(project => project.slug === study.slug)!
+---
+<ContentPage title={`${project.title}: ${study.title} | Patrick Fanella`} description={study.description} readingSurface ogType="article" socialImage={`/assets/projects/social/${project.slug}.png`} socialAlt={project.media[0]?.alt}>
+  <article class="product-study">
+    <a href="/projects/">All selected work</a>
+    <header>
+      <p class="study-project">{project.title}</p>
+      <h1>{study.title}</h1>
+      <p class="lead">{study.intro}</p>
+      <dl class="project-facts">
+        <div><dt>My work</dt><dd>{study.scope}</dd></div>
+        <div><dt>Delivery</dt><dd>{study.outcome}</dd></div>
+        <div><dt>Status</dt><dd>{project.deliveryStatus}</dd></div>
+      </dl>
+      <nav class="project-links" aria-label="Case study destinations">
+        <a href={project.liveUrl}>Open {project.slug === 'rekolekt' ? 'HasanAra' : project.title}</a>
+        <a href={project.repoUrl}>Source on GitHub</a>
+        <a href={`/projects/${project.slug}/`}>Project details</a>
+      </nav>
+    </header>
+    {project.media[0] && <ProjectMedia media={project.media[0]} sizes="(max-width: 1080px) calc(100vw - 64px), 968px" loading="eager" />}
+    <nav class="study-contents" aria-label="In this case study">
+      <h2>In this study</h2>
+      <ol>{study.sections.map(section => <li><a href={`#${section.id}`}>{section.heading}</a></li>)}</ol>
+    </nav>
+    <div class="study-reading">
+      {study.sections.map((section, index) => <Fragment>
+        <section id={section.id} tabindex="-1" aria-labelledby={`${section.id}-heading`}>
+          <h2 id={`${section.id}-heading`}>{section.heading}</h2>
+          {section.paragraphs.map(paragraph => <p>{paragraph}</p>)}
+          {section.tradeoff && <p class="study-tradeoff"><strong>The tradeoff.</strong> {section.tradeoff}</p>}
+          <ul class="study-sources" aria-label={`Sources for ${section.heading}`}>{section.sources.map(source => <li><a href={source.url}>{source.label}</a></li>)}</ul>
+        </section>
+        {index === 1 && project.media[1] && <ProjectMedia media={project.media[1]} sizes="(max-width: 1080px) calc(100vw - 64px), 968px" />}
+      </Fragment>)}
+      <section aria-labelledby="evidence-limits">
+        <h2 id="evidence-limits">Evidence and limits</h2>
+        <p>{study.limits}</p>
+        <p class="source-note">Source and copy review: November 16, 2026. Implementation links name the reviewed commits; screenshots name their capture dates and data context.</p>
+      </section>
+    </div>
+    <nav class="study-next project-links" aria-label="Continue reading">
+      <a href="/case-studies/">All four case studies</a>
+      <a href="/resume/">Experience and résumé</a>
+      <a href="/contact/">Contact me</a>
+    </nav>
+  </article>
+</ContentPage>

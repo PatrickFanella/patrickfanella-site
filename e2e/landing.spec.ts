@@ -63,9 +63,9 @@ test('selected work exposes supported ownership, dated media and direct destinat
   await page.goto('/#coming')
   await expect(page.locator('.employment-feature')).toContainText('approximately 25%')
   await expect(page.locator('.employment-feature a')).toHaveAttribute('href', '/resume/#deliverzero')
-  await expect(page.locator('.featured-project')).toHaveCount(2)
+  await expect(page.locator('.featured-project')).toHaveCount(4)
   for (const figure of await page.locator('.featured-project figure').all()) {
-    await expect(figure.locator('figcaption')).toContainText('November 5, 2026')
+    await expect(figure.locator('figcaption')).toContainText('November 16, 2026')
     await expect(figure.locator('img')).toHaveAttribute('loading', 'lazy')
     expect(await figure.locator('img').getAttribute('width')).toMatch(/^\d+$/)
     await expect(figure.locator('img')).toHaveAttribute('srcset', /640w.*1280w/)

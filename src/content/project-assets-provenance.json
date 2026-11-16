@@ -553,6 +553,148 @@
       "sha256": "cf22dde59a039efc96ec706c1848a351141b83538b939cc372e3ca7e4a04d514",
       "width": 640,
       "height": 400
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-clpr-discover-640.webp",
+      "sha256": "afda9ff440e8cd7c700087f90f7bb4f2e025b103f05e645485301f2f1c97faa3",
+      "width": 640,
+      "height": 400,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clpr-discover.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-clpr-discover-1280.webp",
+      "sha256": "010ae6bf1ca3485248ab5303d67cb7be872e619e607c9d4d96b382bea57dc064",
+      "width": 1280,
+      "height": 800,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clpr-discover.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-clpr-feed-640.webp",
+      "sha256": "b50fa61e7c9f242519969cb38434a983872f2022f0591f1c49bae66c1e1c1b5e",
+      "width": 640,
+      "height": 400,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clpr-feed.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-clpr-feed-1280.webp",
+      "sha256": "9f4e56ce3113420ab33b76e7931fac2e8a27335cf8e9d3d2a212cd840d2b499c",
+      "width": 1280,
+      "height": 800,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clpr-feed.png"
+    },
+    {
+      "path": "/assets/projects/social/clpr.png",
+      "sha256": "abc259fb8feaebc479a2b0e39f1809916f30e34fe70bfede95abb8c5a890c6a8",
+      "width": 1200,
+      "height": 630,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clpr-discover.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-clustr-data-640.webp",
+      "sha256": "14942399c31e4809c81e5cfe84ef3ab57d9e7ecc36135fe83ea49e0b6da96b6d",
+      "width": 640,
+      "height": 400,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clustr-data.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-clustr-data-1280.webp",
+      "sha256": "a2a9be74a684dfa13f1a8cf8215e2ef10c7ac3e78533d02d6f7d7a9e393776d2",
+      "width": 1280,
+      "height": 800,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clustr-data.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-clustr-universe-640.webp",
+      "sha256": "49735b97ec432875f6f00d4965d24736f93b75226a91d2c346c3d67e83d20a32",
+      "width": 640,
+      "height": 400,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clustr-universe.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-clustr-universe-1280.webp",
+      "sha256": "ec008cea3bb47d6c72e936c3e042d7659e345d78d48f23ffeb8a62455a4687af",
+      "width": 1280,
+      "height": 800,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clustr-universe.png"
+    },
+    {
+      "path": "/assets/projects/social/clustr.png",
+      "sha256": "21a8165ffaf741757f8be757c55b9dfdfa8f83618c535f36370aac2dfc9a0a34",
+      "width": 1200,
+      "height": 630,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/clustr-data.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-rekolekt-search-640.webp",
+      "sha256": "7d7b44a37bb545f5c389f9564729d2ed251b13f2da0372ec9ef2fb23af482d70",
+      "width": 640,
+      "height": 400,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/rekolekt-search.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-rekolekt-search-1280.webp",
+      "sha256": "cf5c4117b5d9c72eb1161dd7bbdf24905f467defe923b546cd46763b710097d2",
+      "width": 1280,
+      "height": 800,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/rekolekt-search.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-rekolekt-archive-640.webp",
+      "sha256": "e392a8d4ce73d565a8ed8f22f6bb01fded3174195ca015a8e6509ab8f4706dac",
+      "width": 640,
+      "height": 400,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/rekolekt-archive.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-rekolekt-archive-1280.webp",
+      "sha256": "f37ad6711e77cc7de2ef9a635fb750696e075c79e7e969a7f118821f6b6eefd6",
+      "width": 1280,
+      "height": 800,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/rekolekt-archive.png"
+    },
+    {
+      "path": "/assets/projects/social/rekolekt.png",
+      "sha256": "d1b34caf171b9fb15fe6e2569bfe9bc10b91257d90602ff168b4c36da4ca762b",
+      "width": 1200,
+      "height": 630,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/rekolekt-search.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-undertow-editor-640.webp",
+      "sha256": "ff869028094184c61a876373f6726aca0257cf70be7cfb31006c5ed79f64a109",
+      "width": 640,
+      "height": 400,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/undertow-editor.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-undertow-editor-1280.webp",
+      "sha256": "5ca411ffa487dda5b760568c29afe7091ac30c13b5ffde65fb353ba6324e0e70",
+      "width": 1280,
+      "height": 800,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/undertow-editor.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-undertow-export-640.webp",
+      "sha256": "0d5d8ad0f8af2d0df12a38cc552ee89a2e7937ac3096227969b84ae552004202",
+      "width": 640,
+      "height": 400,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/undertow-export.png"
+    },
+    {
+      "path": "/assets/projects/screenshots/2026-11-16-undertow-export-1280.webp",
+      "sha256": "412b379eded112f5d3295eacf7b14d7d5ff86c4f21b92c1a6f43dc0b878aea4e",
+      "width": 1280,
+      "height": 800,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/undertow-export.png"
+    },
+    {
+      "path": "/assets/projects/social/undertow.png",
+      "sha256": "550228f3c1b8cb4185282261dfc03298f7609f1cbba925cf028511b857edfb2d",
+      "width": 1200,
+      "height": 630,
+      "capture": "docs/evidence/portfolio-2026-11-16/captures/undertow-editor.png"
     }
-  ]
+  ],
+  "captureEvidence": "docs/evidence/portfolio-2026-11-16/captures.json",
+  "importedBaseline": "The repository and commit fields identify the original imported assets. Entries with a capture field are site-owned derivatives of the linked dated screenshot, not files from that imported commit."
 }

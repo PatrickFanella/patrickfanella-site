@@ -5,33 +5,36 @@ commit (the source repository is private) and records the repository, file, full
 An optional local clone path uses `git show` for the same commit and file, with no checkout mutation.
 Builds use the checked-in copy and do not fetch content from the network.
 
-The 40 catalog entries appear once each at `/projects/`: Clpr and Undertow first, then the remaining
-38 entries in source order. This small featured set comes from the site-owned `project-presentation.ts`,
-also used on the landing page. The 25 imported `selected` flags and pinned catalog bytes are unchanged.
-Rows show the first available captioned screenshot or diagram from each project's media; entries
-without media remain text rows rather than showing a placeholder or implying a product screenshot exists.
-`ProjectMedia.astro` uses the pinned asset dimensions and responsive screenshot variants with native
-lazy loading. Capture dates stay in their original captions; undated illustrations and diagrams are
-labelled with the source snapshot date (November 13, 2026, the pinned source commit's committer date),
-not a capture date or a statement about current runtime health.
-Every entry includes its original summary, stack and delivery status. Missing status is explicitly
-unstated, not inferred from screenshots or links. Pre-alpha and development labels are retained.
-CSS and fonts load without JavaScript. The optional script supplies ink, theme switching and motion.
-Every catalog entry also has a detail page at `/projects/<slug>/`, with its description, links,
-stack, status, notes and captioned images. The source catalog remains unchanged. List links and
-page headings share the selected project name during the native hand-over; reduced motion disables
-the transition. Browsers without cross-document transitions follow ordinary HTML links.
+The current `/projects/` selection is maintained separately in `src/content/selected-projects.json`:
+four featured projects (Clpr, Clustr, Rekolekt with HasanAra, Undertow) and twelve supporting entries.
+`project-presentation.ts` defines the four featured slugs and exports the same selection for the
+landing page, Work page and Desk. Imported selection flags are not used. The source catalog bytes
+remain intact; current entries overlay those records for detail pages, and three new projects bring
+the total to 43 detail routes. Unselected pages carry a historical-snapshot notice and return to the
+Work index. The sitemap lists the current sixteen detail pages.
 
-Detail pages lead with the original summary, role, status and period, followed by the first available
-product screenshot or diagram. That lead image loads eagerly with its original caption and dimensions;
-remaining media stays lazy and in source order after the architecture. Product scope, stack and technical
-sections follow the lead visual. Projects without media keep their complete text rather than an empty
-image slot. Direct study links and featured ownership copy come from `project-presentation.ts`;
-Clpr links to `/case-studies/clpr-search/` from its header with an ordinary HTML anchor.
+The four product stories at `/case-studies/<slug>/` read `project-case-studies.json`. Each includes
+scope, current delivery status, implementation choices, tradeoffs and evidence limits. Public
+implementation links use full reviewed commit IDs recorded in `selected-project-sources.json`.
+The existing pinned Clpr request walkthrough is retained at `/case-studies/clpr-request/`, and
+its ranking study remains at `/case-studies/clpr-search/`. `/case-studies/` introduces all four stories.
 
-`node scripts/sync-project-assets.mjs [local-clone]` reads only the assets used by this catalog from
-the same pinned commit. File hashes are recorded in `project-assets-provenance.json`. It also makes
-1200 × 630 PNG social images from each original thumbnail. The pages load no external images or fonts.
+Featured entries show fresh captioned screenshots; supporting entries are compact text rows.
+`ProjectMedia.astro` reads dimensions from the asset manifest, uses responsive WebP variants and
+native lazy loading, and retains the supplied caption. Case studies and detail pages load their
+lead image eagerly and remaining media lazily. Historical entries keep their original image captions;
+the page's source note identifies the November 13 imported snapshot. CSS and fonts load without
+JavaScript; optional scripts supply ink, theme switching and motion. List links and detail headings
+share the project name during the native hand-over. Reduced motion disables that transition, and
+browsers without cross-document transitions follow ordinary HTML links.
+
+`node scripts/sync-project-assets.mjs [local-clone]` refreshes the pinned imported assets and their
+social cards, then reapplies the site-owned captures. `scripts/process-project-captures.mjs` verifies
+the eight original PNG hashes in `docs/evidence/portfolio-2026-11-16/captures.json`, generates two
+responsive WebP sizes per capture, updates the featured media, and renders four 1200 × 630 PNG social
+cards. The manifest records each derivative's source capture, dimensions and SHA-256. Capture notes
+distinguish public data from the isolated Undertow demonstration. The pages load no external images
+or fonts. Running the capture processor does not need a login or another browser session.
 
 The old `/projects/transcript-create` and `/projects/discord-spywatcher` URLs redirect to Rekolekt
 and Backline, respectively. Astro static output emits HTML refresh redirects; the launch server
@@ -42,10 +45,12 @@ live site's sitemap captured on 2026-11-15 UTC in `docs/evidence/current-site-si
 `--live` to compare with the current public sitemap instead. Only project paths are checked here;
 the live contact route belongs to launch work.
 
-Checks: `npm run build`; `npx playwright test e2e/content.spec.ts` checks every source record without
+Checks: `npm run build`; `npx playwright test e2e/content.spec.ts` checks the curated list without
 JavaScript, mobile overflow, and accessibility in both themes.
 `npx playwright test e2e/project-pages.spec.ts` checks all detail pages without scripts, images,
 metadata, legacy redirects, list navigation, name hand-over and mobile accessibility.
+`npx playwright test e2e/portfolio-selection.spec.ts` checks the four product stories without scripts,
+pinned source links, mobile accessibility, enlarged text and curated sitemap discovery.
 
 The project hand-over listener runs as a scoped, classic external blocking script in the head, before
 the first rendering opportunity. A render expectation points to the footer so the selected

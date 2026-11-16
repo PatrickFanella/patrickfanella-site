@@ -1,0 +1,329 @@
+{
+  "reviewedAt": "2026-11-16",
+  "studies": [
+    {
+      "slug": "clpr",
+      "title": "Making Twitch clips discoverable",
+      "description": "Building a clip discovery product around useful search, collections and explicit product boundaries.",
+      "scope": "Go API, React client, search and operations",
+      "outcome": "A public product connecting clip discovery, collections, playlists and moderation.",
+      "intro": "A clip can outlive the stream that made it interesting, but finding it again requires more than a list sorted by views. Clpr connects creators, topics and tags to a searchable clip library, then gives people collections and playlists for the things they want to keep.",
+      "sections": [
+        {
+          "id": "problem",
+          "heading": "Start with the way people look for a clip",
+          "paragraphs": [
+            "A reader might remember a creator, a topic, a line of speech or only part of a title. The product needs to support those different starting points and let browsing remain useful when there is no precise query.",
+            "I built the Go API, React client and search pipeline, together with the account, submission and moderation workflows around them. The current public collections view makes the product legible before a reader learns anything about its backend."
+          ],
+          "sources": [
+            {
+              "label": "Current product scope",
+              "url": "https://github.com/subculture-collective/clpr/blob/5591a5179a44dc79d25b25f6d7f528f1cf2fe414/README.md"
+            }
+          ],
+          "tradeoff": null
+        },
+        {
+          "id": "search",
+          "heading": "Give each search result a clear contract",
+          "paragraphs": [
+            "The Go repository builds independent clip, creator, game and tag result sets. A request selects the relevant branches, and each branch returns its own result count. That keeps the response meaningful for a broad search as well as a clip-only view.",
+            "The active search path also supports a speech-transcript filter. Validation treats a phrase-only search as a clip request and rejects empty or oversized input. These are product semantics that the API tests can name directly."
+          ],
+          "sources": [
+            {
+              "label": "Search repository",
+              "url": "https://github.com/subculture-collective/clpr/blob/5591a5179a44dc79d25b25f6d7f528f1cf2fe414/backend/internal/search/repository.go"
+            },
+            {
+              "label": "Phrase-filter validation tests",
+              "url": "https://github.com/subculture-collective/clpr/blob/5591a5179a44dc79d25b25f6d7f528f1cf2fe414/backend/internal/search/handler_test.go"
+            }
+          ],
+          "tradeoff": "Counts, filtering and ordering are part of the interface contract. Changing a query to make it cheaper can also change navigation or what the reader thinks matched."
+        },
+        {
+          "id": "scope",
+          "heading": "Keep the supported product smaller than the repository",
+          "paragraphs": [
+            "An implementation can exist in a repository without belonging to a supported release. Clpr’s launch inventory explicitly removes or disables features that have not met their promotion gates. Current discovery, playlists and moderation are the story I present here.",
+            "The inventory also makes the maintenance boundary concrete: retired forums, watch parties and billing are not advertised as present-day capabilities. Automated account deletion and full data-subject export remain outside the supported launch contract."
+          ],
+          "sources": [
+            {
+              "label": "Release-scope contract",
+              "url": "https://github.com/subculture-collective/clpr/blob/5591a5179a44dc79d25b25f6d7f528f1cf2fe414/docs/LAUNCH_FEATURE_INVENTORY.md"
+            }
+          ],
+          "tradeoff": "A smaller supported surface means saying exactly what is available. Historical code is useful context, but it is not evidence that a capability shipped."
+        },
+        {
+          "id": "evidence",
+          "heading": "Make the implementation inspectable",
+          "paragraphs": [
+            "The source walkthrough explains ranking, filtered counts, transcript snippets and numbered pages in a pinned PostgreSQL implementation. The engineering Desk takes that further: an opt-in worker runs the pinned Go path against labelled fixture clips and exposes SQL, timings, protocol messages and plans.",
+            "Those artifacts explain a particular version of the search code. They do not establish the current production backend, traffic, relevance quality or a universal speedup. The new screenshots show the public discovery interface as it appeared on November 16, 2026."
+          ],
+          "sources": [
+            {
+              "label": "Read the pinned search decisions",
+              "url": "/case-studies/clpr-search/"
+            },
+            {
+              "label": "Open the engineering Desk",
+              "url": "/desk/"
+            }
+          ],
+          "tradeoff": null
+        }
+      ],
+      "limits": "This study combines current public product documentation with an explicitly versioned code demonstration. Fixture timings are not production latency or traffic measurements."
+    },
+    {
+      "slug": "clustr",
+      "title": "From Reddit activity to an explorable graph",
+      "description": "A durable crawler, reproducible community partitions and atomic graph publication behind a 2D/3D explorer.",
+      "scope": "Go collection and graph pipeline, PostgreSQL and browser explorer",
+      "outcome": "A public community explorer backed by a revision-aware graph API.",
+      "intro": "Clustr turns Reddit activity into a map of communities and the relationships between them. The interesting engineering problem is keeping collection, graph construction and exploration coherent while the underlying data keeps changing.",
+      "sections": [
+        {
+          "id": "problem",
+          "heading": "A graph needs a collection policy",
+          "paragraphs": [
+            "Collecting external data is bounded by API quotas, network failures and the cost of revisiting existing records. A map also needs a defined interpretation: links represent observed relationships, not a complete or permanent account of a community.",
+            "I built the Go collection and publication pipeline and its browser explorer. The public application offers a 3D universe, a 2D map, data views and linked entity inspection. A separate Unity client consumes the same API and remains a prototype."
+          ],
+          "sources": [
+            {
+              "label": "Project scope and collection pipeline",
+              "url": "https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/README.md"
+            }
+          ],
+          "tradeoff": null
+        },
+        {
+          "id": "collection",
+          "heading": "Make interrupted collection recoverable",
+          "paragraphs": [
+            "A durable crawl request is separate from a particular worker attempt. The lifecycle code records a worker identity, lease and attempt outcome, and distinguishes complete, partial, retryable, permanent-failure and cancelled work.",
+            "An explicit request can bring an existing community forward for another crawl. A historical successful job therefore does not become a permanent marker that prevents the data from ever being refreshed."
+          ],
+          "sources": [
+            {
+              "label": "Durable crawl lifecycle",
+              "url": "https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/backend/internal/crawler/lifecycle.go"
+            }
+          ],
+          "tradeoff": "Leases and retries add state to operate and test. They also make unfinished work visible instead of hiding it in a worker process that may disappear."
+        },
+        {
+          "id": "publication",
+          "heading": "Publish a world rather than a work in progress",
+          "paragraphs": [
+            "Graph generation and publication are separate from the crawler. The publication path bounds node and link counts, constructs the required artifacts, then commits those artifacts and the current revision pointer atomically.",
+            "The weighted Louvain boundary sorts source identities and edges and uses an explicit random seed. Repeated builds can therefore reproduce the partition for the same inputs and parameters, which makes graph changes easier to investigate."
+          ],
+          "sources": [
+            {
+              "label": "Revision publication",
+              "url": "https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/backend/internal/graph/revisions.go"
+            },
+            {
+              "label": "Reproducible partition boundary",
+              "url": "https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/backend/internal/affinity/hierarchy.go"
+            }
+          ],
+          "tradeoff": "A published revision is a consistent snapshot, so it deliberately trails collection. Caps keep resource use bounded but also define what the explorer can show."
+        },
+        {
+          "id": "evidence",
+          "heading": "Let readers follow the same revision",
+          "paragraphs": [
+            "The explorer and API expose views of the published world rather than querying every crawler table directly. The revision integration test checks that publication refuses an absent or unpublished spatial catalog without moving the current pointer.",
+            "The screenshots show the actual public application captured on November 16, 2026. Rendering and dataset coverage have their own limits; a graph image does not establish collection completeness or a benchmark for large-world performance."
+          ],
+          "sources": [
+            {
+              "label": "Publication integration test",
+              "url": "https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/backend/internal/graph/revisions_integration_test.go"
+            },
+            {
+              "label": "Explore Clustr",
+              "url": "https://clustr.subcult.tv"
+            }
+          ],
+          "tradeoff": null
+        }
+      ],
+      "limits": "Community relationships reflect collected activity and the selected graph model. Configured node caps are resource budgets, not measurements of the published dataset."
+    },
+    {
+      "slug": "rekolekt",
+      "title": "From long recordings to timestamped passages",
+      "description": "Rekolekt’s recoverable processing and search contracts, made concrete in the HasanAra broadcast archive.",
+      "scope": "Python/FastAPI engine, worker pipeline, shared React kit and HasanAra frontend",
+      "outcome": "A reusable recording-archive backend in use by a public, searchable broadcast archive.",
+      "intro": "A long recording becomes useful reference material when a reader can find a phrase and return to the moment it was spoken. Rekolekt supplies the processing and API; HasanAra gives that system a concrete archive and reader experience.",
+      "sections": [
+        {
+          "id": "problem",
+          "heading": "Keep the source attached to the answer",
+          "paragraphs": [
+            "Ingestion and transcription are expensive, interruptible jobs. Search needs to stay useful while processing continues, and a transcript result needs to preserve its recording and timestamp so a person can inspect the source.",
+            "I built the headless Rekolekt backend and HasanAra’s independent React frontend. The rekolekt-web package supplies generated API types, hooks and reusable player/transcript behavior; the archive owns its pages and identity. These are parts of one system rather than three unrelated portfolio projects."
+          ],
+          "sources": [
+            {
+              "label": "Engine capabilities",
+              "url": "https://github.com/subculture-collective/rekolekt/blob/93bb8277aeddc4b70add58168258f30ee0290c92/README.md"
+            },
+            {
+              "label": "HasanAra frontend and engine boundary",
+              "url": "https://github.com/subculture-collective/hasanara/blob/d6b1f00bd3842f5b4784978304bf174192b784c3/README.md"
+            }
+          ],
+          "tradeoff": null
+        },
+        {
+          "id": "workers",
+          "heading": "Make completion depend on ownership",
+          "paragraphs": [
+            "Workers claim durable attempts, renew leases and record their progress. Finalization uses the attempt’s identity and ownership, so a worker finishing after interruption cannot simply overwrite the result of a newer attempt.",
+            "Network and GPU work runs outside the database transaction. Short database operations claim and finalize work; the application does not hold a transaction open for an entire download or transcription."
+          ],
+          "sources": [
+            {
+              "label": "Worker leases and finalization",
+              "url": "https://github.com/subculture-collective/rekolekt/blob/93bb8277aeddc4b70add58168258f30ee0290c92/worker/job_lifecycle.py"
+            },
+            {
+              "label": "Processing architecture",
+              "url": "https://github.com/subculture-collective/rekolekt/blob/93bb8277aeddc4b70add58168258f30ee0290c92/docs/development/architecture.md"
+            }
+          ],
+          "tradeoff": "Lease expiry, cancellation and retries create more states than a simple in-memory queue. They are also the states an operator needs to recover work deliberately."
+        },
+        {
+          "id": "search",
+          "heading": "Keep the primary store authoritative",
+          "paragraphs": [
+            "PostgreSQL owns archive records. Optional OpenSearch acceleration is fed through a transactional outbox, with versioned updates and deletion tombstones. The API exposes indexing freshness so a reader or operator can distinguish an empty answer from a stale index.",
+            "Classified search outages can fall back to PostgreSQL. That fallback is a defined degraded mode, not a reason to hide authorization, validation or quota errors. The outbox tests exercise update and deletion behavior at the database boundary."
+          ],
+          "sources": [
+            {
+              "label": "Search freshness queries",
+              "url": "https://github.com/subculture-collective/rekolekt/blob/93bb8277aeddc4b70add58168258f30ee0290c92/app/search/outbox.py"
+            },
+            {
+              "label": "Outbox and tombstone tests",
+              "url": "https://github.com/subculture-collective/rekolekt/blob/93bb8277aeddc4b70add58168258f30ee0290c92/tests/test_search_outbox.py"
+            }
+          ],
+          "tradeoff": "A second search backend carries synchronization and recovery costs. A source-of-truth store, explicit lag metadata and a bounded fallback make those costs observable."
+        },
+        {
+          "id": "reader",
+          "heading": "Finish at the recording",
+          "paragraphs": [
+            "HasanAra groups search results by broadcast and offers the matching moment, a shareable passage and the full recording. The new search screenshot uses a real public query and retains the visible transcript context.",
+            "Machine transcription can be wrong, and a passage link can change when its source or transcript changes. The archive asks readers to check the recording before quoting. This study does not describe passage links as immutable citations."
+          ],
+          "sources": [
+            {
+              "label": "Search the HasanAra archive",
+              "url": "https://hasanara.tv/search?q=labor"
+            },
+            {
+              "label": "Frontend and snippet contract",
+              "url": "https://github.com/subculture-collective/rekolekt/blob/93bb8277aeddc4b70add58168258f30ee0290c92/docs/development/architecture.md"
+            }
+          ],
+          "tradeoff": null
+        }
+      ],
+      "limits": "Transcripts are machine-generated and archive coverage is incomplete. Screenshots record a dated view of the public archive, not transcription accuracy or a new processing-performance benchmark."
+    },
+    {
+      "slug": "undertow",
+      "title": "A video rendering pipeline inside the browser",
+      "description": "Building a layered music-video editor with local encoding, bounded output buffers and explicit codec limits.",
+      "scope": "React editor, audio-reactive composition and local WebCodecs export",
+      "outcome": "A public editor that renders MP4 or WebM locally without requiring an account.",
+      "intro": "Undertow gives a musician a way to turn a track, artwork and timed lyrics into a video. The editor is only the beginning: the same project has to produce frames, encode them and finish a playable file within the browser’s limits.",
+      "sections": [
+        {
+          "id": "problem",
+          "heading": "Treat the export as part of the editor",
+          "paragraphs": [
+            "A preview can look right while the exported file has the wrong timing, no audio or an allocation failure. The editor therefore needs a real rendering pipeline, not a screen recording of the preview.",
+            "I built the React editor, layered compositor and local export path. Projects keep separate landscape, portrait and square layouts. Visuals can react to audio, and timed lyrics can sit alongside artwork, text and video layers."
+          ],
+          "sources": [
+            {
+              "label": "Editor and export capabilities",
+              "url": "https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/README.md"
+            }
+          ],
+          "tradeoff": null
+        },
+        {
+          "id": "frames",
+          "heading": "Keep frame production and encoding explicit",
+          "paragraphs": [
+            "The export loop analyzes, draws and encodes frames through MediaBunny and the browser’s codec APIs. It negotiates an encodable video and audio format instead of assuming every browser supports the same combination.",
+            "Encoder promises do not necessarily yield control back to the page. The pipeline explicitly yields a macrotask, and the frame-capture path handles GPU/CPU copying with a pixel-readback fallback."
+          ],
+          "sources": [
+            {
+              "label": "Frame capture and export loop",
+              "url": "https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/src/export/exportVideo.ts"
+            }
+          ],
+          "tradeoff": "Local rendering keeps media on the user’s device, but codec availability and encoding speed depend on that browser and hardware. A supported resolution is not a promise that every device can encode it."
+        },
+        {
+          "id": "memory",
+          "heading": "Let the muxer seek without one giant buffer",
+          "paragraphs": [
+            "Video containers need to patch metadata written earlier in the file. Undertow’s BlobChunks output maps writes into seekable chunks so the muxer can revise headers without allocating an ArrayBuffer as large as the finished video.",
+            "The regression test first constrains individual ArrayBuffer allocations, demonstrates the original in-memory path failing, then exports and demuxes a larger file through the chunked path. Another check verifies bytes when a header write crosses a chunk boundary."
+          ],
+          "sources": [
+            {
+              "label": "Seekable chunked output",
+              "url": "https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/src/export/blobOutput.ts"
+            },
+            {
+              "label": "Allocation and byte-integrity regression tests",
+              "url": "https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/tests/export-memory.test.ts"
+            }
+          ],
+          "tradeoff": "Chunking avoids a single large contiguous allocation. It does not make output storage free or remove the device’s overall memory limit."
+        },
+        {
+          "id": "evidence",
+          "heading": "Separate the local product from optional services",
+          "paragraphs": [
+            "The public editor works without an account. Optional accounts and cloud rendering are a separate capability in testing, and live paid billing is off. They are not needed to explain the local rendering work.",
+            "The screenshots use an isolated demonstration project, an original eight-second synthesized track and the portfolio’s approved PF artwork. They show the real editor and export controls, not a client commission or a measured encoding benchmark. The repository also provides a browser self-test that encodes and reads actual output files."
+          ],
+          "sources": [
+            {
+              "label": "Browser export self-test",
+              "url": "https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/src/selftest.ts"
+            },
+            {
+              "label": "Open Undertow",
+              "url": "https://undertow.subcult.tv"
+            }
+          ],
+          "tradeoff": null
+        }
+      ],
+      "limits": "Encoding support, audio output and achievable resolutions vary by browser and hardware. The captured demonstration does not qualify every device or the optional cloud-rendering service."
+    }
+  ]
+}

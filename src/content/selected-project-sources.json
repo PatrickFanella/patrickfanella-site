@@ -1,0 +1,90 @@
+{
+  "reviewedAt": "2026-11-16",
+  "sources": [
+    {
+      "repo": "subculture-collective/clpr",
+      "sha": "5591a5179a44dc79d25b25f6d7f528f1cf2fe414",
+      "readmeSha": "011698fe409df2b035f8d61ac031df125d0904a6"
+    },
+    {
+      "repo": "subculture-collective/clustr",
+      "sha": "27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75",
+      "readmeSha": "63dd5b4f143acb149ab9dfac4eb260aec8fdeb6d"
+    },
+    {
+      "repo": "subculture-collective/rekolekt",
+      "sha": "93bb8277aeddc4b70add58168258f30ee0290c92",
+      "readmeSha": "78a4bd5a61c0c44071040b3a2d6c8e4f88793e9e"
+    },
+    {
+      "repo": "subculture-collective/hasanara",
+      "sha": "d6b1f00bd3842f5b4784978304bf174192b784c3",
+      "readmeSha": "2e146c98a1c73183d9104ac174fd0d848a43da06"
+    },
+    {
+      "repo": "subculture-collective/undertow",
+      "sha": "3440d7f17de91d3371f77702f9d374677499fa20",
+      "readmeSha": "3b34ab7dee65967eb44728cac1463e6708a6d86e"
+    },
+    {
+      "repo": "subculture-collective/tadooer",
+      "sha": "34729bb5ccb85bb4ea363a4117d9bb4244fe1fb6",
+      "readmeSha": "d214ff4b90298456064c94d59584c66e511368c4"
+    },
+    {
+      "repo": "subculture-collective/prichal",
+      "sha": "d62b60fb2274144846d9a7f605ad9d90f8ce1eb4",
+      "readmeSha": "ba3ef94d4fcbba397e00011fd4e15c671570808e"
+    },
+    {
+      "repo": "subculture-collective/arkhiv",
+      "sha": "a31d243e8982d99200f77d8e2ebf7ba15cba41eb",
+      "readmeSha": "4b167bbdc2cb42947b1d7142dfbaf5769b23939a"
+    },
+    {
+      "repo": "subculture-collective/stupen",
+      "sha": "fac64f6ce68ae3c51d861f29f27371d3d1946470",
+      "readmeSha": "1eeee06760d36f6ab036fac7b8a46548a4577e0a"
+    },
+    {
+      "repo": "subculture-collective/patchwork",
+      "sha": "3187bd4ab16a212b518207577faca4de6bdc199f",
+      "readmeSha": "b6d0d5c7226c9718c1c9efb78354dbc2f4e051dd"
+    },
+    {
+      "repo": "subculture-collective/left-field",
+      "sha": "ca429777f0d7af63e6d5812e3361e75798a29660",
+      "readmeSha": "5f6195ae5e79f85ee96bb27a2434d6052da9f536"
+    },
+    {
+      "repo": "subculture-collective/headcount",
+      "sha": "f0fb8408d870661af10cfb1b85d8067103cc26bd",
+      "readmeSha": "07adae4995aac109e159de17160a7c640cca9ab9"
+    },
+    {
+      "repo": "subculture-collective/backline",
+      "sha": "c42f3032cd69c55e669aa3479e5632d21a09752e",
+      "readmeSha": "9fd4e23802f40e1dfcd7b64db863158e4b9d45d9"
+    },
+    {
+      "repo": "subculture-collective/pult",
+      "sha": "7a703f18d2a934d5c4821c24a723c0ad4863417d",
+      "readmeSha": "2e487e1abc7c677576aaada14bc1aeb0e7e6ee12"
+    },
+    {
+      "repo": "subculture-collective/subsets",
+      "sha": "6538dee268214803d507f1dcc2df28f8ac87aeea",
+      "readmeSha": "1455952e5dede5060df3428427308cdf4c14f4af"
+    },
+    {
+      "repo": "subculture-collective/super-productivity-mcp",
+      "sha": "b772e06e85999d707c807f92d4bbe0af1b3410f7",
+      "readmeSha": "37944634bfb00aaf49fa6cd29249eecb62b3c774"
+    },
+    {
+      "repo": "subculture-collective/obsidian-plugin-metronome-tuner",
+      "sha": "8164f82ff705e9c658230e516be739ebb4c3e5f5",
+      "readmeSha": "98922fea9121f9a13439bb11d135ee51caebddd8"
+    }
+  ]
+}

@@ -35,7 +35,7 @@ import { employmentFeature, featuredProjects } from '../content/project-presenta
     <section id="coming" class="coming" aria-labelledby="coming-h">
       <div class="coming-head">
         <h2 id="coming-h">Selected work</h2>
-        <p>Run the software, inspect its evidence, or read the source beside the decisions that shaped it.</p>
+        <p>Four products, four engineering stories: discovery, graph data, recording archives and local video rendering.</p>
         <p class="dim">Looking for experience and results? Read the <a href="/resume/">résumé</a> or <a href="/contact/">get in touch</a>.</p>
       </div>
       <div class="featured-work">
@@ -46,25 +46,24 @@ import { employmentFeature, featuredProjects } from '../content/project-presenta
           <p>{employmentFeature.outcome}</p>
           <a href={employmentFeature.href}>Read the DeliverZero experience</a>
         </article>
-        {featuredProjects.map(({ project, ownership, media, dimensions, study }) => <article class="featured-project panel">
+        {featuredProjects.map(({ project, media, dimensions, study }) => <article class="featured-project panel">
           <figure>
-            <img src={media.src} srcset={'srcSet' in media ? media.srcSet : undefined} sizes="(max-width: 860px) calc(100vw - 32px), 60vw" width={dimensions.width} height={dimensions.height} alt={media.alt} loading="lazy" decoding="async" />
+            <img src={media.src} srcset={'srcSet' in media ? media.srcSet : undefined} sizes="(max-width: 860px) calc(100vw - 32px), 58vw" width={dimensions!.width} height={dimensions!.height} alt={media.alt} loading="lazy" decoding="async" />
             <figcaption>{media.caption}</figcaption>
           </figure>
           <div class="featured-copy">
             <h3><a href={`/projects/${project.slug}/`}>{project.title}</a></h3>
-            <p>{project.summary}</p><p>{ownership}</p>
+            <p>{project.summary}</p><p class="dim">{project.deliveryStatus}</p>
             <nav aria-label={`${project.title} destinations`}>
-              <a href={`/projects/${project.slug}/`}>Read the project</a>
-              {study && <a href={study}>Search decisions study</a>}
+              <a href={study}>Read the case study</a>
+              <a href={`/projects/${project.slug}/`}>Project and source</a>
               <a href={project.liveUrl}>Open {project.title}</a>
             </nav>
           </div>
         </article>)}
         <div class="featured-more panel">
           <p><a href="/desk/">Open the engineering Desk</a>: read recorded search evidence, then opt in to run Clpr’s pinned search code in your browser.</p>
-          <p>For the data and search story, read <a href="/projects/hasanara/">HasanAra</a> and its <a href="/projects/rekolekt/">Rekolekt core</a>.</p>
-          <p><a href="/projects/">Browse all 40 projects</a> or <a href="/motion/">explore the motion set</a>.</p>
+          <p><a href="/projects/">Browse twelve other projects</a> or <a href="/motion/">explore the motion set</a>.</p>
         </div>
       </div>
     </section>

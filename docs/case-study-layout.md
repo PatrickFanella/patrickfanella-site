@@ -1,5 +1,10 @@
 # Case-study layout
 
+The case-study index now introduces four product stories. The annotated source sample described
+below is retained at `/case-studies/clpr-request/`; its ranking study remains at
+`/case-studies/clpr-search/`. Current product-story data and captures are described in
+[content-pages.md](content-pages.md).
+
 The sample reads Clpr's `Search` method at commit `1eab1a62535e562e327fbf4b197c094e81abe619`,
 `backend/internal/repository/search_repository.go`, lines 26–47. The complete upstream file is
 archived in `src/content/case-studies/search_repository.go`; its bytes were compared with the

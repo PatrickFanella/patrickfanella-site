@@ -46,3 +46,25 @@
 ::view-transition-group(project-name) { animation-duration: var(--t-4); animation-timing-function: var(--ease-out); }
 ::view-transition-old(project-name), ::view-transition-new(project-name) { height: 100%; object-fit: contain; object-position: left top; }
 @media (prefers-reduced-motion: reduce) { ::view-transition-group(project-name), ::view-transition-old(project-name), ::view-transition-new(project-name) { animation: none !important; } }
+
+/* Product studies reuse the existing reading surface and type system. */
+.product-study header { margin: 2rem 0; }
+.product-study .study-project { font: 700 1rem/1.5 var(--body); margin: 0 0 1rem; }
+.product-study .project-facts div { grid-template-columns: 8ch minmax(0, 1fr); }
+.content-main .product-study h1 { font-size: clamp(2.6rem, 6.5vw, 5rem); line-height: 1; text-transform: none; max-width: 20ch; }
+.product-study > figure, .study-reading > figure { margin: 2.5rem 0; }
+.product-study img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+.product-study figcaption { font: .75rem/1.6 var(--mono); color: var(--dim); margin-top: .75rem; }
+.study-contents { margin: 2.5rem 0; max-width: 70ch; }
+.study-contents h2, .study-reading h2 { font: 800 2rem/1.15 var(--display); margin: 0 0 1rem; }
+.study-contents ol { padding-left: 1.5rem; }
+.study-contents li + li { margin-top: .5rem; }
+.study-reading section { max-width: 70ch; margin: 3rem 0; scroll-margin-top: var(--header-clearance); }
+.study-reading p + p { margin-top: 1rem; }
+.study-tradeoff { padding-top: 1rem; border-top: 1px solid var(--line); }
+.study-sources { list-style: none; padding: 0; margin: 1rem 0 0; display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: .875rem; }
+.study-next { padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.project-list h2 { font: 800 1.9rem/1.1 var(--display); margin: 0; }
+.supporting-projects article { grid-template-columns: minmax(0, 1fr); }
+.supporting-projects .project-list-copy { grid-column: 1; }
+@media (max-width: 600px) { .product-study .project-facts div { grid-template-columns: minmax(0, 1fr); gap: .25rem; } }

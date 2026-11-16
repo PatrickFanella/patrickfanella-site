@@ -1,7 +1,11 @@
 import { readFile, access } from 'node:fs/promises'
 
 const root = new URL('../', import.meta.url)
-const { projects } = JSON.parse(await readFile(new URL('src/content/portfolio.json', root)))
+const imported = JSON.parse(await readFile(new URL('src/content/portfolio.json', root)))
+const selected = JSON.parse(await readFile(new URL('src/content/selected-projects.json', root)))
+const studies = JSON.parse(await readFile(new URL('src/content/project-case-studies.json', root)))
+const projects = [...new Map([...imported.projects, ...selected.projects].map(project => [project.slug, project])).values()]
+if (selected.projects.length !== 16 || studies.studies.length !== 4) throw new Error('Expected four case studies and twelve supporting projects')
 const snapshot = new URL('docs/evidence/current-site-sitemap.xml', root)
 const xml = process.argv.includes('--live')
   ? await fetch('https://patrickfanella.co/sitemap.xml').then(response => {
@@ -24,3 +28,6 @@ for (const path of new Set([...projects.map(project => `/projects/${project.slug
   }
 }
 console.log(`All ${projects.length} catalog pages, ${projectPaths.length} sitemap project paths and ${redirects.size} legacy redirects exist.`)
+
+for (const study of studies.studies) await access(new URL(`dist/case-studies/${study.slug}/index.html`, root))
+console.log('All four product studies and the curated sixteen-project selection exist.')

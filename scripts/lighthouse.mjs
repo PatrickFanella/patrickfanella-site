@@ -7,7 +7,7 @@ import { setTimeout } from 'node:timers/promises'
 
 const local = process.argv.includes('--local')
 const base = local ? 'http://127.0.0.1:4189' : (process.argv.find(arg => arg.startsWith('https://')) ?? 'https://patrickfanella.co')
-const paths = process.argv.find(arg => arg.startsWith('--paths='))?.slice(8).split(',') ?? ['/', '/projects/', '/resume/', '/contact/', '/desk/']
+const paths = process.argv.find(arg => arg.startsWith('--paths='))?.slice(8).split(',') ?? ['/', '/projects/', '/resume/', '/contact/', '/desk/', '/case-studies/clpr/', '/case-studies/clustr/', '/case-studies/rekolekt/', '/case-studies/undertow/']
 const directory = process.env.LIGHTHOUSE_OUTPUT ?? 'test-results/lighthouse'
 await mkdir(directory, { recursive: true })
 let server
