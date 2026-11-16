@@ -19,3 +19,12 @@ Motion, Desk and Desk shell; the imported source data and original PDF bytes rem
 The web résumé places the existing approximate DeliverZero outcome before the skills
 inventory and provides `/resume/#deliverzero` as a stable employment anchor. #67 owns
 the later branded PDF export and its separate artifact provenance.
+
+
+## Generated compact download (#67)
+
+`npm run render:resume` renders the one-page download from maintained `src/content/resume.json`, the shared recruiting contact, the selected solid PF and the installed self-hosted display/body font bytes. It uses the lockfile's Playwright Chromium. The subset keeps profile/skills, the first three bullets of each engineering role and Retail Data Systems; the fuller web résumé and its one-or-two-page print layout remain available. No unsupported facts or new employment measurements are added.
+
+`src/content/resume-artifact.json` records the generated PDF hash, renderer/browser version and input hashes. `resume.json` retains the original imported PDF path/commit/hash; that historical source hash is not the replacement download hash. Chromium date and document ID metadata are normalized at equal byte lengths for reproducibility on the same browser. Build checks reject stale source inputs or altered artifact bytes. After a browser/toolchain upgrade, regenerate twice, compare bytes, render the page and review the new receipt.
+
+Validation: render twice with `npm run render:resume`, inspect `pdfinfo`, extract facts with `pdftotext`, render with `pdftoppm -png`, and run `npx playwright test e2e/resume.spec.ts`. Browser checks exercise a real download event, advertised filename, served/downloaded hash and the separate full web print contract.

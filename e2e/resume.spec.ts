@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { readFile, writeFile } from 'node:fs/promises'
 import AxeBuilder from '@axe-core/playwright'
 import resume from '../src/content/resume.json' with { type: 'json' }
+import artifact from '../src/content/resume-artifact.json' with { type: 'json' }
 import { test, expect } from './fixtures'
 
 test.use({ reducedMotion: 'reduce' })
@@ -14,8 +15,16 @@ test('résumé matches its source, downloads the exact PDF and prints on one or 
   const response = await page.request.get('/assets/patrick_fanella_resume.pdf')
   expect(response.ok()).toBeTruthy()
   expect(response.headers()['content-type']).toContain('application/pdf')
-  expect(createHash('sha256').update(await response.body()).digest('hex')).toBe(resume.provenance.pdfSha256)
+  expect(createHash('sha256').update(await response.body()).digest('hex')).toBe(artifact.sha256)
   await expect(page.getByRole('link', { name: 'Download PDF' })).toHaveAttribute('download', 'Patrick_Fanella_Resume.pdf')
+  const downloading = page.waitForEvent('download')
+  await page.getByRole('link', { name: 'Download PDF' }).click()
+  const download = await downloading
+  expect(download.suggestedFilename()).toBe(artifact.filename)
+  const downloaded = (await download.path())!
+  expect(createHash('sha256').update(await readFile(downloaded)).digest('hex')).toBe(artifact.sha256)
+  expect(artifact.importedSource.pdfSha256).toBe(resume.provenance.pdfSha256)
+  expect(artifact.sha256).not.toBe(resume.provenance.pdfSha256)
   let prints = 0
   page.on('dialog', async dialog => dialog.dismiss())
   await page.exposeFunction('recordPrint', () => { prints++ })
