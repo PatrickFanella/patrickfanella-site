@@ -8,7 +8,7 @@ with a download filename. Do not invent dates when updating these sources.
 
 `/resume/` renders without JavaScript. Fonts and CSS load statically; the optional Print résumé
 button uses a bundled event listener allowed by the site's CSP. The print stylesheet removes the
-navigation and ink, uses letter paper with half-inch margins, and fits the checked content on one letter page (the contract permits two).
+navigation and ink, uses letter paper with 0.4-inch margins, and fits the full experience on one letter page.
 
 Checks: `npm run build`; `npx playwright test e2e/resume.spec.ts` compares the served PDF hash,
 checks the source roles and dates, renders print output, and checks mobile layout and accessibility.
@@ -22,6 +22,14 @@ the later branded PDF export and its separate artifact provenance.
 
 
 ## Generated compact download (#67)
+
+The owner selected a centered name/contact header with left-aligned body text on November 16, 2026.
+The PDF uses the solid PF at 40% opacity and the approved ink scene at 20% opacity in a vertically
+compressed band about one-third down the page, tilted nine degrees with the right side higher.
+The artwork extends past both page edges; content
+margins remain unchanged. The web résumé uses the same centered header/contact alignment.
+Both selected SVGs are input-hashed in the PDF receipt. This presentation change does not change
+résumé facts or the imported source record.
 
 `npm run render:resume` renders the one-page download from maintained `src/content/resume.json`, the shared recruiting contact, the selected solid PF and the installed self-hosted display/body font bytes. It uses the lockfile's Playwright Chromium. The subset keeps profile/skills, the first three bullets of each engineering role and Retail Data Systems; the fuller web résumé and its one-or-two-page print layout remain available. No unsupported facts or new employment measurements are added.
 
