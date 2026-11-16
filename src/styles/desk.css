@@ -208,7 +208,10 @@
 
 .clpr-example { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-bottom: 12px; }
 .clpr-example label { width: 100%; font-weight: 700; }
-.clpr-example input { min-width: 0; flex: 1 1 12rem; padding: 10px; background: var(--desk-pane-solid); color: var(--desk-text); border: 1px solid var(--desk-line); font: inherit; }
-.clpr-example button { max-width: 100%; white-space: normal; }
+.clpr-example :is(input, button) { min-width: 0; padding: 10px; background: var(--desk-pane-solid); color: var(--desk-text); border: 1px solid var(--desk-line); font: inherit; }
+.clpr-example input { flex: 1 1 12rem; }
+.clpr-example button { max-width: 100%; white-space: normal; cursor: pointer; }
+.clpr-example button:disabled { cursor: default; }
+.clpr-example :focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
 .evidence-entry { margin-block: 12px; padding-block: 12px; border-block: 1px solid var(--desk-line); }
 .evidence-entry p + p { margin-top: 8px; }
