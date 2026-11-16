@@ -55,3 +55,24 @@ test.describe('with reduced motion', () => {
     expect(Date.now() - fontsAt).toBeLessThan(3000)
   })
 })
+
+
+test('selected work exposes supported ownership, dated media and direct destinations without disclosures', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } })
+  const page = await context.newPage()
+  await page.goto('/#coming')
+  await expect(page.locator('.employment-feature')).toContainText('approximately 25%')
+  await expect(page.locator('.employment-feature a')).toHaveAttribute('href', '/resume/#deliverzero')
+  await expect(page.locator('.featured-project')).toHaveCount(2)
+  for (const figure of await page.locator('.featured-project figure').all()) {
+    await expect(figure.locator('figcaption')).toContainText('November 5, 2026')
+    await expect(figure.locator('img')).toHaveAttribute('loading', 'lazy')
+    expect(await figure.locator('img').getAttribute('width')).toMatch(/^\d+$/)
+    await expect(figure.locator('img')).toHaveAttribute('srcset', /640w.*1280w/)
+  }
+  for (const link of await page.locator('.featured-work a[href^="/"]').all()) {
+    expect((await page.request.get((await link.getAttribute('href'))!)).status()).toBe(200)
+  }
+  expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)
+  await context.close()
+})
