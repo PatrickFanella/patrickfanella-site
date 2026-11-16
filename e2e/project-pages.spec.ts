@@ -1,18 +1,18 @@
 import AxeBuilder from '@axe-core/playwright'
-import catalog from '../src/content/portfolio.json' with { type: 'json' }
+import { allProjects, selectedProjects } from '../src/content/project-presentation'
 import { test, expect } from './fixtures'
 
 test.use({ reducedMotion: 'reduce' })
 
-test('catalog features the editorial pair and keeps every anchor, link and available visual without JavaScript', async ({ browser }) => {
+test('selected directory exposes four studies and twelve other projects without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } })
   const page = await context.newPage()
   await page.goto('/projects/')
   const featured = page.getByRole('region', { name: 'Featured projects', exact: true })
-  await expect(featured.locator('article')).toHaveCount(2)
-  await expect(featured.locator('h3')).toHaveText(['Clpr', 'Undertow'])
-  await expect(page.locator('.project-list article')).toHaveCount(40)
-  for (const project of catalog.projects) {
+  await expect(featured.locator('article')).toHaveCount(4)
+  await expect(featured.locator('h3')).toHaveText(['Clpr', 'Clustr', 'Rekolekt + HasanAra', 'Undertow'])
+  await expect(page.locator('.project-list article')).toHaveCount(16)
+  for (const project of selectedProjects) {
     const item = page.locator(`article[id="${project.slug}"]`)
     const link = item.locator('a[data-project-name]')
     await expect(link).toHaveAttribute('href', `/projects/${project.slug}/`)
@@ -42,10 +42,10 @@ test('catalog features the editorial pair and keeps every anchor, link and avail
   await context.close()
 })
 
-test('every catalog page has its content, social metadata and working local images without JavaScript', async ({ browser }) => {
+test('every current and retained project page has its content, social metadata and working local images without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
-  for (const project of catalog.projects) {
+  for (const project of allProjects) {
     expect((await page.goto(`/projects/${project.slug}/`))?.status()).toBe(200)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title)
     await expect(page.locator('.project-detail')).toContainText(project.description || project.summary)
@@ -93,7 +93,7 @@ test('Clpr opens its source-backed search study in one activation without JavaSc
 
 test('list links, return link and legacy redirects reach the right project', async ({ page }) => {
   await page.goto('/projects/')
-  await expect(page.locator('a[data-project-name]')).toHaveCount(catalog.projects.length)
+  await expect(page.locator('a[data-project-name]')).toHaveCount(selectedProjects.length)
   await page.getByRole('link', { name: 'Clpr', exact: true }).click()
   await expect(page).toHaveURL('/projects/clpr/')
   await page.getByRole('link', { name: 'All projects', exact: true }).click()

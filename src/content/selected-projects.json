@@ -1,0 +1,672 @@
+{
+  "reviewedAt": "2026-11-16",
+  "projects": [
+    {
+      "slug": "clpr",
+      "title": "Clpr",
+      "deliveryStatus": "Public application",
+      "periodLabel": "2025–present",
+      "summary": "A Twitch clip discovery product with creator and topic search, curated collections, playlists and moderation.",
+      "description": "I build and operate the Go API, React client and search pipeline behind Clpr. The public product connects clip discovery to collections and playlists, with creator workflows and a moderation process around submissions, reports and appeals.",
+      "problem": "A clip is easy to make and difficult to find again. Discovery needs useful search and browsing, while submissions and shared collections need clear account and moderation boundaries.",
+      "role": "Full-stack engineer",
+      "year": 2025,
+      "repoUrl": "https://github.com/subculture-collective/clpr",
+      "liveUrl": "https://clpr.tv",
+      "stack": [
+        "Go",
+        "React",
+        "TypeScript",
+        "PostgreSQL",
+        "Redis",
+        "OpenSearch"
+      ],
+      "highlights": [
+        "Built creator, topic and tag discovery, clip search and shareable playlists.",
+        "Connected the React interface to versioned Go APIs, persistence and background processing.",
+        "Built submission review, reports, appeals and audit trails."
+      ],
+      "architecture": [
+        "PostgreSQL is the durable store. The Go search repository converts a request into separate result sets for clips, creators, games and tags; Redis and optional search services have distinct responsibilities.",
+        "The current product includes speech-transcript filtering. The portfolio Desk separately runs an older, explicitly pinned PostgreSQL search path against labelled fixtures."
+      ],
+      "lessons": [
+        "A search explanation needs its exact query, source version and data context. A fixture benchmark is useful evidence about an implementation, not production traffic.",
+        "A product feature is only part of the supported scope when the active routes and release contract agree."
+      ],
+      "media": [
+        {
+          "src": "/assets/projects/screenshots/2026-11-16-clpr-discover-1280.webp",
+          "srcSet": "/assets/projects/screenshots/2026-11-16-clpr-discover-640.webp 640w, /assets/projects/screenshots/2026-11-16-clpr-discover-1280.webp 1280w",
+          "alt": "Clpr collections in the public Discover view.",
+          "caption": "Clpr collections in the public Discover view. Captured November 16, 2026.",
+          "capturedAt": "2026-11-16T14:41:26.555846+00:00"
+        },
+        {
+          "src": "/assets/projects/screenshots/2026-11-16-clpr-feed-1280.webp",
+          "srcSet": "/assets/projects/screenshots/2026-11-16-clpr-feed-640.webp 640w, /assets/projects/screenshots/2026-11-16-clpr-feed-1280.webp 1280w",
+          "alt": "Clpr’s public trending feed, with creator navigation and clip controls.",
+          "caption": "Clpr’s public trending feed, with creator navigation and clip controls. Captured November 16, 2026.",
+          "capturedAt": "2026-11-16T14:39:28.228191+00:00"
+        }
+      ],
+      "brandBackground": "#0e0c13",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-16-clpr-discover-1280.webp",
+      "thumbnailAlt": "Clpr collections in the public Discover view."
+    },
+    {
+      "slug": "clustr",
+      "title": "Clustr",
+      "summary": "A Reddit community explorer connecting a durable Go crawler, reproducible graph builds and an interactive 2D/3D map.",
+      "description": "I built Clustr’s data collection, graph publication and browser explorer. Reddit activity becomes a weighted map of communities, with search, shareable views and a revision-aware API for the web app and a separate Unity prototype.",
+      "deliveryStatus": "Public application; active development",
+      "role": "Backend and full-stack engineer",
+      "year": 2026,
+      "periodLabel": "2026–present",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "React",
+        "TypeScript",
+        "WebGL"
+      ],
+      "problem": "External data changes while people explore it. A useful community map needs bounded collection, recoverable work and a consistent published graph.",
+      "highlights": [
+        "Built a crawler with global rate limits, durable requests, worker leases and retry outcomes.",
+        "Built weighted graph construction and reproducible community partitioning.",
+        "Published immutable graph revisions for 2D/3D exploration, search and linked entity views."
+      ],
+      "architecture": [
+        "A Go crawler writes normalized PostgreSQL records. A separate build stage constructs communities and spatial data before publishing a complete revision.",
+        "Publication commits the graph artifacts and current pointer atomically. Stable ordering and an explicit seed make the weighted Louvain partition reproducible."
+      ],
+      "lessons": [
+        "Data collection and publication have different failure boundaries. A partial crawl should not become a half-published world.",
+        "Graph caps and rendering detail are engineering budgets, not claims about the size of the live dataset."
+      ],
+      "repoUrl": "https://github.com/subculture-collective/clustr",
+      "liveUrl": "https://clustr.subcult.tv",
+      "media": [
+        {
+          "src": "/assets/projects/screenshots/2026-11-16-clustr-data-1280.webp",
+          "srcSet": "/assets/projects/screenshots/2026-11-16-clustr-data-640.webp 640w, /assets/projects/screenshots/2026-11-16-clustr-data-1280.webp 1280w",
+          "alt": "Clustr’s published-world dashboard, showing revision 744 and catalog 15.",
+          "caption": "Clustr’s published-world dashboard, showing revision 744 and catalog 15. Captured November 16, 2026.",
+          "capturedAt": "2026-11-16T14:50:53.520701+00:00"
+        },
+        {
+          "src": "/assets/projects/screenshots/2026-11-16-clustr-universe-1280.webp",
+          "srcSet": "/assets/projects/screenshots/2026-11-16-clustr-universe-640.webp 640w, /assets/projects/screenshots/2026-11-16-clustr-universe-1280.webp 1280w",
+          "alt": "Clustr’s 3D community universe with its search and navigation controls.",
+          "caption": "Clustr’s 3D community universe with its search and navigation controls. Captured November 16, 2026.",
+          "capturedAt": "2026-11-16T14:45:33.824467+00:00"
+        }
+      ],
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-16-clustr-data-1280.webp",
+      "thumbnailAlt": "Clustr’s published-world dashboard, showing revision 744 and catalog 15."
+    },
+    {
+      "slug": "rekolekt",
+      "title": "Rekolekt + HasanAra",
+      "deliveryStatus": "Backend in use; public archive",
+      "periodLabel": "Active in 2026",
+      "summary": "A reusable recording-archive backend and its public HasanAra application, connecting long-running ingestion to timestamped transcript search.",
+      "description": "I built Rekolekt’s ingestion, transcription, search and API, and HasanAra’s independently branded React frontend. Rekolekt is the headless engine; rekolekt-web supplies typed clients and reusable behavior; HasanAra is the public broadcast archive.",
+      "problem": "Hours of recordings are hard to search and cite. Expensive processing must recover from interruptions, and a result must retain the original recording and timestamp.",
+      "role": "Design and engineering",
+      "year": 2026,
+      "stack": [
+        "Python",
+        "FastAPI",
+        "PostgreSQL",
+        "Redis",
+        "Whisper",
+        "React",
+        "TypeScript"
+      ],
+      "highlights": [
+        "Built durable ingestion and transcription jobs with retries, cancellation and worker leases.",
+        "Built passage links, timestamped transcripts and source-aware search.",
+        "Separated the backend contract, shared frontend kit and HasanAra application."
+      ],
+      "architecture": [
+        "FastAPI serves the stable API, PostgreSQL owns the records, and background workers perform network and transcription work outside database transactions.",
+        "Optional OpenSearch acceleration is maintained through a transactional outbox. Classified outages fall back to PostgreSQL while exposing freshness and degraded-state metadata."
+      ],
+      "lessons": [
+        "A worker completing late must not overwrite a newer attempt; ownership and finalization need explicit database checks.",
+        "Machine transcripts can be wrong. A searchable passage should lead back to the recording, with that uncertainty visible."
+      ],
+      "media": [
+        {
+          "src": "/assets/projects/screenshots/2026-11-16-rekolekt-search-1280.webp",
+          "srcSet": "/assets/projects/screenshots/2026-11-16-rekolekt-search-640.webp 640w, /assets/projects/screenshots/2026-11-16-rekolekt-search-1280.webp 1280w",
+          "alt": "HasanAra groups transcript matches by broadcast and links each one to its timestamp.",
+          "caption": "HasanAra groups transcript matches by broadcast and links each one to its timestamp. Captured November 16, 2026.",
+          "capturedAt": "2026-11-16T14:41:26.815846+00:00"
+        },
+        {
+          "src": "/assets/projects/screenshots/2026-11-16-rekolekt-archive-1280.webp",
+          "srcSet": "/assets/projects/screenshots/2026-11-16-rekolekt-archive-640.webp 640w, /assets/projects/screenshots/2026-11-16-rekolekt-archive-1280.webp 1280w",
+          "alt": "HasanAra’s public archive homepage, powered by the Rekolekt backend.",
+          "caption": "HasanAra’s public archive homepage, powered by the Rekolekt backend. Captured November 16, 2026.",
+          "capturedAt": "2026-11-16T14:51:23.820667+00:00"
+        }
+      ],
+      "liveUrl": "https://hasanara.tv",
+      "repoUrl": "https://github.com/subculture-collective/rekolekt",
+      "brandBackground": "#16201b",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-16-rekolekt-search-1280.webp",
+      "thumbnailAlt": "HasanAra groups transcript matches by broadcast and links each one to its timestamp."
+    },
+    {
+      "slug": "undertow",
+      "title": "Undertow",
+      "deliveryStatus": "Public editor; optional cloud features in testing",
+      "periodLabel": "2026–present",
+      "summary": "A layered music-video editor with timed lyrics and local MP4/WebM export, built around a browser rendering and encoding pipeline.",
+      "description": "I built the browser editor and local rendering pipeline. A project combines audio-reactive visuals, artwork and timed lyrics, with separate layouts for landscape, portrait and square exports. Local editing and rendering work without an account.",
+      "problem": "A musician needs a finished video as well as a convincing preview. Browser codecs, frame timing and large output files make the export path as important as the editor.",
+      "role": "Full-stack engineer",
+      "year": 2026,
+      "repoUrl": "https://github.com/subculture-collective/undertow",
+      "liveUrl": "https://undertow.subcult.tv",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Web Audio",
+        "WebCodecs",
+        "Canvas",
+        "MediaBunny"
+      ],
+      "highlights": [
+        "Built layered visual composition, audio analysis and timed lyric controls.",
+        "Built per-format layouts, project persistence and local video export.",
+        "Added chunked output handling and an end-to-end browser export self-test."
+      ],
+      "architecture": [
+        "The compositor draws each output frame and hands it to the browser encoder through MediaBunny. Codec negotiation follows the browser’s actual capabilities.",
+        "Seekable Blob chunks let the muxer patch file headers without allocating one file-sized ArrayBuffer. The export loop yields to the browser to keep the interface responsive."
+      ],
+      "lessons": [
+        "A successful preview does not prove export works. Container bytes, codec support, frame timing and memory require their own checks.",
+        "Encoding limits belong in the interface: some browsers cannot produce audio, and hardware support varies."
+      ],
+      "media": [
+        {
+          "src": "/assets/projects/screenshots/2026-11-16-undertow-editor-1280.webp",
+          "srcSet": "/assets/projects/screenshots/2026-11-16-undertow-editor-640.webp 640w, /assets/projects/screenshots/2026-11-16-undertow-editor-1280.webp 1280w",
+          "alt": "Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork.",
+          "caption": "Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork. Captured November 16, 2026.",
+          "capturedAt": "2026-11-16T14:50:53.352702+00:00"
+        },
+        {
+          "src": "/assets/projects/screenshots/2026-11-16-undertow-export-1280.webp",
+          "srcSet": "/assets/projects/screenshots/2026-11-16-undertow-export-640.webp 640w, /assets/projects/screenshots/2026-11-16-undertow-export-1280.webp 1280w",
+          "alt": "The local video-export controls for the Night Signal demonstration project.",
+          "caption": "The local video-export controls for the Night Signal demonstration project. Captured November 16, 2026.",
+          "capturedAt": "2026-11-16T14:51:23.548668+00:00"
+        }
+      ],
+      "brandBackground": "#0f0c1c",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-16-undertow-editor-1280.webp",
+      "thumbnailAlt": "Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork."
+    },
+    {
+      "slug": "tadooer",
+      "title": "Tadooer",
+      "deliveryStatus": "Self-hosted release candidate",
+      "periodLabel": "2026–present",
+      "year": 2026,
+      "repoUrl": "https://github.com/subculture-collective/tadooer",
+      "summary": "A private task and calendar planner with queued task edits, explicit calendar conflicts and one focus session across clients.",
+      "description": "Tadooer brings tasks, calendars and focus into a single-owner workspace. I built the application and integrations, including CalDAV, Google Calendar, previewed imports, scoped automation and client synchronization.",
+      "problem": "A task planner must stay understandable when several devices and calendar providers disagree.",
+      "role": "Full-stack engineer",
+      "stack": [
+        "TypeScript",
+        "React",
+        "Node.js",
+        "SQLite",
+        "CalDAV",
+        "Electron",
+        "Capacitor"
+      ],
+      "highlights": [
+        "Built task, planner and focus workflows across web, desktop and phone shells.",
+        "Added queued offline task edits, calendar conflict handling and previewed data import/export."
+      ],
+      "architecture": [
+        "The server owns SQLite state and the shared focus timer. Clients cache task data; calendar and focus commands require a connection."
+      ],
+      "lessons": [
+        "Briefly offline task edits and offline calendar synchronization are different promises. The product makes that boundary explicit."
+      ],
+      "media": [],
+      "brandBackground": "#1e1e2e",
+      "thumbnailUrl": "/assets/brands/tadooer.svg",
+      "thumbnailAlt": "Tadooer identity",
+      "liveUrl": "https://tadooer.subcult.tv"
+    },
+    {
+      "slug": "prichal",
+      "title": "Prichal",
+      "deliveryStatus": "Private preview",
+      "periodLabel": "2026–present",
+      "summary": "A Go control plane and restricted host agent for managed AT Protocol account servers, with resumable provisioning and scoped ownership.",
+      "description": "I built the management API, background deployment flow, node agent and React dashboard for a managed personal data server. The project has local and private-staging evidence; general public account hosting is not available.",
+      "problem": "Provisioning can succeed on a host even when the caller loses the response. Retrying must preserve identity and respect the owner’s authority.",
+      "role": "Lead engineer",
+      "year": 2026,
+      "liveUrl": "https://prichal.subcult.tv",
+      "stack": [
+        "Go",
+        "React",
+        "TypeScript",
+        "PostgreSQL",
+        "OIDC",
+        "mTLS",
+        "Docker"
+      ],
+      "highlights": [
+        "Built owner-scoped organizations, deployment requests and lifecycle history.",
+        "Built a restricted node-agent boundary with mutual TLS and resumable operations."
+      ],
+      "architecture": [
+        "The control plane records durable intent before a background worker asks the node agent to operate the upstream Bluesky PDS runtime."
+      ],
+      "lessons": [
+        "Management-system recovery and customer-account recovery are distinct guarantees. Public hosting remains gated."
+      ],
+      "media": [],
+      "brandBackground": "#101322",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-prichal-640.webp",
+      "thumbnailAlt": "Prichal interface captured November 5, 2026",
+      "repoUrl": "https://github.com/subculture-collective/prichal"
+    },
+    {
+      "slug": "arkhiv",
+      "title": "Arkhiv",
+      "deliveryStatus": "Shared engine; consumer releases qualified separately",
+      "periodLabel": "2026–present",
+      "summary": "A shared archive engine for print, audio and video, with source provenance, reviewed access and independently deployed collection frontends.",
+      "description": "I built the archive engine and its release contracts. Branded consumers own their interfaces while sharing catalog, search, media identities and reviewed access decisions. Anarchist Archive, Riot Grrrl, Lineage and the replay-channel apps belong to this family.",
+      "problem": "Sharing backend behavior should not erase a collection’s identity or silently change its access rules.",
+      "role": "Lead engineer",
+      "year": 2026,
+      "liveUrl": "https://arkhiv.subcult.tv",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "TypeScript",
+        "Docker"
+      ],
+      "highlights": [
+        "Built source metadata, editorial history and media/access boundaries.",
+        "Added immutable engine pins, additive migrations and explicit consumer compatibility contracts."
+      ],
+      "architecture": [
+        "Each consumer upgrades its pinned headless engine through a reviewed change. Metadata retention is independent of acquisition and public playback permission."
+      ],
+      "lessons": [
+        "A successful core release does not qualify every consumer. Each branded application needs its own upgrade and recovery evidence."
+      ],
+      "media": [],
+      "brandBackground": "#21222c",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-arkhiv-640.webp",
+      "thumbnailAlt": "Arkhiv interface captured November 5, 2026",
+      "collections": [
+        {
+          "slug": "anarchist-archive",
+          "title": "Anarchist Archive",
+          "url": "https://anarchist-archive.subcult.tv/",
+          "summary": "Preserved zines, source history, local reading, and downloads.",
+          "logoUrl": "/assets/brands/anarchist-archive.svg",
+          "brandBackground": "#f3efe4",
+          "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-anarchist-archive-640.webp"
+        },
+        {
+          "slug": "riot-grrrl",
+          "title": "Riot Grrrl Zine Archive",
+          "url": "https://riot-grrrl.subcult.tv/",
+          "summary": "A separately designed catalog and reader for feminist punk zines.",
+          "logoUrl": "/assets/brands/arkhiv-riot-grrrl.svg",
+          "brandBackground": "#f3efe4",
+          "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-riot-grrrl-640.webp"
+        },
+        {
+          "slug": "dedhed",
+          "title": "Dedhed",
+          "url": "https://dedhed.subcult.tv/",
+          "summary": "A limited public pilot for concert-tape listening, recording credits, and a shared schedule.",
+          "logoUrl": "/assets/brands/dedhed.svg",
+          "brandBackground": "#f3efe4",
+          "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-dedhed-640.webp"
+        },
+        {
+          "slug": "lineage",
+          "title": "Lineage",
+          "url": "https://lineage.subcult.tv/",
+          "summary": "Browse live recordings with artist, venue, date, source credits, and recording lineage.",
+          "logoUrl": "/assets/brands/lineage.svg",
+          "brandBackground": "#f3efe4",
+          "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-lineage-640.webp"
+        },
+        {
+          "slug": "bill-nye",
+          "title": "Bill Nye TV",
+          "url": "https://bill-nye.subcult.tv/",
+          "summary": "An independent episode library and science-TV replay interface.",
+          "logoUrl": "/assets/brands/bill-nye-tv.svg",
+          "brandBackground": "#f3efe4",
+          "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-bill-nye-640.webp"
+        },
+        {
+          "slug": "democracy-now",
+          "title": "Democracy Now! TV",
+          "url": "https://democracy-now.subcult.tv/",
+          "summary": "An independent broadcast archive and scheduled replay; source-streaming only.",
+          "logoUrl": "/assets/brands/democracy-now-tv.svg",
+          "brandBackground": "#f3efe4",
+          "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-democracy-now-640.webp"
+        }
+      ],
+      "repoUrl": "https://github.com/subculture-collective/arkhiv"
+    },
+    {
+      "slug": "stupen",
+      "title": "Stupen",
+      "summary": "A practice coach with learner-controlled assistance, a coding workspace and isolated execution for hands-on exercises.",
+      "description": "I built the learning workflow, coach interface and exercise execution boundaries. Learners choose how much help to receive and connect their own model accounts. Run supports practice; Submit records canonical assessment and history.",
+      "deliveryStatus": "Unreleased; invited learners",
+      "role": "Backend and full-stack engineer",
+      "year": 2026,
+      "periodLabel": "2026–present",
+      "stack": [
+        "TypeScript",
+        "React",
+        "Node.js",
+        "WebAssembly",
+        "Docker",
+        "Linux sandboxing"
+      ],
+      "problem": "Generated lessons need observable checks, and learner code must be separated from the application host.",
+      "highlights": [
+        "Built lesson, editor, feedback and private history flows.",
+        "Separated practice from assessment and added a remote sandbox runner protocol."
+      ],
+      "architecture": [
+        "The app and runner advertise compatible capabilities. An unavailable runner disables practice instead of executing learner code on the app host."
+      ],
+      "lessons": [
+        "UI fixtures prove state handling, while real runner tests prove execution. Model behavior and learning outcomes require separate evaluation."
+      ],
+      "repoUrl": "https://github.com/subculture-collective/stupen",
+      "liveUrl": "https://stupen.subcult.tv",
+      "media": []
+    },
+    {
+      "slug": "patchwork",
+      "title": "Patchwork",
+      "summary": "An AT Protocol mutual-aid demonstration with ingestion, neighborhood discovery, moderation and approximate-location privacy.",
+      "description": "I built public-record ingestion, query workflows and the web interface around decentralized requests and offers. Public discovery uses an approximate location; finer disclosure is a separate, authorized step. The demo is not approved for arranging real help.",
+      "problem": "Public discovery needs useful geographic context without exposing a person’s exact location.",
+      "role": "Full-stack engineer",
+      "year": 2025,
+      "repoUrl": "https://github.com/subculture-collective/patchwork",
+      "liveUrl": "https://patchwork.subcult.tv",
+      "deliveryStatus": "Pre-alpha demonstration",
+      "periodLabel": "2025–present",
+      "stack": [
+        "TypeScript",
+        "React",
+        "Node.js",
+        "PostgreSQL",
+        "AT Protocol"
+      ],
+      "highlights": [
+        "Built ingestion, indexing and neighborhood query paths.",
+        "Built moderation and explicit privacy boundaries for requests and offers."
+      ],
+      "architecture": [
+        "Separate services ingest public records, serve queries and perform moderation. The interface distinguishes public information from approved disclosure."
+      ],
+      "lessons": [
+        "A functioning demonstration does not establish that a service is ready to coordinate real-world help."
+      ],
+      "media": [],
+      "brandBackground": "#f2efe7",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-patchwork-640.webp",
+      "thumbnailAlt": "Patchwork interface captured November 5, 2026"
+    },
+    {
+      "slug": "left-field",
+      "title": "Left Field",
+      "deliveryStatus": "Public research application",
+      "periodLabel": "Active in 2026",
+      "summary": "Seat-level election research combining public records, geography and provisional scores with visible source and publication versions.",
+      "description": "I built source-backed data intake, geographic queries and a publication model that keeps factual releases separate from provisional scoring. Missing inputs remain visible rather than becoming zeroes.",
+      "problem": "A research score is difficult to assess when its sources, missing inputs or version cannot be inspected.",
+      "role": "Design and engineering",
+      "year": 2026,
+      "stack": [
+        "TypeScript",
+        "Next.js",
+        "PostgreSQL",
+        "PostGIS",
+        "Drizzle"
+      ],
+      "highlights": [
+        "Built sourced seat-level records and geographic views.",
+        "Separated factual publication from versioned research scoring."
+      ],
+      "architecture": [
+        "Published pointers and release contracts define which data readers see. Scoring identifies its model and factual inputs."
+      ],
+      "lessons": [
+        "Research priority is not a forecast. The interface should show the evidence and uncertainty behind a score."
+      ],
+      "media": [],
+      "liveUrl": "https://left-field.subcult.tv",
+      "repoUrl": "https://github.com/subculture-collective/left-field",
+      "brandBackground": "#f4f0e6",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-left-field-640.webp",
+      "thumbnailAlt": "Left Field interface captured November 5, 2026"
+    },
+    {
+      "slug": "headcount",
+      "title": "Headcount",
+      "deliveryStatus": "Public research dashboard",
+      "periodLabel": "Active in 2026",
+      "summary": "A Twitch time-series dashboard with continuous collection, replayable evidence and provisional viewer/chat pattern scores.",
+      "description": "I built continuous Twitch collection, time-series storage, the read-only dashboard and explainable detectors. The hand-set detector weights are not calibrated; a high score identifies patterns for investigation, not proof that a streamer bought bots.",
+      "problem": "A suspicious-looking audience chart needs context and retained evidence before it can support a conclusion.",
+      "role": "Design and engineering",
+      "year": 2026,
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "TimescaleDB",
+        "TypeScript"
+      ],
+      "highlights": [
+        "Built channel polling, chat signals and per-stream time-series views.",
+        "Added versioned research detectors, replay context and a rate-limited read-only API."
+      ],
+      "architecture": [
+        "Collection and scoring retain the source signals needed to inspect and replay an individual stream. The public dashboard has read-only access."
+      ],
+      "lessons": [
+        "A detector’s output should explain its evidence and limits instead of presenting an accusation as a fact."
+      ],
+      "media": [],
+      "liveUrl": "https://headcount.subcult.tv",
+      "brandBackground": "#121316",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-headcount-640.webp",
+      "thumbnailAlt": "Headcount interface captured November 5, 2026",
+      "repoUrl": "https://github.com/subculture-collective/headcount"
+    },
+    {
+      "slug": "backline",
+      "title": "Backline",
+      "deliveryStatus": "Release candidate; private pilot",
+      "periodLabel": "2025–present",
+      "summary": "A Discord bot and dashboard for community onboarding, moderation cases, tickets and feeds, with explicit operational recovery.",
+      "description": "I built the bot services, React operator dashboard and recovery tooling. Community workflows include onboarding, case records, private support tickets and configured feeds. Public installation is not open yet.",
+      "problem": "Community operators need consistent records and permission checks across bot commands and dashboard actions.",
+      "role": "Full-stack engineer",
+      "year": 2025,
+      "liveUrl": "https://backline.subcult.tv",
+      "stack": [
+        "TypeScript",
+        "Node.js",
+        "React",
+        "PostgreSQL",
+        "Discord API"
+      ],
+      "highlights": [
+        "Built coordinated Discord and dashboard workflows.",
+        "Added operational diagnostics, recovery tooling and documented release checks."
+      ],
+      "architecture": [
+        "The bot and dashboard use shared service contracts and scoped authorization for community operations."
+      ],
+      "lessons": [
+        "A pilot in one community is different evidence from an openly supported public installation."
+      ],
+      "media": [],
+      "brandBackground": "#21222c",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-backline-640.webp",
+      "thumbnailAlt": "Backline interface captured November 5, 2026",
+      "repoUrl": "https://github.com/subculture-collective/backline"
+    },
+    {
+      "slug": "pult",
+      "title": "Pult",
+      "summary": "A Go terminal app that applies one palette across installed applications with previewable changes, ownership checks and recovery.",
+      "description": "I built a theme application pipeline that plans file changes, records originals and can recover an interrupted run. Pult uses an application’s own theme mechanism where possible and recognizes configuration owned by other tools.",
+      "deliveryStatus": "Early 0.x tool",
+      "role": "Backend and full-stack engineer",
+      "year": 2026,
+      "periodLabel": "2026–present",
+      "stack": [
+        "Go",
+        "Terminal UI",
+        "Linux",
+        "macOS"
+      ],
+      "problem": "Changing colors should not destroy unrelated settings or another manager’s files.",
+      "highlights": [
+        "Built a theme catalog, application adapters and a searchable terminal interface.",
+        "Added dry-run diffs, journaling, undo and interrupted-run recovery."
+      ],
+      "architecture": [
+        "Adapters create a concrete file plan. A journal and compressed original files support rollback and uninstall."
+      ],
+      "lessons": [
+        "The recovery path is part of the feature. Writing a valid configuration is only half of a configuration tool."
+      ],
+      "repoUrl": "https://github.com/subculture-collective/pult",
+      "liveUrl": "https://pult.subcult.tv",
+      "media": []
+    },
+    {
+      "slug": "subsets",
+      "title": "Subsets",
+      "deliveryStatus": "Alpha; Linux tested",
+      "periodLabel": "2026",
+      "year": 2026,
+      "repoUrl": "https://github.com/subculture-collective/subsets",
+      "summary": "A CLI and terminal interface for managing agent skills through ownership-aware discovery, previewed transactions and rollback.",
+      "description": "I built skill discovery, grouping and transactional activation across coding-agent folders. Subsets distinguishes adopted files from package-owned content and verifies saved state before applying changes. The older Python edition remains separate.",
+      "problem": "Switching a working set of skills must preserve instructions and installation ownership across several tools.",
+      "role": "Developer tools engineer",
+      "stack": [
+        "TypeScript",
+        "Node.js",
+        "Python",
+        "Terminal UI"
+      ],
+      "highlights": [
+        "Built discovery, groups and a keyboard-driven terminal interface.",
+        "Added stale-state refusal, transaction history and verified rollback."
+      ],
+      "architecture": [
+        "Discovery reads the filesystem; activation applies an explicit, rechecked plan and journals the result."
+      ],
+      "lessons": [
+        "Files present on disk do not prove that an already-running agent has loaded them."
+      ],
+      "media": [],
+      "brandBackground": "#d9dedc",
+      "thumbnailUrl": "/assets/projects/screenshots/2026-11-05-subsets-640.webp",
+      "thumbnailAlt": "Subsets interface captured November 5, 2026",
+      "liveUrl": "https://subsets.subcult.tv"
+    },
+    {
+      "slug": "super-productivity-mcp",
+      "title": "Super Productivity MCP",
+      "summary": "A Go MCP server, in-app bridge and quick-add tool connecting assistants to a local task manager through explicit contracts.",
+      "description": "I built the MCP suite and its shared task contracts. Scopes constrain each client’s access, and scheduling tools can preview changes before applying them. Current v20 compatibility evidence comes from fixtures and CI; the documented live desktop qualification is still incomplete.",
+      "problem": "An assistant needs predictable task semantics and a reviewable boundary before it changes a person’s schedule.",
+      "role": "Product and integration engineer",
+      "year": 2026,
+      "repoUrl": "https://github.com/subculture-collective/super-productivity-mcp",
+      "stack": [
+        "Go",
+        "JavaScript",
+        "MCP",
+        "JSON Schema"
+      ],
+      "highlights": [
+        "Built the MCP server, plugin bridge and quick-add command.",
+        "Added contract checks, scoped tools and preview/confirmation for supported bulk operations."
+      ],
+      "architecture": [
+        "Typed tool contracts bridge an assistant client to the locally running Super Productivity application. Preview behavior is explicit per tool."
+      ],
+      "lessons": [
+        "A fixture matching the upstream API is useful evidence, but it does not replace testing the installed desktop application."
+      ],
+      "media": [],
+      "deliveryStatus": "v0.2.0; live v20 qualification incomplete",
+      "periodLabel": "2026–present",
+      "brandBackground": "#21222c",
+      "thumbnailUrl": "/assets/brands/super-productivity-mcp.svg",
+      "thumbnailAlt": "Super Productivity MCP identity",
+      "liveUrl": null
+    },
+    {
+      "slug": "obsidian-plugin-metronome-tuner",
+      "title": "Metronome + Tuner",
+      "deliveryStatus": "Desktop and mobile plugin",
+      "periodLabel": "2026",
+      "summary": "An Obsidian metronome and chromatic tuner using Web Audio, with keyboard controls and explicit microphone opt-in.",
+      "description": "I built an in-vault practice tool with a metronome, chromatic pitch display and configurable tuning reference. Audio analysis stays on the device; microphone access starts only after the musician explicitly enables it.",
+      "problem": "A small music tool needs dependable timing and a clear boundary around microphone access.",
+      "role": "Plugin developer",
+      "year": 2026,
+      "repoUrl": "https://github.com/subculture-collective/obsidian-plugin-metronome-tuner",
+      "stack": [
+        "TypeScript",
+        "Web Audio",
+        "Obsidian"
+      ],
+      "highlights": [
+        "Built tempo, meter and accent controls alongside a chromatic tuner.",
+        "Added keyboard interaction, local settings and explicit microphone consent."
+      ],
+      "architecture": [
+        "Web Audio drives the click and pitch analysis inside the Obsidian runtime. Device and mobile-host microphone behavior can differ."
+      ],
+      "lessons": [
+        "Permission state is part of the interaction, not a prerequisite to silently assume."
+      ],
+      "media": [],
+      "brandBackground": "#21222c",
+      "thumbnailUrl": "/assets/brands/obsidian-plugin-metronome-tuner.svg",
+      "thumbnailAlt": "Metronome + Tuner identity",
+      "liveUrl": null
+    }
+  ]
+}

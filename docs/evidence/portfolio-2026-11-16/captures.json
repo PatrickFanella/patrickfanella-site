@@ -1,0 +1,92 @@
+{
+  "captures": [
+    {
+      "slug": "clpr",
+      "state": "discover",
+      "url": "https://clpr.tv/discover/lists",
+      "caption": "Clpr collections in the public Discover view.",
+      "context": "Public clip collections; no signed-in account.",
+      "original": "docs/evidence/portfolio-2026-11-16/captures/clpr-discover.png",
+      "capturedAt": "2026-11-16T14:41:26.555846+00:00",
+      "originalSha256": "551f31a2cdf6e7b3b729a517bb310777b497b48ad0ae731bc74c493b3e862e75",
+      "method": "T3 shared browser screenshot; actual application, no DOM or network fixture replacement"
+    },
+    {
+      "slug": "clpr",
+      "state": "feed",
+      "url": "https://clpr.tv/",
+      "caption": "Clpr’s public trending feed, with creator navigation and clip controls.",
+      "context": "Public clip feed; no signed-in account.",
+      "original": "docs/evidence/portfolio-2026-11-16/captures/clpr-feed.png",
+      "capturedAt": "2026-11-16T14:39:28.228191+00:00",
+      "originalSha256": "216c7f286817cf17dd068ddc8bf7607161d7810920124e2be046e4794bf1a55f",
+      "method": "T3 shared browser screenshot; actual application, no DOM or network fixture replacement"
+    },
+    {
+      "slug": "clustr",
+      "state": "data",
+      "url": "https://clustr.subcult.tv/?view=dashboard&f_subreddit=1&f_user=1&f_post=0&f_comment=0&communityColors=0&precomputedLayout=1&sizeAttenuation=1&adaptiveLOD=1",
+      "caption": "Clustr’s published-world dashboard, showing revision 744 and catalog 15.",
+      "context": "Public telemetry as displayed by the application; not an independent dataset audit.",
+      "original": "docs/evidence/portfolio-2026-11-16/captures/clustr-data.png",
+      "capturedAt": "2026-11-16T14:50:53.520701+00:00",
+      "originalSha256": "4e76c9c181b25d12b90b064d44b9a1bec56970dbeb3bf30b728fe95ed8253065",
+      "method": "T3 shared browser screenshot; actual application, no DOM or network fixture replacement"
+    },
+    {
+      "slug": "clustr",
+      "state": "universe",
+      "url": "https://clustr.subcult.tv/?view=3d&f_subreddit=1&f_user=1&f_post=0&f_comment=0&communityColors=0&precomputedLayout=1&sizeAttenuation=1&adaptiveLOD=1",
+      "caption": "Clustr’s 3D community universe with its search and navigation controls.",
+      "context": "Public graph; default published-world view.",
+      "original": "docs/evidence/portfolio-2026-11-16/captures/clustr-universe.png",
+      "capturedAt": "2026-11-16T14:45:33.824467+00:00",
+      "originalSha256": "d8fcff9abb37ff1599a7b95369124b22a7d6d6c0807bb52100e154e8dce37aff",
+      "method": "T3 shared browser screenshot; actual application, no DOM or network fixture replacement"
+    },
+    {
+      "slug": "rekolekt",
+      "state": "search",
+      "url": "https://hasanara.tv/search?q=labor",
+      "caption": "HasanAra groups transcript matches by broadcast and links each one to its timestamp.",
+      "context": "Public query: labor; machine-generated transcript text.",
+      "original": "docs/evidence/portfolio-2026-11-16/captures/rekolekt-search.png",
+      "capturedAt": "2026-11-16T14:41:26.815846+00:00",
+      "originalSha256": "47b9d252710185f48c24ec981c922578792872615fd8aabb217acd5356f51248",
+      "method": "T3 shared browser screenshot; actual application, no DOM or network fixture replacement"
+    },
+    {
+      "slug": "rekolekt",
+      "state": "archive",
+      "url": "https://hasanara.tv/",
+      "caption": "HasanAra’s public archive homepage, powered by the Rekolekt backend.",
+      "context": "Public archive summary and recordings; no signed-in account.",
+      "original": "docs/evidence/portfolio-2026-11-16/captures/rekolekt-archive.png",
+      "capturedAt": "2026-11-16T14:51:23.820667+00:00",
+      "originalSha256": "6935bd73494f16ae61762c26db079f7631600df6551947be8ff5a553a956e35f",
+      "method": "T3 shared browser screenshot; actual application, no DOM or network fixture replacement"
+    },
+    {
+      "slug": "undertow",
+      "state": "editor",
+      "url": "https://undertow.subcult.tv/",
+      "caption": "Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork.",
+      "context": "Demonstration project created for this capture; not a client commission.",
+      "original": "docs/evidence/portfolio-2026-11-16/captures/undertow-editor.png",
+      "capturedAt": "2026-11-16T14:50:53.352702+00:00",
+      "originalSha256": "1b56345b7f641db0abb1f856f29a2611f466f5f21d05674d9e6b6b8d2961b860",
+      "method": "T3 shared browser screenshot; actual application, no DOM or network fixture replacement"
+    },
+    {
+      "slug": "undertow",
+      "state": "export",
+      "url": "https://undertow.subcult.tv/",
+      "caption": "The local video-export controls for the Night Signal demonstration project.",
+      "context": "Real export interface; screenshot is not an encoding-performance result.",
+      "original": "docs/evidence/portfolio-2026-11-16/captures/undertow-export.png",
+      "capturedAt": "2026-11-16T14:51:23.548668+00:00",
+      "originalSha256": "f92bd45e0afae8d5f5496448a7566f6d75f777afcf41860cca48b226320ef4ba",
+      "method": "T3 shared browser screenshot; actual application, no DOM or network fixture replacement"
+    }
+  ]
+}

@@ -1,22 +1,25 @@
 ---
 import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
-import catalog from '../../content/portfolio.json'
+import { allProjects, selectedProjects, featuredProjects } from '../../content/project-presentation'
+import sources from '../../content/selected-project-sources.json'
 import provenance from '../../content/portfolio-provenance.json'
-import { featuredProjects } from '../../content/project-presentation'
 
 export function getStaticPaths() {
-  return catalog.projects.map(project => ({ params: { slug: project.slug }, props: { project } }))
+  return allProjects.map(project => ({ params: { slug: project.slug }, props: { project } }))
 }
 const { project } = Astro.props
 const presentation = featuredProjects.find(({ slug }) => slug === project.slug)
-const image = `https://patrickfanella.co/assets/projects/social/${project.slug}.png`
+const current = selectedProjects.some(item => item.slug === project.slug)
+const evidence = sources.sources.find(item => item.repo.endsWith(`/${project.slug}`))
+const image = current && !project.thumbnailUrl ? '/assets/brand/patrick/share-card.png' : `/assets/projects/social/${project.slug}.png`
 const source = `https://github.com/${provenance.repository}/blob/${provenance.commit}/${provenance.file}`
 ---
 <ContentPage title={`${project.title} | Patrick Fanella`} description={project.summary} ogType="article" socialImage={image} socialAlt={project.thumbnailAlt ?? `${project.title} project image`}>
 
   <article class="project-detail">
-    <a href={`/projects/#${project.slug}`}>All projects</a>
+    <a href={current ? `/projects/#${project.slug}` : '/projects/'}>All projects</a>
+    {!current && <p class="source-note">Historical project entry retained for existing links. This page records the earlier portfolio snapshot; it is outside the current selection and has not been requalified as a live service.</p>}
     <header>
       <h1 data-project-name={project.slug}>{project.title}</h1>
       <p class="lead">{project.summary}</p>
@@ -26,7 +29,8 @@ const source = `https://github.com/${provenance.repository}/blob/${provenance.co
         <div><dt>Period</dt><dd>{project.periodLabel ?? project.year}</dd></div>
       </dl>
       <nav class="project-links" aria-label="Project links">
-        {presentation?.study && <a href={presentation.study}>Read the search decisions study</a>}
+        {presentation && <a href={presentation.study}>Read the case study</a>}
+        {project.slug === 'clpr' && <a href="/case-studies/clpr-search/">Read the search decisions study</a>}
         {project.liveUrl && <a href={project.liveUrl}>Visit {project.title}</a>}
         {project.repoUrl && <a href={project.repoUrl}>Repository</a>}
         {project.sourceUrl && <a href={project.sourceUrl}>Download source</a>}
@@ -36,7 +40,6 @@ const source = `https://github.com/${provenance.repository}/blob/${provenance.co
     <section>
       <h2>Product and scope</h2>
       <p>{project.description || project.summary}</p>
-      {presentation && <p>{presentation.ownership}</p>}
       <dl class="project-facts"><div><dt>Stack</dt><dd>{project.stack.join(', ') || 'Not specified in source'}</dd></div></dl>
     </section>
     {project.problem && <section><h2>The problem</h2><p>{project.problem}</p></section>}
@@ -45,6 +48,6 @@ const source = `https://github.com/${provenance.repository}/blob/${provenance.co
     {project.media.slice(1).map(media => <ProjectMedia media={media} sizes="(max-width: 1080px) calc(100vw - 32px), 1048px" />)}
     {project.lessons.length > 0 && <section><h2>What I learned</h2><ul>{project.lessons.map(text => <li>{text}</li>)}</ul></section>}
     {project.relatedProjects && <section><h2>Related work</h2><ul>{project.relatedProjects.map(related => <li><a href={`/projects/${related.slug}/`}>{related.label}</a>: {related.relationship}</li>)}</ul></section>}
-    <p class="source-note">Content and delivery status from the <a href={source}>pinned portfolio catalog</a>, commit <code>{provenance.commit.slice(0, 7)}</code>. Image captions retain their recorded dates; this page does not report current service health.</p>
+    {current && evidence ? <p class="source-note">Copy reviewed November 16, 2026 against the <a href={`https://github.com/${evidence.repo}/blob/${evidence.sha}/README.md`}>pinned project source</a>. Images retain their own capture dates. Repository scope and screenshots do not establish every release or device qualification.</p> : <p class="source-note">Historical content from the <a href={source}>pinned portfolio catalog</a>, commit <code>{provenance.commit.slice(0, 7)}</code>, dated November 13, 2026.</p>}
   </article>
 </ContentPage>

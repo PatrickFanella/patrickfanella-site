@@ -51,7 +51,7 @@ for (const colorScheme of ['light', 'dark'] as const) test(`study notes fit and 
 })
 
 test('the request setup links to the complete ranking study', async ({ page }) => {
-  await page.goto('/case-studies/')
+  await page.goto('/case-studies/clpr-request/')
   await page.getByRole('link', { name: 'How Clpr ranks and pages a clip search', exact: true }).click()
   await expect(page).toHaveURL('/case-studies/clpr-search/')
 })

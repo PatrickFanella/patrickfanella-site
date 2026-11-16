@@ -11,7 +11,7 @@ test.use({ reducedMotion: 'reduce' })
 test('case study preserves exact pinned lines and aligns notes without overflow', async ({ page }) => {
   const source = (await readFile(sourceFile, 'utf8')).split('\n')
   await page.setViewportSize({ width: 1440, height: 1000 })
-  await page.goto('/case-studies/')
+  await page.goto('/case-studies/clpr-request/')
   await expect(page.getByRole('heading', { name: /search request becomes/i })).toBeVisible()
   for (let number = 26; number <= 47; number++) {
     const line = page.locator(`.line[data-line="${number}"]`)
@@ -49,13 +49,13 @@ test('case study preserves exact pinned lines and aligns notes without overflow'
 
 for (const colorScheme of ['light', 'dark'] as const) test(`case study passes axe in ${colorScheme}`, async ({ page }) => {
   await page.emulateMedia({ colorScheme })
-  await page.goto('/case-studies/')
+  await page.goto('/case-studies/clpr-request/')
   expect((await new AxeBuilder({ page }).analyze()).violations.map(v => ({ id: v.id, nodes: v.nodes.map(n => n.failureSummary) }))).toEqual([])
 })
 
 test('mobile notes ignore desktop anchor offsets before the resize handler cleans up', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto('/case-studies/')
+  await page.goto('/case-studies/clpr-request/')
   // Preserve the state from a desktop layout while CSS has already switched to mobile.
   // This is the interval before the queued resize handler removes the anchored class.
   await page.locator('.excerpt-row[data-note]').evaluateAll(rows => {
@@ -77,7 +77,7 @@ test('mobile notes ignore desktop anchor offsets before the resize handler clean
 test('case study remains readable without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1440, height: 1000 } })
   const page = await context.newPage()
-  await page.goto('/case-studies/')
+  await page.goto('/case-studies/clpr-request/')
   for (const row of await page.locator('.excerpt-row[data-note]').all()) {
     const code = await row.locator('.source').boundingBox(), note = await row.locator('.note').boundingBox()
     expect(note!.x).toBeGreaterThan(code!.x)

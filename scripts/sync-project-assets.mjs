@@ -37,3 +37,6 @@ for (const project of projects) {
 }
 await writeFile(new URL('../src/content/project-assets-provenance.json', import.meta.url), JSON.stringify({ repository, commit, files }, null, 2) + '\n')
 console.log(`Copied ${files.length} pinned assets and rendered ${projects.length} social images.`)
+
+// Site-owned captures overlay the historical imported images.
+execFileSync(process.execPath, ['scripts/process-project-captures.mjs'], { stdio: 'inherit' })

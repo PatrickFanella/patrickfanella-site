@@ -1,9 +1,9 @@
 ---
 import assets from '../content/project-assets-provenance.json'
-import catalog from '../content/portfolio.json'
+import type { ProjectMedia } from '../content/project-presentation'
 
 interface Props {
-  media: (typeof catalog.projects)[number]['media'][number]
+  media: ProjectMedia
   sizes: string
   loading?: 'eager' | 'lazy'
 }
@@ -12,5 +12,5 @@ const dimensions = assets.files.find(file => file.path === media.src)!
 ---
 <figure>
   <img src={media.src} width={dimensions.width} height={dimensions.height} srcset={'srcSet' in media ? media.srcSet : undefined} sizes={sizes} alt={media.alt} loading={loading} decoding="async" />
-  <figcaption>{media.caption}{!('capturedAt' in media) && ' Source snapshot: November 13, 2026.'}</figcaption>
+  <figcaption>{media.caption}</figcaption>
 </figure>

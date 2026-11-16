@@ -1,13 +1,13 @@
 import AxeBuilder from '@axe-core/playwright'
-import catalog from '../src/content/portfolio.json' with { type: 'json' }
+import { selectedProjects } from '../src/content/project-presentation'
 import { test, expect } from './fixtures'
 
-test('projects render the exact complete catalog without JavaScript', async ({ browser }) => {
+test('projects render the curated selection without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
   await page.goto('/projects/')
-  await expect(page.locator('.project-list article')).toHaveCount(catalog.projects.length)
-  for (const project of catalog.projects) {
+  await expect(page.locator('.project-list article')).toHaveCount(selectedProjects.length)
+  for (const project of selectedProjects) {
     const item = page.locator(`article[id="${project.slug}"]`)
     await expect(item.getByRole('heading')).toHaveText(project.title)
     await expect(item).toContainText(project.summary)
