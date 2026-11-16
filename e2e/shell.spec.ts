@@ -20,7 +20,7 @@ test.describe('desk shell', () => {
     await expect(log).toContainText('search <words>')
     await expect(log.getByRole('link', { name: 'Browse all projects and delivery statuses' })).toHaveAttribute('href', '/projects/')
     await expect(log.getByRole('link', { name: 'Read the résumé and download the PDF' })).toHaveAttribute('href', '/resume/')
-    await expect(log.getByRole('link', { name: 'patrick@subcult.tv' })).toHaveAttribute('href', 'mailto:patrick@subcult.tv')
+    await expect(log.getByRole('link', { name: 'fanella.patrick@gmail.com' })).toHaveAttribute('href', 'mailto:fanella.patrick@gmail.com')
     await expect(log).toContainText('Unknown command. Type help')
     await expect(log).toContainText('Usage: search <words>')
     await input.fill('draft'); await input.press('ArrowUp'); await expect(input).toHaveValue('search')
