@@ -290,3 +290,12 @@ main, .foot { position: relative; z-index: 1; }
 /* Compact selected PF uses the unchanged solid backup, never reduced strands. */
 .site-header .mark { gap: 8px; }
 .home-mark { display: block; flex: none; }
+/* Homepage editorial selection; screenshots retain their source dates and proportions. */
+.featured-work { display: grid; gap: 24px; min-width: 0; }
+.featured-work h3 { margin: 0; font: 800 2.5rem/1.1 var(--display); }
+.employment-feature, .featured-copy, .featured-more { padding: 20px 24px; display: grid; gap: 12px; }
+.featured-project { min-width: 0; }
+.featured-project figure { margin: 0; }
+.featured-project img { display: block; width: 100%; height: auto; }
+.featured-project figcaption { padding: 12px 24px 0; font: .75rem/1.5 var(--mono); color: var(--dim); }
+.featured-copy nav { display: flex; flex-wrap: wrap; gap: 12px 24px; }
