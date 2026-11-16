@@ -1,5 +1,7 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro'
+import Breadcrumbs from '../components/Breadcrumbs.astro'
+import type { PageSeo } from '../content/site-metadata'
 import { recruitingEmail } from '../content/contact'
 import Page from './Page.astro'
 import '@fontsource-variable/big-shoulders-display'
@@ -7,13 +9,16 @@ import '@fontsource-variable/hanken-grotesk'
 import '@fontsource-variable/martian-mono'
 import '../styles/site.css'
 import '../styles/content-pages.css'
-interface Props { title: string; description: string; resume?: boolean; readingSurface?: boolean; ogType?: 'website' | 'article'; socialImage?: string; socialAlt?: string }
-const { title, description, resume = false, readingSurface = false, ogType = 'website', socialImage, socialAlt } = Astro.props
+interface Props { title: string; description: string; resume?: boolean; readingSurface?: boolean; ogType?: 'website' | 'article'; socialImage?: string; socialAlt?: string; noindex?: boolean; seo?: PageSeo }
+const { title, description, resume = false, readingSurface = false, ogType = 'website', socialImage, socialAlt, noindex = false, seo } = Astro.props
 ---
-<Page title={title} description={description} ogType={ogType} socialImage={socialImage} socialAlt={socialAlt} bodyClass={`content-page${resume ? ' resume-page' : ''}`}>
+<Page title={title} description={description} ogType={ogType} socialImage={socialImage} socialAlt={socialAlt} noindex={noindex} seo={seo} bodyClass={`content-page${resume ? ' resume-page' : ''}`}>
   <a class="skip" href="#content">Skip to content</a>
   <SiteHeader />
-  <main id="content" class:list={['content-main', { 'reading-surface': readingSurface }]}><slot /></main>
+  <main id="content" class:list={['content-main', { 'reading-surface': readingSurface }]}>
+    {seo?.breadcrumbs && <Breadcrumbs items={seo.breadcrumbs} />}
+    <slot />
+  </main>
   <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href={`mailto:${recruitingEmail}`}>{recruitingEmail}</a><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Case studies</a></nav></footer>
   <Fragment slot="head"><slot name="head" /><link rel="expect" href="#content-footer" blocking="render" /><script is:inline src="/project-transition.js"></script><script>import '../content-page.ts'</script></Fragment>
 </Page>

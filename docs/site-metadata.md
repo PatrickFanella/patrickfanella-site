@@ -36,3 +36,28 @@ Verification: `npm run build`; `npx playwright test e2e/metadata.spec.ts e2e/bra
 The metadata suite checks every sitemap page without scripts, its social-image bytes/dimensions,
 structured profile links, favicon hashes, the manifest and browser theme behavior. Search engines
 and social platforms choose when to recrawl and refresh their cached presentations.
+
+## Search indexing and case-study data
+
+The homepage description names the engineering stack and Chicago/remote availability already
+visible on the page. Current portfolio pages allow indexing and large image previews. Historical
+project detail pages outside the sixteen-project selection return their existing content with
+`noindex, follow`; they remain crawlable so search engines can read that directive. They are
+excluded from the sitemap. This follows the [robots metadata specification](https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag).
+
+The four product studies add an `Article` linked to the existing author/profile and containing
+the visible headline, description and actual lead screenshot. Publication or modification dates
+are not inferred from a build or screenshot timestamp. Project and product-study pages show a
+native breadcrumb trail, and a matching `BreadcrumbList` uses the same names and destinations.
+References: [article guidance](https://developers.google.com/search/docs/appearance/structured-data/article)
+and [breadcrumb guidance](https://developers.google.com/search/docs/appearance/structured-data/breadcrumb).
+
+The sitemap contains only current canonical pages, with image-sitemap entries for their visible
+screenshots. Image URLs are absolute and same-origin; XML values are escaped. Neither fake
+`lastmod` dates nor arbitrary priority values are generated. The existing `robots.txt` allows
+crawling and advertises the sitemap. See [image sitemap requirements](https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps).
+
+`e2e/seo.spec.ts` parses the XML, verifies every listed page and image, checks historical-page
+exclusion, compares article/breadcrumb data with rendered content without scripts, and checks
+mobile/enlarged-text breadcrumb layouts and accessibility in both themes. These checks establish
+the implemented search signals; they do not establish indexing, rankings or a rich-result display.

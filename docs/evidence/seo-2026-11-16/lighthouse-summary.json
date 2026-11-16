@@ -1,0 +1,415 @@
+{
+  "measuredAt": "2026-11-16T18:38:22.789Z",
+  "base": "http://127.0.0.1:4189",
+  "mobile": true,
+  "physicalDevice": false,
+  "graphics": "Chrome default; per-page graphics and fallback state recorded below",
+  "results": [
+    {
+      "path": "/",
+      "finalUrl": "http://127.0.0.1:4189/",
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "cls": 0,
+      "lcpMs": 752.5916,
+      "tbtMs": 0,
+      "graphics": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "",
+            "deviceString": "",
+            "driverVendor": "",
+            "driverVersion": ""
+          }
+        ],
+        "features": {
+          "2d_canvas": "disabled_software",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "disabled_software",
+          "multiple_raster_threads": "disabled_off",
+          "opengl": "disabled_off",
+          "rasterization": "disabled_software",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "disabled_software",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "disabled_off",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "staticInkFallback": null
+      },
+      "benchmarkIndex": 4611.5,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    },
+    {
+      "path": "/projects/",
+      "finalUrl": "http://127.0.0.1:4189/projects/",
+      "scores": {
+        "performance": 0.96,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "cls": 0.001869364455503239,
+      "lcpMs": 2777.9283000000005,
+      "tbtMs": 0,
+      "graphics": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "",
+            "deviceString": "",
+            "driverVendor": "",
+            "driverVersion": ""
+          }
+        ],
+        "features": {
+          "2d_canvas": "disabled_software",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "disabled_software",
+          "multiple_raster_threads": "disabled_off",
+          "opengl": "disabled_off",
+          "rasterization": "disabled_software",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "disabled_software",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "disabled_off",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "staticInkFallback": null
+      },
+      "benchmarkIndex": 4684,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    },
+    {
+      "path": "/resume/",
+      "finalUrl": "http://127.0.0.1:4189/resume/",
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "cls": 0,
+      "lcpMs": 901.9505999999999,
+      "tbtMs": 0,
+      "graphics": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "",
+            "deviceString": "",
+            "driverVendor": "",
+            "driverVersion": ""
+          }
+        ],
+        "features": {
+          "2d_canvas": "disabled_software",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "disabled_software",
+          "multiple_raster_threads": "disabled_off",
+          "opengl": "disabled_off",
+          "rasterization": "disabled_software",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "disabled_software",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "disabled_off",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "staticInkFallback": null
+      },
+      "benchmarkIndex": 4769,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    },
+    {
+      "path": "/contact/",
+      "finalUrl": "http://127.0.0.1:4189/contact/",
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "cls": 0.001869364455503239,
+      "lcpMs": 901.8409999999999,
+      "tbtMs": 0,
+      "graphics": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "",
+            "deviceString": "",
+            "driverVendor": "",
+            "driverVersion": ""
+          }
+        ],
+        "features": {
+          "2d_canvas": "disabled_software",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "disabled_software",
+          "multiple_raster_threads": "disabled_off",
+          "opengl": "disabled_off",
+          "rasterization": "disabled_software",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "disabled_software",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "disabled_off",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "staticInkFallback": null
+      },
+      "benchmarkIndex": 4667,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    },
+    {
+      "path": "/desk/",
+      "finalUrl": "http://127.0.0.1:4189/desk/",
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "cls": 0.001869364455503239,
+      "lcpMs": 901.5591999999999,
+      "tbtMs": 0,
+      "graphics": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "",
+            "deviceString": "",
+            "driverVendor": "",
+            "driverVersion": ""
+          }
+        ],
+        "features": {
+          "2d_canvas": "disabled_software",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "disabled_software",
+          "multiple_raster_threads": "disabled_off",
+          "opengl": "disabled_off",
+          "rasterization": "disabled_software",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "disabled_software",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "disabled_off",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "staticInkFallback": null
+      },
+      "benchmarkIndex": 4524.5,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    },
+    {
+      "path": "/case-studies/clpr/",
+      "finalUrl": "http://127.0.0.1:4189/case-studies/clpr/",
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "cls": 0,
+      "lcpMs": 901.6874,
+      "tbtMs": 0,
+      "graphics": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "",
+            "deviceString": "",
+            "driverVendor": "",
+            "driverVersion": ""
+          }
+        ],
+        "features": {
+          "2d_canvas": "disabled_software",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "disabled_software",
+          "multiple_raster_threads": "disabled_off",
+          "opengl": "disabled_off",
+          "rasterization": "disabled_software",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "disabled_software",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "disabled_off",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "staticInkFallback": null
+      },
+      "benchmarkIndex": 4676.5,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    },
+    {
+      "path": "/case-studies/clustr/",
+      "finalUrl": "http://127.0.0.1:4189/case-studies/clustr/",
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "cls": 0,
+      "lcpMs": 901.6043999999999,
+      "tbtMs": 0,
+      "graphics": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "",
+            "deviceString": "",
+            "driverVendor": "",
+            "driverVersion": ""
+          }
+        ],
+        "features": {
+          "2d_canvas": "disabled_software",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "disabled_software",
+          "multiple_raster_threads": "disabled_off",
+          "opengl": "disabled_off",
+          "rasterization": "disabled_software",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "disabled_software",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "disabled_off",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "staticInkFallback": null
+      },
+      "benchmarkIndex": 4731.5,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    },
+    {
+      "path": "/case-studies/rekolekt/",
+      "finalUrl": "http://127.0.0.1:4189/case-studies/rekolekt/",
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "cls": 0,
+      "lcpMs": 901.4135000000001,
+      "tbtMs": 0,
+      "graphics": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "",
+            "deviceString": "",
+            "driverVendor": "",
+            "driverVersion": ""
+          }
+        ],
+        "features": {
+          "2d_canvas": "disabled_software",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "disabled_software",
+          "multiple_raster_threads": "disabled_off",
+          "opengl": "disabled_off",
+          "rasterization": "disabled_software",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "disabled_software",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "disabled_off",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "staticInkFallback": null
+      },
+      "benchmarkIndex": 4689,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    },
+    {
+      "path": "/case-studies/undertow/",
+      "finalUrl": "http://127.0.0.1:4189/case-studies/undertow/",
+      "scores": {
+        "performance": 1,
+        "accessibility": 1,
+        "best-practices": 1,
+        "seo": 1
+      },
+      "cls": 0,
+      "lcpMs": 901.8230000000001,
+      "tbtMs": 0,
+      "graphics": {
+        "devices": [
+          {
+            "vendorId": 0,
+            "deviceId": 0,
+            "vendorString": "",
+            "deviceString": "",
+            "driverVendor": "",
+            "driverVersion": ""
+          }
+        ],
+        "features": {
+          "2d_canvas": "disabled_software",
+          "direct_rendering_display_compositor": "disabled_off_ok",
+          "gpu_compositing": "disabled_software",
+          "multiple_raster_threads": "disabled_off",
+          "opengl": "disabled_off",
+          "rasterization": "disabled_software",
+          "skia_graphite": "disabled_off",
+          "trees_in_viz": "disabled_off",
+          "video_decode": "disabled_software",
+          "video_encode": "disabled_software",
+          "vulkan": "disabled_off",
+          "webgl": "disabled_off",
+          "webgpu": "disabled_off",
+          "webgpu_on_vk_via_gl_interop": "disabled_off",
+          "webnn": "disabled_off"
+        },
+        "staticInkFallback": null
+      },
+      "benchmarkIndex": 4629.5,
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/159.0.0.0 Safari/537.36"
+    }
+  ],
+  "failures": []
+}

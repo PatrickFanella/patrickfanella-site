@@ -9,8 +9,12 @@ export function getStaticPaths() {
 }
 const { study } = Astro.props
 const project = selectedProjects.find(project => project.slug === study.slug)!
+const seo = {
+  breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Case studies', href: '/case-studies/' }, { name: project.title, href: `/case-studies/${project.slug}/` }],
+  article: { headline: study.title, image: project.media[0].src },
+}
 ---
-<ContentPage title={`${project.title}: ${study.title} | Patrick Fanella`} description={study.description} readingSurface ogType="article" socialImage={`/assets/projects/social/${project.slug}.png`} socialAlt={project.media[0]?.alt}>
+<ContentPage title={`${project.title}: ${study.title} | Patrick Fanella`} description={study.description} readingSurface ogType="article" socialImage={`/assets/projects/social/${project.slug}.png`} socialAlt={project.media[0]?.alt} seo={seo}>
   <article class="product-study">
     <a href="/projects/">All selected work</a>
     <header>
