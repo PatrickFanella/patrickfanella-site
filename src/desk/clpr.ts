@@ -1,11 +1,11 @@
 import { manifest, type ClprEvent } from './clpr-protocol'
-import type { SearchResult } from './psql'
+import type { SearchResult, BenchmarkStatus } from './psql'
 import { startInspector } from './inspector/inspector'
 
 /** Opt-in Clpr mode shares the psql output with the SQL benchmark, but owns its worker. */
 export function startClpr(pane: HTMLElement, options: {
   pre: HTMLElement; bench: HTMLElement; sub: HTMLElement
-  stopBenchmark(): void; startBenchmark(): void; recorded(): void
+  stopBenchmark(): void; startBenchmark(report: (status: BenchmarkStatus) => void): void; recorded(): void
 }) {
   const root = pane.querySelector<HTMLElement>('[data-inspector]')!
   const allowed = root.dataset.liveAllowed === 'true'
@@ -32,6 +32,7 @@ export function startClpr(pane: HTMLElement, options: {
   buttons.append(start, stop, benchmark); controls.append(meta, provenance, buttons, status)
   pane.querySelector('.pbody')!.prepend(controls)
 
+  let mode: 'recorded' | 'clpr' | 'benchmark' = 'recorded'
   let state: 'idle' | 'starting' | 'live' | 'failed' = 'idle'
   const set = (value: typeof state) => { state = value; pane.dataset.clpr = value }
   set('idle')
@@ -47,8 +48,11 @@ export function startClpr(pane: HTMLElement, options: {
     start.disabled = !allowed; stop.disabled = true
   }
   const reset = () => {
+    const benchmark = mode === 'benchmark'
+    mode = 'recorded'; options.stopBenchmark()
     set('idle'); terminate(); options.recorded()
-    status.textContent = 'Live mode stopped. The psql pane shows the recorded run.'
+    stop.textContent = 'Stop live mode'
+    status.textContent = benchmark ? 'SQL benchmark stopped. The psql pane shows the recorded run.' : 'Live mode stopped. The psql pane shows the recorded run.'
   }
   const fail = (message: string) => {
     set('failed'); terminate(); options.recorded()
@@ -63,6 +67,7 @@ export function startClpr(pane: HTMLElement, options: {
     const id = ++requestId
     lastWords = words
     shownId = id
+    status.textContent = 'Running Clpr’s Go search handler on fixture clips and any generated clips in this tab.'
     return new Promise((resolve, reject) => {
       pending.set(id, { resolve, reject })
       worker!.postMessage({ id, words, rows })
@@ -84,7 +89,6 @@ export function startClpr(pane: HTMLElement, options: {
     pending.delete(event.id)
     try {
       if (event.id === shownId) {
-        status.textContent = `Clpr is live: all ${manifest.migrationCount} migrations applied, 8 fixture clips and ${(event.rows - 8).toLocaleString('en-US')} generated clips. Type search world record in the shell.`
         inspector.render(event)
         options.bench.hidden = true
         options.pre.hidden = true
@@ -97,24 +101,36 @@ export function startClpr(pane: HTMLElement, options: {
         || typeof results !== 'object' || results === null || !('clips' in results) || !Array.isArray(results.clips)) throw new Error('Clpr returned unexpected clip results')
       const first: unknown = results.clips[0]
       const top = typeof first === 'object' && first !== null && 'title' in first && typeof first.title === 'string' ? first.title : undefined
+      if (event.id === shownId) status.textContent = `Clpr search complete: ${counts.clips} ${counts.clips === 1 ? 'match' : 'matches'}. Clpr is live: all ${manifest.migrationCount} migrations applied, 8 fixture clips and ${(event.rows - 8).toLocaleString('en-US')} generated clips. Go handler request measured in this tab.`
       request.resolve({ total: counts.clips, top, time: event.ms.toFixed(1), timing: 'Clpr request time' })
-    } catch (error) { request.reject(error instanceof Error ? error : new Error(String(error))) }
+    } catch (error) {
+      if (event.id === shownId) status.textContent = 'Clpr search failed; inspect its response or try another search.'
+      request.reject(error instanceof Error ? error : new Error(String(error)))
+    }
   }
   start.addEventListener('click', () => {
     // Enforce the gate as well as disabling the control.
     if (!allowed) { status.textContent = idleStatus; return }
-    options.stopBenchmark(); options.recorded(); set('starting')
-    start.disabled = true; stop.disabled = false
+    mode = 'clpr'; options.stopBenchmark(); options.recorded(); set('starting')
+    start.disabled = true; stop.disabled = false; stop.textContent = 'Stop live mode'
     status.textContent = 'Downloading the pinned Clpr build and starting PostgreSQL.'
     slow = setTimeout(() => { status.textContent = 'Clpr is still loading. The recorded run remains below; Stop live mode cancels the download.' }, 30_000)
     try {
-      worker = new Worker(new URL('./clpr.worker.ts', import.meta.url), { type: 'module', name: 'clpr-search' })
-      worker.onmessage = (event: MessageEvent<ClprEvent>) => onEvent(event.data)
-      worker.onerror = event => { event.preventDefault(); fail(event.message || 'The worker did not load') }
+      const current = new Worker(new URL('./clpr.worker.ts', import.meta.url), { type: 'module', name: 'clpr-search' })
+      worker = current
+      current.onmessage = (event: MessageEvent<ClprEvent>) => { if (worker === current) onEvent(event.data) }
+      current.onerror = event => { event.preventDefault(); if (worker === current) fail(event.message || 'The worker did not load') }
     } catch (error) { fail(String(error)) }
   })
   stop.addEventListener('click', reset)
-  benchmark.addEventListener('click', () => { reset(); status.textContent = 'Running the SQL benchmark on generated clips. This mode runs SQL directly.'; options.startBenchmark() })
+  benchmark.addEventListener('click', () => {
+    reset(); mode = 'benchmark'; stop.textContent = 'Stop SQL benchmark'
+    options.startBenchmark(event => {
+      if (mode !== 'benchmark') return
+      status.textContent = event.message
+      stop.disabled = event.state === 'idle' || event.state === 'failed'
+    })
+  })
   addEventListener('pagehide', event => { if (!event.persisted) terminate() })
   return { get active() { return state !== 'idle' }, search }
 }

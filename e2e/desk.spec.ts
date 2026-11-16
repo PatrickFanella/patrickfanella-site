@@ -77,6 +77,8 @@ test.describe('PostgreSQL on the desk', () => {
     expect(gap, 'longest frame gap while PostgreSQL started, in ms').toBeLessThan(5000)
 
     await expect(page.locator('[data-pg-cap]')).toHaveText('Measured in this tab, median of 3 batches')
+    await expect(page.locator('[data-clpr-status]')).toContainText('SQL benchmark complete')
+    await expect(page.locator('[data-clpr-status]')).not.toContainText('Running')
     // Decimals follow the clock: two in Chromium for a batch of several runs, fewer for a single slow run.
     await expect(page.locator('[data-pg-seq]')).toHaveText(/^\d+(\.\d{1,2})?$/)
     await expect(page.locator('[data-pg-idx]')).toHaveText(/^(< )?\d+(\.\d{1,2})?$/)
