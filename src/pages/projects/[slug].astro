@@ -11,17 +11,8 @@ const { project } = Astro.props
 const image = `https://patrickfanella.co/assets/projects/social/${project.slug}.png`
 const source = `https://github.com/${provenance.repository}/blob/${provenance.commit}/${provenance.file}`
 ---
-<ContentPage title={`${project.title} | Patrick Fanella`} description={project.summary} ogType="article">
-  <Fragment slot="head">
-    <meta property="og:image" content={image} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={project.thumbnailAlt ?? `${project.title} project image`} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={`${project.title} | Patrick Fanella`} />
-    <meta name="twitter:description" content={project.summary} />
-    <meta name="twitter:image" content={image} />
-  </Fragment>
+<ContentPage title={`${project.title} | Patrick Fanella`} description={project.summary} ogType="article" socialImage={image} socialAlt={project.thumbnailAlt ?? `${project.title} project image`}>
+
   <article class="project-detail">
     <a href={`/projects/#${project.slug}`}>All projects</a>
     <header>

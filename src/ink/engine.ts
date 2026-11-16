@@ -83,7 +83,7 @@ const EMBER = {
 }
 const LOOK: Record<Theme, Look> = {
   light: { ground: [0.914, 0.937, 0.949], ...EMBER, gain: P.gain, toe: P.toe },
-  dark: { ground: [0.047, 0.059, 0.086], ...EMBER, gain: P.gain, toe: P.toe },
+  dark: { ground: [16 / 255, 19 / 255, 30 / 255], ...EMBER, gain: P.gain, toe: P.toe },
 }
 const INK_RGB: Record<InkId, number[]> = { 0: [1, 0, 0], 1: [0, 1, 0], 2: [0, 0, 1] }
 
