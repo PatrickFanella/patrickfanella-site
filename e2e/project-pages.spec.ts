@@ -49,7 +49,7 @@ test('every catalog page has its content, social metadata and working local imag
     expect((await page.goto(`/projects/${project.slug}/`))?.status()).toBe(200)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title)
     await expect(page.locator('.project-detail')).toContainText(project.description || project.summary)
-    await expect(page.locator('.project-facts')).toContainText(project.deliveryStatus ?? 'Status not stated in source')
+    await expect(page.locator('.project-detail header .project-facts')).toContainText(project.deliveryStatus ?? 'Status not stated in source')
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', project.summary)
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', `${project.title} | Patrick Fanella`)
     const image = await page.locator('meta[property="og:image"]').getAttribute('content')
@@ -60,7 +60,34 @@ test('every catalog page has its content, social metadata and working local imag
       expect((await page.request.get(media.src)).status(), media.src).toBe(200)
     }
     await expect(page.locator('.project-detail figure')).toHaveCount(project.media.length)
+    await expect(page.locator('.project-detail header .lead')).toHaveText(project.summary)
+    await expect(page.locator('.project-facts')).toContainText([project.role, project.stack.join(', ') || 'Not specified in source'])
+    for (const [index, media] of project.media.entries()) {
+      const figure = page.locator('.project-detail figure').nth(index)
+      await expect(figure.locator('figcaption')).toContainText(media.caption)
+      await expect(figure.locator('img')).toHaveAttribute('alt', media.alt)
+      await expect(figure.locator('img')).toHaveAttribute('loading', index === 0 ? 'eager' : 'lazy')
+    }
+    if (project.media.length) {
+      expect(await page.locator('.project-detail').evaluate(article => {
+        const lead = article.querySelector('figure')!
+        return [...article.querySelectorAll('section')].every(section =>
+          Boolean(lead.compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING))
+      })).toBe(true)
+    }
   }
+  await context.close()
+})
+
+test('Clpr opens its source-backed search study in one activation without JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  const page = await context.newPage()
+  await page.goto('/projects/clpr/')
+  const study = page.getByRole('link', { name: 'Read the search decisions study', exact: true })
+  await expect(study).toHaveAttribute('href', '/case-studies/clpr-search/')
+  await study.click()
+  await expect(page).toHaveURL('/case-studies/clpr-search/')
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   await context.close()
 })
 
@@ -104,11 +131,19 @@ test('the selected name participates in the cross-document hand-over', async ({ 
 
 for (const colorScheme of ['light', 'dark'] as const) test(`project detail fits mobile and passes axe in ${colorScheme}`, async ({ page }) => {
   await page.emulateMedia({ colorScheme })
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto('/projects/clpr/')
-  expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)
-  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
-  await page.screenshot({ path: test.info().outputPath(`project-${colorScheme}-phone.png`), fullPage: true })
+  for (const slug of ['clpr', 'undertow', 'rekolekt', 'subcorp']) {
+    await page.setViewportSize({ width: 320, height: 740 })
+    await page.goto(`/projects/${slug}/`)
+    expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(320)
+    await page.setViewportSize({ width: 390, height: 844 })
+    expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)
+    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
+    await page.screenshot({ path: test.info().outputPath(`project-${slug}-${colorScheme}-phone.png`) })
+    if (await page.locator('.project-detail figure').count()) {
+      await page.locator('.project-detail figure').first().scrollIntoViewIfNeeded()
+      await page.screenshot({ path: test.info().outputPath(`project-${slug}-${colorScheme}-media-phone.png`) })
+    }
+  }
 })
 
 // Returning before the hand-over finishes cancels it; that must not reject on the page.

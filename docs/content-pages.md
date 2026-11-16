@@ -22,6 +22,13 @@ stack, status, notes and captioned images. The source catalog remains unchanged.
 page headings share the selected project name during the native hand-over; reduced motion disables
 the transition. Browsers without cross-document transitions follow ordinary HTML links.
 
+Detail pages lead with the original summary, role, status and period, followed by the first available
+product screenshot or diagram. That lead image loads eagerly with its original caption and dimensions;
+remaining media stays lazy and in source order after the architecture. Product scope, stack and technical
+sections follow the lead visual. Projects without media keep their complete text rather than an empty
+image slot. Direct study links and featured ownership copy come from `project-presentation.ts`;
+Clpr links to `/case-studies/clpr-search/` from its header with an ordinary HTML anchor.
+
 `node scripts/sync-project-assets.mjs [local-clone]` reads only the assets used by this catalog from
 the same pinned commit. File hashes are recorded in `project-assets-provenance.json`. It also makes
 1200 × 630 PNG social images from each original thumbnail. The pages load no external images or fonts.
