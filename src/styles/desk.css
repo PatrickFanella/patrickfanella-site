@@ -10,7 +10,7 @@
 /* Pane switcher in the top bar: one button per pane, in its accent. */
 .bar .tags { display: flex; gap: 4px; padding: 4px; background: var(--raise); border: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
 .tags button {
-  width: 30px; height: 30px; padding: 0; font: 700 0.75rem/1 var(--mono); color: var(--acc); cursor: pointer;
+  width: 44px; height: 44px; padding: 0; font: 700 0.75rem/1 var(--mono); color: var(--acc); cursor: pointer;
   background: transparent; border: 1px solid var(--line);
   transition: background-color var(--t-2) var(--ease-out), color var(--t-2) var(--ease-out), border-color var(--t-2) var(--ease-out), transform var(--t-1) var(--ease-out);
 }
@@ -123,9 +123,8 @@
   .log { grid-area: log; }
   .process { grid-area: process; }
 }
-/* Stacked layouts scroll, so a pane focused with Alt+n stops clear of the sticky top bar.
-   desk.ts sets --bar-h to the bar's real height, which grows when it wraps on a phone. */
-@media (max-width: 1099px) { html { scroll-padding-top: calc(var(--bar-h, 110px) + 12px); } }
+/* Shared --header-clearance also keeps pane targets clear of the sticky header. */
+@media (max-width: 1099px) { .site-header .tags { display: none; } }
 /* Tablet: about across the top, the rest two by two; the page scrolls. */
 @media (min-width: 700px) and (max-width: 1099px) {
   .wm { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "about about" "projects psql" "log process"; }

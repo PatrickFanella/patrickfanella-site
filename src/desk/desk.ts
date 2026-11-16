@@ -51,10 +51,6 @@ document.addEventListener('focusin', (e) => {
 addEventListener('scroll', () => ink?.invalidate(), { capture: true, passive: true })
 addEventListener('resize', () => ink?.invalidate())
 
-// The sticky bar wraps to more lines on a phone; the scroll padding that keeps a focused pane clear of it follows its height.
-const bar = document.querySelector<HTMLElement>('.bar')!
-new ResizeObserver(() => document.documentElement.style.setProperty('--bar-h', `${bar.offsetHeight}px`)).observe(bar)
-
 // Text lands complete immediately. Normal ink develops in frames rather than
 // blocking interaction on a synchronous preroll; reduced motion gets one still.
 document.fonts.load('900 100px "Big Shoulders Display Variable"').catch(() => []).then(() => document.fonts.ready).then(() => {
