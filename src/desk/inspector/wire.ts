@@ -1,15 +1,22 @@
+export interface Parameter { format: 'text' | 'binary'; value: string | null; oid?: number }
+/** A decoded frame. Parse and Query carry sql; Parse and Bind name their statement; Bind carries
+ * its parameters; ParameterDescription carries the server's parameter OIDs. */
 export interface WireMessage {
   type: string; name: string; bytes: number; detail: string; hex: string
   parameterTypes?: number[]
   statementName?: string
+  sql?: string
+  parameters?: Parameter[]
 }
 
 const frontend: Record<string, string> = { P: 'Parse', B: 'Bind', D: 'Describe', E: 'Execute', S: 'Sync', Q: 'Query', H: 'Flush', C: 'Close', X: 'Terminate' }
 const backend: Record<string, string> = { '1': 'ParseComplete', '2': 'BindComplete', '3': 'CloseComplete', T: 'RowDescription', D: 'DataRow', C: 'CommandComplete', Z: 'ReadyForQuery', t: 'ParameterDescription', n: 'NoData', E: 'ErrorResponse', N: 'NoticeResponse', I: 'EmptyQueryResponse', s: 'PortalSuspended', R: 'Authentication', S: 'ParameterStatus', K: 'BackendKeyData' }
 const decoder = new TextDecoder()
 
-/** Decode within each frame's bounds. Counts include its type byte and length word.
- * Unknown messages keep their bytes rather than acquiring an invented meaning. */
+/** Decode within each frame's bounds: every field read goes through need(), so a truncated
+ * frame throws instead of borrowing bytes from the next one. Counts include its type byte and
+ * length word. Unknown messages keep their bytes rather than acquiring an invented meaning.
+ * Binary Bind values stay hex: their type is not known from Bind alone. */
 export function decodeWire(bytes: Uint8Array, direction: 'sent' | 'received'): WireMessage[] {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
   const messages: WireMessage[] = []
@@ -37,24 +44,28 @@ export function decodeWire(bytes: Uint8Array, direction: 'sent' | 'received'): W
     if (direction === 'sent') {
       if (type === 'P') {
         const name = string(), sql = string(), types = Array.from({ length: u16() }, i32)
-        message.statementName = name
+        message.statementName = name; message.sql = sql
         message.detail = `statement ${JSON.stringify(name)}; ${sql}; parameter OIDs [${types.join(', ')}]`
       } else if (type === 'B') {
         const portal = string(), name = string(), formats = Array.from({ length: u16() }, u16)
-        const parameters = Array.from({ length: u16() }, (_, index) => {
+        const sizes: number[] = []
+        const parameters = Array.from({ length: u16() }, (_, index): Parameter => {
           const size = i32(), format = (formats.length === 1 ? formats[0] : formats[index] ?? 0) === 1 ? 'binary' : 'text'
-          if (size === -1) return `$${index + 1}: NULL (${format})`
+          sizes.push(size)
+          if (size === -1) return { format, value: null }
           need(size)
           const value = bytes.subarray(at, at + size); at += size
-          return `$${index + 1}: ${format === 'text' ? JSON.stringify(decoder.decode(value)) : Array.from(value, b => b.toString(16).padStart(2, '0')).join('')} (${format}, ${size} bytes)`
+          return { format, value: format === 'text' ? decoder.decode(value) : Array.from(value, b => b.toString(16).padStart(2, '0')).join('') }
         })
         const resultFormats = Array.from({ length: u16() }, u16)
-        message.detail = `portal ${JSON.stringify(portal)}; statement ${JSON.stringify(name)}; ${parameters.join('; ')}; result formats [${resultFormats.join(', ')}]`
+        message.statementName = name; message.parameters = parameters
+        message.detail = `portal ${JSON.stringify(portal)}; statement ${JSON.stringify(name)}; ${parameters.map(({ format, value }, index) => `$${index + 1}: ${value === null ? `NULL (${format})`
+          : `${format === 'text' ? JSON.stringify(value) : value} (${format}, ${sizes[index]} bytes)`}`).join('; ')}; result formats [${resultFormats.join(', ')}]`
       } else if (type === 'D' || type === 'C') {
         need(1); const target = String.fromCharCode(bytes[at++])
         message.detail = `${target === 'S' ? 'statement' : 'portal'} ${JSON.stringify(string())}`
       } else if (type === 'E') message.detail = `portal ${JSON.stringify(string())}; max rows ${i32()} (0 means all)`
-      else if (type === 'Q') message.detail = string()
+      else if (type === 'Q') message.detail = message.sql = string()
     } else {
       if (type === 't') { message.parameterTypes = Array.from({ length: u16() }, i32); message.detail = `parameter OIDs [${message.parameterTypes.join(', ')}]` }
       else if (type === 'C') message.detail = string()
