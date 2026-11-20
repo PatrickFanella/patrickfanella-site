@@ -64,9 +64,41 @@ test('a recording with a missing field is rejected by name', () => {
   }
   expect(without(draft => Reflect.deleteProperty(draft.meta.memory, 'peakBytes'))).toThrow('Invalid Clpr recording: meta.memory.peakBytes')
   expect(without(draft => Reflect.deleteProperty(draft.meta.budget, 'maxPeakRssBytes'))).toThrow('Invalid Clpr recording: meta.budget.maxPeakRssBytes')
-  expect(without(draft => Reflect.deleteProperty(draft.results[1], 'plan'))).toThrow('Invalid Clpr recording: results[1].plan.natural')
+  expect(without(draft => Reflect.deleteProperty(draft.results[1], 'plan'))).toThrow('Invalid Clpr recording: results[1].plan')
+  expect(without(draft => Reflect.deleteProperty(draft.results[1].plan, 'gin'))).toThrow('Invalid Clpr recording: results[1].plan.gin')
+  expect(without(draft => Reflect.deleteProperty(draft.results[1].plan, 'rows'))).toThrow('Invalid Clpr recording: results[1].plan.rows')
+  expect(without(draft => Reflect.deleteProperty(draft.results[2], 'id'))).toThrow('Invalid Clpr recording: results[2].id')
+  expect(without(draft => Reflect.deleteProperty(draft.results[3].response, 'headers'))).toThrow('Invalid Clpr recording: results[3].response.headers')
   expect(without(draft => Reflect.deleteProperty(draft.results[4], 'calls'))).toThrow('Invalid Clpr recording: results[4].calls')
+  expect(without(draft => Reflect.deleteProperty(draft.results[4].calls[0], 'statements'))).toThrow('Invalid Clpr recording: results[4].calls.statements')
+  expect(without(draft => Reflect.deleteProperty(draft.results[4].calls[0], 'sent'))).toThrow('Invalid Clpr recording: results[4].calls.sent')
+  expect(without(draft => Reflect.deleteProperty(draft.results[4].calls[0].sent[0], 'hex'))).toThrow('Invalid Clpr recording: results[4].calls.sent: Sync')
   expect(without(draft => draft.results.pop())).toThrow('Invalid Clpr recording: results')
+})
+
+test('a null where an object belongs is rejected by name', () => {
+  const nulled = (target: (draft: ReturnType<typeof valid>) => object, key: string) => () => { const draft = valid(); Reflect.set(target(draft), key, null); parseRecording(draft) }
+  expect(() => parseRecording(null)).toThrow('Invalid Clpr recording: schemaVersion')
+  expect(nulled(draft => draft, 'meta')).toThrow('Invalid Clpr recording: meta')
+  expect(nulled(draft => draft.meta, 'memory')).toThrow('Invalid Clpr recording: meta.memory')
+  expect(nulled(draft => draft.meta, 'budget')).toThrow('Invalid Clpr recording: meta.budget')
+  expect(nulled(draft => draft.meta, 'downloads')).toThrow('Invalid Clpr recording: meta.downloads')
+  expect(nulled(draft => draft, 'results')).toThrow('Invalid Clpr recording: results')
+  expect(nulled(draft => draft.results, '0')).toThrow('Invalid Clpr recording: results[0].rows')
+  expect(nulled(draft => draft.results[0], 'response')).toThrow('Invalid Clpr recording: results[0].response')
+  expect(nulled(draft => draft.results[0].calls, '0')).toThrow('Invalid Clpr recording: results[0].calls.ms')
+  expect(nulled(draft => draft.results[0].calls[0], 'received')).toThrow('Invalid Clpr recording: results[0].calls.received')
+})
+
+test('fields the definition does not name are left out, so the checker can find them', () => {
+  const extra = valid()
+  Object.assign(extra, { note: 1 })
+  Object.assign(extra.meta, { host: 'kvant' })
+  Object.assign(extra.results[0], { planError: 'none' })
+  Object.assign(extra.results[0].response, { ok: true })
+  Object.assign(extra.results[0].calls[0], { rows: 2 })
+  Object.assign(extra.results[0].plan, { analyze: true })
+  expect(parseRecording(extra)).toEqual(valid())
 })
 
 test('measurements the live gate would refuse are rejected when the recording is made', () => {
@@ -77,5 +109,5 @@ test('measurements the live gate would refuse are rejected when the recording is
   expect(broken(draft => { draft.meta.siteCommit = 'HEAD' })).toThrow('meta.siteCommit')
   expect(broken(draft => { draft.results[2].rows = 10000 })).toThrow('results[2].rows')
   expect(broken(draft => { draft.results[0].response.status = 500 })).toThrow('results[0].response')
-  expect(broken(draft => { draft.results[0].calls[0].sent[0].bytes = 4 })).toThrow('results[0].calls: Sync')
+  expect(broken(draft => { draft.results[0].calls[0].sent[0].bytes = 4 })).toThrow('results[0].calls.sent: Sync')
 })

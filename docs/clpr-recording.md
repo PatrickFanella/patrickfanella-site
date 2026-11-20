@@ -26,9 +26,13 @@ frontmatter, the tests, the worker and the page scripts all import it.
   checker read the sizes.
 - `sourceFingerprint` hashes the input files. The build, the recorder, the checker, the
   Inspector and the browser tests call it; the caller passes the hash and the file reader.
-- `parseRecording` is the recording's shape. It throws on a missing or malformed field and its
-  return type is the `Recording` type. The recorder writes what it returns, and the checker
-  and the Inspector read the JSON through it.
+- `parseRecording` is the recording's shape. It throws `Invalid Clpr recording: <field>` on a
+  missing or malformed field and its return type is the `Recording` type. The recorder writes
+  what it returns, and the checker and the Inspector read the JSON through it. It rebuilds the
+  recording from the fields it names, so the checker's comparison with the file also fails on
+  an unknown field. Wire messages, statements and PostgreSQL's plan trees are passed through:
+  messages are checked for a name and one hex byte per counted byte, plans for a total cost
+  and an execution time.
 
 `checkoutLiveGate` in `live-policy.ts` builds the gate for a checkout from that fingerprint
 and the size of the pinned `search.wasm.gz` on disk. The Desk page and the browser tests both
