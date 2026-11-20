@@ -82,6 +82,9 @@ export async function createWebGPU(canvas: HTMLCanvasElement, soft: boolean, onL
   const keep = (k: number) => { const b = buffer(16); device.queue.writeBuffer(b, 0, new Float32Array([k, 0, 0, 0])); return wrap({ buffer: b }) }
   // The first sweep warm-starts from the last step's pressure, damped, as on WebGL2.
   const keep0 = keep(0.9), keep1 = keep(1)
+  // Scale and gain for carrying velocity and ink over a resize (see `resample` in wgsl.ts).
+  const carryVel = buffer(16), carryDye = buffer(16)
+  const cv = wrap({ buffer: carryVel }), cd = wrap({ buffer: carryDye })
 
   let owned: GPUTexture[] = []
   const RW = GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.STORAGE_BINDING
@@ -129,13 +132,26 @@ export async function createWebGPU(canvas: HTMLCanvasElement, soft: boolean, onL
     path: 'WebGPU compute',
     renderer,
     rows: [320, 250],
-    resize(simW, simH, dW, dH) {
-      for (const t of owned) t.destroy()
+    resize(simW, simH, dW, dH, keep) {
+      const old = owned, had = old.length > 0, oldVel = had && vel.r, oldDye = had && dye.r
       owned = []; groups.clear()
       W = simW; H = simH; dyeW = dW; dyeH = dH
       vel = two(W, H, 'rgba16float'); dye = two(dyeW, dyeH, 'rgba16float'); prs = two(W, H, 'r32float')
       curl = tex(W, H, 'r32float'); divg = tex(W, H, 'r32float'); solid = tex(W, H, 'r32float')
       mask = tex(dyeW, dyeH, 'rgba8unorm', GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT)
+      // New textures start at zero. Velocity is in viewport heights a second, so a new height
+      // rescales it; pressure only warm-starts the next solve and starts again from zero.
+      if (keep && oldVel && oldDye) {
+        device.queue.writeBuffer(carryVel, 0, new Float32Array([keep[0], keep[1], 1 / keep[1], 0]))
+        device.queue.writeBuffer(carryDye, 0, new Float32Array([keep[0], keep[1], 1, 0]))
+        const enc = device.createCommandEncoder(), pass = enc.beginComputePass()
+        go(pass, 'resample', [cv, samp, oldVel, vel.r], W, H)
+        go(pass, 'resample', [cd, samp, oldDye, dye.r], dyeW, dyeH)
+        pass.end(); device.queue.submit([enc.finish()])
+        groups.clear()
+      }
+      // Destroying after the submit is safe: the queued copy still reads them.
+      for (const t of old) t.destroy()
     },
     get stepCost() { return cost },
     maxSize: device.limits.maxTextureDimension2D,

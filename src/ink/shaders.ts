@@ -136,6 +136,16 @@ void main() {
   o = vec4(d, 1.);
 }`,
 
+  // Carries a field over to a new grid when the viewport changes size. The old and new grids
+  // share their top left corner, so what was on screen stays where it was in CSS px.
+  // uScale is the new viewport size over the old one.
+  resample: HEAD + `
+uniform sampler2D uSrc; uniform vec2 uScale; uniform float uGain;
+void main() {
+  vec2 p = vec2(uv.x * uScale.x, 1. - (1. - uv.y) * uScale.y);
+  o = (p.x < 0. || p.x > 1. || p.y < 0. || p.y > 1.) ? vec4(0.) : texture(uSrc, p) * uGain;
+}`,
+
   // The same Ember pigments in both themes; only the ground changes.
   show: HEAD + NOISE + `
 uniform sampler2D uDye; uniform vec2 uDT;
