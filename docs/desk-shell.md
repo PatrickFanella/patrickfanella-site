@@ -15,19 +15,44 @@ A search before startup finishes asks the visitor to retry. A failed worker is r
 recorded benchmark rows never answer a visitor search. Requests are serialized and errors reject the
 pending command. Leaving the page frees the worker, except when the page enters the back-forward cache.
 
-Checks: `npm run build` and `npx playwright test e2e/shell.spec.ts`.
+Checks: `npm run test:unit`, `npm run build` and `npx playwright test e2e/shell.spec.ts e2e/desk-status.spec.ts`.
 
-The visible mode status follows committed output: the SQL controller reports progress,
-completion, search/no-match results, failure and cancellation through a typed callback.
-The Stop control names the active SQL benchmark or Clpr live mode. A completed SQL worker
-remains available for shell searches; a failed search can be retried without relabeling
-recorded evidence as live. Status copy distinguishes direct SQL over generated clips from
-Clpr's Go handler over fixtures (and any explicitly added generated clips).
+## Pane modes
 
-Each worker callback checks that its worker is still current before changing output or
-status. Switching, stopping and retrying terminate the previous worker and reject its
-pending requests. `e2e/desk-status.spec.ts` injects deterministic controller-boundary events
-for terminal and stale-callback regressions; those fixture times are not performance proof.
+`src/desk/pane-modes.ts` owns which mode the psql pane is in, what that mode's worker is doing, the
+status copy and which worker replies still count. It has no DOM: `src/desk/psql.ts` passes in the two
+worker factories and a render function, and writes each view to the page. `psql.ts` is the only place
+that shows or hides the psql text, the timing panel and the inspector, from the view's mode: the SQL
+benchmark has the text and the panel; the recorded run and Clpr live mode have the inspector.
+
+| Mode | Phase | Entered by | Status line |
+| --- | --- | --- | --- |
+| recorded | idle | page load | Recorded evidence below… (or why live mode is off) |
+| recorded | idle | Stop | SQL benchmark stopped… / Live mode stopped… |
+| benchmark | starting | Run SQL benchmark | Running the SQL benchmark…, then one `SQL benchmark: …` line per worker step |
+| benchmark | slow | 30 s without PostgreSQL | SQL benchmark: PostgreSQL is still loading in this tab… |
+| benchmark | live | the indexed measurement | SQL benchmark complete…; per search: Running a direct SQL search…, SQL search complete: n matches…, SQL search failed… |
+| benchmark | failed | error event, worker error or no worker | SQL benchmark failed. These are recorded times… |
+| clpr | starting | Start Clpr live mode or the example | Downloading the pinned Clpr build…, the worker's progress lines; after 30 s: Clpr is still loading… |
+| clpr | live | the worker's ready event | Running Clpr’s Go search handler…, Clpr search complete: n matches…, Clpr search failed… |
+| clpr | failed | error event, worker error, no worker or a failed first search | Clpr could not run in this tab… |
+
+One worker runs at a time. Starting either mode, stopping and failing all terminate the current
+worker and reject its pending searches ("The SQL benchmark stopped.", "Clpr live mode stopped.",
+"PostgreSQL is unavailable in this tab."); leaving the page rejects a pending SQL search with
+"The desk was closed." and a pending Clpr search with "Clpr live mode stopped.".
+A callback from a worker that is no longer current changes nothing, and neither does a reply nobody
+is waiting for. Request numbers carry on across restarts. Until the SQL benchmark's indexed
+measurement arrives, the pane shows the recorded times, and progress replaces only the last line of
+the psql text. A completed SQL worker stays for shell searches; a failed search can be retried. In
+Clpr live mode only the latest search is shown in the inspector; an earlier one still answers its
+caller. The Stop control names the active mode and is enabled while a worker is starting or live.
+Status copy distinguishes direct SQL over generated clips from Clpr's Go handler over fixtures (and
+any explicitly added generated clips).
+
+`src/desk/pane-modes.test.ts` covers all of this directly with fixture workers.
+`e2e/desk-status.spec.ts` keeps what needs a page: that a view reaches the controls, the psql text,
+the inspector and the shell; its fixture times are not performance proof.
 `e2e/desk.spec.ts` also asserts completion after a real PostgreSQL benchmark, and that each
 figure is the median of its three batch means; how a time is rounded to the clock, how the plan
 is tidied and what the ratio sentence says are tested directly in `src/desk/benchmark.test.ts`, while

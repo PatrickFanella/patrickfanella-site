@@ -1,7 +1,8 @@
 import { responseMarkup, sqlMarkup, timingMarkup, wireMarkup, type Result } from './render'
 import { startPlanView } from './plan-view'
 
-/** HTML sections remain readable without script; only this module turns them into tabs. */
+/** HTML sections remain readable without script; only this module turns them into tabs.
+ *  The psql pane decides whether the inspector is visible; this module only fills it. */
 export function startInspector(root: HTMLElement, resize: (rows: number) => Promise<unknown>) {
   const plans = startPlanView(root, resize)
   const recorded = [...root.querySelectorAll<HTMLElement>('[data-inspector-request], [data-inspector-response], [data-inspector-sql], [data-inspector-timing], [data-inspector-wire], [data-plan-status], [data-plan-output]')]
@@ -39,10 +40,10 @@ export function startInspector(root: HTMLElement, resize: (rows: number) => Prom
     clear() {
       plans.clear()
       recorded.forEach(({ element, html }) => { element.innerHTML = html })
-      root.hidden = false; root.dataset.mode = 'recorded'; provenance.hidden = false; form.hidden = true
+      root.dataset.mode = 'recorded'; provenance.hidden = false; form.hidden = true
     },
     render(event: Result) {
-      root.hidden = false; root.dataset.mode = 'live'; provenance.hidden = true; form.hidden = false
+      root.dataset.mode = 'live'; provenance.hidden = true; form.hidden = false
       root.querySelector<HTMLElement>('[data-inspector-request]')!.textContent = `GET ${event.url} · HTTP ${event.response.status} · measured in this tab on ${event.rows.toLocaleString('en-US')} clips (8 fixtures, ${event.rows - 8} generated)`
       for (const [name, render] of [['response', responseMarkup], ['sql', sqlMarkup], ['timing', timingMarkup], ['wire', wireMarkup]] as const) {
         root.querySelector<HTMLElement>(`[data-inspector-${name}]`)!.innerHTML = render(event)
