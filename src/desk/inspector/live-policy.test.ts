@@ -11,7 +11,7 @@ const recorded = (): RecordingMeta => ({
   budget: { ...policy }, postgres: '', migrations: 0,
 })
 
-test('live policy enforces measured budgets and rejects stale or missing measurements', () => {
+test('live policy enforces measured budgets and rejects stale measurements', () => {
   const meta = recorded(), hash = meta.sourceFingerprint
   const baselinePeak = meta.memory.peakBytes
   const measuredManifest = { commit: meta.clprCommit, wasm: { gzipBytes: meta.wasmGzipBytes } }
@@ -21,9 +21,7 @@ test('live policy enforces measured budgets and rejects stale or missing measure
   meta.memory.peakBytes = meta.budget.maxPeakRssBytes
   expect(gate().allowed).toBe(true)
   meta.memory.peakBytes++
-  expect(gate()).toMatchObject({ allowed: false, reason: expect.stringContaining('peak memory exceeds') })
-  meta.memory.peakBytes = 0
-  expect(gate().allowed).toBe(false)
+  expect(gate()).toEqual({ allowed: false, reason: 'Clpr live mode is off: recorded peak memory exceeds the 2,048 MiB budget.' })
   meta.memory.peakBytes = baselinePeak
   meta.sourceFingerprint = 'changed'
   expect(gate()).toMatchObject({ allowed: false, reason: expect.stringContaining('new recording') })
@@ -34,10 +32,5 @@ test('live policy enforces measured budgets and rejects stale or missing measure
   meta.clprCommit = 'changed'
   expect(gate().allowed).toBe(false)
   meta.clprCommit = measuredManifest.commit
-  meta.memory.samples = 1
-  expect(gate()).toMatchObject({ allowed: false, reason: expect.stringContaining('no usable memory measurement') })
-  meta.memory.samples = 2
-  meta.downloadBytes = meta.wasmGzipBytes - 1
-  expect(gate()).toMatchObject({ allowed: false, reason: expect.stringContaining('download or startup measurement is missing') })
-  expect(liveGate(recorded(), hash, { ...measuredManifest, wasm: { gzipBytes: 6000001 } })).toMatchObject({ allowed: false, reason: expect.stringContaining('6 MB budget') })
+  expect(liveGate(recorded(), hash, { ...measuredManifest, wasm: { gzipBytes: 6000001 } })).toEqual({ allowed: false, reason: 'Clpr live mode is off: compressed Wasm exceeds the 6 MB budget.' })
 })

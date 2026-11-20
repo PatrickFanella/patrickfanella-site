@@ -129,7 +129,7 @@ export function parseRecording(value) {
         metric: text(memory.metric, 'meta.memory.metric', /^sampled Chromium process-tree RSS$/),
         peakBytes: number(memory.peakBytes, 'meta.memory.peakBytes'),
         sampleIntervalMs: number(memory.sampleIntervalMs, 'meta.memory.sampleIntervalMs'),
-        // The live gate refuses fewer samples; fail here instead of shipping live mode off.
+        // One sample cannot show a peak. The live gate relies on this check.
         samples: number(memory.samples, 'meta.memory.samples', 2),
       },
       budget: {
@@ -143,7 +143,7 @@ export function parseRecording(value) {
   }
   const { downloadBytes, downloads, wasmGzipBytes } = parsed.meta
   if (!Number.isFinite(Date.parse(parsed.meta.recordedAt))) reject('meta.recordedAt')
-  // The gate also refuses a download smaller than the Wasm it includes.
+  // A download smaller than the Wasm it includes is not a measurement. The live gate relies on this check.
   if (downloadBytes < wasmGzipBytes || downloadBytes !== Object.values(downloads).reduce((sum, bytes) => sum + bytes, 0)) reject('meta.downloadBytes')
   return parsed
 }
