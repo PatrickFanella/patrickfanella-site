@@ -1,7 +1,7 @@
 // The engine's arithmetic as pure functions on plain numbers, so it can be tested without a
 // canvas or a GPU. engine.ts owns the state and the timing; the decisions live here.
 
-/** Bursts that run at once, and bursts that may wait; a burst past the second is dropped. */
+/** Bursts that run at once, and bursts that may wait; a burst queued past MAX_WAITING is dropped. */
 export const MAX_ACTIVE = 4
 export const MAX_WAITING = 24
 // A phone's toolbar changes the viewport height by up to about this many CSS px.
