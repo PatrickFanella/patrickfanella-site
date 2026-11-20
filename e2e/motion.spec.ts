@@ -96,6 +96,30 @@ test.describe('with motion', () => {
     expect(rising).toBe(await cards.count())
   })
 
+  test('a link within the page glides, then scrolling is instant again', async ({ page }) => {
+    await noWebGL(page)
+    await page.goto('/motion/')
+    await poured(page)
+    const link = page.getByRole('link', { name: 'Glide back to Pour-in' })
+    await link.scrollIntoViewIfNeeded()
+    await page.waitForTimeout(300)
+    const from = await page.evaluate(() => scrollY)
+    expect(from).toBeGreaterThan(200)
+    const path = await page.evaluate(() => new Promise<number[]>((resolve) => {
+      const ys: number[] = []
+      document.querySelector<HTMLAnchorElement>('a[href="#pour-in"]')!.click()
+      const t0 = performance.now()
+      const look = () => { ys.push(scrollY); if (performance.now() - t0 < 1500) requestAnimationFrame(look); else resolve(ys) }
+      requestAnimationFrame(look)
+    }))
+    // On the way up it passes through several positions between the start and the end.
+    const end = path.at(-1)!
+    expect(end).toBeLessThan(from)
+    expect(new Set(path.filter((y) => y < from - 1 && y > end + 1)).size).toBeGreaterThan(2)
+    expect(page.url()).toMatch(/#pour-in$/)
+    // Only that scroll was smooth.
+    await expect.poll(() => page.evaluate(() => document.documentElement.style.scrollBehavior)).toBe('')
+  })
 })
 
 test.describe('with reduced motion', () => {
@@ -109,4 +133,19 @@ test.describe('with reduced motion', () => {
     expect(moving).toBe(0)
   })
 
+  test('a link within the page jumps at once', async ({ page }) => {
+    await noWebGL(page)
+    await page.goto('/motion/')
+    await poured(page)
+    await page.getByRole('link', { name: 'Glide back to Pour-in' }).scrollIntoViewIfNeeded()
+    const after = await page.evaluate(() => new Promise<{ top: number; clearance: number; behavior: string }>((resolve) => {
+      document.querySelector<HTMLAnchorElement>('a[href="#pour-in"]')!.click()
+      const behavior = document.documentElement.style.scrollBehavior
+      const clearance = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)
+      requestAnimationFrame(() => resolve({ top: document.getElementById('pour-in')!.getBoundingClientRect().top, clearance, behavior }))
+    }))
+    expect(after.behavior).toBe('')
+    // By the next frame Pour-in is already under the header, where the scroll padding puts it.
+    expect(Math.abs(after.top - after.clearance)).toBeLessThan(2)
+  })
 })

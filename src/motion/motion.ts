@@ -161,6 +161,27 @@ export function splash(ink: Ink) {
   })
 }
 
+/**
+ * glide: following a link to a place further down the same page scrolls there smoothly
+ * instead of jumping, and the scroll drags the ink with it. The browser still does the
+ * navigation, so history and the keyboard's starting point move as usual; only that one
+ * scroll is smooth. Skip links still jump.
+ */
+export function glide() {
+  const html = document.documentElement
+  let reset = 0
+  const done = () => { clearTimeout(reset); html.style.scrollBehavior = '' }
+  document.addEventListener('click', (e) => {
+    if (reduced() || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    const a = (e.target as Element | null)?.closest?.<HTMLAnchorElement>('a[href^="#"]:not(.skip)')
+    if (!a || a.hash.length < 2 || !document.getElementById(decodeURIComponent(a.hash.slice(1)))) return
+    html.style.scrollBehavior = 'smooth'
+    addEventListener('scrollend', done, { once: true })
+    // No scroll (the target is already in place) means no scrollend.
+    reset = window.setTimeout(done, 1500)
+  })
+}
+
 /** stir-sweep: one slow loop of the pointer across the tank, for demonstrations. */
 export function stirSweep(ink: Ink, cx = innerWidth / 2, cy = innerHeight * 0.6, ms = 2200) {
   if (reduced()) return
