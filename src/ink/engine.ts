@@ -1,4 +1,8 @@
 import { drawMask, type Emitter, type InkId } from './mask'
+import {
+  admitBursts, advanceBursts, canQueueBurst, canvasSize, finalSteps, gpuCappedSteps, gridSize, isResizeNoop,
+  probeSteps, resizeKeep, stepsThatFit, stillRemake,
+} from './schedule'
 import { createWebGL } from './webgl'
 import { createWebGPU, type GPUBackend } from './webgpu'
 
@@ -95,8 +99,6 @@ const INK_RGB: Record<InkId, number[]> = { 0: [1, 0, 0], 1: [0, 1, 0], 2: [0, 0,
 // How long WebGPU may take to start before WebGL2 takes the canvas instead. The pages wait
 // this long at most before the pour; a cold start took about 250 ms more than WebGL2 here.
 const GPU_WAIT_MS = 1000
-// A phone's toolbar changes the viewport height by up to about this many CSS px.
-const TOOLBAR_PX = 120
 
 /**
  * Starts the ink on WebGPU where the browser gives a hardware adapter, otherwise on
@@ -119,19 +121,14 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   // left alone; `sized` stays behind `be` until one has a size, and nothing steps or draws until then.
   function resize() {
     if (!be || !innerWidth || !innerHeight) return false
-    const lim = be.maxSize ?? Infinity
-    const dpr = Math.min(devicePixelRatio || 1, 2, lim / Math.max(innerWidth, innerHeight))
-    const cw = Math.min(lim, Math.round(innerWidth * dpr)), ch = Math.min(lim, Math.round(innerHeight * dpr))
+    const { w: cw, h: ch } = canvasSize(innerWidth, innerHeight, devicePixelRatio, be.maxSize)
     const same = sized === be
     // Assigning a canvas its own size still clears it, so leave an unchanged one alone.
-    if (same && cw === canvas.width && ch === canvas.height && cssW === innerWidth && cssH === innerHeight) return false
+    if (isResizeNoop(same, [cw, ch], [canvas.width, canvas.height], [cssW, cssH], [innerWidth, innerHeight])) return false
     canvas.width = cw; canvas.height = ch
-    const rows = be.rows[innerWidth <= 700 ? 1 : 0]
-    simH = rows; simW = Math.max(16, Math.round(rows * innerWidth / innerHeight))
-    const dyeScale = Math.min(1, 1100 / Math.max(innerWidth, innerHeight))
-    dyeW = Math.round(innerWidth * dyeScale); dyeH = Math.round(innerHeight * dyeScale)
+    ;({ simW, simH, dyeW, dyeH } = gridSize(innerWidth, innerHeight, be.rows))
     maskCanvas.width = dyeW; maskCanvas.height = dyeH
-    be.resize(simW, simH, dyeW, dyeH, same ? [innerWidth / cssW, innerHeight / cssH] : undefined)
+    be.resize(simW, simH, dyeW, dyeH, same ? resizeKeep(innerWidth, innerHeight, cssW, cssH) : undefined)
     sized = be; cssW = innerWidth; cssH = innerHeight
     maskDirty = true
     return true
@@ -143,7 +140,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   // Input gathered between steps.
   const ptr = { x: -1, y: -1, ax: 0, ay: 0 }
   interface Burst { a: number[]; b: number[]; c: number[]; left: number }
-  const waiting: Burst[] = [], active: Burst[] = []
+  let waiting: Burst[] = [], active: Burst[] = []
   const bA = new Float32Array(16), bB = new Float32Array(16), bC = new Float32Array(16)
   let scrollV = 0
   let time = 0
@@ -155,7 +152,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
       be.mask(maskCanvas); maskDirty = false
     }
     const ptrV: [number, number] = [ptr.ax * 9, ptr.ay * 9]; ptr.ax = 0; ptr.ay = 0
-    while (active.length < 4 && waiting.length) active.push(waiting.shift()!)
+    ;({ active, waiting } = admitBursts(active, waiting))
     bA.fill(0); bB.fill(0); bC.fill(0)
     active.forEach((q, i) => { bA.set(q.a, i * 4); bB.set(q.b, i * 4); bC.set(q.c, i * 4); q.c = [q.c[0], q.c[1], q.c[2], 0] })
     be.step({
@@ -163,7 +160,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
       asp: [simW / simH, 1], T: [1 / simW, 1 / simH], ptr: [ptr.x, ptr.y], ptrV, bA, bB, bC,
     })
     scrollV *= 0.5
-    for (let i = active.length - 1; i >= 0; i--) if (--active[i].left <= 0) active.splice(i, 1)
+    active = advanceBursts(active)
     time += dt
   }
 
@@ -214,8 +211,9 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
       // stays aligned and is kept. One that hides uncovers space the still never reached, or a
       // strip an earlier cut left bare, so any height past what is left of the still makes it again.
       if (!still || wanted) return
-      stillCut = Math.min(stillCut, innerHeight)
-      if (innerWidth !== stillW || Math.abs(innerHeight - stillH) > TOOLBAR_PX || innerHeight > stillCut) {
+      const { cut, remake } = stillRemake(innerWidth, innerHeight, stillW, stillH, stillCut)
+      stillCut = cut
+      if (remake) {
         clearTimeout(again)
         again = window.setTimeout(() => {
           if (!still || wanted || !be || sized !== be) return
@@ -258,15 +256,16 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
           for (let i = 0; i < k; i++) step(1 / 60)
           n += k; finish()
           const now = performance.now()
-          return Math.floor((budgetMs - (now - t0)) / Math.max((now - t) / k, 0.01))
+          return stepsThatFit(budgetMs, now - t0, k, now - t)
         }
         finish()
         let fits = timed(1)
-        if (fits >= 1 && fits < steps - n) fits = timed(Math.max(1, Math.min(8, fits >> 1)))
-        for (let k = Math.min(steps - n, fits); k > 0; k--) { step(1 / 60); n++ }
+        const probe = probeSteps(fits, steps - n)
+        if (probe) fits = timed(probe)
+        for (let k = finalSteps(steps - n, fits); k > 0; k--) { step(1 / 60); n++ }
       } else {
         // WebGPU cannot wait here, so the GPU cost it measured at start caps the count.
-        if (b.stepCost) steps = Math.min(steps, Math.max(1, Math.floor(budgetMs / b.stepCost)))
+        if (b.stepCost) steps = gpuCappedSteps(steps, budgetMs, b.stepCost)
         while (n < steps && performance.now() - t0 < budgetMs) { step(1 / 60); n++ }
       }
     } catch (err) { crash(err as Error); return n }
@@ -342,7 +341,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     invalidate() { maskDirty = true },
     setEmitters(list) { emitters = list; maskDirty = true },
     burst(x, y, ink, amount = 1, rx = 57, ry = rx, { dir = [0, 0], spread = 1, steps = 1 } = {}) {
-      if (waiting.length >= 24 || noView()) return
+      if (!canQueueBurst(waiting.length) || noView()) return
       waiting.push({
         a: [x / innerWidth, 1 - y / innerHeight, rx / innerHeight, ry / innerHeight],
         b: [dir[0], -dir[1], spread, 0.9 * amount],
