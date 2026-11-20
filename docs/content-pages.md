@@ -23,9 +23,9 @@ live in that module, with the asset path rules `socialCardPath()` and `assetPath
 thumbnail and media files with their `srcSet` candidates). `src/content/projects.mjs` applies the join
 to the checked-in files; only the two asset scripts below open them elsewhere. It is plain JavaScript with JSON import
 attributes, so Astro, Vitest, Playwright and plain node scripts import the same `catalog` with no
-build step or generated copy. `project-presentation.ts` re-exports it for the pages as
-`allProjects`, `selectedProjects`, `featuredProjects`, `supportingProjects` and `studiedProjects`,
-with `reviewedOn`, `studiesReviewedOn` and `projectsReply`.
+build step or generated copy. Pages read `catalog.all`, `selected`, `featured`, `supporting` and
+`studied`, with `reviewedOn` and `studiesReviewedOn`; `projects.mjs` also exports `projectsReply`,
+the Desk shell's `projects` reply. Types come from `project-catalog.mjs`.
 The project and case-study pages, the landing page, the Desk, the sitemap and `ProjectMedia.astro`
 read those and do not open the JSON files.
 

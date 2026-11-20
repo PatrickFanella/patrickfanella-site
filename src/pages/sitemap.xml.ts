@@ -1,6 +1,7 @@
-import { selectedProjects, studiedProjects } from '../content/project-presentation'
+import { catalog } from '../content/projects.mjs'
 import { siteMetadata } from '../content/site-metadata'
 import { routePaths } from '../content/site-facts.mjs'
+const { selected: selectedProjects, studied: studiedProjects } = catalog
 
 const xml = (value: string) => value.replace(/[<>&"']/g, character => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' })[character]!)
 

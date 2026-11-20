@@ -3,6 +3,7 @@
 // it to, and its shape. Plain JavaScript without Node imports, so astro.config.mjs, the node scripts,
 // Astro frontmatter, the tests, the worker and the page scripts can all import it. It never imports
 // recorded-run.json: callers hand the data in, which keeps the recording out of client bundles.
+import { contentSecurityPolicy } from '../../content/site-facts.mjs'
 
 /** @typedef {ReturnType<typeof parseRecording>} Recording */
 /** @typedef {Recording['meta']} RecordingMeta */
@@ -15,7 +16,6 @@ export const tableSizes = [0, 1000, 10000, 30000, 50000].map(generated => fixtur
 /** Files that decide what the worker does and how it is recorded. A change to any needs a new recording. */
 const inputs = [
   'astro.config.mjs',
-  'src/content/site-facts.mjs',
   'scripts/record-clpr.mjs',
   'src/desk/inspector/recording.mjs',
   'package-lock.json',
@@ -30,12 +30,14 @@ const inputs = [
 ]
 
 /**
- * The hex fingerprint of the recording's inputs: each path and its bytes, in order.
+ * The hex fingerprint of the recording's inputs: each path and its bytes, in order, then the
+ * content security policy the recorder serves (the only part of site-facts.mjs it depends on).
  * @param {{ update(data: string | Uint8Array): unknown, digest(encoding: 'hex'): string }} sha256 A fresh `createHash('sha256')`.
  * @param {(path: string) => string | Uint8Array} read `readFileSync`, from the repository root.
  */
 export function sourceFingerprint(sha256, read) {
   for (const path of inputs) { sha256.update(path); sha256.update('\0'); sha256.update(read(path)); sha256.update('\0') }
+  sha256.update('contentSecurityPolicy\0'); sha256.update(contentSecurityPolicy); sha256.update('\0')
   return sha256.digest('hex')
 }
 
@@ -127,7 +129,7 @@ export function parseRecording(value) {
         metric: text(memory.metric, 'meta.memory.metric', /^sampled Chromium process-tree RSS$/),
         peakBytes: number(memory.peakBytes, 'meta.memory.peakBytes'),
         sampleIntervalMs: number(memory.sampleIntervalMs, 'meta.memory.sampleIntervalMs'),
-        // The live gate refuses fewer samples; fail here instead of shipping live mode off.
+        // One sample cannot show a peak. The live gate relies on this check.
         samples: number(memory.samples, 'meta.memory.samples', 2),
       },
       budget: {
@@ -141,7 +143,7 @@ export function parseRecording(value) {
   }
   const { downloadBytes, downloads, wasmGzipBytes } = parsed.meta
   if (!Number.isFinite(Date.parse(parsed.meta.recordedAt))) reject('meta.recordedAt')
-  // The gate also refuses a download smaller than the Wasm it includes.
+  // A download smaller than the Wasm it includes is not a measurement. The live gate relies on this check.
   if (downloadBytes < wasmGzipBytes || downloadBytes !== Object.values(downloads).reduce((sum, bytes) => sum + bytes, 0)) reject('meta.downloadBytes')
   return parsed
 }

@@ -1,9 +1,9 @@
 ---
 import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
-import { featuredProjects } from '../../content/project-presentation'
 import { catalog } from '../../content/projects.mjs'
 import { listNames, NumberWord, numberWord } from '../../content/number-words.mjs'
+const { featured: featuredProjects } = catalog
 const studyCount = numberWord(catalog.studied.length)
 ---
 <ContentPage title="Engineering case studies | Patrick Fanella" description={`${NumberWord(catalog.studied.length)} source-backed engineering case studies: ${listNames(catalog.studied.map(project => project.title))}.`}>

@@ -20,3 +20,6 @@ export const catalog = assembleCatalog({
   featured: featuredSlugs,
   reviewedAt: { selection: selection.reviewedAt, studies: studies.reviewedAt },
 })
+
+/** The Desk shell's `projects` reply: each featured project by its product name. */
+export const projectsReply = catalog.featured.map(project => `${project.displayName}: ${project.tagline}.`).join(' ')

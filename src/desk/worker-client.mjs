@@ -31,7 +31,8 @@
  *   into what its request resolves to; a throw rejects the request. `latest` says the reply answers
  *   the newest request.
  * @property {(message: string) => void} failed The worker failed or its script did not load.
- * @property {(message: string) => void} [refused] A request failed, before its promise rejects.
+ * @property {(message: string) => void} [refused] A request failed; its promise has already been
+ *   rejected with the worker's message.
  * @property {() => void} [slow] Called once if started() has not been called after `slowAfter` ms.
  * @property {number} [slowAfter] 30 s unless given.
  * @property {() => void} [after] Called after any of the above.
@@ -64,8 +65,9 @@ export function connect(worker, on) {
       // A reply nobody is waiting for changes nothing.
       const request = pending.get(message.id)
       if (request && message.ev === 'error') {
-        on.refused?.(message.message)
+        // Settle first: `refused` may close the client, which would reject it with the close reason.
         pending.delete(message.id); request.reject(new Error(message.message))
+        on.refused?.(message.message)
       } else if (request) {
         pending.delete(message.id)
         try { request.resolve(on.result(/** @type {Extract<Event, { ev: 'result' }>} */ (data), message.id === lastId)) }

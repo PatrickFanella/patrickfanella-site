@@ -1,8 +1,9 @@
 import AxeBuilder from '@axe-core/playwright'
 import { assetPaths } from '../src/content/project-catalog.mjs'
-import { allProjects, featuredProjects, selectedProjects } from '../src/content/project-presentation'
+import { catalog } from '../src/content/projects.mjs'
 import { redirects } from '../src/content/site-facts.mjs'
 import { test, expect } from './fixtures'
+const { all: allProjects, featured: featuredProjects, selected: selectedProjects } = catalog
 
 test.use({ reducedMotion: 'reduce' })
 

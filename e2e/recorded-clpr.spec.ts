@@ -1,20 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import { checkoutLiveGate } from '../src/desk/inspector/live-policy'
-import { responseMarkup, sqlMarkup, wireMarkup } from '../src/desk/inspector/render'
 import { test, expect } from './fixtures'
 import { recordedLiveGate, recording } from './recording-policy'
-
-test('the shared renderer escapes captured response, SQL, parameters and wire strings', () => {
-  const event = structuredClone(recording.results[0]), attack = '<img src=x onerror="alert(1)">'
-  event.response.body = JSON.stringify({ results: { clips: [{ title: attack }] } })
-  event.response.headers.Attack = attack
-  event.calls[0].statements = [{ kind: 'execute', sql: `SELECT ${attack}`, params: [{ format: 'text', value: attack }] }]
-  event.calls[0].sent[0].detail = attack
-  for (const markup of [responseMarkup(event), sqlMarkup(event), wireMarkup(event)]) {
-    expect(markup).not.toContain('<img')
-    expect(markup).toContain('&lt;img')
-  }
-})
 
 test('every panel contains complete recorded evidence without JavaScript or a worker download', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } })

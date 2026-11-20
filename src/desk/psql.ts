@@ -3,11 +3,11 @@
 // handler in a module worker. pane-modes.ts decides what the pane is doing and says; this file only
 // builds the elements, creates the workers and writes each view to the page.
 import { SEARCH_SQL, type PgEvent } from './pg-protocol'
-import { manifest } from './clpr-protocol'
-import { clprControls } from './clpr'
+import { manifest, type ClprResult } from './clpr-protocol'
+import { clprControls } from './pane-controls'
 import { tidyPlan } from './benchmark'
 import { startInspector } from './inspector/inspector'
-import { startModes, type ClprResult, type SearchResult, type Session, type View } from './pane-modes'
+import { startModes, type SearchResult, type Session, type View } from './pane-modes'
 
 const fmt = (n: number) => n.toLocaleString('en-US')
 
@@ -81,6 +81,12 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
   const bars = bench.querySelectorAll<HTMLElement>('.bbar i')
   // Two of these are live regions, so text is written only when it changes.
   const text = (element: HTMLElement, value: string) => { if (element.textContent !== value) element.textContent = value }
+  // A focused button that disables itself would drop keyboard focus to the body, so the status line,
+  // which says what happened, takes it first.
+  const enable = (button: HTMLButtonElement, on: boolean) => {
+    if (!on && document.activeElement === button) ui.status.focus()
+    button.disabled = !on
+  }
 
   let session: Session | undefined, live: ClprResult | null = null
   const render = (view: View) => {
@@ -92,7 +98,7 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
     pre.hidden = !sql; bench.hidden = !sql; root.hidden = sql
 
     text(sub, view.sub); text(ui.status, view.status); text(ui.stop, view.stopLabel)
-    ui.start.disabled = !view.canStart; ui.sample.disabled = !view.canExample; ui.stop.disabled = !view.canStop
+    enable(ui.start, view.canStart); enable(ui.sample, view.canExample); enable(ui.stop, view.canStop)
 
     const b = view.bench
     text(q('[data-pg-cap]'), b.cap); text(q('[data-pg-note]'), b.note); q('.seq').hidden = b.seqHidden
