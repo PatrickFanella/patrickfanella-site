@@ -70,7 +70,7 @@ test('the SQL benchmark view reaches the controls, the psql output and the shell
 
   const input = page.getByRole('textbox', { name: 'Desk command' })
   await input.fill('search absent'); await input.press('Enter')
-  await emit(page, 0, { ev: 'search', id: 1, query: 'absent', run, rows: [], total: 0 })
+  await emit(page, 0, { ev: 'result', id: 1, query: 'absent', run, rows: [], total: 0 })
   await expect(status).toContainText('SQL search complete: 0 matches')
   await expect(page.getByRole('log')).toContainText('No matching clips.')
   await expect(page.locator('.bench .seq')).toBeHidden()
