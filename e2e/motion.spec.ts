@@ -54,3 +54,36 @@ test('replaying the pour is not disturbed by the run before it', async ({ page }
   await poured(page)
   await expect(page.locator('#demo-pour [data-ink-letter]:not([data-pour])')).toHaveCount(0)
 })
+
+test('the landing name holds its fitted size before the display face loads', async ({ page }) => {
+  await noWebGL(page)
+  for (const size of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(size)
+    await page.addInitScript(() => {
+      const w = window as unknown as { shift: number }
+      w.shift = 0
+      new PerformanceObserver((list) => {
+        for (const e of list.getEntries() as unknown as { value: number; hadRecentInput: boolean }[]) if (!e.hadRecentInput) w.shift += e.value
+      }).observe({ type: 'layout-shift', buffered: true })
+    })
+    await page.goto('/')
+    await poured(page)
+    // Before the estimate, fitting the name moved the page by a layout shift of 0.2 on a desktop.
+    expect(await page.evaluate(() => (window as unknown as { shift: number }).shift), `layout shift at ${size.width} px`).toBeLessThan(0.05)
+  }
+})
+
+test.describe('with motion', () => {
+  test('the ink canvas stays clear until the solver draws, then fades in', async ({ page }) => {
+    await page.addInitScript(() => {
+      addEventListener('DOMContentLoaded', () => {
+        (window as unknown as { early: string }).early = getComputedStyle(document.getElementById('ink')!).opacity
+      })
+    })
+    await page.goto('/case-studies/')
+    expect(await page.evaluate(() => (window as unknown as { early: string }).early)).toBe('0')
+    await expect(page.locator('html')).toHaveClass(/\bink-on\b/, { timeout: 60_000 })
+    await expect.poll(() => page.locator('#ink').evaluate((el) => getComputedStyle(el).opacity)).toBe('1')
+  })
+
+})
