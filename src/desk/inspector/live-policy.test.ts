@@ -1,16 +1,18 @@
 import { expect, test } from 'vitest'
-import data from './recorded-run.json' with { type: 'json' }
-import { liveGate, type Recording } from './live-policy'
-import { manifest } from '../clpr-protocol'
+import { liveGate, type RecordingMeta } from './live-policy'
+import policy from './recording-policy.json' with { type: 'json' }
 
-const recording = data as Recording
+// A literal recording at the allowed boundary, so the gate's rules are tested whatever recorded-run.json holds.
+const recorded = (): RecordingMeta => ({
+  recordedAt: '', siteCommit: '', sourceFingerprint: 'hash', clprCommit: 'commit', workerSha256: '', browser: '', platform: '', ciRun: null,
+  wasmGzipBytes: 5000000, downloadBytes: 6000000, downloads: {}, startupMs: 0,
+  memory: { metric: 'sampled Chromium process-tree RSS', peakBytes: policy.maxPeakRssBytes / 2, sampleIntervalMs: 50, samples: 2 },
+  budget: { ...policy }, postgres: '', migrations: 0,
+})
 
 test('live policy enforces measured budgets and rejects stale or missing measurements', () => {
-  const meta = structuredClone(recording.meta), hash = meta.sourceFingerprint
-  // Exercise the allowed boundary even when the actual CI measurement disables live mode.
-  const baselinePeak = meta.budget.maxPeakRssBytes / 2
-  meta.memory.peakBytes = baselinePeak
-  meta.wasmGzipBytes = 5000000
+  const meta = recorded(), hash = meta.sourceFingerprint
+  const baselinePeak = meta.memory.peakBytes
   const measuredManifest = { commit: meta.clprCommit, wasm: { gzipBytes: meta.wasmGzipBytes } }
   const gate = () => liveGate(meta, hash, measuredManifest)
   expect(gate().allowed).toBe(true)
@@ -30,8 +32,11 @@ test('live policy enforces measured budgets and rejects stale or missing measure
   meta.budget.maxPeakRssBytes--
   meta.clprCommit = 'changed'
   expect(gate().allowed).toBe(false)
-  meta.clprCommit = manifest.commit
-  meta.memory.samples = 0
-  expect(gate().allowed).toBe(false)
-  expect(liveGate(recording.meta, hash, { ...manifest, wasm: { gzipBytes: 6000001 } })).toMatchObject({ allowed: false, reason: expect.stringContaining('6 MB budget') })
+  meta.clprCommit = measuredManifest.commit
+  meta.memory.samples = 1
+  expect(gate()).toMatchObject({ allowed: false, reason: expect.stringContaining('no usable memory measurement') })
+  meta.memory.samples = 2
+  meta.downloadBytes = meta.wasmGzipBytes - 1
+  expect(gate()).toMatchObject({ allowed: false, reason: expect.stringContaining('download or startup measurement is missing') })
+  expect(liveGate(recorded(), hash, { ...measuredManifest, wasm: { gzipBytes: 6000001 } })).toMatchObject({ allowed: false, reason: expect.stringContaining('6 MB budget') })
 })
