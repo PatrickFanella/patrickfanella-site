@@ -5,8 +5,10 @@ import { pg_trgm } from '@electric-sql/pglite/contrib/pg_trgm'
 import { ltree } from '@electric-sql/pglite/contrib/ltree'
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto'
 import { artifactBase, manifest, type ClprEvent, type ClprRequest, type ClprResponse } from './clpr-protocol'
+import { replies } from './worker-replies'
 import { captureDatabase } from './inspector/capture'
 import { clipSearch, inspectPlans, resizeClips } from './inspector/plans'
+import type { fixtureCount } from './inspector/recording.mjs'
 
 declare global {
   var pglite: Pick<PGlite, 'execProtocolRaw'>
@@ -15,10 +17,7 @@ declare global {
   var Go: new () => { importObject: WebAssembly.Imports; run(instance: WebAssembly.Instance): Promise<void> }
 }
 
-const post = (event: ClprEvent) => postMessage(event)
-const fail = (error: unknown) => post({ ev: 'error', message: error instanceof Error ? error.message : String(error) })
-self.addEventListener('unhandledrejection', event => fail(event.reason))
-self.addEventListener('error', event => fail(event.message))
+const { post, fail, serve } = replies<ClprRequest, ClprEvent>(self)
 
 async function downloaded(name: keyof typeof manifest.files): Promise<ArrayBuffer> {
   const response = await fetch(artifactBase + name)
@@ -66,12 +65,12 @@ async function main() {
     try { await pg.exec(migration.sql) } catch (error) { throw new Error(`${migration.name}: ${String(error)}`) }
   }
   // The prototype's eight labelled fixtures; all data and search analytics remain in this worker.
-  const fixtures: [string, string, number][] = [
+  const fixtures = [
     ['speedrun world record attempt', 'runner_a', 41], ['chat reacts to the world record', 'streamer_b', 33],
     ['cooking stream goes wrong', 'chef_c', 12], ['clutch final round in ranked', 'pro_d', 58],
     ['world first raid clear', 'guild_e', 71], ['record breaking subathon finale', 'host_f', 22],
     ['rock and roll cover on stream', 'band_g', 9], ['c++ live coding session', 'dev_h', 15],
-  ]
+  ] as const satisfies readonly (readonly [string, string, number])[] & { length: typeof fixtureCount }
   for (const [i, [title, creator, votes]] of fixtures.entries()) {
     await pg.query(`INSERT INTO clips(twitch_clip_id,twitch_clip_url,embed_url,title,creator_name,broadcaster_name,created_at,vote_score)
       VALUES ($1,$2,$2,$3,$4,$4,timestamp '2026-11-01' + ($5 || ' hours')::interval,$6)`,
@@ -90,29 +89,26 @@ async function main() {
   const version = (await pg.query<{ server_version: string }>('SHOW server_version')).rows[0].server_version
   post({ ev: 'ready', migrations: migrations.length, rows: fixtures.length, version })
   // PGlite's wire-protocol connection is single-client; serialize requests in this worker.
-  let requests = Promise.resolve()
-  let rows = fixtures.length
-  self.onmessage = ({ data }: MessageEvent<ClprRequest>) => {
-    requests = requests.then(async () => {
-      if (data.rows !== undefined) {
-        await resizeClips(pg, data.rows)
-        rows = (await pg.query<{ n: number }>('SELECT count(*)::int AS n FROM clips')).rows[0].n
-      }
-      const url = `/api/v1/search?${new URLSearchParams({ q: data.words, type: 'clips' })}`
-      capture.begin()
-      const start = performance.now()
-      const response = await goHandle('GET', url)
-      const ms = performance.now() - start
-      const calls = capture.finish()
-      const statement = clipSearch(calls.flatMap(call => call.statements))
-      let plan, planError
-      if (statement) {
-        try { plan = await inspectPlans(pg, statement, rows) }
-        catch (error) { planError = error instanceof Error ? error.message : String(error) }
-      }
-      post({ ev: 'result', id: data.id, url, response, ms, calls, rows, plan, planError })
-    }).catch(fail)
-  }
+  let rows: number = fixtures.length
+  serve(async (request) => {
+    if (request.rows !== undefined) {
+      await resizeClips(pg, request.rows)
+      rows = (await pg.query<{ n: number }>('SELECT count(*)::int AS n FROM clips')).rows[0].n
+    }
+    const url = `/api/v1/search?${new URLSearchParams({ q: request.words, type: 'clips' })}`
+    capture.begin()
+    const start = performance.now()
+    const response = await goHandle('GET', url)
+    const ms = performance.now() - start
+    const calls = capture.finish()
+    const statement = clipSearch(calls.flatMap(call => call.statements))
+    let plan, planError
+    if (statement) {
+      try { plan = await inspectPlans(pg, statement, rows) }
+      catch (error) { planError = error instanceof Error ? error.message : String(error) }
+    }
+    return { url, response, ms, calls, rows, plan, planError }
+  })
 }
 
 void main().catch(fail)

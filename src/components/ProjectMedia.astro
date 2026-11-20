@@ -1,6 +1,5 @@
 ---
-import assets from '../content/project-assets-provenance.json'
-import type { ProjectMedia } from '../content/project-presentation'
+import type { ProjectMedia } from '../content/project-catalog.mjs'
 
 interface Props {
   media: ProjectMedia
@@ -8,9 +7,8 @@ interface Props {
   loading?: 'eager' | 'lazy'
 }
 const { media, sizes, loading = 'lazy' } = Astro.props
-const dimensions = assets.files.find(file => file.path === media.src)!
 ---
 <figure>
-  <img src={media.src} width={dimensions.width} height={dimensions.height} srcset={'srcSet' in media ? media.srcSet : undefined} sizes={sizes} alt={media.alt} loading={loading} decoding="async" />
+  <img src={media.src} width={media.width} height={media.height} srcset={media.srcSet} sizes={sizes} alt={media.alt} loading={loading} decoding="async" />
   <figcaption>{media.caption}</figcaption>
 </figure>

@@ -1,10 +1,13 @@
 import { readFile } from 'node:fs/promises'
+import { routePaths } from '../src/content/site-facts.mjs'
 
 const base = process.argv[2] ?? 'https://patrickfanella.co'
 const expected = process.argv.find(arg => arg.startsWith('--revision='))?.slice(11)
 const xml = await readFile('docs/evidence/current-site-sitemap.xml', 'utf8')
 const paths = new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => new URL(url).pathname))
-for (const path of ['/desk/', '/motion/', '/case-studies/clpr-search/', '/assets/patrick_fanella_resume.pdf', '/robots.txt', '/sitemap.xml', '/REVISION']) paths.add(path)
+// The legacy sitemap lists pages without the trailing slash; those entries already cover them.
+for (const path of routePaths('live')) if (!paths.has(path.replace(/(.)\/$/, '$1'))) paths.add(path)
+for (const path of ['/assets/patrick_fanella_resume.pdf', '/robots.txt', '/sitemap.xml', '/REVISION']) paths.add(path)
 for (const path of paths) {
   const response = await fetch(new URL(path, base), { signal: AbortSignal.timeout(30_000) })
   if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`)

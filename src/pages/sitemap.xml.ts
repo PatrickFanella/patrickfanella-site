@@ -1,14 +1,15 @@
-import { selectedProjects } from '../content/project-presentation'
-import studies from '../content/project-case-studies.json'
+import { catalog } from '../content/projects.mjs'
 import { siteMetadata } from '../content/site-metadata'
+import { routePaths } from '../content/site-facts.mjs'
+const { selected: selectedProjects, studied: studiedProjects } = catalog
 
 const xml = (value: string) => value.replace(/[<>&"']/g, character => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' })[character]!)
 
 export function GET() {
   const pages = [
-    ...['/', '/projects/', '/resume/', '/contact/', '/desk/', '/motion/', '/case-studies/', '/case-studies/clpr-search/', '/case-studies/clpr-request/'].map(path => ({ path, images: [] as string[] })),
-    ...studies.studies.map(study => ({ path: `/case-studies/${study.slug}/`, images: selectedProjects.find(project => project.slug === study.slug)!.media.map(media => media.src) })),
-    ...selectedProjects.map(project => ({ path: `/projects/${project.slug}/`, images: project.media.map(media => media.src) })),
+    ...routePaths().map(path => ({ path, images: [] as string[] })),
+    ...studiedProjects.map(project => ({ path: project.study.path, images: project.media.map(media => media.src) })),
+    ...selectedProjects.map(project => ({ path: project.path, images: project.media.map(media => media.src) })),
   ]
   const entries = pages.map(page => {
     const images = page.images.map(image => `<image:image><image:loc>${xml(new URL(image, siteMetadata.origin).href)}</image:loc></image:image>`).join('')

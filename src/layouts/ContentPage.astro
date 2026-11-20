@@ -20,5 +20,5 @@ const { title, description, resume = false, readingSurface = false, ogType = 'we
     <slot />
   </main>
   <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href={`mailto:${recruitingEmail}`}>{recruitingEmail}</a><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Case studies</a></nav></footer>
-  <Fragment slot="head"><slot name="head" /><link rel="expect" href="#content-footer" blocking="render" /><script is:inline src="/project-transition.js"></script><script>import '../content-page.ts'</script></Fragment>
+  <Fragment slot="head"><slot name="head" /><link rel="expect" href="#content-footer" blocking="render" /><script is:inline src="/project-transition.js"></script><script>import { boot } from '../boot'; boot()</script></Fragment>
 </Page>

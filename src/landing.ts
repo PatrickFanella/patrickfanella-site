@@ -1,29 +1,21 @@
 import { boot } from './boot'
-import { fitWidth, pourIn, reduced, splitLetters, unfold } from './motion/motion'
+import { fitWidth, glide, pourIn, splitLetters, unfold } from './motion/motion'
 
-const { ink } = boot()
+// Pour once the name has its final size. The name stays hidden until the solver is ready too, so
+// the first splashes are not lost.
+const { ink } = boot((ink) => { faceReady = true; layout(); void pourIn(letters, ink) })
 const name = document.getElementById('name')!
 const letters = splitLetters(name, 'ooyycccccyyooo')
 
-const layout = () => { fitWidth(name, innerWidth <= 700 ? 0.17 : 0.27); ink?.invalidate() }
-layout()
+// Until the display face loads, the stylesheet's estimate holds the name's size. Fitting the
+// fallback face first would move the page twice: once now and again when the face arrives.
+let faceReady = false
+const layout = () => { if (!faceReady) return; fitWidth(name, innerWidth <= 700 ? 0.17 : 0.27); ink?.invalidate() }
 // Refit when the container's width changes, such as when a scrollbar appears.
 new ResizeObserver(layout).observe(name)
-const faces = document.fonts.load('900 100px "Big Shoulders Display Variable"').catch(() => []).then(() => document.fonts.ready)
-
 unfold()
+glide()
 
-// Start once the name has its final size. With motion the tank starts empty and fills as each
-// letter lands; with reduced motion the solver runs ahead and the page shows one still frame.
-// The name stays hidden until the solver is ready too, so the first splashes are not lost.
-void Promise.all([faces, ink?.ready]).then(() => {
-  layout()
-  if (!ink) { pourIn(letters, null); return }
-  if (reduced()) {
-    pourIn(letters, ink)
-    ink.preroll(240, 1500)
-    return
-  }
-  ink.setRunning(true)
-  pourIn(letters, ink)
-})
+// The selected work rises into place as it scrolls in, like the rows on /motion/. Set here, so
+// the markup stays plain and the cards show at once without scripts.
+for (const card of document.querySelectorAll<HTMLElement>('.featured-work > .panel')) card.dataset.rise = ''

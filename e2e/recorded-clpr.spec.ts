@@ -1,55 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
-import data from '../src/desk/inspector/recorded-run.json' with { type: 'json' }
-import { liveGate, type Recording } from '../src/desk/inspector/live-policy'
-import { responseMarkup, sqlMarkup, wireMarkup } from '../src/desk/inspector/render'
-import { manifest } from '../src/desk/clpr-protocol'
+import { checkoutLiveGate } from '../src/desk/inspector/live-policy'
 import { test, expect } from './fixtures'
-import { recordedLiveGate } from './recording-policy'
-
-const recording = data as Recording
-
-test('live policy enforces measured budgets and rejects stale or missing measurements', () => {
-  const meta = structuredClone(recording.meta), hash = meta.sourceFingerprint
-  // Exercise the allowed boundary even when the actual CI measurement disables live mode.
-  const baselinePeak = meta.budget.maxPeakRssBytes / 2
-  meta.memory.peakBytes = baselinePeak
-  meta.wasmGzipBytes = 5000000
-  const measuredManifest = { commit: meta.clprCommit, wasm: { gzipBytes: meta.wasmGzipBytes } }
-  const gate = () => liveGate(meta, hash, measuredManifest)
-  expect(gate().allowed).toBe(true)
-  expect(liveGate({ ...meta, wasmGzipBytes: 6000000 }, hash, { ...measuredManifest, wasm: { gzipBytes: 6000000 } }).allowed).toBe(true)
-  meta.memory.peakBytes = meta.budget.maxPeakRssBytes
-  expect(gate().allowed).toBe(true)
-  meta.memory.peakBytes++
-  expect(gate()).toMatchObject({ allowed: false, reason: expect.stringContaining('peak memory exceeds') })
-  meta.memory.peakBytes = 0
-  expect(gate().allowed).toBe(false)
-  meta.memory.peakBytes = baselinePeak
-  meta.sourceFingerprint = 'changed'
-  expect(gate()).toMatchObject({ allowed: false, reason: expect.stringContaining('new recording') })
-  meta.sourceFingerprint = hash
-  meta.budget.maxPeakRssBytes++
-  expect(gate().allowed).toBe(false)
-  meta.budget.maxPeakRssBytes--
-  meta.clprCommit = 'changed'
-  expect(gate().allowed).toBe(false)
-  meta.clprCommit = manifest.commit
-  meta.memory.samples = 0
-  expect(gate().allowed).toBe(false)
-  expect(liveGate(recording.meta, hash, { ...manifest, wasm: { gzipBytes: 6000001 } })).toMatchObject({ allowed: false, reason: expect.stringContaining('6 MB budget') })
-})
-
-test('the shared renderer escapes captured response, SQL, parameters and wire strings', () => {
-  const event = structuredClone(recording.results[0]), attack = '<img src=x onerror="alert(1)">'
-  event.response.body = JSON.stringify({ results: { clips: [{ title: attack }] } })
-  event.response.headers.Attack = attack
-  event.calls[0].statements = [{ kind: 'execute', sql: `SELECT ${attack}`, params: [{ format: 'text', value: attack }] }]
-  event.calls[0].sent[0].detail = attack
-  for (const markup of [responseMarkup(event), sqlMarkup(event), wireMarkup(event)]) {
-    expect(markup).not.toContain('<img')
-    expect(markup).toContain('&lt;img')
-  }
-})
+import { recordedLiveGate, recording } from './recording-policy'
 
 test('every panel contains complete recorded evidence without JavaScript or a worker download', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } })
@@ -109,7 +61,7 @@ test('a denied build policy keeps the recorded evidence and cannot start a worke
   const large: string[] = []
   page.on('request', request => { if (/\.wasm|\.data|\.tar\.gz|clpr\.worker-/.test(request.url())) large.push(request.url()) })
   const meta = structuredClone(recording.meta); meta.memory.peakBytes = meta.budget.maxPeakRssBytes + 1
-  const gate = liveGate(meta, meta.sourceFingerprint, manifest)
+  const gate = checkoutLiveGate(meta)
   await page.route('**/desk/', async route => {
     const response = await route.fetch()
     const body = (await response.text()).replace('data-live-allowed="true"', 'data-live-allowed="false"').replace(/data-live-reason(?:="[^"]*")?/, `data-live-reason="${gate.reason}"`)

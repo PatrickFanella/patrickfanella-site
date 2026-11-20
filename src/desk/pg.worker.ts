@@ -3,16 +3,14 @@
 // worker runs under `worker-src 'self'`; WebAssembly still needs 'wasm-unsafe-eval' in script-src.
 import { PGlite } from '@electric-sql/pglite'
 import { SEARCH_SQL, COUNT_SQL, QUERY, searchTerms, type PgRequest, type Run, type PgEvent } from './pg-protocol'
-
-const post = (m: PgEvent) => postMessage({ ...m, at: performance.timeOrigin + performance.now() })
-let queries = 0
-post({ ev: 'worker' })
+import { replies } from './worker-replies'
 
 // When Emscripten cannot fetch or compile PGlite's WebAssembly, it rejects a promise inside
-// PGlite.create() that nothing awaits, so create() never settles and main().catch never runs. The
-// main thread's Worker.onerror does not see an unhandled rejection either, so report it from here.
-self.addEventListener('unhandledrejection', (e) => post({ ev: 'error', message: String(e.reason) }))
-self.addEventListener('error', (e) => post({ ev: 'error', message: e.message }))
+// PGlite.create() that nothing awaits, so create() never settles and main().catch never runs;
+// replies() reports that rejection.
+const { post, fail, serve } = replies<PgRequest, PgEvent>(self)
+let queries = 0
+post({ ev: 'worker' })
 
 async function explain(pg: PGlite, tsq: string): Promise<Run> {
   queries++
@@ -103,31 +101,20 @@ async function main() {
     post({ ev: 'stats', bytes, queries })
   }
   // Serialize requests so the displayed plan, rows and count always belong to one search.
-  let queue = Promise.resolve()
-  self.onmessage = (event: MessageEvent<PgRequest>) => {
-    const request = event.data
-    queue = queue.then(async () => {
-      try {
-        if (request.ev === 'stats') { await stats(); return }
-        const query = searchTerms(request.words)
-        if (!query) throw new Error('Use search followed by words or numbers.')
-        const run = await batch(pg, query)
-        queries++
-        const matches = (await pg.query<{ title: string; creator_name: string; vote_score: number }>(SEARCH_SQL, [query])).rows
-        queries++
-        const count = (await pg.query<{ n: number }>(COUNT_SQL, [query])).rows[0].n
-        post({ ev: 'search', id: request.id, query, run, total: count,
-          rows: matches.map((r) => ({ title: r.title, creator: r.creator_name, votes: r.vote_score })) })
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err)
-        if (request.ev === 'search') post({ ev: 'search-error', id: request.id, message })
-        else post({ ev: 'error', message })
-      }
-    })
-  }
+  serve(async (request) => {
+    if (request.ev === 'stats') { await stats(); return }
+    const query = searchTerms(request.words)
+    if (!query) throw new Error('Use search followed by words or numbers.')
+    const run = await batch(pg, query)
+    queries++
+    const matches = (await pg.query<{ title: string; creator_name: string; vote_score: number }>(SEARCH_SQL, [query])).rows
+    queries++
+    const count = (await pg.query<{ n: number }>(COUNT_SQL, [query])).rows[0].n
+    return { query, run, total: count, rows: matches.map((r) => ({ title: r.title, creator: r.creator_name, votes: r.vote_score })) }
+  })
   // Publish readiness only after the request listener exists.
   post({ ev: 'bench', kind: 'idx', run: idx, rows: found.map((r) => ({ title: r.title, creator: r.creator_name, votes: r.vote_score })), total })
   await stats()
 }
 
-main().catch((err: unknown) => post({ ev: 'error', message: err instanceof Error ? err.message : String(err) }))
+main().catch(fail)

@@ -182,6 +182,18 @@ struct J { keep: f32 };
   }
   textureStore(outT, c, vec4f(q, 1.));
 }`,
+  // Carries velocity or ink over to a new grid when the viewport changes size, as on WebGL2:
+  // the grids share their top left corner. k is the new size over the old (x, y) and a gain.
+  resample: `
+@group(0) @binding(0) var<uniform> k: vec4f;
+@group(0) @binding(1) var samp: sampler;
+@group(0) @binding(2) var srcT: texture_2d<f32>;
+@group(0) @binding(3) var outT: texture_storage_2d<rgba16float, write>;
+` + MAIN + `
+  let p = vec2f(uv.x * k.x, 1. - (1. - uv.y) * k.y);
+  if (any(p < vec2f(0.)) || any(p > vec2f(1.))) { textureStore(outT, c, vec4f(0.)); return; }
+  textureStore(outT, c, textureSampleLevel(srcT, samp, p, 0.) * k.z);
+}`,
 } as const
 
 export type ComputeName = keyof typeof COMPUTE

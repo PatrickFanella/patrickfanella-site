@@ -4,10 +4,12 @@ import { chromium } from '@playwright/test'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
+import { catalog } from '../src/content/projects.mjs'
+import { routePaths } from '../src/content/site-facts.mjs'
 
 const local = process.argv.includes('--local')
 const base = local ? 'http://127.0.0.1:4189' : (process.argv.find(arg => arg.startsWith('https://')) ?? 'https://patrickfanella.co')
-const paths = process.argv.find(arg => arg.startsWith('--paths='))?.slice(8).split(',') ?? ['/', '/projects/', '/resume/', '/contact/', '/desk/', '/case-studies/clpr/', '/case-studies/clustr/', '/case-studies/rekolekt/', '/case-studies/undertow/']
+const paths = process.argv.find(arg => arg.startsWith('--paths='))?.slice(8).split(',') ?? [...routePaths('lighthouse'), ...catalog.studied.map(project => project.study.path)]
 const directory = process.env.LIGHTHOUSE_OUTPUT ?? 'test-results/lighthouse'
 await mkdir(directory, { recursive: true })
 let server

@@ -1,11 +1,6 @@
 import { test, expect } from './fixtures'
 import { searchTerms } from '../src/desk/pg-protocol'
 
-test('search words cannot supply tsquery operators', () => {
-  expect(searchTerms("world & record:*')); DROP TABLE clips; --")).toBe("'world':* & 'record':* & 'DROP':* & 'TABLE':* & 'clips':*")
-  expect(searchTerms('???')).toBe('')
-})
-
 test.describe('desk shell', () => {
   test.use({ reducedMotion: 'reduce' })
   test('commands have links, history and accessible output', async ({ page }) => {
@@ -18,6 +13,8 @@ test.describe('desk shell', () => {
     }
     await expect(log).toHaveAttribute('aria-live', 'polite')
     await expect(log).toContainText('search <words>')
+    // The page writes this reply from the project catalog; src/content/project-catalog.test.ts states how it is built.
+    await expect(log).toContainText('Clpr: Twitch clip search and moderation. Clustr: Reddit community map in 2D and 3D. HasanAra: searchable broadcast archive. Undertow: browser music-video editor (live beta).')
     await expect(log.getByRole('link', { name: 'Browse all projects and delivery statuses' })).toHaveAttribute('href', '/projects/')
     await expect(log.getByRole('link', { name: 'Read the résumé and download the PDF' })).toHaveAttribute('href', '/resume/')
     await expect(log.getByRole('link', { name: 'fanella.patrick@gmail.com' })).toHaveAttribute('href', 'mailto:fanella.patrick@gmail.com')

@@ -1,20 +1,21 @@
 import AxeBuilder from '@axe-core/playwright'
+import { catalog } from '../src/content/projects.mjs'
 import { test, expect } from './fixtures'
+const { all: allProjects, studied: studiedProjects, studiesReviewedOn } = catalog
 
-const studies = ['clpr', 'clustr', 'rekolekt', 'undertow']
 test.use({ reducedMotion: 'reduce' })
 
 test('four source-backed product stories are complete and navigable without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } })
   const page = await context.newPage()
   await page.goto('/case-studies/')
-  await expect(page.locator('.project-list article')).toHaveCount(4)
-  for (const slug of studies) {
-    await page.goto(`/case-studies/${slug}/`)
+  await expect(page.locator('.project-list article')).toHaveCount(studiedProjects.length)
+  for (const { study, media } of studiedProjects) {
+    await page.goto(study.path)
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
-    await expect(page.locator('.product-study figure')).toHaveCount(2)
+    await expect(page.locator('.product-study figure')).toHaveCount(media.length)
     await expect(page.getByRole('heading', { name: 'Evidence and limits', exact: true })).toBeVisible()
-    await expect(page.locator('.product-study')).toContainText('November 16, 2026')
+    await expect(page.locator('.product-study .source-note')).toContainText(`Source and copy review: ${studiesReviewedOn}.`)
     for (const link of await page.locator('.study-contents a').all()) {
       const href = (await link.getAttribute('href'))!
       await link.click()
@@ -34,9 +35,9 @@ test('four source-backed product stories are complete and navigable without Java
 
 for (const colorScheme of ['light', 'dark'] as const) test(`product stories fit enlarged phone text and pass axe in ${colorScheme}`, async ({ page }) => {
   await page.emulateMedia({ colorScheme })
-  for (const slug of studies) {
+  for (const { study } of studiedProjects) {
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto(`/case-studies/${slug}/`)
+    await page.goto(study.path)
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([])
     await page.evaluate(() => document.documentElement.style.fontSize = '200%')
     await page.setViewportSize({ width: 320, height: 740 })
@@ -45,14 +46,10 @@ for (const colorScheme of ['light', 'dark'] as const) test(`product stories fit 
   }
 })
 
-test('the sitemap curates discovery while historical project links still resolve', async ({ page }) => {
-  const sitemap = await (await page.request.get('/sitemap.xml')).text()
-  for (const slug of studies) expect(sitemap).toContain(`/case-studies/${slug}/`)
-  expect(sitemap).toContain('/projects/pult/')
-  expect(sitemap).toContain('/projects/stupen/')
-  expect(sitemap).not.toContain('/projects/blacktower/')
+// Which pages the sitemap lists is tested directly in src/content/project-catalog.test.ts.
+test('historical project links still resolve', async ({ page }) => {
   for (const slug of ['blacktower', 'subcorp']) {
-    await page.goto(`/projects/${slug}/`)
+    await page.goto(allProjects.find(project => project.slug === slug)!.path)
     await expect(page.locator('.project-detail')).toContainText('Historical project entry')
     await expect(page.getByRole('link', { name: 'All projects', exact: true })).toHaveAttribute('href', '/projects/')
   }

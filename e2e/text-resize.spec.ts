@@ -1,6 +1,5 @@
-import { test, expect } from './fixtures'
+import { test, expect, crawlRoutes as routes } from './fixtures'
 
-const routes = ['/', '/projects/', '/projects/clpr/', '/case-studies/clpr-search/', '/resume/', '/contact/', '/desk/', '/motion/']
 test.use({ reducedMotion: 'reduce' })
 
 for (const colorScheme of ['light', 'dark'] as const) test(`candidate remains readable at 200% text without graphics in ${colorScheme}`, async ({ page }) => {

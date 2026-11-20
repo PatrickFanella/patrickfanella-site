@@ -1,26 +1,31 @@
 ---
 import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
-import { featuredProjects, supportingProjects } from '../../content/project-presentation'
+import resume from '../../content/resume.json'
+import { catalog } from '../../content/projects.mjs'
+import { NumberWord, numberWord } from '../../content/number-words.mjs'
+const { featured: featuredProjects, reviewedOn, supporting: supportingProjects } = catalog
+const featuredCount = catalog.featured.length
+const supportingCount = catalog.supporting.length
 ---
-<ContentPage title="Work | Patrick Fanella" description="Four engineering case studies and twelve selected projects by Patrick Fanella: search, data pipelines, media systems and developer tools.">
+<ContentPage title="Work | Patrick Fanella" description={`${NumberWord(featuredCount)} engineering case studies and ${numberWord(supportingCount)} selected projects by Patrick Fanella: search, data pipelines, media systems and developer tools.`}>
   <h1>Selected work</h1>
-  <p class="lead">Four projects in depth: a clip discovery product, a community graph, a recording archive and a browser video editor. Each study follows the problem, the implementation choices and the evidence.</p>
+  <p class="lead">{NumberWord(featuredCount)} projects in depth: a clip discovery product, a community graph, a recording archive and a browser video editor. Each study follows the problem, the implementation choices and the evidence.</p>
   <section aria-label="Featured projects">
     <h2 class="group-title">Case studies</h2>
-    <ul class="project-list">{featuredProjects.map(({ project, study }) => <li><article id={project.slug}>
+    <ul class="project-list">{featuredProjects.map(project => <li><article id={project.slug}>
       {project.media[0] && <ProjectMedia media={project.media[0]} sizes="(max-width: 600px) calc(100vw - 32px), 340px" />}
       <div class="project-list-copy">
         <h3><a href={`/projects/${project.slug}/`} data-project-name={project.slug}>{project.title}</a></h3>
         <p>{project.summary}</p>
         <dl><div><dt>Status</dt><dd>{project.deliveryStatus}</dd></div><div><dt>Stack</dt><dd>{project.stack.join(', ')}</dd></div></dl>
-        <a href={study}>Read the {project.title} case study</a>
+        <a href={project.study.path}>Read the {project.title} case study</a>
       </div>
     </article></li>)}</ul>
   </section>
   <section aria-label="Other selected projects">
     <h2 class="group-title">Other projects</h2>
-    <p>Applications, infrastructure and smaller tools. Private previews, research models and early releases keep their scope visible.</p>
+    <p class="group-intro">Applications, infrastructure and smaller tools. Each status line says how far the project has got, including private previews, research models and early releases.</p>
     <ul class="project-list supporting-projects">{supportingProjects.map(project => <li><article id={project.slug}>
       <div class="project-list-copy">
         <h3><a href={`/projects/${project.slug}/`} data-project-name={project.slug}>{project.title}</a></h3>
@@ -30,5 +35,5 @@ import { featuredProjects, supportingProjects } from '../../content/project-pres
       </div>
     </article></li>)}</ul>
   </section>
-  <p class="source-note">Copy reviewed November 16, 2026 against the public repositories linked from each project. Screenshots identify their capture date and demonstration data. <a href="https://github.com/PatrickFanella?tab=repositories">More repositories on GitHub</a>.</p>
+  <p class="source-note">Copy reviewed {reviewedOn} against the public repositories linked from each project. Screenshots identify their capture date and demonstration data. <a href={`${resume.github}?tab=repositories`}>More repositories on GitHub</a>.</p>
 </ContentPage>

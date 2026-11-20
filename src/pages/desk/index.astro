@@ -1,9 +1,11 @@
 ---
-import { featuredProjects } from '../../content/project-presentation'
+import { catalog, projectsReply } from '../../content/projects.mjs'
 import SiteHeader from '../../components/SiteHeader.astro'
 import { recruitingEmail } from '../../content/contact'
+import resume from '../../content/resume.json'
 import Page from '../../layouts/Page.astro'
 import Inspector from '../../desk/inspector/Inspector.astro'
+const { featured: featuredProjects } = catalog
 ---
 <Page title="Engineering Desk | Patrick Fanella" description="Inspect Clpr’s pinned Go search code, PostgreSQL queries, protocol traffic and query plans in an interactive engineering desk by Patrick Fanella." bodyClass="desk" noscript={false}>
   <!-- Without ink, a still solid pane avoids compositing a very tall protocol
@@ -31,11 +33,11 @@ import Inspector from '../../desk/inspector/Inspector.astro'
         <p class="pitch">I build and run services in Go, Python and TypeScript on PostgreSQL. At DeliverZero I built the inventory, returns and partner integrations that cut manual operations work by about 25%. Chicago or remote, and interviewing now.</p>
         <ul class="links" aria-label="Contact and code">
           <li><a href={`mailto:${recruitingEmail}`} data-bleed="y">{recruitingEmail}</a></li>
-          <li><a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a></li>
-          <li><a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a></li>
+          <li><a href={resume.github} data-bleed="c">GitHub</a></li>
+          <li><a href={resume.linkedin} data-bleed="o">LinkedIn</a></li>
           <li><a href="/resume/" data-bleed="y">Résumé</a></li>
         </ul>
-        <form class="shell" data-shell hidden>
+        <form class="shell" data-shell data-projects-reply={projectsReply} hidden>
           <label for="command"><span class="ps1">~</span> $ <span class="sr-only">Desk command</span></label>
           <input id="command" name="command" autocomplete="off" spellcheck="false" maxlength="200" aria-describedby="shell-help" />
           <button type="submit">Run</button>
@@ -48,8 +50,8 @@ import Inspector from '../../desk/inspector/Inspector.astro'
     <section class="pane projects" data-pane="2" tabindex="-1" aria-labelledby="p2" style="--i: 1">
       <header class="ptitle"><h2 class="pname" id="p2"><i aria-hidden="true">2</i>projects</h2><span>ls ~/projects</span></header>
       <div class="pbody">
-        <ol class="work">{featuredProjects.map(({ project, study }) => <li>
-          <h3><a href={study} data-bleed="c">{project.title}</a><span>{project.deliveryStatus}</span></h3>
+        <ol class="work">{featuredProjects.map(project => <li>
+          <h3><a href={project.study.path} data-bleed="c">{project.title}</a><span>{project.deliveryStatus}</span></h3>
           <p>{project.summary}</p>
         </li>)}</ol>
         <p class="more-work">Browse the <a href="/projects/">selected project list</a>.</p>

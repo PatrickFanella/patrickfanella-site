@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
-import { allProjects, selectedProjects } from '../src/content/project-presentation'
-import studies from '../src/content/project-case-studies.json' with { type: 'json' }
+import { catalog } from '../src/content/projects.mjs'
 import { test, expect } from './fixtures'
+const { all: allProjects, studied: studiedProjects } = catalog
 
 test('the sitemap contains indexable canonical pages and images from their visible content', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
@@ -41,9 +41,7 @@ test('historical project URLs stay readable with noindex and remain outside the 
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
   const sitemap = await (await page.request.get('/sitemap.xml')).text()
-  const current = new Set(selectedProjects.map(project => project.slug))
-  for (const project of allProjects.filter(project => !current.has(project.slug))) {
-    const path = `/projects/${project.slug}/`
+  for (const { path } of allProjects.filter(project => !project.current)) {
     expect(sitemap).not.toContain(`https://patrickfanella.co${path}`)
     expect((await page.goto(path))?.status()).toBe(200)
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow')
@@ -56,8 +54,8 @@ test('historical project URLs stay readable with noindex and remain outside the 
 test('case-study article and breadcrumb data match the rendered page without scripts', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
-  for (const study of studies.studies) {
-    await page.goto(`/case-studies/${study.slug}/`)
+  for (const { study } of studiedProjects) {
+    await page.goto(study.path)
     const data = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!)
     const article = data['@graph'].find((node: { '@type': string }) => node['@type'] === 'Article')
     const person = data['@graph'].find((node: { '@type': string }) => node['@type'] === 'Person')

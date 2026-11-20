@@ -81,6 +81,9 @@ p { margin: 0; }
    excludes that gutter and compresses the ink horizontally, pulling it away from the letters. */
 #ink { position: fixed; inset: 0; width: 100vw; height: 100%; display: block; z-index: 0; touch-action: pan-y; }
 .no-ink #ink { display: none; }
+/* Until the solver first draws, a WebGL2 or WebGPU canvas is black: keep it clear, then fade it in. */
+html:not(.ink-on) #ink { opacity: 0; }
+#ink { transition: opacity var(--t-2) var(--ease-out); }
 .no-ink body {
   background:
     radial-gradient(60% 50% at 20% 70%, color-mix(in oklab, var(--ink-a) 35%, transparent), transparent 70%),
@@ -135,6 +138,9 @@ main, .foot { position: relative; z-index: 1; }
 .name [data-fit] { display: inline-block; width: max-content; }
 .name [data-word] { display: inline-block; white-space: nowrap; }
 .name [data-ink-letter] { display: inline-block; }
+/* The size fitWidth() will give the name once the display face loads (the words fill 99.5% of
+   the hero, capped by 27% of the viewport height), so the page below does not jump when it does. */
+.landing .hero .name { font-size: min(calc((100vw - var(--gutter) - var(--gutter-r)) * 0.1538), 27vh); }
 /* The name waits, hidden, until pour-in starts, so it does not flash in place first.
    If the script never runs it appears after 3 s; with JavaScript off, a noscript style shows it at once. */
 [data-pour-in]:not(.pouring):not(.poured) [data-word] { visibility: hidden; animation: show-late 0s 3s forwards; }
@@ -200,10 +206,15 @@ main, .foot { position: relative; z-index: 1; }
 .chip.moving { color: var(--cobalt); }
 .chip.progress { color: var(--orange); border-style: dashed; }
 
-/* rise: rows lift into place as they scroll in (scroll-driven, no script). At rest they are in place. */
+/* rise: rows lift into place as they scroll in (scroll-driven, no script). At rest they are in place.
+   Longhands only: given the `animation` shorthand, the minifier folds view() into it, which no
+   browser accepts, and the whole declaration is dropped. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    [data-rise] { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+    [data-rise] {
+      animation-name: rise; animation-timing-function: linear; animation-fill-mode: both;
+      animation-timeline: view(); animation-range: entry 0% entry 70%;
+    }
   }
 }
 @keyframes rise { from { transform: translateY(28px); clip-path: inset(0 0 22% 0); } to { transform: none; clip-path: inset(0); } }
@@ -241,7 +252,7 @@ main, .foot { position: relative; z-index: 1; }
 
 /* ---------- narrow screens ---------- */
 @media (max-width: 860px) {
-  .coming { grid-template-columns: minmax(0, 1fr); padding-top: 48px; gap: 18px; }
+  .coming { grid-template-columns: minmax(0, 1fr); padding-top: 48px; padding-bottom: 56px; gap: 18px; }
   .coming-head { position: static; }
 }
 @media (max-width: 700px) {
@@ -308,7 +319,7 @@ main, .foot { position: relative; z-index: 1; }
 .landing .hero .intro { gap: 10px; }
 .hero-depth { font-size: .875rem; }
 @media (max-width: 700px) {
-  .landing .hero .name { font-size: clamp(64px, 23vw, 120px); }
+  .landing .hero .name { font-size: min(calc((100vw - var(--gutter) - var(--gutter-r)) * 0.316), 17vh); }
   .landing .tank { gap: 16px; padding-bottom: 20px; }
   .landing .intro { padding: 16px; font-size: 1rem; }
   .landing .intro .role { font-size: 1.65rem; }

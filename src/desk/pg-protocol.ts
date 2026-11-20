@@ -1,4 +1,5 @@
 // What the desk and its PostgreSQL worker share: Clpr's search query and the messages between them.
+// worker-client.mjs says how the messages are tagged.
 
 /** Clpr's clip search with a shorter column list: the same moderation filter, tsquery match and
  *  ranking as its production query, and its first page of 20. */
@@ -26,9 +27,8 @@ export type PgEvent = (
   | { ev: 'bench'; kind: 'seq'; run: Run }
   | { ev: 'index'; ms: number }
   | { ev: 'bench'; kind: 'idx'; run: Run; rows: Row[]; total: number }
-  | { ev: 'search'; id: number; query: string; run: Run; rows: Row[]; total: number }
-  | { ev: 'search-error'; id: number; message: string }
-  | { ev: 'error'; message: string }
+  | { ev: 'result'; id: number; query: string; run: Run; rows: Row[]; total: number }
+  | { ev: 'error'; id?: number; message: string }
   | { ev: 'worker' }
   | { ev: 'schema'; ms: number }
   | { ev: 'stats'; bytes: number; queries: number }

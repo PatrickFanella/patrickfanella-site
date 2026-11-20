@@ -1,9 +1,19 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro'
 import { recruitingEmail } from '../content/contact'
+import resume from '../content/resume.json'
 import Page from '../layouts/Page.astro'
-import { employmentFeature, featuredProjects } from '../content/project-presentation'
+import { catalog } from '../content/projects.mjs'
 import { siteMetadata } from '../content/site-metadata'
+import { NumberWord, numberWord } from '../content/number-words.mjs'
+const featuredCount = catalog.featured.length
+const { featured: featuredProjects } = catalog
+const employmentFeature = {
+  title: 'DeliverZero',
+  ownership: 'Full-stack engineer, working directly with the CTO',
+  outcome: resume.deliverzero_bullets[1],
+  href: '/resume/#deliverzero',
+}
 ---
 <Page title={siteMetadata.title} description={siteMetadata.description} bodyClass="landing">
   <a class="skip" href="#coming">Skip to the work</a>
@@ -36,7 +46,7 @@ import { siteMetadata } from '../content/site-metadata'
     <section id="coming" class="coming" aria-labelledby="coming-h">
       <div class="coming-head">
         <h2 id="coming-h">Selected work</h2>
-        <p>Four products, four engineering stories: discovery, graph data, recording archives and local video rendering.</p>
+        <p>{NumberWord(featuredCount)} products, {numberWord(featuredCount)} engineering stories: discovery, graph data, recording archives and local video rendering.</p>
         <p class="dim">Looking for experience and results? Read the <a href="/resume/">résumé</a> or <a href="/contact/">get in touch</a>.</p>
       </div>
       <div class="featured-work">
@@ -47,24 +57,24 @@ import { siteMetadata } from '../content/site-metadata'
           <p>{employmentFeature.outcome}</p>
           <a href={employmentFeature.href}>Read the DeliverZero experience</a>
         </article>
-        {featuredProjects.map(({ project, media, dimensions, study }) => <article class="featured-project panel">
+        {featuredProjects.map(({ media: [media], ...project }) => <article class="featured-project panel">
           <figure>
-            <img src={media.src} srcset={'srcSet' in media ? media.srcSet : undefined} sizes="(max-width: 860px) calc(100vw - 32px), 58vw" width={dimensions!.width} height={dimensions!.height} alt={media.alt} loading="lazy" decoding="async" />
+            <img src={media.src} srcset={media.srcSet} sizes="(max-width: 860px) calc(100vw - 32px), 58vw" width={media.width} height={media.height} alt={media.alt} loading="lazy" decoding="async" />
             <figcaption>{media.caption}</figcaption>
           </figure>
           <div class="featured-copy">
-            <h3><a href={`/projects/${project.slug}/`}>{project.title}</a></h3>
+            <h3><a href={project.path}>{project.title}</a></h3>
             <p>{project.summary}</p><p class="dim">{project.deliveryStatus}</p>
             <nav aria-label={`${project.title} destinations`}>
-              <a href={study}>Read the case study</a>
-              <a href={`/projects/${project.slug}/`}>Project and source</a>
+              <a href={project.study.path}>Read the case study</a>
+              <a href={project.path}>Project and source</a>
               <a href={project.liveUrl}>Open {project.title}</a>
             </nav>
           </div>
         </article>)}
         <div class="featured-more panel">
           <p><a href="/desk/">Open the engineering Desk</a>: read recorded search evidence, then opt in to run Clpr’s pinned search code in your browser.</p>
-          <p><a href="/projects/">Browse twelve other projects</a> or <a href="/motion/">explore the motion set</a>.</p>
+          <p><a href="/projects/">Browse {numberWord(catalog.supporting.length)} other projects</a> or <a href="/motion/">explore the motion set</a>.</p>
         </div>
       </div>
     </section>
@@ -74,8 +84,8 @@ import { siteMetadata } from '../content/site-metadata'
     <p>Patrick Fanella. Software, sound, culture.</p>
     <nav aria-label="Contact">
       <a href={`mailto:${recruitingEmail}`} data-bleed="y">{recruitingEmail}</a>
-      <a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a>
-      <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
+      <a href={resume.github} data-bleed="c">GitHub</a>
+      <a href={resume.linkedin} data-bleed="o">LinkedIn</a>
     </nav>
   </footer>
   <Fragment slot="head"><script>import '../landing.ts'</script></Fragment>
