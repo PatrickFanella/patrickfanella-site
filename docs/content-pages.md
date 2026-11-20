@@ -7,11 +7,30 @@ Builds use the checked-in copy and do not fetch content from the network.
 
 The current `/projects/` selection is maintained separately in `src/content/selected-projects.json`:
 four featured projects (Clpr, Clustr, Rekolekt with HasanAra, Undertow) and twelve supporting entries.
-`project-presentation.ts` defines the four featured slugs and exports the same selection for the
-landing page, Work page and Desk. Imported selection flags are not used. The source catalog bytes
+Imported selection flags are not used. The source catalog bytes
 remain intact; current entries overlay those records for detail pages, and three new projects bring
 the total to 43 detail routes. Unselected pages carry a historical-snapshot notice and return to the
 Work index. The sitemap lists the current sixteen detail pages.
+
+## The project catalog
+
+`assembleCatalog()` in `src/content/project-catalog.mjs` joins the selection, the product studies,
+`selected-project-sources.json`, the asset manifest and the imported portfolio into finished
+projects. Each has its media with dimensions, `path`, `current`, `socialImage`, `displayName`
+(the live product's name: HasanAra for Rekolekt), `furtherStudies` (Clpr's search study) and, where
+they exist, its `study` and pinned source `evidence`. The four featured slugs and those slug rules
+live in that module. `project-presentation.ts` applies the join to the checked-in files and exports
+`allProjects`, `selectedProjects`, `featuredProjects`, `supportingProjects` and `studiedProjects`.
+The project and case-study pages, the landing page, the Desk, the sitemap and `ProjectMedia.astro`
+read those and do not open the JSON files.
+
+The join throws when the files disagree: a study whose slug is not in the selection or whose project
+has no image or no `thumbnailUrl` (the study page uses the project's `socialImage`), a media file missing from the asset manifest, or a featured slug that is not selected
+or has no study. The message names each entry. Because the pages import the result, this fails
+`npm run build`; `src/content/project-catalog.test.ts` fails `npm run test:unit` on the same data
+and tests each rule with broken fixture data. The module is plain JavaScript with its data passed
+in, so node scripts can call it; the asset scripts and `scripts/check-project-paths.mjs` still read
+the JSON files themselves.
 
 The four product stories at `/case-studies/<slug>/` read `project-case-studies.json`. Each includes
 scope, current delivery status, implementation choices, tradeoffs and evidence limits. Public
@@ -20,7 +39,7 @@ The existing pinned Clpr request walkthrough is retained at `/case-studies/clpr-
 its ranking study remains at `/case-studies/clpr-search/`. `/case-studies/` introduces all four stories.
 
 Featured entries show fresh captioned screenshots; supporting entries are compact text rows.
-`ProjectMedia.astro` reads dimensions from the asset manifest, uses responsive WebP variants and
+`ProjectMedia.astro` takes dimensions from the catalog, uses responsive WebP variants and
 native lazy loading, and retains the supplied caption. Case studies and detail pages load their
 lead image eagerly and remaining media lazily. Historical entries keep their original image captions;
 the page's source note identifies the November 13 imported snapshot. CSS and fonts load without
@@ -70,7 +89,8 @@ JavaScript, mobile overflow, and accessibility in both themes.
 `npx playwright test e2e/project-pages.spec.ts` checks all detail pages without scripts, images,
 metadata, legacy redirects, list navigation, name hand-over and mobile accessibility.
 `npx playwright test e2e/portfolio-selection.spec.ts` checks the four product stories without scripts,
-pinned source links, mobile accessibility, enlarged text and curated sitemap discovery.
+pinned source links, mobile accessibility, enlarged text and retained historical pages.
+`npm run test:unit` checks the catalog join and which pages the sitemap lists, without a build.
 
 The project hand-over listener runs as a scoped, classic external blocking script in the head, before
 the first rendering opportunity. A render expectation points to the footer so the selected

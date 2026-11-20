@@ -1,20 +1,20 @@
 ---
 import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
-import studies from '../../content/project-case-studies.json'
-import { selectedProjects } from '../../content/project-presentation'
+import { studiedProjects, type StudiedProject } from '../../content/project-presentation'
 
 export function getStaticPaths() {
-  return studies.studies.map(study => ({ params: { slug: study.slug }, props: { study } }))
+  return studiedProjects.map(project => ({ params: { slug: project.slug }, props: { project } }))
 }
-const { study } = Astro.props
-const project = selectedProjects.find(project => project.slug === study.slug)!
+interface Props { project: StudiedProject }
+const { project } = Astro.props
+const { study } = project
 const seo = {
-  breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Case studies', href: '/case-studies/' }, { name: project.title, href: `/case-studies/${project.slug}/` }],
+  breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Case studies', href: '/case-studies/' }, { name: project.title, href: study.path }],
   article: { headline: study.title, image: project.media[0].src },
 }
 ---
-<ContentPage title={`${project.title}: ${study.title} | Patrick Fanella`} description={study.description} readingSurface ogType="article" socialImage={`/assets/projects/social/${project.slug}.png`} socialAlt={project.media[0]?.alt} seo={seo}>
+<ContentPage title={`${project.title}: ${study.title} | Patrick Fanella`} description={study.description} readingSurface ogType="article" socialImage={project.socialImage} socialAlt={project.media[0]?.alt} seo={seo}>
   <article class="product-study">
     <a href="/projects/">All selected work</a>
     <header>
@@ -27,9 +27,9 @@ const seo = {
         <div><dt>Status</dt><dd>{project.deliveryStatus}</dd></div>
       </dl>
       <nav class="project-links" aria-label="Case study destinations">
-        <a href={project.liveUrl}>Open {project.slug === 'rekolekt' ? 'HasanAra' : project.title}</a>
+        <a href={project.liveUrl}>Open {project.displayName}</a>
         <a href={project.repoUrl}>Source on GitHub</a>
-        <a href={`/projects/${project.slug}/`}>Project details</a>
+        <a href={project.path}>Project details</a>
       </nav>
     </header>
     {project.media[0] && <ProjectMedia media={project.media[0]} sizes="(max-width: 1080px) calc(100vw - 64px), 968px" loading="eager" />}

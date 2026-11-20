@@ -9,13 +9,13 @@ import { featuredProjects, supportingProjects } from '../../content/project-pres
   <p class="lead">Four projects in depth: a clip discovery product, a community graph, a recording archive and a browser video editor. Each study follows the problem, the implementation choices and the evidence.</p>
   <section aria-label="Featured projects">
     <h2 class="group-title">Case studies</h2>
-    <ul class="project-list">{featuredProjects.map(({ project, study }) => <li><article id={project.slug}>
+    <ul class="project-list">{featuredProjects.map(project => <li><article id={project.slug}>
       {project.media[0] && <ProjectMedia media={project.media[0]} sizes="(max-width: 600px) calc(100vw - 32px), 340px" />}
       <div class="project-list-copy">
         <h3><a href={`/projects/${project.slug}/`} data-project-name={project.slug}>{project.title}</a></h3>
         <p>{project.summary}</p>
         <dl><div><dt>Status</dt><dd>{project.deliveryStatus}</dd></div><div><dt>Stack</dt><dd>{project.stack.join(', ')}</dd></div></dl>
-        <a href={study}>Read the {project.title} case study</a>
+        <a href={project.study.path}>Read the {project.title} case study</a>
       </div>
     </article></li>)}</ul>
   </section>
