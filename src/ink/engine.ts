@@ -282,8 +282,17 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     if (wanted && !document.hidden) start(); else draw()
     settle()
   }
+  // A lost WebGL2 context stops the ink until the browser restores it; then the solver starts
+  // again on the same canvas, running or as a new still. While lost nothing steps or draws, and
+  // showing the tab again does not start the loop. The listeners go on once: only one canvas runs WebGL2.
+  let glWatched = false
   async function useGL() {
-    be = await createWebGL(canvas, stop)
+    if (!glWatched) {
+      glWatched = true
+      canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); stop(); be = sized = null; live = false })
+      canvas.addEventListener('webglcontextrestored', () => { be = sized = null; void useGL().catch((err: Error) => failed(err)) })
+    }
+    be = await createWebGL(canvas)
     resize(); begin()
   }
   function failed(err: Error) {
