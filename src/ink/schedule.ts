@@ -51,14 +51,12 @@ export function isResizeNoop(
 export const resizeKeep = (vw: number, vh: number, lastW: number, lastH: number): [number, number] => [vw / lastW, vh / lastH]
 
 /**
- * Whether a reduced-motion still must be made again after a resize: the width changed, the
- * height moved by more than a toolbar, or the viewport is taller than what is left of the still
- * (`cut`, the least height seen since it was made). Returns the new `cut` too.
+ * Whether a reduced-motion still must be made again after a resize: the width changed or the
+ * height moved by more than a toolbar. A toolbar showing or hiding keeps the still, so scrolling
+ * on a phone never swaps the frame; a hidden toolbar can leave a thin strip at the bottom bare.
  */
-export function stillRemake(vw: number, vh: number, stillW: number, stillH: number, cut: number) {
-  const next = Math.min(cut, vh)
-  return { cut: next, remake: vw !== stillW || Math.abs(vh - stillH) > TOOLBAR_PX || vh > next }
-}
+export const stillRemake = (vw: number, vh: number, stillW: number, stillH: number) =>
+  vw !== stillW || Math.abs(vh - stillH) > TOOLBAR_PX
 
 /** Steps a timed batch of `k` leaves room for in the budget, at that batch's cost per step. */
 export const stepsThatFit = (budgetMs: number, usedMs: number, k: number, batchMs: number) =>

@@ -119,7 +119,7 @@ function debugPanel(ink: Ink) {
     const rate = (n: number, p: number) => ((n - p) / s).toFixed(0)
     const c = document.querySelector<HTMLCanvasElement>('#ink')
     el.textContent = [
-      `${i.path} | running ${i.running}`,
+      `${i.path} | running ${i.running} | reduced ${reduced()}`,
       `raf/s ${rate(rafs, prev.rafs)}  steps/s ${rate(i.steps, prev.steps)}  draws/s ${rate(i.draws, prev.draws)}`,
       `steps ${i.steps} draws ${i.draws} resizes ${i.resizes}`,
       `view ${innerWidth}x${innerHeight} dpr ${devicePixelRatio} canvas ${c?.width}x${c?.height}`,
