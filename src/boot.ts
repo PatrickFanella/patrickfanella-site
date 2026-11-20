@@ -52,6 +52,7 @@ export function boot(pour?: (ink: Ink | null) => void): Page {
   // and fades in over the ground it matches.
   void ink?.ready.then(() => requestAnimationFrame(() => root.classList.add('ink-on')))
   if (ink) readout(ink)
+  if (ink && new URLSearchParams(location.search).has('ink-debug')) debugPanel(ink)
   // Layout is final once the display face has loaded.
   void Promise.all([document.fonts.load(DISPLAY_FACE).catch(() => []).then(() => document.fonts.ready), ink?.ready]).then(() => {
     ink?.invalidate()
@@ -97,4 +98,34 @@ function readout(ink: Ink) {
     el.querySelector('[data-k=gpu]')!.textContent = (parts[1] ?? parts[0]).replace(/\s*\(.*$/, '').trim() || '…'
   }
   paint(); void ink.ready.then(paint); setInterval(paint, 1000)
+}
+
+/** `?ink-debug`: live counters over the page, to see on a phone whether frames run and reach the screen. */
+function debugPanel(ink: Ink) {
+  const el = document.createElement('pre')
+  el.style.cssText = 'position:fixed;left:4px;top:60px;z-index:99;margin:0;padding:6px;font:11px/1.35 monospace;background:#000c;color:#0f0;pointer-events:none;white-space:pre-wrap;max-width:60vw'
+  document.body.append(el)
+  const log: string[] = []
+  for (const k of ['info', 'warn', 'error'] as const) {
+    const orig = console[k].bind(console)
+    console[k] = (...a: unknown[]) => { log.push(`${k}: ${a.map(String).join(' ')}`.slice(0, 140)); log.splice(0, log.length - 4); orig(...a) }
+  }
+  let rafs = 0
+  const tick = () => { rafs++; requestAnimationFrame(tick) }
+  requestAnimationFrame(tick)
+  let at = performance.now(), prev = { rafs: 0, steps: 0, draws: 0 }
+  setInterval(() => {
+    const i = ink.info(), now = performance.now(), s = (now - at) / 1000
+    const rate = (n: number, p: number) => ((n - p) / s).toFixed(0)
+    const c = document.querySelector<HTMLCanvasElement>('#ink')
+    el.textContent = [
+      `${i.path} | running ${i.running}`,
+      `raf/s ${rate(rafs, prev.rafs)}  steps/s ${rate(i.steps, prev.steps)}  draws/s ${rate(i.draws, prev.draws)}`,
+      `steps ${i.steps} draws ${i.draws} resizes ${i.resizes}`,
+      `view ${innerWidth}x${innerHeight} dpr ${devicePixelRatio} canvas ${c?.width}x${c?.height}`,
+      `hidden ${document.hidden} classes ${document.documentElement.className}`,
+      ...log,
+    ].join('\n')
+    at = now; prev = { rafs, steps: i.steps, draws: i.draws }
+  }, 500)
 }
