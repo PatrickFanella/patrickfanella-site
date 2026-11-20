@@ -3,6 +3,7 @@
   "projects": [
     {
       "slug": "clpr",
+      "tagline": "Twitch clip search and moderation",
       "title": "Clpr",
       "deliveryStatus": "Public application",
       "periodLabel": "2025–present",
@@ -56,6 +57,7 @@
     },
     {
       "slug": "clustr",
+      "tagline": "Reddit community map in 2D and 3D",
       "title": "Clustr",
       "summary": "A Reddit community explorer connecting a durable Go crawler, reproducible graph builds and an interactive 2D/3D map.",
       "description": "I built Clustr’s data collection, graph publication and browser explorer. Reddit activity becomes a weighted map of communities, with search, shareable views and a revision-aware API for the web app and a separate Unity prototype.",
@@ -107,6 +109,7 @@
     },
     {
       "slug": "rekolekt",
+      "tagline": "searchable broadcast archive",
       "title": "Rekolekt + HasanAra",
       "deliveryStatus": "Backend in use; public archive",
       "periodLabel": "Active in 2026",
@@ -161,6 +164,7 @@
     },
     {
       "slug": "undertow",
+      "tagline": "browser music-video editor (live beta)",
       "title": "Undertow",
       "deliveryStatus": "Public editor; optional cloud features in testing",
       "periodLabel": "2026–present",

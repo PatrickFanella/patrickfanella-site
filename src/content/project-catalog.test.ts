@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
-import { assembleCatalog, type SourceProject } from './project-catalog.mjs'
-import { allProjects, featuredProjects, selectedProjects, studiedProjects, supportingProjects } from './project-presentation'
+import { assembleCatalog, assetPaths, socialCardPath, type SourceProject } from './project-catalog.mjs'
+import { allProjects, featuredProjects, projectsReply, reviewedOn, selectedProjects, studiedProjects, supportingProjects } from './project-presentation'
 import { GET } from '../pages/sitemap.xml'
 
 // Literal fixture data, so the join's rules are tested whatever the content files hold.
@@ -12,11 +12,12 @@ const shot = { src: '/assets/a.webp', srcSet: '/assets/a-640.webp 640w', alt: 'A
 const study = (slug: string) => ({ slug, title: 'Study', description: 'About', scope: '', outcome: '', intro: '', sections: [], limits: '' })
 const fixture = () => ({
   portfolio: [project('old'), project('alpha', { title: 'Stale title' })],
-  selected: [project('alpha', { media: [shot], thumbnailUrl: '/assets/a.webp' }), project('beta'), project('rekolekt'), project('clpr')],
+  selected: [project('alpha', { media: [shot], thumbnailUrl: '/assets/a.webp', tagline: 'first letter' }), project('beta'), project('rekolekt'), project('clpr')],
   studies: [study('alpha')],
   sources: [{ repo: 'org/alpha', sha: 'abc123' }, { repo: 'org/old', sha: 'def456' }, { repo: 'org/not-alpha', sha: 'fff' }],
   assets: [{ path: '/assets/a.webp', width: 1280, height: 800 }],
   featured: ['alpha'],
+  reviewedAt: ['2026-03-09', '2026-03-09', '2026-03-09'],
 })
 
 test('each project is joined once with its study, source, media dimensions, social card and display name', () => {
@@ -49,6 +50,25 @@ test('each project is joined once with its study, source, media dimensions, soci
   // The slug rules the page templates used to branch on.
   expect(rekolekt.displayName).toBe('HasanAra')
   expect(clpr.furtherStudies).toEqual([{ href: '/case-studies/clpr-search/', label: 'Read the search decisions study' }])
+  expect(catalog.reviewedOn).toBe('March 9, 2026')
+})
+
+test('asset path rules: the social card, and a project\'s thumbnail, media and srcSet candidates once each', () => {
+  expect(socialCardPath('alpha')).toBe('/assets/projects/social/alpha.png')
+  expect(assetPaths({ media: [] })).toEqual([])
+  expect(assetPaths({
+    thumbnailUrl: '/assets/b-1280.webp',
+    media: [
+      { src: '/assets/b-1280.webp', srcSet: '/assets/b-640.webp 640w,  /assets/b-1280.webp 1280w', alt: '', caption: '' },
+      { src: '/assets/c.svg', alt: '', caption: '' },
+    ],
+  })).toEqual(['/assets/b-1280.webp', '/assets/b-640.webp', '/assets/c.svg'])
+})
+
+test('review dates that disagree or are not a date fail and are named', () => {
+  expect(() => assembleCatalog({ ...fixture(), reviewedAt: ['2026-03-09', '2026-03-10', '2026-03-09'] }))
+    .toThrow('reviewedAt must be one YYYY-MM-DD date in every content file, not 2026-03-09, 2026-03-10, 2026-03-09')
+  expect(() => assembleCatalog({ ...fixture(), reviewedAt: ['March 9', 'March 9'] })).toThrow('not March 9, March 9')
 })
 
 test('a study without a project fails and names the study', () => {
@@ -73,11 +93,15 @@ test('a project without its assets fails and names the project and the file', ()
 test('a featured slug that is not selected, or has no study, fails and names the slug', () => {
   expect(() => assembleCatalog({ ...fixture(), featured: ['alpha', 'old'] })).toThrow('featured slug "old" is not in selected-projects.json')
   expect(() => assembleCatalog({ ...fixture(), featured: ['alpha', 'beta'] })).toThrow('featured slug "beta" has no study in project-case-studies.json')
+  // The shell's projects reply prints a tagline for each featured project.
+  const data = fixture()
+  data.selected[0] = project('alpha', { media: [shot], thumbnailUrl: '/assets/a.webp' })
+  expect(() => assembleCatalog(data)).toThrow('featured slug "alpha" has no tagline in selected-projects.json')
 })
 
 test('a studied project needs a lead image, and every disagreement is reported together', () => {
   const data = fixture()
-  data.selected[0] = project('alpha')
+  data.selected[0] = project('alpha', { tagline: 'first letter' })
   data.studies.push(study('ghost'))
   const message = (() => { try { assembleCatalog(data) } catch (error) { return (error as Error).message } })()
   expect(message).toBe([
@@ -89,7 +113,7 @@ test('a studied project needs a lead image, and every disagreement is reported t
 
 test('a studied project needs its own social card, so its study page never takes the site card', () => {
   const data = fixture()
-  data.selected[0] = project('alpha', { media: [shot] })
+  data.selected[0] = project('alpha', { media: [shot], tagline: 'first letter' })
   expect(() => assembleCatalog(data)).toThrow('project-case-studies.json: study "alpha" has no social card: project "alpha" has no thumbnailUrl')
 })
 
@@ -105,6 +129,8 @@ test('the content files agree and give four studied projects, twelve others and 
   expect(selectedProjects).toHaveLength(16)
   expect(allProjects).toHaveLength(43)
   expect(allProjects.filter(item => !item.current)).toHaveLength(27)
+  expect(reviewedOn).toBe('November 16, 2026')
+  expect(projectsReply).toBe('Clpr: Twitch clip search and moderation. Clustr: Reddit community map in 2D and 3D. HasanAra: searchable broadcast archive. Undertow: browser music-video editor (live beta).')
   expect(featuredProjects.every(item => item.media.length === 2 && item.media.every(media => media.width > 0 && media.height > 0))).toBe(true)
 })
 

@@ -1,7 +1,10 @@
 import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import sharp from 'sharp'
+import { socialCardPath } from '../src/content/project-catalog.mjs'
 
+// This script rewrites the selection and the asset manifest, so it reads those two files whole
+// instead of the joined catalog, and takes only the catalog's path rules.
 const evidence = JSON.parse(await readFile('docs/evidence/portfolio-2026-11-16/captures.json', 'utf8'))
 const selection = JSON.parse(await readFile('src/content/selected-projects.json', 'utf8'))
 const assets = JSON.parse(await readFile('src/content/project-assets-provenance.json', 'utf8'))
@@ -28,7 +31,7 @@ for (const project of selection.projects) {
   if (captures.length) {
     project.thumbnailUrl = project.media[0].src
     project.thumbnailAlt = project.media[0].alt
-    const path = `/assets/projects/social/${project.slug}.png`
+    const path = socialCardPath(project.slug)
     const bytes = await sharp(captures[0].original).resize(1200, 630, { fit: 'contain', background: project.brandBackground ?? '#e9eff2' }).png().toBuffer()
     await writeFile(`public${path}`, bytes)
     assets.files = assets.files.filter(file => file.path !== path)

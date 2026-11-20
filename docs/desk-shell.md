@@ -4,6 +4,10 @@
 Up and Down recall the session history and restore an unfinished command. Each completed command
 appends one response to a polite live log. Input and database results are inserted as text.
 
+`projects` lists the featured projects by product name and tagline. The page writes that reply into
+the form's `data-projects-reply` from the project catalog at build, so it follows the featured set
+and the catalog's JSON stays out of the client bundle.
+
 Search retains the PostgreSQL worker after its startup comparison. Words become prefix terms joined
 with AND and are bound as parameters to the existing moderation-filtered search and count queries.
 The psql pane shows the same query, indexed plan, match count and rows. The initial no-index comparison

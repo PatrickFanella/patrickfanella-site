@@ -2,7 +2,11 @@ import { recruitingEmail } from '../content/contact'
 import resume from '../content/resume.json'
 import type { Psql } from './psql'
 
-/** Each completed command appends one entry to the live log; user text is always plain text. */
+/**
+ * Each completed command appends one entry to the live log; user text is always plain text.
+ * The `projects` reply is the form's `data-projects-reply`, which the page writes from the project
+ * catalog at build, so the catalog's JSON stays out of the client bundle.
+ */
 export function startShell(form: HTMLFormElement, psql: Psql) {
   const input = form.querySelector<HTMLInputElement>('input')!
   const button = form.querySelector<HTMLButtonElement>('button')!
@@ -37,7 +41,7 @@ export function startShell(form: HTMLFormElement, psql: Psql) {
       switch (verb.toLowerCase()) {
         case 'help': say('help · projects · resume · contact · search <words>. Start Clpr live mode in the psql pane to run its Go search handler on eight fixture clips. The SQL benchmark is a separate mode with generated clips.'); break
         case 'projects':
-          say('Clpr: Twitch clip search and moderation. HasanAra: searchable broadcast archive. Undertow: browser music-video editor (live beta).')
+          say(form.dataset.projectsReply!)
           link('Browse all projects and delivery statuses', '/projects/'); break
         case 'resume': say('Senior backend and full-stack engineer. Go, Python, TypeScript and PostgreSQL. Chicago or remote.'); link('Read the résumé and download the PDF', '/resume/'); break
         case 'contact': link(recruitingEmail, `mailto:${recruitingEmail}`); link('GitHub: PatrickFanella', resume.github); link('LinkedIn: Patrick Fanella', resume.linkedin); break

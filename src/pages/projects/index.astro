@@ -2,7 +2,7 @@
 import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
 import resume from '../../content/resume.json'
-import { featuredProjects, supportingProjects } from '../../content/project-presentation'
+import { featuredProjects, reviewedOn, supportingProjects } from '../../content/project-presentation'
 ---
 <ContentPage title="Work | Patrick Fanella" description="Four engineering case studies and twelve selected projects by Patrick Fanella: search, data pipelines, media systems and developer tools.">
   <h1>Selected work</h1>
@@ -31,5 +31,5 @@ import { featuredProjects, supportingProjects } from '../../content/project-pres
       </div>
     </article></li>)}</ul>
   </section>
-  <p class="source-note">Copy reviewed November 16, 2026 against the public repositories linked from each project. Screenshots identify their capture date and demonstration data. <a href={`${resume.github}?tab=repositories`}>More repositories on GitHub</a>.</p>
+  <p class="source-note">Copy reviewed {reviewedOn} against the public repositories linked from each project. Screenshots identify their capture date and demonstration data. <a href={`${resume.github}?tab=repositories`}>More repositories on GitHub</a>.</p>
 </ContentPage>
