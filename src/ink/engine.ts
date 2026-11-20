@@ -17,10 +17,6 @@ export interface InkInfo {
   stepMs: number
   fps: number
   running: boolean
-  /** Counts for `?ink-debug`: solver steps, draws and canvas resizes since the start. */
-  steps: number
-  draws: number
-  resizes: number
 }
 
 export interface Ink {
@@ -123,14 +119,13 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   // this must not empty the tank: the solver carries its velocity and ink over to the new grids.
   // Returns whether the grids were laid out again. A viewport with no size (a hidden frame) is
   // left alone; `sized` stays behind `be` until one has a size, and nothing steps or draws until then.
-  let steps = 0, draws = 0, resizes = 0
   function resize() {
     if (!be || !innerWidth || !innerHeight) return false
     const { w: cw, h: ch } = canvasSize(innerWidth, innerHeight, devicePixelRatio, be.maxSize)
     const same = sized === be
     // Assigning a canvas its own size still clears it, so leave an unchanged one alone.
     if (isResizeNoop(same, [cw, ch], [canvas.width, canvas.height], [cssW, cssH], [innerWidth, innerHeight])) return false
-    canvas.width = cw; canvas.height = ch; resizes++
+    canvas.width = cw; canvas.height = ch
     ;({ simW, simH, dyeW, dyeH } = gridSize(innerWidth, innerHeight, be.rows))
     maskCanvas.width = dyeW; maskCanvas.height = dyeH
     be.resize(simW, simH, dyeW, dyeH, same ? resizeKeep(innerWidth, innerHeight, cssW, cssH) : undefined)
@@ -170,7 +165,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   }
 
   let look = LOOK[theme]
-  const draw = () => { try { if (be && sized === be) { be.draw(look); draws++ } } catch (err) { crash(err as Error) } }
+  const draw = () => { try { if (be && sized === be) be.draw(look) } catch (err) { crash(err as Error) } }
 
   // Frame loop. One solver step per frame at a fixed 1/60 s, so the motion
   // looks the same on 60 Hz and 120 Hz screens; the step time is wall clock.
@@ -180,7 +175,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     const gap = now - last; last = now
     if (gap > 0 && gap < 500) fps += (1000 / gap - fps) * 0.05
     const t0 = performance.now()
-    try { step(1 / 60); steps++ } catch (err) { return crash(err as Error) }
+    try { step(1 / 60) } catch (err) { return crash(err as Error) }
     draw()
     stepMs += (performance.now() - t0 - stepMs) * 0.05
   }
@@ -365,6 +360,6 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     setTheme(t) { look = LOOK[t]; if (!running) draw() },
     setRunning(on) { wanted = on; if (on && !document.hidden) start(); else { stop(); draw() } },
     preroll,
-    info: () => ({ path: be?.path ?? '…', renderer: be?.renderer ?? '', grid: be ? `${simW} × ${simH}` : '…', stepMs, fps, running, steps, draws, resizes }),
+    info: () => ({ path: be?.path ?? '…', renderer: be?.renderer ?? '', grid: be ? `${simW} × ${simH}` : '…', stepMs, fps, running }),
   }
 }
