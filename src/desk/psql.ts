@@ -4,19 +4,10 @@
 import { QUERY, SEARCH_SQL, searchTerms, type PgEvent, type Row, type Run } from './pg-protocol'
 import { RECORDED_ON, recordedIdx, recordedSeq } from './recorded'
 import { startClpr } from './clpr'
+import { compare, measured, scanName, tick, tidyPlan } from './benchmark'
 
 const fmt = (n: number) => n.toLocaleString('en-US')
 const ms = (n: number) => n.toFixed(2)
-/** A measured time with only the decimals the clock supports. Each reading is off by up to one tick,
- *  so a mean of n readings `step` apart is good to about step / 2√n at worst. Below that bound the
- *  figure is shown as "< bound", not as a number. */
-export const measured = (exec: number, step: number, runs = 1) => {
-  const bound = step / (2 * Math.sqrt(runs))
-  const dp = Math.min(2, Math.max(0, Math.ceil(-Math.log10(bound))))
-  // A ratio needs both times well clear of the bound: at five times it, a time is good to about 20%.
-  return { text: exec < bound ? `< ${bound.toFixed(dp)}` : exec.toFixed(dp), below: exec < bound, rough: exec < 5 * bound }
-}
-const scanName = (r: Run) => /Seq Scan/.test(r.plan.join('\n')) ? 'seq scan' : /Index Scan/.test(r.plan.join('\n')) ? 'index scan' : 'scan'
 
 type Part = string | [cls: string, text: string]
 
@@ -46,22 +37,6 @@ function mark(text: string, re: RegExp, classes: string[]): Part[] {
 const SQL_RE = /('[^']*')|(--.*$)|\b(EXPLAIN|ANALYZE|COSTS|BUFFERS|OFF|SELECT|FROM|WHERE|AND|ORDER BY|DESC|LIMIT)\b|(\$1|\b\d+\b|\bfalse\b)/g
 const PLAN_RE = /(idx_clips_search_vector)|(Seq Scan)|(\d+(?:\.\d+)?(?:\.\.\d+(?:\.\d+)?)?)/g
 
-/** EXPLAIN's node lines, filter counts and the two timing lines, with costs, buffers and loops left
- *  out and the six-space indent per level tightened to two, so the plan fits the pane. */
-export function tidyPlan(plan: string[]): string[] {
-  const out: string[] = []
-  for (const raw of plan) {
-    const lead = raw.length - raw.trimStart().length
-    const text = raw.trim().replace(/\s*\(cost=[^)]*\)/, '').replace(/ loops=1\)/, ')').replace(/rows=(\d+)\.00/g, 'rows=$1').replace(/\s{2,}/g, ' ')
-    // A node at depth d starts its arrow at 2 + 6(d - 1); its detail lines start at 2 + 6d.
-    const d = Math.max(0, Math.round((lead - 2) / 6))
-    if (text.startsWith('->')) out.push(` ${'  '.repeat(d + 1)}-> ${text.slice(2).trim()}`)
-    else if (lead === 0 && !/^Planning:?$/.test(text)) out.push(` ${text}`)
-    else if (/^Rows Removed by Filter/.test(text)) out.push(` ${d ? `${'  '.repeat(d + 1)}   ` : '  '}${text}`)
-  }
-  return out
-}
-
 /** A measured run also carries the clock's step, so its times are shown at the clock's resolution. */
 interface Shown { run: Run; rows: Row[]; total: number; of: number; step?: number }
 
@@ -70,19 +45,11 @@ function renderSession(pre: HTMLElement, s: Shown, status: string, query = QUERY
   const sql = `EXPLAIN (ANALYZE, COSTS OFF, BUFFERS OFF)\n${SEARCH_SQL};  -- $1 = ${query}`.split('\n')
   sql.forEach((l, i) => line(pre, ...(i === 0 ? [['ps1', 'clpr=#'] as Part, ' '] : []), ...mark(l, SQL_RE, ['s', 'c', 'k', 'n'])))
   line(pre)
-  for (let l of tidyPlan(s.run.plan)) {
-    // A measured plan is the last run of the median batch, read on a coarse clock, so its node times
-    // and Execution Time often read 0.000. Drop the node times, as TIMING OFF would, and show the
-    // batch's mean in place of that one run's Execution Time, as the timing panel does.
-    if (s.step) {
-      l = l.replace(/actual time=[\d.]+\.\.[\d.]+ /, 'actual ')
-      const plan = /^ Planning Time: ([\d.]+) ms$/.exec(l)
-      if (plan) l = ` Planning Time: ${measured(parseFloat(plan[1]), s.step).text} ms`
-    }
-    if (!l.startsWith(' Execution Time')) { line(pre, ...mark(l, PLAN_RE, ['g', 'w', 'n'])); continue }
-    if (!s.step) { line(pre, ' Execution Time: ', ['hl', l.slice(' Execution Time: '.length)]); continue }
-    const n = s.run.runs ?? 1
-    line(pre, ' Execution Time: ', ['hl', `${measured(s.run.exec, s.step, n).text} ms`], ['c', ` (mean of ${fmt(n)} ${n === 1 ? 'run' : 'runs'})`])
+  // The module words Execution Time, a measured one with its batch note; the pane only adds the spans.
+  for (const l of tidyPlan(s.run, s.step)) {
+    const exec = /^( Execution Time: )(.+? ms)(.*)$/.exec(l)
+    if (exec) line(pre, exec[1], ['hl', exec[2]], ...(exec[3] ? [['c', exec[3]] as Part] : []))
+    else line(pre, ...mark(l, PLAN_RE, ['g', 'w', 'n']))
   }
   line(pre)
   line(pre, ['c', ` ${'title'.padEnd(33)} ${'creator'.padEnd(12)} votes`])
@@ -178,7 +145,6 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
   let requestId = 0
   const pending = new Map<number, { resolve: (r: SearchResult) => void; reject: (e: Error) => void }>()
   let version = '', rows = 0, step = 1, seq: Run | null = null
-  const tick = () => Number(step.toPrecision(1))
   const onEvent = (m: PgEvent) => {
     onProgress(m)
     if (m.ev === 'search' || m.ev === 'search-error') {
@@ -196,7 +162,7 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
       q('[data-pg-cap]').textContent = 'Your search, measured in this tab'
       q<HTMLElement>('.seq').hidden = true
       q('[data-pg-idx]').textContent = time
-      q('[data-pg-idx-note]').textContent = `${scanName(m.run)}, ${fmt(rows)} rows`
+      q('[data-pg-idx-note]').textContent = `${scanName(m.run.plan)}, ${fmt(rows)} rows`
       q('[data-pg-note]').textContent = `Prefix search with AND; ${fmt(m.total)} matches. Mean of ${fmt(m.run.runs ?? 1)} query runs, at this tab's clock resolution.`
       reportBenchmark({ state: 'ready', message: `SQL search complete: ${fmt(m.total)} ${m.total === 1 ? 'match' : 'matches'} in ${fmt(rows)} generated clips. Direct SQL, measured in this tab.` })
       request.resolve({ total: m.total, time, top: m.rows[0]?.title })
@@ -214,24 +180,16 @@ export function startPsql(pane: HTMLElement, onProgress: (event: PgEvent) => voi
         set('live')
         sub.textContent = `live in this tab, PostgreSQL ${version}`
         q('[data-pg-cap]').textContent = 'Measured in this tab, median of 3 batches'
-        q('[data-pg-seq-note]').textContent = `${scanName(seq)}, ${fmt(rows)} rows`
-        q('[data-pg-idx-note]').textContent = `${scanName(m.run)}, ${fmt(rows)} rows`
+        q('[data-pg-seq-note]').textContent = `${scanName(seq.plan)}, ${fmt(rows)} rows`
+        q('[data-pg-idx-note]').textContent = `${scanName(m.run.plan)}, ${fmt(rows)} rows`
         {
-          const a = measured(seq.exec, step, seq.runs), b = measured(m.run.exec, step, m.run.runs)
-          figures(seq.exec, m.run.exec, [a.text, b.text])
+          const shown = compare(seq, m.run, step, rows)
+          figures(seq.exec, m.run.exec, [shown.seq, shown.idx])
           // Each figure is the middle of three batch means; keep all three, so a test can check the median.
-          for (const [k, r] of [['seq', seq], ['idx', m.run]] as const) {
-            const el = q(`[data-pg-${k}]`)
-            el.dataset.batches = (r.batches ?? []).join(' '); el.dataset.runs = String(r.runs ?? 1)
-          }
-          bench.dataset.step = String(step)
-          // Two significant figures at most: the ratio of two means is rougher than either.
-          const x = seq.exec / m.run.exec, sig = (v: number) => String(Number(v.toPrecision(2)))
-          const ratio = a.rough || b.rough ? 'One time is too close to what this tab\'s clock can resolve, so there is no ratio.'
-            : `The index answers ${x >= 1 ? `about ${sig(x)} times faster` : `about ${sig(1 / x)} times slower`} on the same ${fmt(rows)} rows.`
-          q('[data-pg-note]').textContent = `${ratio} This tab's clock ticks every ${tick()} ms, so each batch repeats the query for 50 ms and takes the mean. Clpr's recorded demo: ${ms(recordedSeq.run.exec)} ms without the index at ${fmt(recordedSeq.rows)} rows, ${ms(recordedIdx.run.exec)} ms with it at ${fmt(recordedIdx.rows)}.`
+          q('[data-pg-seq]').dataset.batches = (seq.batches ?? []).join(' '); q('[data-pg-idx]').dataset.batches = (m.run.batches ?? []).join(' ')
+          q('[data-pg-note]').textContent = `${shown.ratio} This tab's clock ticks every ${tick(step)} ms, so each batch repeats the query for 50 ms and takes the mean. Clpr's recorded demo: ${ms(recordedSeq.run.exec)} ms without the index at ${fmt(recordedSeq.rows)} rows, ${ms(recordedIdx.run.exec)} ms with it at ${fmt(recordedIdx.rows)}.`
         }
-        renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows, step }, `measured in this tab by PostgreSQL ${version}: the plan of the median batch's last run, on a clock that ticks every ${tick()} ms`)
+        renderSession(pre, { run: m.run, rows: m.rows, total: m.total, of: rows, step }, `measured in this tab by PostgreSQL ${version}: the plan of the median batch's last run, on a clock that ticks every ${tick(step)} ms`)
         reportBenchmark({ state: 'ready', message: `SQL benchmark complete on ${fmt(rows)} generated clips. Direct SQL, measured in this tab; ready for a shell search.` })
         break
     }
