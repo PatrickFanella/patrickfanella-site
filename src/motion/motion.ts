@@ -99,24 +99,37 @@ export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false
   })
 }
 
+/** How long bleed takes to fade in and out, in ms. */
+export const BLEED = { in: 240, out: 400 }
+
+/** One frame of bleed: move strength `s` toward `target` at the fade-in or fade-out rate over `dt` ms. */
+export function bleedStep(s: number, target: number, dt: number) {
+  const k = dt / (target > s ? BLEED.in : BLEED.out)
+  return s + Math.sign(target - s) * Math.min(Math.abs(target - s), k)
+}
+
 /**
  * bleed: an element marked `data-bleed="c|o|y"` lets ink go from its bottom
  * edge while hovered or focused, fading in over 240 ms and out over 400 ms.
+ * The fade follows the clock, so it takes as long on a 120 Hz screen as on 60 Hz.
  */
 export function bleed(ink: Ink, base: () => Emitter[] = () => []) {
   const active = new Map<HTMLElement, { ink: InkId; s: number; target: number }>()
-  let raf = 0
-  const tick = () => {
+  let raf = 0, last = 0
+  const tick = (now: number) => {
     raf = 0
+    // A long gap (a hidden tab, the first frame) counts as one 60 Hz frame.
+    const dt = last && now - last < 100 ? now - last : 1000 / 60
+    last = now
     let moving = false
     for (const [el, a] of active) {
-      const k = a.target > a.s ? 1 / 14 : 1 / 24
-      a.s += Math.sign(a.target - a.s) * Math.min(Math.abs(a.target - a.s), k)
+      a.s = bleedStep(a.s, a.target, dt)
       if (a.s !== a.target) moving = true
       if (a.s <= 0 && a.target === 0) active.delete(el)
     }
     ink.setEmitters([...base(), ...[...active].map(([el, a]) => ({ rect: el.getBoundingClientRect(), ink: a.ink, strength: a.s * 0.45 }))])
     if (moving || active.size) raf = requestAnimationFrame(tick)
+    else last = 0
   }
   const set = (el: HTMLElement, on: boolean) => {
     if (reduced()) return
