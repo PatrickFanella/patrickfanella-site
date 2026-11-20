@@ -1,6 +1,7 @@
 import { manifest, type ClprEvent } from './clpr-protocol'
 import type { SearchResult, BenchmarkStatus } from './psql'
 import { startInspector } from './inspector/inspector'
+import { fixtureCount } from './inspector/recording.mjs'
 
 /** Opt-in Clpr mode shares the psql output with the SQL benchmark, but owns its worker. */
 export function startClpr(pane: HTMLElement, options: {
@@ -107,7 +108,7 @@ export function startClpr(pane: HTMLElement, options: {
         || typeof results !== 'object' || results === null || !('clips' in results) || !Array.isArray(results.clips)) throw new Error('Clpr returned unexpected clip results')
       const first: unknown = results.clips[0]
       const top = typeof first === 'object' && first !== null && 'title' in first && typeof first.title === 'string' ? first.title : undefined
-      if (event.id === shownId) status.textContent = `Clpr search complete: ${counts.clips} ${counts.clips === 1 ? 'match' : 'matches'}. Clpr is live: all ${manifest.migrationCount} migrations applied, 8 fixture clips and ${(event.rows - 8).toLocaleString('en-US')} generated clips. Go handler request measured in this tab.`
+      if (event.id === shownId) status.textContent = `Clpr search complete: ${counts.clips} ${counts.clips === 1 ? 'match' : 'matches'}. Clpr is live: all ${manifest.migrationCount} migrations applied, ${fixtureCount} fixture clips and ${(event.rows - fixtureCount).toLocaleString('en-US')} generated clips. Go handler request measured in this tab.`
       request.resolve({ total: counts.clips, top, time: event.ms.toFixed(1), timing: 'Clpr request time' })
     } catch (error) {
       if (event.id === shownId) status.textContent = 'Clpr search failed; inspect its response or try another search.'

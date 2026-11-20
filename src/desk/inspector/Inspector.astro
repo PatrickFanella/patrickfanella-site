@@ -1,23 +1,16 @@
 ---
-import { readFileSync, statSync } from 'node:fs'
-import { createHash } from 'node:crypto'
 import data from './recorded-run.json'
-import inputs from './recording-inputs.json'
-import { manifest } from '../clpr-protocol'
-import { liveGate, type Recording } from './live-policy'
-import { responseMarkup, sqlMarkup, timingMarkup, wireMarkup, planMarkup } from './render'
-const recording = data as Recording
+import { checkoutLiveGate } from './live-policy'
+import { parseRecording, tableSizes } from './recording.mjs'
+import { number, responseMarkup, sqlMarkup, timingMarkup, wireMarkup, planMarkup } from './render'
+const recording = parseRecording(data)
 const { meta } = recording
 const result = recording.results[0]
 const fixtureBody = JSON.parse(result.response.body) as { query: string; results: { clips: { title: string }[] } }
-const samplePlan = result.plan!
+const samplePlan = result.plan
+const largest = number(tableSizes.at(-1)!)
 
-const fingerprint = createHash('sha256')
-for (const path of inputs) fingerprint.update(path).update('\0').update(readFileSync(path)).update('\0')
-const actualManifest = { ...manifest, wasm: { ...manifest.wasm,
-  gzipBytes: statSync(`public/clpr/${manifest.commit}/search.wasm.gz`).size,
-} }
-const gate = liveGate(meta, fingerprint.digest('hex'), actualManifest)
+const gate = checkoutLiveGate(meta)
 const startLabel = `Start Clpr live mode (${(meta.downloadBytes / 1e6).toFixed(2)} MB download; ${Math.ceil(meta.memory.peakBytes / 1048576).toLocaleString('en-US')} MiB measured peak)`
 ---
 <div class="inspector" data-inspector data-mode="recorded" data-live-allowed={String(gate.allowed)} data-live-reason={gate.reason} data-live-label={startLabel}>
@@ -37,12 +30,12 @@ const startLabel = `Start Clpr live mode (${(meta.downloadBytes / 1e6).toFixed(2
       These results were recorded elsewhere; they are not measurements from your device.</p>
     <p>{(meta.downloadBytes / 1e6).toFixed(2)} MB of worker payloads, including {(meta.wasmGzipBytes / 1e6).toFixed(2)} MB compressed Clpr Wasm.
       Startup {(meta.startupMs / 1000).toFixed(1)} s. Sampled peak Chromium process-tree RSS: {Math.ceil(meta.memory.peakBytes / 1048576).toLocaleString('en-US')} MiB;
-      budget {meta.budget.maxPeakRssBytes / 1048576} MiB. Includes WebAssembly and shared pages counted per process; sampled every {meta.memory.sampleIntervalMs} ms through 50,008 clips. Device use can differ.</p>
+      budget {meta.budget.maxPeakRssBytes / 1048576} MiB. Includes WebAssembly and shared pages counted per process; sampled every {meta.memory.sampleIntervalMs} ms through {largest} clips. Device use can differ.</p>
     <details><summary>Recording provenance</summary><p>Platform: {meta.platform}. Memory samples: {meta.memory.samples}.</p>
       <pre tabindex="0">{`Source fingerprint: ${meta.sourceFingerprint}\nBuilt worker SHA-256: ${meta.workerSha256}`}</pre></details>
     {!gate.allowed && <p>{gate.reason} The recorded run remains readable.</p>}
   </div>
-  <p data-inspector-request>Recorded GET {result.url} · HTTP {result.response.status} · {result.rows} fixture clips. Plan samples cover 8 through 50,008 clips.</p>
+  <p data-inspector-request>Recorded GET {result.url} · HTTP {result.response.status} · {result.rows} fixture clips. Plan samples cover {tableSizes[0]} through {largest} clips.</p>
   <div data-inspector-tabs hidden aria-label="Search inspector"></div>
   <section id="inspector-response" aria-labelledby="inspector-response-title" tabindex="0">
     <h3 id="inspector-response-title">Response</h3>
@@ -66,15 +59,11 @@ const startLabel = `Start Clpr live mode (${(meta.downloadBytes / 1e6).toFixed(2
     <form data-plan-size hidden>
       <label for="plan-rows">Table size</label>
       <select id="plan-rows" name="rows">
-        <option value="8">8 clips</option>
-        <option value="1008">1,008 clips</option>
-        <option value="10008">10,008 clips</option>
-        <option value="30008">30,008 clips</option>
-        <option value="50008">50,008 clips</option>
+        <Fragment set:html={tableSizes.map(rows => `<option value="${rows}">${number(rows)} clips</option>`).join('\n        ')} />
       </select>
       <button type="submit">Resize and compare plans</button>
     </form>
     <p data-plan-status role="status">Recorded plans for world record; each resize ran VACUUM FULL and ANALYZE before planning.</p>
-    <div data-plan-output set:html={planMarkup(recording.results.map(result => result.plan!), result.plan!, false)} />
+    <div data-plan-output set:html={planMarkup(recording.results.map(result => result.plan), result.plan, false)} />
   </section>
 </div>

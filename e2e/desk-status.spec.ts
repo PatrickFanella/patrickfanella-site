@@ -1,10 +1,8 @@
 import type { Page } from '@playwright/test'
 import { test, expect } from './fixtures'
-import { recordedLiveGate } from './recording-policy'
+import { recordedLiveGate, recording } from './recording-policy'
 import type { PgEvent } from '../src/desk/pg-protocol'
 import type { ClprEvent } from '../src/desk/clpr-protocol'
-import data from '../src/desk/inspector/recorded-run.json' with { type: 'json' }
-import type { Recording } from '../src/desk/inspector/live-policy'
 
 // Deterministic controller-boundary fixtures, not benchmark/performance evidence.
 // Real PostgreSQL and Clpr remain covered by desk.spec.ts and clpr.spec.ts.
@@ -88,7 +86,7 @@ test('cancel, worker failure, retry and mode switches reject stale worker callba
   await expect(status).toContainText('The recorded run is still available')
   await page.getByRole('button', { name: 'Start Clpr live mode' }).click()
   await emit(page, 4, { ev: 'ready', migrations: 155, rows: 8, version: '18.6' })
-  const result = structuredClone((data as Recording).results[0])
+  const result = structuredClone(recording.results[0])
   await emit(page, 4, { ...result, id: 1 })
   await expect(status).toContainText('Clpr search complete')
   const input = page.getByRole('textbox', { name: 'Desk command' })
@@ -122,7 +120,7 @@ test('example action opts in and supports matches, no match, failure, cancellati
   await expect(status).toContainText('Live mode stopped')
   await sample.click()
   await emit(page, 1, { ev: 'ready', migrations: 155, rows: 8, version: '18.6' })
-  const result = structuredClone((data as Recording).results[0])
+  const result = structuredClone(recording.results[0])
   await emit(page, 1, { ...result, id: 1 })
   await expect(status).toContainText('Clpr search complete: 2 matches')
   await expect(sample).toBeEnabled()

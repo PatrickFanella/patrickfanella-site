@@ -1,5 +1,6 @@
 import type { ClprEvent } from '../clpr-protocol'
 import type { PlanSample } from './plans'
+import { fixtureCount } from './recording.mjs'
 import { number, scan, planMarkup } from './render'
 
 export function startPlanView(root: HTMLElement, resize: (rows: number) => Promise<unknown>) {
@@ -37,7 +38,7 @@ export function startPlanView(root: HTMLElement, resize: (rows: number) => Promi
       samples.set(event.rows, event.plan)
       const points = [...samples.values()].sort((a, b) => a.rows - b.rows)
       const sample = event.plan, chosen = scan(sample.natural.Plan) || sample.natural.Plan['Node Type']
-      status.textContent = `${number(event.rows)} clips: ${chosen}. Plans measured in this tab after ANALYZE; eight fixtures plus ${number(event.rows - 8)} generated clips. The selected size re-runs the handler too.`
+      status.textContent = `${number(event.rows)} clips: ${chosen}. Plans measured in this tab after ANALYZE; eight fixtures plus ${number(event.rows - fixtureCount)} generated clips. The selected size re-runs the handler too.`
       output.innerHTML = planMarkup(points, sample, true)
     },
   }

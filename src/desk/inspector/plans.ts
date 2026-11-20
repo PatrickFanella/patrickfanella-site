@@ -1,8 +1,8 @@
 import type { PGlite } from '@electric-sql/pglite'
 import type { Statement } from './capture'
 import type { Parameter } from './wire'
+import { fixtureCount, tableSizes } from './recording.mjs'
 
-export const tableSizes = [8, 1008, 10008, 30008, 50008] as const
 export interface PlanNode {
   'Node Type': string; 'Total Cost': number; 'Startup Cost': number; 'Plan Rows': number
   'Index Name'?: string; Plans?: PlanNode[]
@@ -58,14 +58,14 @@ export async function inspectPlans(pg: PGlite, statement: Statement, rows: numbe
 /** Resize only this worker's generated data. The eight labelled fixtures survive.
  * Rewrite after both growth and shrink, then refresh statistics before planning. */
 export async function resizeClips(pg: PGlite, rows: number) {
-  if (!tableSizes.some(size => size === rows)) throw new Error('Choose one of the offered table sizes')
+  if (!tableSizes.includes(rows)) throw new Error('Choose one of the offered table sizes')
   await pg.query("DELETE FROM clips WHERE twitch_clip_id LIKE 'synthetic-%'")
-  if (rows > 8) await pg.query(`INSERT INTO clips(twitch_clip_id,twitch_clip_url,embed_url,title,creator_name,broadcaster_name,created_at,vote_score)
+  if (rows > fixtureCount) await pg.query(`INSERT INTO clips(twitch_clip_id,twitch_clip_url,embed_url,title,creator_name,broadcaster_name,created_at,vote_score)
     SELECT 'synthetic-' || g, 'https://example.invalid/s/' || g, 'https://example.invalid/s/' || g,
       (ARRAY['speedrun','world','record','raid','ranked','cooking','music','clutch','finale','coding','reaction','highlight'])[1 + (g * 7) % 12] || ' ' ||
       (ARRAY['attempt','moment','clip','fail','win','session','stream','cover','round','run'])[1 + (g * 13) % 10] || ' ' || g,
       'synthetic_' || (g % 500), 'synthetic_' || (g % 500), timestamp '2026-01-01' + (g || ' minutes')::interval, (g * 31) % 100
-    FROM generate_series(1, $1::int) g`, [rows - 8])
+    FROM generate_series(1, $1::int) g`, [rows - fixtureCount])
   // VACUUM cannot run inside a transaction. It also flushes the GIN pending list.
   await pg.exec('VACUUM FULL clips')
   await pg.exec('ANALYZE clips')

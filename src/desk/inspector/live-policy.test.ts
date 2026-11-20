@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest'
-import { liveGate, type RecordingMeta } from './live-policy'
+import { liveGate } from './live-policy'
+import type { RecordingMeta } from './recording.mjs'
 import policy from './recording-policy.json' with { type: 'json' }
 
 // A literal recording at the allowed boundary, so the gate's rules are tested whatever recorded-run.json holds.
