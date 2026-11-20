@@ -2,6 +2,7 @@
 import Code from 'astro/components/Code.astro'
 import type { ShikiTransformer } from 'shiki'
 import type { CaseStudy as Study, CaseStudyNote } from '../content/case-studies/clpr-search'
+import { NumberWord } from '../content/number-words.mjs'
 interface Props { study: Study }
 const { study } = Astro.props
 const lines = study.sourceText.split('\n')
@@ -33,8 +34,9 @@ function annotation(start: number, note?: CaseStudyNote): ShikiTransformer {
 ---
 <article class="case-study" aria-labelledby="study-title">
   <header><h1 id="study-title">{study.title}</h1><p class="lead">{study.description}</p></header>
+  <slot name="intro" />
   {study.notes.some(note => note.summary) && <nav class="decision-summary" aria-label="Search decisions">
-    <h2>Four search decisions</h2>
+    <h2>{NumberWord(study.notes.filter(note => note.summary).length)} search decisions</h2>
     <ul>{study.notes.filter(note => note.summary).map(note => <li><a href={`#note-${note.id}`}>{note.label}</a><p>{note.summary}</p></li>)}</ul>
   </nav>}
   <p class="source-label"><a href={`${study.source}#L${study.excerptStart}-L${study.excerptEnd}`}>Open pinned source on GitHub</a></p>

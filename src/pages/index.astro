@@ -5,6 +5,9 @@ import resume from '../content/resume.json'
 import Page from '../layouts/Page.astro'
 import { employmentFeature, featuredProjects } from '../content/project-presentation'
 import { siteMetadata } from '../content/site-metadata'
+import { catalog } from '../content/projects.mjs'
+import { NumberWord, numberWord } from '../content/number-words.mjs'
+const featuredCount = catalog.featured.length
 ---
 <Page title={siteMetadata.title} description={siteMetadata.description} bodyClass="landing">
   <a class="skip" href="#coming">Skip to the work</a>
@@ -37,7 +40,7 @@ import { siteMetadata } from '../content/site-metadata'
     <section id="coming" class="coming" aria-labelledby="coming-h">
       <div class="coming-head">
         <h2 id="coming-h">Selected work</h2>
-        <p>Four products, four engineering stories: discovery, graph data, recording archives and local video rendering.</p>
+        <p>{NumberWord(featuredCount)} products, {numberWord(featuredCount)} engineering stories: discovery, graph data, recording archives and local video rendering.</p>
         <p class="dim">Looking for experience and results? Read the <a href="/resume/">résumé</a> or <a href="/contact/">get in touch</a>.</p>
       </div>
       <div class="featured-work">
@@ -65,7 +68,7 @@ import { siteMetadata } from '../content/site-metadata'
         </article>)}
         <div class="featured-more panel">
           <p><a href="/desk/">Open the engineering Desk</a>: read recorded search evidence, then opt in to run Clpr’s pinned search code in your browser.</p>
-          <p><a href="/projects/">Browse twelve other projects</a> or <a href="/motion/">explore the motion set</a>.</p>
+          <p><a href="/projects/">Browse {numberWord(catalog.supporting.length)} other projects</a> or <a href="/motion/">explore the motion set</a>.</p>
         </div>
       </div>
     </section>

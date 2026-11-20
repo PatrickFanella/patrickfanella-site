@@ -26,7 +26,12 @@
 .project-list dl div { display: grid; grid-template-columns: 7ch minmax(0, 1fr); gap: 1rem; margin-bottom: .5rem; }
 .project-list dt { color: var(--dim); font-family: var(--mono); font-size: .7rem; padding-top: .2rem; }
 .project-list dd { margin: 0; }
-.source-note { font: .75rem/1.6 var(--mono); color: var(--dim); margin-top: 2rem; overflow-wrap: anywhere; }
+.source-note { font: .75rem/1.6 var(--mono); color: var(--dim); margin-top: 2rem; max-width: 90ch; overflow-wrap: anywhere; }
+/* Plain paragraphs placed straight into a page need the same rhythm as section text. */
+.content-main > p + p:not(.source-note) { margin-top: 1rem; }
+/* Short pages keep the footer at the bottom of the window instead of mid-screen. */
+.content-page { display: flex; flex-direction: column; }
+.content-page > .foot { margin-top: auto; }
 @media (max-width: 600px) { .project-list article { grid-template-columns: minmax(0, 1fr); } .project-list-copy { grid-column: 1; } }
 
 .project-detail { overflow-wrap: anywhere; }
@@ -67,6 +72,11 @@
 .project-list h2 { font: 800 1.9rem/1.1 var(--display); margin: 0; }
 .supporting-projects article { grid-template-columns: minmax(0, 1fr); }
 .supporting-projects .project-list-copy { grid-column: 1; }
+.group-intro { max-width: 65ch; margin-bottom: 1rem; }
+/* Twelve text-only rows read as a long single column; two columns keep each summary to a readable width. */
+@media (min-width: 800px) {
+  .supporting-projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2.5rem; }
+}
 .breadcrumbs { margin-bottom: 1.5rem; font-size: .875rem; overflow-wrap: anywhere; }
 .breadcrumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; margin: 0; padding: 0; }
 .breadcrumbs li { display: flex; gap: .5rem; min-width: 0; }
