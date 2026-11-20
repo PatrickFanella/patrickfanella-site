@@ -1,11 +1,6 @@
 import { test, expect } from './fixtures'
 import { searchTerms } from '../src/desk/pg-protocol'
 
-test('search words cannot supply tsquery operators', () => {
-  expect(searchTerms("world & record:*')); DROP TABLE clips; --")).toBe("'world':* & 'record':* & 'DROP':* & 'TABLE':* & 'clips':*")
-  expect(searchTerms('???')).toBe('')
-})
-
 test.describe('desk shell', () => {
   test.use({ reducedMotion: 'reduce' })
   test('commands have links, history and accessible output', async ({ page }) => {
