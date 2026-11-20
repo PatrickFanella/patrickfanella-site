@@ -1,22 +1,8 @@
-import portfolio from './portfolio.json' with { type: 'json' }
-import selection from './selected-projects.json' with { type: 'json' }
-import studies from './project-case-studies.json' with { type: 'json' }
-import sources from './selected-project-sources.json' with { type: 'json' }
-import assets from './project-assets-provenance.json' with { type: 'json' }
 import resume from './resume.json' with { type: 'json' }
-import { assembleCatalog, featuredSlugs } from './project-catalog.mjs'
+import { catalog } from './projects.mjs'
 
 export type { Project, ProjectMedia, StudiedProject } from './project-catalog.mjs'
 
-// The one join of the content files. It throws when they disagree, which fails the build and the unit tests.
-const catalog = assembleCatalog({
-  portfolio: portfolio.projects,
-  selected: selection.projects,
-  studies: studies.studies,
-  sources: sources.sources,
-  assets: assets.files,
-  featured: featuredSlugs,
-})
 // Every detail route: previously published pages stay while the current selection is refreshed.
 export const allProjects = catalog.all
 export const selectedProjects = catalog.selected
@@ -24,6 +10,12 @@ export const featuredProjects = catalog.featured
 export const supportingProjects = catalog.supporting
 /** The projects with a product case study, in the study file's order. */
 export const studiedProjects = catalog.studied
+/** The date the selection's copy was reviewed against its sources, as the pages print it. */
+export const reviewedOn = catalog.reviewedOn
+/** The same for the product studies, which are reviewed in their own file. */
+export const studiesReviewedOn = catalog.studiesReviewedOn
+/** The Desk shell's `projects` reply: each featured project by its product name. */
+export const projectsReply = featuredProjects.map(project => `${project.displayName}: ${project.tagline}.`).join(' ')
 export const employmentFeature = {
   title: 'DeliverZero',
   ownership: 'Full-stack engineer, working directly with the CTO',

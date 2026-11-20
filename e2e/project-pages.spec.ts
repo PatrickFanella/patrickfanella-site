@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
-import { allProjects, selectedProjects } from '../src/content/project-presentation'
+import { assetPaths } from '../src/content/project-catalog.mjs'
+import { allProjects, featuredProjects, selectedProjects } from '../src/content/project-presentation'
 import { redirects } from '../src/content/site-facts.mjs'
 import { test, expect } from './fixtures'
 
@@ -10,13 +11,13 @@ test('selected directory exposes four studies and twelve other projects without 
   const page = await context.newPage()
   await page.goto('/projects/')
   const featured = page.getByRole('region', { name: 'Featured projects', exact: true })
-  await expect(featured.locator('article')).toHaveCount(4)
-  await expect(featured.locator('h3')).toHaveText(['Clpr', 'Clustr', 'Rekolekt + HasanAra', 'Undertow'])
-  await expect(page.locator('.project-list article')).toHaveCount(16)
+  // How many there are and which four are featured is stated in src/content/project-catalog.test.ts.
+  await expect(featured.locator('h3')).toHaveText(featuredProjects.map(project => project.title))
+  await expect(page.locator('.project-list article')).toHaveCount(selectedProjects.length)
   for (const project of selectedProjects) {
     const item = page.locator(`article[id="${project.slug}"]`)
     const link = item.locator('a[data-project-name]')
-    await expect(link).toHaveAttribute('href', `/projects/${project.slug}/`)
+    await expect(link).toHaveAttribute('href', project.path)
     expect((await page.request.get((await link.getAttribute('href'))!)).status()).toBe(200)
     const media = project.media[0]
     await expect(item.locator('figure')).toHaveCount(media ? 1 : 0)
@@ -28,8 +29,7 @@ test('selected directory exposes four studies and twelve other projects without 
     expect(Number(await image.getAttribute('height'))).toBeGreaterThan(0)
     await expect(item.locator('figcaption')).toContainText(media.caption)
     await expect(item.locator('figcaption')).toContainText('2026')
-    const paths = [media.src, ...('srcSet' in media && media.srcSet ? media.srcSet.split(',').map(candidate => candidate.trim().split(' ')[0]) : [])]
-    for (const path of paths) expect((await page.request.get(path)).status(), path).toBe(200)
+    for (const path of assetPaths({ media: [media] })) expect((await page.request.get(path)).status(), path).toBe(200)
   }
   // Native lazy loading still resolves responsive media when the reader reaches it.
   for (const slug of ['clpr', 'undertow']) {
@@ -47,7 +47,7 @@ test('every current and retained project page has its content, social metadata a
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
   for (const project of allProjects) {
-    expect((await page.goto(`/projects/${project.slug}/`))?.status()).toBe(200)
+    expect((await page.goto(project.path))?.status()).toBe(200)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(project.title)
     await expect(page.locator('.project-detail')).toContainText(project.description || project.summary)
     await expect(page.locator('.project-detail header .project-facts')).toContainText(project.deliveryStatus ?? 'Status not stated in source')
@@ -139,7 +139,7 @@ for (const colorScheme of ['light', 'dark'] as const) test(`project detail fits 
   await page.emulateMedia({ colorScheme })
   for (const slug of ['clpr', 'undertow', 'rekolekt', 'subcorp']) {
     await page.setViewportSize({ width: 320, height: 740 })
-    await page.goto(`/projects/${slug}/`)
+    await page.goto(allProjects.find(project => project.slug === slug)!.path)
     expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(320)
     await page.setViewportSize({ width: 390, height: 844 })
     expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)

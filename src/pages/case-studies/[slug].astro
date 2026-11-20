@@ -1,7 +1,7 @@
 ---
 import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
-import { studiedProjects, type StudiedProject } from '../../content/project-presentation'
+import { studiedProjects, studiesReviewedOn, type StudiedProject } from '../../content/project-presentation'
 
 export function getStaticPaths() {
   return studiedProjects.map(project => ({ params: { slug: project.slug }, props: { project } }))
@@ -50,7 +50,7 @@ const seo = {
       <section aria-labelledby="evidence-limits">
         <h2 id="evidence-limits">Evidence and limits</h2>
         <p>{study.limits}</p>
-        <p class="source-note">Source and copy review: November 16, 2026. Implementation links name the reviewed commits; screenshots name their capture dates and data context.</p>
+        <p class="source-note">Source and copy review: {studiesReviewedOn}. Implementation links name the reviewed commits; screenshots name their capture dates and data context.</p>
       </section>
     </div>
     <nav class="study-next project-links" aria-label="Continue reading">
