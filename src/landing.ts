@@ -15,3 +15,6 @@ const layout = () => { if (!faceReady) return; fitWidth(name, innerWidth <= 700 
 new ResizeObserver(layout).observe(name)
 unfold()
 
+// The selected work rises into place as it scrolls in, like the rows on /motion/. Set here, so
+// the markup stays plain and the cards show at once without scripts.
+for (const card of document.querySelectorAll<HTMLElement>('.featured-work > .panel')) card.dataset.rise = ''

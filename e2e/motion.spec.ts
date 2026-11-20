@@ -86,4 +86,27 @@ test.describe('with motion', () => {
     await expect.poll(() => page.locator('#ink').evaluate((el) => getComputedStyle(el).opacity)).toBe('1')
   })
 
+  test('the selected work rises in from the scroll position', async ({ page }) => {
+    await noWebGL(page)
+    await page.goto('/')
+    const cards = page.locator('.featured-work > .panel')
+    expect(await cards.count()).toBeGreaterThan(0)
+    const rising = await cards.evaluateAll((els) => els.filter((el) => el.hasAttribute('data-rise') &&
+      el.getAnimations().some((a) => (a as CSSAnimation).animationName === 'rise')).length)
+    expect(rising).toBe(await cards.count())
+  })
+
+})
+
+test.describe('with reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' })
+
+  test('the selected work is in place without rising', async ({ page }) => {
+    await noWebGL(page)
+    await page.goto('/')
+    const moving = await page.locator('.featured-work > .panel').evaluateAll((els) =>
+      els.filter((el) => el.getAnimations().length > 0 || getComputedStyle(el).transform !== 'none').length)
+    expect(moving).toBe(0)
+  })
+
 })
