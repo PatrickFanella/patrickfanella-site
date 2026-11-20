@@ -18,8 +18,11 @@ npm ci
 npm run dev        # http://localhost:4321
 npm run build      # astro check, typecheck, then build to dist/
 npm run preview
+npm run test:unit  # run the tests that need no browser and no build
 npm run test:e2e   # build, serve dist/ and run the browser tests in headless Chromium
 ```
+
+`npm run test:unit` runs Vitest over `src/**/*.test.ts`. A test belongs there, beside the module it covers, when it calls TypeScript directly and needs neither a page nor `dist/`: the live-mode gate today, and decoders, arithmetic and data assembly as they gain direct tests. A test that opens a page or reads the built site belongs in `e2e/`. CI runs the unit tests first, before it records or builds anything.
 
 The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame within 3 s of the fonts loading, that the page works without WebGL2, that the desk measures the search in a worker while the ink keeps drawing, that a slow download still reaches the measured run, that it falls back to the recorded run when the worker script, PGlite's WebAssembly or a policy without `'wasm-unsafe-eval'` stops it, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. They serve `dist/` with `astro preview`. Set `E2E_PORT` to serve on a port other than 4173.
 

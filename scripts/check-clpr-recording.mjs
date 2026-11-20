@@ -12,6 +12,8 @@ assert.ok(meta.ciRun === null || /^https:\/\/github\.com\/[^/]+\/[^/]+\/actions\
 for (const n of [meta.wasmGzipBytes, meta.downloadBytes, meta.memory.peakBytes, meta.memory.sampleIntervalMs, meta.memory.samples, meta.budget.maxPeakRssBytes, meta.budget.maxWasmGzipBytes]) assert.ok(Number.isFinite(n) && n > 0)
 assert.ok(Number.isFinite(meta.startupMs) && meta.startupMs >= 0)
 assert.equal(meta.memory.metric, 'sampled Chromium process-tree RSS')
+// The live gate refuses a recording with fewer samples or a download smaller than the Wasm; fail here instead of shipping live mode off.
+assert.ok(meta.memory.samples >= 2 && meta.downloadBytes >= meta.wasmGzipBytes)
 assert.equal(meta.downloadBytes, Object.values(meta.downloads).reduce((sum, n) => sum + n, 0))
 assert.deepEqual(results.map(result => result.rows), [8, 1008, 10008, 30008, 50008])
 for (const result of results) {

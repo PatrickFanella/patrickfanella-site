@@ -11,6 +11,7 @@
     "check:live": "node scripts/check-live-routes.mjs",
     "typecheck": "astro check && tsc --noEmit && tsc --noEmit -p e2e",
     "preview": "astro preview",
+    "test:unit": "vitest run",
     "test:e2e": "npm run build && playwright test",
     "render:resume": "node scripts/render-resume.mjs"
   },
@@ -31,6 +32,7 @@
     "chrome-launcher": "1.2.3",
     "lighthouse": "13.6.0",
     "sharp": "0.35.5",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "vitest": "5.1.1"
   }
 }
