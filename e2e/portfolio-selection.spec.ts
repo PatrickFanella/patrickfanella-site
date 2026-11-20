@@ -45,12 +45,8 @@ for (const colorScheme of ['light', 'dark'] as const) test(`product stories fit 
   }
 })
 
-test('the sitemap curates discovery while historical project links still resolve', async ({ page }) => {
-  const sitemap = await (await page.request.get('/sitemap.xml')).text()
-  for (const slug of studies) expect(sitemap).toContain(`/case-studies/${slug}/`)
-  expect(sitemap).toContain('/projects/pult/')
-  expect(sitemap).toContain('/projects/stupen/')
-  expect(sitemap).not.toContain('/projects/blacktower/')
+// Which pages the sitemap lists is tested directly in src/content/project-catalog.test.ts.
+test('historical project links still resolve', async ({ page }) => {
   for (const slug of ['blacktower', 'subcorp']) {
     await page.goto(`/projects/${slug}/`)
     await expect(page.locator('.project-detail')).toContainText('Historical project entry')
