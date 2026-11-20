@@ -19,18 +19,34 @@ Work index. The sitemap lists the current sixteen detail pages.
 projects. Each has its media with dimensions, `path`, `current`, `socialImage`, `displayName`
 (the live product's name: HasanAra for Rekolekt), `furtherStudies` (Clpr's search study) and, where
 they exist, its `study` and pinned source `evidence`. The four featured slugs and those slug rules
-live in that module. `project-presentation.ts` applies the join to the checked-in files and exports
-`allProjects`, `selectedProjects`, `featuredProjects`, `supportingProjects` and `studiedProjects`.
+live in that module, with the asset path rules `socialCardPath()` and `assetPaths()` (a project's
+thumbnail and media files with their `srcSet` candidates). `src/content/projects.mjs` applies the join
+to the checked-in files; only the two asset scripts below open them elsewhere. It is plain JavaScript with JSON import
+attributes, so Astro, Vitest, Playwright and plain node scripts import the same `catalog` with no
+build step or generated copy. `project-presentation.ts` re-exports it for the pages as
+`allProjects`, `selectedProjects`, `featuredProjects`, `supportingProjects` and `studiedProjects`,
+with `reviewedOn`, `studiesReviewedOn` and `projectsReply`.
 The project and case-study pages, the landing page, the Desk, the sitemap and `ProjectMedia.astro`
 read those and do not open the JSON files.
 
+The hand-maintained files each record `reviewedAt`. The join turns the selection's into `reviewedOn`
+("November 16, 2026") for the Work index and the project pages, and the study file's into
+`studiesReviewedOn` for the study pages, so either file can be reviewed again on its own. Each
+prints in its page's source note. Each featured project has a `tagline` in `selected-projects.json`;
+`projectsReply` joins the featured projects' product names and taglines for the Desk shell
+([desk-shell.md](desk-shell.md)).
+
 The join throws when the files disagree: a study whose slug is not in the selection or whose project
-has no image or no `thumbnailUrl` (the study page uses the project's `socialImage`), a media file missing from the asset manifest, or a featured slug that is not selected
-or has no study. The message names each entry. Because the pages import the result, this fails
+has no image or no `thumbnailUrl` (the study page uses the project's `socialImage`), a media file missing from the asset manifest, a featured slug that is not selected
+or has no study or no tagline, or a review date that is not a `YYYY-MM-DD` date. The message names each entry. Because the pages import the result, this fails
 `npm run build`; `src/content/project-catalog.test.ts` fails `npm run test:unit` on the same data
-and tests each rule with broken fixture data. The module is plain JavaScript with its data passed
-in, so node scripts can call it; the asset scripts and `scripts/check-project-paths.mjs` still read
-the JSON files themselves.
+and tests each rule with broken fixture data. `scripts/check-project-paths.mjs` imports the
+catalog for its pages, study paths and counts, so it fails on the same disagreements;
+`scripts/lighthouse.mjs` takes the study paths from it. The two asset
+scripts rewrite files the join reads (the asset manifest and the selection), so they read their own
+inputs and take only the path rules from `project-catalog.mjs`; a stale manifest cannot stop them.
+The e2e specs take project paths, counts and the review dates from the catalog; the unit test states
+the counts, the featured four, the review date and the shell reply literally.
 
 The four product stories at `/case-studies/<slug>/` read `project-case-studies.json`. Each includes
 scope, current delivery status, implementation choices, tradeoffs and evidence limits. Public

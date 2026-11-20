@@ -8,6 +8,7 @@ import { artifactBase, manifest, type ClprEvent, type ClprRequest, type ClprResp
 import { replies } from './worker-replies'
 import { captureDatabase } from './inspector/capture'
 import { clipSearch, inspectPlans, resizeClips } from './inspector/plans'
+import type { fixtureCount } from './inspector/recording.mjs'
 
 declare global {
   var pglite: Pick<PGlite, 'execProtocolRaw'>
@@ -64,12 +65,12 @@ async function main() {
     try { await pg.exec(migration.sql) } catch (error) { throw new Error(`${migration.name}: ${String(error)}`) }
   }
   // The prototype's eight labelled fixtures; all data and search analytics remain in this worker.
-  const fixtures: [string, string, number][] = [
+  const fixtures = [
     ['speedrun world record attempt', 'runner_a', 41], ['chat reacts to the world record', 'streamer_b', 33],
     ['cooking stream goes wrong', 'chef_c', 12], ['clutch final round in ranked', 'pro_d', 58],
     ['world first raid clear', 'guild_e', 71], ['record breaking subathon finale', 'host_f', 22],
     ['rock and roll cover on stream', 'band_g', 9], ['c++ live coding session', 'dev_h', 15],
-  ]
+  ] as const satisfies readonly (readonly [string, string, number])[] & { length: typeof fixtureCount }
   for (const [i, [title, creator, votes]] of fixtures.entries()) {
     await pg.query(`INSERT INTO clips(twitch_clip_id,twitch_clip_url,embed_url,title,creator_name,broadcaster_name,created_at,vote_score)
       VALUES ($1,$2,$2,$3,$4,$4,timestamp '2026-11-01' + ($5 || ' hours')::interval,$6)`,
@@ -88,7 +89,7 @@ async function main() {
   const version = (await pg.query<{ server_version: string }>('SHOW server_version')).rows[0].server_version
   post({ ev: 'ready', migrations: migrations.length, rows: fixtures.length, version })
   // PGlite's wire-protocol connection is single-client; serialize requests in this worker.
-  let rows = fixtures.length
+  let rows: number = fixtures.length
   serve(async (request) => {
     if (request.rows !== undefined) {
       await resizeClips(pg, request.rows)

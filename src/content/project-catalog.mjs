@@ -3,7 +3,7 @@
 // studies, the pinned sources and the asset manifest) plus the imported portfolio snapshot.
 // assembleCatalog() joins them once and throws when they disagree, so pages read finished projects.
 // Plain JavaScript and no imports: the data is passed in, so tests can pass broken data and
-// node scripts can call it without a build step. project-presentation.ts applies it to the real files.
+// node scripts can call it without a build step. projects.mjs applies it to the real files.
 
 /** @typedef {{ src: string, srcSet?: string, alt: string, caption: string, capturedAt?: string }} SourceMedia */
 /** @typedef {SourceMedia & { width: number, height: number }} ProjectMedia */
@@ -30,6 +30,7 @@
  * @property {string} [thumbnailUrl]
  * @property {string} [thumbnailAlt]
  * @property {string} [brandBackground]
+ * @property {string} [tagline] A few words for the Desk shell's `projects` reply; featured projects need one.
  * @property {{ slug: string, label: string, relationship: string }[]} [relatedProjects]
  */
 /** @typedef {{ id: string, heading: string, paragraphs: string[], tradeoff: string | null, sources: { label: string, url: string }[] }} StudySection */
@@ -60,6 +61,7 @@
  * @property {{ repo: string, sha: string }[]} sources selected-project-sources.json `sources`
  * @property {{ path: string, width: number, height: number }[]} assets project-assets-provenance.json `files`
  * @property {string[]} featured featured slugs, in display order
+ * @property {{ selection: string, studies: string }} reviewedAt those two files' `reviewedAt` (YYYY-MM-DD)
  */
 
 /** The four projects with a case study, in display order. */
@@ -72,14 +74,29 @@ const displayNames = { rekolekt: 'HasanAra' }
 const furtherStudies = { clpr: [{ href: '/case-studies/clpr-search/', label: 'Read the search decisions study' }] }
 const sharedCard = '/assets/brand/patrick/share-card.png'
 
+/** Where a project's rendered 1200 × 630 social card is published. @param {string} slug */
+export const socialCardPath = slug => `/assets/projects/social/${slug}.png`
+
+/**
+ * Every local image a project names, without duplicates: its thumbnail and each media file with its
+ * `srcSet` candidates.
+ * @param {Pick<SourceProject, 'thumbnailUrl' | 'media'>} project
+ */
+export const assetPaths = project => [...new Set([
+  ...(project.thumbnailUrl ? [project.thumbnailUrl] : []),
+  ...project.media.flatMap(media => [media.src, ...(media.srcSet?.split(',') ?? []).map(candidate => candidate.trim().split(/\s+/)[0])]),
+])]
+
 /**
  * Join the content files into finished projects. Throws one Error naming every entry that disagrees.
  * @param {CatalogInput} input
- * @returns {{ all: Project[], selected: Project[], featured: StudiedProject[], supporting: Project[], studied: StudiedProject[] }}
+ * @returns {{ all: Project[], selected: Project[], featured: StudiedProject[], supporting: Project[], studied: StudiedProject[], reviewedOn: string, studiesReviewedOn: string }}
  * `all` is every detail page: the portfolio in its own order with current entries overlaid, then
- * new selections. `studied` follows the study file's order.
+ * new selections. `studied` follows the study file's order. `reviewedOn` is the selection's review date
+ * as the pages print it, for example "November 16, 2026"; `studiesReviewedOn` is the study file's, so
+ * either file can be reviewed again on its own.
  */
-export function assembleCatalog({ portfolio, selected, studies, sources, assets, featured }) {
+export function assembleCatalog({ portfolio, selected, studies, sources, assets, featured, reviewedAt }) {
   /** @type {string[]} */
   const problems = []
   const current = new Set(selected.map(project => project.slug))
@@ -103,7 +120,7 @@ export function assembleCatalog({ portfolio, selected, studies, sources, assets,
       displayName: displayNames[project.slug] ?? project.title,
       // Current entries without their own image share the site card; everything else has a rendered card.
       // One rule serves the project page and its study page.
-      socialImage: isCurrent && !project.thumbnailUrl ? sharedCard : `/assets/projects/social/${project.slug}.png`,
+      socialImage: isCurrent && !project.thumbnailUrl ? sharedCard : socialCardPath(project.slug),
       furtherStudies: furtherStudies[project.slug] ?? [],
       ...(study && { study: { ...study, path: `/case-studies/${study.slug}/` } }),
       ...(source && { evidence: { repo: source.repo, sha: source.sha, readmeUrl: `https://github.com/${source.repo}/blob/${source.sha}/README.md` } }),
@@ -126,7 +143,20 @@ export function assembleCatalog({ portfolio, selected, studies, sources, assets,
   for (const slug of featured) {
     if (!current.has(slug)) problems.push(`featured slug "${slug}" is not in selected-projects.json`)
     else if (!studyBySlug.has(slug)) problems.push(`featured slug "${slug}" has no study in project-case-studies.json`)
+    // The Desk shell's `projects` reply prints one for each featured project.
+    else if (!finished.get(slug)?.tagline) problems.push(`featured slug "${slug}" has no tagline in selected-projects.json`)
   }
+  /** @param {string} file @param {string} value */
+  const longDate = (file, value) => {
+    const date = new Date(`${value}T00:00:00Z`)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(date.getTime())) {
+      problems.push(`${file}: reviewedAt must be a YYYY-MM-DD date, not ${value}`)
+      return ''
+    }
+    return date.toLocaleDateString('en-US', { dateStyle: 'long', timeZone: 'UTC' })
+  }
+  const reviewedOn = longDate('selected-projects.json', reviewedAt.selection)
+  const studiesReviewedOn = longDate('project-case-studies.json', reviewedAt.studies)
   if (problems.length) throw new Error(`Project catalog: the content files disagree.\n- ${problems.join('\n- ')}`)
 
   const pick = (/** @type {string[]} */ slugs) => slugs.map(slug => /** @type {StudiedProject} */ (finished.get(slug)))
@@ -136,5 +166,7 @@ export function assembleCatalog({ portfolio, selected, studies, sources, assets,
     featured: pick(featured),
     supporting: [...finished.values()].filter(project => !featured.includes(project.slug)),
     studied: pick(studies.map(study => study.slug)),
+    reviewedOn,
+    studiesReviewedOn,
   }
 }

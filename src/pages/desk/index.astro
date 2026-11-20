@@ -1,5 +1,5 @@
 ---
-import { featuredProjects } from '../../content/project-presentation'
+import { featuredProjects, projectsReply } from '../../content/project-presentation'
 import SiteHeader from '../../components/SiteHeader.astro'
 import { recruitingEmail } from '../../content/contact'
 import resume from '../../content/resume.json'
@@ -36,7 +36,7 @@ import Inspector from '../../desk/inspector/Inspector.astro'
           <li><a href={resume.linkedin} data-bleed="o">LinkedIn</a></li>
           <li><a href="/resume/" data-bleed="y">Résumé</a></li>
         </ul>
-        <form class="shell" data-shell hidden>
+        <form class="shell" data-shell data-projects-reply={projectsReply} hidden>
           <label for="command"><span class="ps1">~</span> $ <span class="sr-only">Desk command</span></label>
           <input id="command" name="command" autocomplete="off" spellcheck="false" maxlength="200" aria-describedby="shell-help" />
           <button type="submit">Run</button>

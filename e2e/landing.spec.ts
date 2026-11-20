@@ -1,4 +1,5 @@
 import { test, expect, poured } from './fixtures'
+import { featuredProjects } from '../src/content/project-presentation'
 import { DISPLAY_FACE } from '../src/display-face'
 
 test('the name pours in and is fitted to the width', async ({ page }) => {
@@ -64,7 +65,7 @@ test('selected work exposes supported ownership, dated media and direct destinat
   await page.goto('/#coming')
   await expect(page.locator('.employment-feature')).toContainText('approximately 25%')
   await expect(page.locator('.employment-feature a')).toHaveAttribute('href', '/resume/#deliverzero')
-  await expect(page.locator('.featured-project')).toHaveCount(4)
+  await expect(page.locator('.featured-project')).toHaveCount(featuredProjects.length)
   for (const figure of await page.locator('.featured-project figure').all()) {
     await expect(figure.locator('figcaption')).toContainText('November 16, 2026')
     await expect(figure.locator('img')).toHaveAttribute('loading', 'lazy')

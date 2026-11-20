@@ -1,10 +1,8 @@
 import type { Page } from '@playwright/test'
 import { test, expect } from './fixtures'
-import { recordedLiveGate } from './recording-policy'
+import { recordedLiveGate, recording } from './recording-policy'
 import type { PgEvent } from '../src/desk/pg-protocol'
 import type { ClprEvent } from '../src/desk/clpr-protocol'
-import data from '../src/desk/inspector/recorded-run.json' with { type: 'json' }
-import type { Recording } from '../src/desk/inspector/live-policy'
 
 // What needs a real page: that each view of src/desk/pane-modes.ts reaches the controls, the psql
 // text, the timing panel, the inspector and the shell. The modes themselves (every transition, status
@@ -97,7 +95,7 @@ test('the Clpr live view reaches the example control, the inspector and the shel
   await expect(sample).toBeDisabled(); await expect(start).toBeDisabled()
   await emit(page, 0, { ev: 'ready', migrations: 155, rows: 8, version: '18.6' })
   await expect(page.locator('[data-pg-sub]')).toHaveText(/^Clpr [0-9a-f]{7}, live in this tab$/)
-  const result = structuredClone((data as Recording).results[0])
+  const result = structuredClone(recording.results[0])
   await emit(page, 0, { ...result, id: 1 })
   await expect(pane).toHaveAttribute('data-clpr', 'live')
   await expect(status).toContainText('Clpr search complete: 2 matches')

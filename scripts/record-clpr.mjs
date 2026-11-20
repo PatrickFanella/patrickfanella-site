@@ -2,26 +2,25 @@
 // worker client as the desk.
 import { chromium } from '@playwright/test'
 import { createServer } from 'node:http'
-import { readFile, readdir, writeFile } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
+import { readFile, readdir, rename, writeFile } from 'node:fs/promises'
 import { resolve, extname } from 'node:path'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { platform, arch, release } from 'node:os'
 import config from '../astro.config.mjs'
+import { parseRecording, sourceFingerprint, tableSizes } from '../src/desk/inspector/recording.mjs'
 
 if (platform() !== 'linux') throw new Error('Memory recording needs Linux /proc; use CI on other platforms.')
 const root = resolve('dist')
-const inputs = JSON.parse(await readFile('src/desk/inspector/recording-inputs.json', 'utf8'))
-const fingerprint = createHash('sha256')
-for (const path of inputs) fingerprint.update(path).update('\0').update(await readFile(path)).update('\0')
 const manifest = JSON.parse(await readFile('public/clpr/manifest.json', 'utf8'))
 const budget = JSON.parse(await readFile('src/desk/inspector/recording-policy.json', 'utf8'))
 const workers = (await readdir(`${root}/_astro`)).filter(path => /^clpr\.worker-.*\.js$/.test(path))
 if (workers.length !== 1) throw new Error('Build first: expected exactly one Clpr worker.')
-const sourceFingerprint = fingerprint.digest('hex')
+const fingerprint = sourceFingerprint(createHash('sha256'), readFileSync)
 const workerSha256 = createHash('sha256').update(await readFile(`${root}/_astro/${workers[0]}`)).digest('hex')
 const built = JSON.parse(await readFile(`${root}/_astro/clpr-recording-build.json`, 'utf8'))
-if (built.sourceFingerprint !== sourceFingerprint || built.workerSha256 !== workerSha256 || built.worker !== workers[0]) throw new Error('Build first: the worker and source fingerprint do not match dist/.')
+if (built.sourceFingerprint !== fingerprint || built.workerSha256 !== workerSha256 || built.worker !== workers[0]) throw new Error('Build first: the worker and source fingerprint do not match dist/.')
 const downloads = new Map()
 const CLIENT = '/worker-client.mjs'
 const mime = { '.js': 'text/javascript', '.json': 'application/json', '.wasm': 'application/wasm', '.gz': 'application/gzip' }
@@ -68,7 +67,7 @@ try {
   browser = await chromium.connect(browserServer.wsEndpoint())
   const page = await browser.newPage()
   await page.goto(`http://127.0.0.1:${server.address().port}/`)
-  const result = await page.evaluate(async ([workerPath, clientPath]) => {
+  const result = await page.evaluate(async ({ workerPath, clientPath, sizes }) => {
     const { connect } = await import(clientPath)
     const started = performance.now(), results = []
     let ready, startupMs, up, down
@@ -83,7 +82,7 @@ try {
     })
     try {
       await startup
-      for (const rows of [8, 1008, 10008, 30008, 50008]) {
+      for (const rows of sizes) {
         const timeout = setTimeout(() => stop('Search recording timed out'), 180_000)
         const result = await client.request({ ev: 'search', words: 'world record', rows }).finally(() => clearTimeout(timeout))
         if (result.response.status !== 200 || result.rows !== rows || !result.plan) throw new Error(result.planError ?? 'Invalid recorded response')
@@ -91,17 +90,18 @@ try {
       }
       return { results, ready, startupMs }
     } finally { client.close('The recording ended.') }
-  }, [`/_astro/${workers[0]}`, CLIENT])
+  }, { workerPath: `/_astro/${workers[0]}`, clientPath: CLIENT, sizes: tableSizes })
   clearInterval(timer); await sampling; await sample()
   if (sampleError) throw sampleError
   if (!peakBytes || samples < 2) throw new Error('No usable memory samples were collected')
   const wasm = await readFile(`public/clpr/${manifest.commit}/search.wasm.gz`)
   if (wasm.length !== manifest.wasm.gzipBytes) throw new Error('Compressed Wasm size differs from its manifest')
-  const recording = {
+  // parseRecording is the recording's definition: a run it rejects is never written.
+  const recording = parseRecording({
     schemaVersion: 1,
     meta: {
       recordedAt: new Date().toISOString(), siteCommit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
-      sourceFingerprint, clprCommit: manifest.commit, workerSha256,
+      sourceFingerprint: fingerprint, clprCommit: manifest.commit, workerSha256,
       browser: await browser.version(), platform: `${platform()} ${arch()} ${release()}`,
       ciRun: process.env.GITHUB_ACTIONS === 'true' ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}` : null,
       wasmGzipBytes: wasm.length, downloadBytes: [...downloads.values()].reduce((sum, bytes) => sum + bytes, 0),
@@ -110,11 +110,11 @@ try {
       postgres: result.ready.version, migrations: result.ready.migrations,
     },
     results: result.results,
-  }
+  })
   // Atomic replacement keeps a failed/cancelled recording from damaging the committed fallback.
   const path = 'src/desk/inspector/recorded-run.json'
   await writeFile(path + '.tmp', JSON.stringify(recording, null, 2) + '\n')
-  const { rename } = await import('node:fs/promises'); await rename(path + '.tmp', path)
+  await rename(path + '.tmp', path)
   console.log(`Recorded ${recording.results.length} sizes; ${(peakBytes / 1048576).toFixed(1)} MiB sampled peak RSS; ${(recording.meta.downloadBytes / 1e6).toFixed(2)} MB download.`)
 } finally {
   clearInterval(timer); await sampling

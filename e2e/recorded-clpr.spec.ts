@@ -1,12 +1,8 @@
 import AxeBuilder from '@axe-core/playwright'
-import data from '../src/desk/inspector/recorded-run.json' with { type: 'json' }
-import { liveGate, type Recording } from '../src/desk/inspector/live-policy'
+import { checkoutLiveGate } from '../src/desk/inspector/live-policy'
 import { responseMarkup, sqlMarkup, wireMarkup } from '../src/desk/inspector/render'
-import { manifest } from '../src/desk/clpr-protocol'
 import { test, expect } from './fixtures'
-import { recordedLiveGate } from './recording-policy'
-
-const recording = data as Recording
+import { recordedLiveGate, recording } from './recording-policy'
 
 test('the shared renderer escapes captured response, SQL, parameters and wire strings', () => {
   const event = structuredClone(recording.results[0]), attack = '<img src=x onerror="alert(1)">'
@@ -78,7 +74,7 @@ test('a denied build policy keeps the recorded evidence and cannot start a worke
   const large: string[] = []
   page.on('request', request => { if (/\.wasm|\.data|\.tar\.gz|clpr\.worker-/.test(request.url())) large.push(request.url()) })
   const meta = structuredClone(recording.meta); meta.memory.peakBytes = meta.budget.maxPeakRssBytes + 1
-  const gate = liveGate(meta, meta.sourceFingerprint, manifest)
+  const gate = checkoutLiveGate(meta)
   await page.route('**/desk/', async route => {
     const response = await route.fetch()
     const body = (await response.text()).replace('data-live-allowed="true"', 'data-live-allowed="false"').replace(/data-live-reason(?:="[^"]*")?/, `data-live-reason="${gate.reason}"`)

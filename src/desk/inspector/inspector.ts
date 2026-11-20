@@ -1,5 +1,6 @@
 import { responseMarkup, sqlMarkup, timingMarkup, wireMarkup, type Result } from './render'
 import { startPlanView } from './plan-view'
+import { fixtureCount } from './recording.mjs'
 
 /** HTML sections remain readable without script; only this module turns them into tabs.
  *  The psql pane decides whether the inspector is visible; this module only fills it. */
@@ -44,7 +45,7 @@ export function startInspector(root: HTMLElement, resize: (rows: number) => Prom
     },
     render(event: Result) {
       root.dataset.mode = 'live'; provenance.hidden = true; form.hidden = false
-      root.querySelector<HTMLElement>('[data-inspector-request]')!.textContent = `GET ${event.url} · HTTP ${event.response.status} · measured in this tab on ${event.rows.toLocaleString('en-US')} clips (8 fixtures, ${event.rows - 8} generated)`
+      root.querySelector<HTMLElement>('[data-inspector-request]')!.textContent = `GET ${event.url} · HTTP ${event.response.status} · measured in this tab on ${event.rows.toLocaleString('en-US')} clips (${fixtureCount} fixtures, ${event.rows - fixtureCount} generated)`
       for (const [name, render] of [['response', responseMarkup], ['sql', sqlMarkup], ['timing', timingMarkup], ['wire', wireMarkup]] as const) {
         root.querySelector<HTMLElement>(`[data-inspector-${name}]`)!.innerHTML = render(event)
       }
