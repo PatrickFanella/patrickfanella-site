@@ -45,12 +45,11 @@ function renderSession(pre: HTMLElement, s: Shown, status: string, query = QUERY
   const sql = `EXPLAIN (ANALYZE, COSTS OFF, BUFFERS OFF)\n${SEARCH_SQL};  -- $1 = ${query}`.split('\n')
   sql.forEach((l, i) => line(pre, ...(i === 0 ? [['ps1', 'clpr=#'] as Part, ' '] : []), ...mark(l, SQL_RE, ['s', 'c', 'k', 'n'])))
   line(pre)
-  // A measured plan shows the batch's mean in place of one run's Execution Time, as the timing panel does.
-  for (const l of tidyPlan(s.run.plan, s.step)) {
-    if (!l.startsWith(' Execution Time')) { line(pre, ...mark(l, PLAN_RE, ['g', 'w', 'n'])); continue }
-    if (!s.step) { line(pre, ' Execution Time: ', ['hl', l.slice(' Execution Time: '.length)]); continue }
-    const n = s.run.runs ?? 1
-    line(pre, ' Execution Time: ', ['hl', `${measured(s.run.exec, s.step, n).text} ms`], ['c', ` (mean of ${fmt(n)} ${n === 1 ? 'run' : 'runs'})`])
+  // The module words Execution Time, a measured one with its batch note; the pane only adds the spans.
+  for (const l of tidyPlan(s.run, s.step)) {
+    const exec = /^( Execution Time: )(.+? ms)(.*)$/.exec(l)
+    if (exec) line(pre, exec[1], ['hl', exec[2]], ...(exec[3] ? [['c', exec[3]] as Part] : []))
+    else line(pre, ...mark(l, PLAN_RE, ['g', 'w', 'n']))
   }
   line(pre)
   line(pre, ['c', ` ${'title'.padEnd(33)} ${'creator'.padEnd(12)} votes`])

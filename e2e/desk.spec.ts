@@ -99,10 +99,11 @@ test.describe('PostgreSQL on the desk', () => {
     await expect(page.locator('[data-pg-cap]')).toHaveText('Measured in this tab, median of 3 batches')
     await expect(page.locator('[data-clpr-status]')).toContainText('SQL benchmark complete')
     await expect(page.locator('[data-clpr-status]')).not.toContainText('Running')
-    // Decimals follow the clock: two in Chromium for a batch of several runs, fewer for a single slow run.
-    await expect(page.locator('[data-pg-seq]')).toHaveText(/^\d+(\.\d{1,2})?$/)
-    await expect(page.locator('[data-pg-idx]')).toHaveText(/^(< )?\d+(\.\d{1,2})?$/)
-    await expect(page.locator('[data-pg-note]')).toContainText("This tab's clock ticks every")
+    // The pane hands the worker's clock step to the benchmark module: Chromium's worker clock ticks
+    // every 0.1 ms, which earns two decimals whatever the batch size. A step left at 1 ms would not.
+    await expect(page.locator('[data-pg-seq]')).toHaveText(/^\d+\.\d\d$/)
+    await expect(page.locator('[data-pg-idx]')).toHaveText(/^(< )?\d+\.\d\d$/)
+    await expect(page.locator('[data-pg-note]')).toContainText("This tab's clock ticks every 0.1 ms, so each batch")
     // Each figure is the middle of its three batch means, rounded to the decimals it shows, or a
     // bound above that mean. How the decimals and the bound follow the clock is benchmark.test.ts's.
     for (const kind of ['seq', 'idx']) {
@@ -112,6 +113,7 @@ test.describe('PostgreSQL on the desk', () => {
       const mid = [...batches].sort((a, b) => a - b)[1]
       const text = (await fig.textContent())!
       const half = 0.5 / 10 ** (text.split('.')[1]?.length ?? 0) + 1e-9
+      // The bound is shown rounded, so the median may pass the shown figure by half its last decimal.
       if (text.startsWith('< ')) expect(mid, `${kind} median under its bound`).toBeLessThan(Number(text.slice(2)) + half)
       else expect(Math.abs(Number(text) - mid), `${kind} figure against its median`).toBeLessThanOrEqual(half)
     }

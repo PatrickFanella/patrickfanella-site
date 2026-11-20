@@ -28,7 +28,7 @@ test('a plan is named by how it reads the table', () => {
 })
 
 test('a recorded plan loses its costs and loops and keeps its node times', () => {
-  expect(tidyPlan([
+  expect(tidyPlan({ exec: 14.55, plan: [
     'Limit  (cost=1934.18..1934.23 rows=20 width=890) (actual time=14.495..14.500 rows=2.00 loops=1)',
     '  ->  Sort  (cost=1934.18..1934.71 rows=209 width=890) (actual time=14.490..14.490 rows=2.00 loops=1)',
     '        Sort Key: vote_score DESC',
@@ -39,7 +39,7 @@ test('a recorded plan loses its costs and loops and keeps its node times', () =>
     '  Buffers: shared hit=12',
     'Planning Time: 0.565 ms',
     'Execution Time: 14.550 ms',
-  ])).toEqual([
+  ] })).toEqual([
     ' Limit (actual time=14.495..14.500 rows=2)',
     '   -> Sort (actual time=14.490..14.490 rows=2)',
     '     -> Seq Scan on clips c (actual time=0.025..14.465 rows=2)',
@@ -49,7 +49,7 @@ test('a recorded plan loses its costs and loops and keeps its node times', () =>
   ])
 })
 
-test('a measured plan drops node times and shows Planning Time at the clock resolution', () => {
+test('a measured plan drops node times and shows its times at the clock resolution', () => {
   const plan = [
     'Limit (actual time=0.000..0.000 rows=2.00 loops=1)',
     '  ->  Sort (actual time=0.000..0.000 rows=2.00 loops=1)',
@@ -58,21 +58,23 @@ test('a measured plan drops node times and shows Planning Time at the clock reso
     'Planning Time: 0.000 ms',
     'Execution Time: 0.000 ms',
   ]
-  expect(tidyPlan(plan, 0.1)).toEqual([
+  // Execution Time is the batch mean given beside the plan, not the 0.000 this one run read.
+  expect(tidyPlan({ plan, exec: 3.4567, runs: 1250 }, 0.1)).toEqual([
     ' Limit (actual rows=2)',
     '   -> Sort (actual rows=2)',
     '     -> Bitmap Heap Scan on clips c (actual rows=2)',
     '       -> Bitmap Index Scan on idx_clips_search_vector (actual rows=2)',
     ' Planning Time: < 0.05 ms',
-    ' Execution Time: 0.000 ms',
+    ' Execution Time: 3.46 ms (mean of 1,250 runs)',
   ])
-  expect(tidyPlan(['Planning Time: 2.000 ms'], 1)).toEqual([' Planning Time: 2.0 ms'])
+  expect(tidyPlan({ plan: ['Planning Time: 2.000 ms', 'Execution Time: 0.000 ms'], exec: 0.3 }, 1))
+    .toEqual([' Planning Time: 2.0 ms', ' Execution Time: < 0.5 ms (mean of 1 run)'])
 })
 
 test('a plan with nothing to tidy only gains the gutter', () => {
-  expect(tidyPlan(['Result (actual rows=1)', 'Planning Time: 0.120 ms', 'Execution Time: 0.340 ms']))
+  expect(tidyPlan({ exec: 0.34, plan: ['Result (actual rows=1)', 'Planning Time: 0.120 ms', 'Execution Time: 0.340 ms'] }))
     .toEqual([' Result (actual rows=1)', ' Planning Time: 0.120 ms', ' Execution Time: 0.340 ms'])
-  expect(tidyPlan([])).toEqual([])
+  expect(tidyPlan({ exec: 0, plan: [] })).toEqual([])
 })
 
 test('the comparison states a ratio to two significant figures', () => {

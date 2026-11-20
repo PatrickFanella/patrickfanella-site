@@ -25,17 +25,22 @@ export const scanName = (plan: string[]) => /Seq Scan/.test(plan.join('\n')) ? '
  *  out and the six-space indent per level tightened to two, so the plan fits the pane.
  *
  *  A measured plan is the last run of the median batch, read on a coarse clock, so its node times
- *  often read 0.000. Given the clock's `step`, the node times are dropped, as TIMING OFF would, and
- *  Planning Time is shown at the clock's resolution. */
-export function tidyPlan(plan: string[], step?: number): string[] {
+ *  often read 0.000. Given the clock's `step`, the node times are dropped, as TIMING OFF would,
+ *  Planning Time is shown at the clock's resolution, and Execution Time is the batch's mean with
+ *  its run count, as the timing panel shows it, in place of one run's reading. */
+export function tidyPlan(run: Run, step?: number): string[] {
   const out: string[] = []
-  for (const raw of plan) {
+  for (const raw of run.plan) {
     const lead = raw.length - raw.trimStart().length
     let text = raw.trim().replace(/\s*\(cost=[^)]*\)/, '').replace(/ loops=1\)/, ')').replace(/rows=(\d+)\.00/g, 'rows=$1').replace(/\s{2,}/g, ' ')
     if (step) {
       text = text.replace(/actual time=[\d.]+\.\.[\d.]+ /, 'actual ')
       const planning = /^Planning Time: ([\d.]+) ms$/.exec(text)
       if (planning) text = `Planning Time: ${measured(parseFloat(planning[1]), step).text} ms`
+      if (text.startsWith('Execution Time:')) {
+        const n = run.runs ?? 1
+        text = `Execution Time: ${measured(run.exec, step, n).text} ms (mean of ${fmt(n)} ${n === 1 ? 'run' : 'runs'})`
+      }
     }
     // A node at depth d starts its arrow at 2 + 6(d - 1); its detail lines start at 2 + 6d.
     const d = Math.max(0, Math.round((lead - 2) / 6))
