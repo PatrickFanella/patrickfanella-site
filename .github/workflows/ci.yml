@@ -29,6 +29,8 @@ jobs:
           cache: npm
       - name: Install
         run: npm ci
+      - name: Unit tests
+        run: npm run test:unit
       - name: Install recording browser
         run: npx playwright install --with-deps chromium
       - name: Record the visitor worker and build its static evidence
