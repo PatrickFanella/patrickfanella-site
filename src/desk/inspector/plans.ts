@@ -8,7 +8,7 @@ export interface PlanNode {
   'Index Name'?: string; Plans?: PlanNode[]
   [key: string]: unknown
 }
-export interface QueryPlan { Plan: PlanNode; 'Execution Time': number; [key: string]: unknown }
+interface QueryPlan { Plan: PlanNode; 'Execution Time': number; [key: string]: unknown }
 export interface PlanSample { rows: number; natural: QueryPlan; seq: QueryPlan; gin: QueryPlan }
 
 /** OIDs come from PostgreSQL's ParameterDescription, never from a value's length. */

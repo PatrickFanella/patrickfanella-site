@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
-import { startModes, type ClprResult, type ModeWorker, type View } from './pane-modes'
+import { startModes, type View } from './pane-modes'
+import type { ClprResult } from './clpr-protocol'
+import type { WorkerLike } from './worker-client.mjs'
 import type { PgEvent, PgRequest, Run } from './pg-protocol'
 import type { ClprEvent, ClprRequest } from './clpr-protocol'
 
 // Fixture workers and fixture events: these exercise the modes, not PostgreSQL or Clpr.
-class FixtureWorker<Request, Event> implements ModeWorker<Request, Event> {
+class FixtureWorker<Request, Event> implements WorkerLike<Request, Event> {
   onmessage: ((event: MessageEvent<Event>) => void) | null = null
   onerror: ((event: ErrorEvent) => void) | null = null
   sent: Request[] = []

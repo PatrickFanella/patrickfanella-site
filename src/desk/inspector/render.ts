@@ -1,11 +1,10 @@
 // Shared by Astro at build time and the live inspector. Every captured string is
 // escaped here; SQL, clip titles and protocol payloads never become page markup.
-import type { ClprEvent } from '../clpr-protocol'
+import type { ClprResult } from '../clpr-protocol'
 import type { PlanNode, PlanSample } from './plans'
 import type { Statement } from './capture'
 import { tableSizes } from './recording.mjs'
 
-export type Result = Extract<ClprEvent, { ev: 'result' }>
 export const escape = (value: unknown) => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
 const pre = (value: unknown) => `<pre tabindex="0">${escape(value)}</pre>`
 const json = (value: unknown) => JSON.stringify(value, null, 2)
@@ -14,7 +13,7 @@ export const scan = (node: PlanNode): string => node['Index Name'] === 'idx_clip
   : node['Node Type'] === 'Seq Scan' ? 'Sequential scan' : (node.Plans ?? []).map(scan).find(Boolean)
     ?? (node['Node Type'].includes('Scan') ? `${node['Node Type']}${node['Index Name'] ? ` on ${node['Index Name']}` : ''}` : '')
 
-export function responseMarkup(event: Result) {
+export function responseMarkup(event: ClprResult) {
   let body: unknown
   try { body = JSON.parse(event.response.body) } catch { /* Preserve non-JSON replies verbatim. */ }
   const clips = (body as { results?: { clips?: { title?: unknown }[] } } | null)?.results?.clips
@@ -35,21 +34,21 @@ function clauses(statement: Statement) {
   ] as const).map(([label, pattern]) => { const match = pattern.exec(sql); return match ? `<dt>${label}</dt><dd>${escape(match[1].trim())}</dd>` : '' }).join('') + '</dl>'
 }
 
-export function sqlMarkup(event: Result) {
+export function sqlMarkup(event: ClprResult) {
   const statements = event.calls.flatMap(call => call.statements), executions = statements.filter(statement => statement.kind === 'execute').length
   return `<p>${executions} executions; ${statements.length - executions} prepares. Statements and parameter formats captured from pgx. Binary parameters are shown as hex bytes; their types are not guessed.</p>`
     + (statements.length ? statements.map((statement, index) => `<section><h4>${index + 1}. ${statement.kind === 'prepare' ? 'Prepare' : 'Execute'}</h4>${clauses(statement)}
       <details><summary>Full SQL</summary>${pre(statement.sql)}</details>${statement.kind === 'execute' ? `<p>Parameters ($1, $2, … in order)</p>${pre(json(statement.params))}` : ''}</section>`).join('') : '<p>This request sent no SQL statements.</p>')
 }
 
-export function timingMarkup(event: Result) {
+export function timingMarkup(event: ClprResult) {
   const inside = event.calls.reduce((sum, call) => sum + call.ms, 0)
   return `<dl data-timing>${([['Total handler request', event.ms], ['Inside PostgreSQL calls', inside], ['Outside PostgreSQL calls', event.ms - inside]] as const)
     .map(([label, value]) => `<dt>${label}</dt><dd data-ms="${value}">${value.toFixed(1)} ms</dd>`).join('')}</dl>
     <p>${event.calls.length} bridge calls. Inside time is wall time awaiting execProtocolRaw, including protocol work and PostgreSQL. Outside time is the request total minus those calls: Go, Gin, pgx, bridge and JavaScript overhead together. These parts are not measured separately. Browser clock rounding applies; these are fixture timings, not production latency.</p>`
 }
 
-export function wireMarkup(event: Result) {
+export function wireMarkup(event: ClprResult) {
   return '<p>Actual PostgreSQL protocol bytes at the in-process pgx bridge, grouped by call. Counts include the type byte and four-byte length. These are not network packets or network latency.</p>'
     + (event.calls.length ? event.calls.map((call, index) => `<h4>Call ${index + 1}: ${call.sent.reduce((sum, m) => sum + m.bytes, 0)} bytes sent, ${call.received.reduce((sum, m) => sum + m.bytes, 0)} bytes received; ${call.ms.toFixed(1)} ms</h4>`
       + ([['pgx → PostgreSQL', call.sent], ['PostgreSQL → pgx', call.received]] as const).map(([label, messages]) => `<p>${escape(label)}</p><ol>${messages.map(m => `<li>${escape(`${m.name} (${m.type || 'untyped'}): ${m.bytes} bytes. ${m.detail}`)}<details><summary>Raw message hex</summary>${pre(m.hex)}</details></li>`).join('')}</ol>`).join('')).join('') : '<p>This request made no PostgreSQL bridge calls.</p>')

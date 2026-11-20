@@ -1,4 +1,4 @@
-import type { ClprEvent } from '../clpr-protocol'
+import type { ClprResult } from '../clpr-protocol'
 import type { PlanSample } from './plans'
 import { fixtureCount } from './recording.mjs'
 import { number, scan, planMarkup } from './render'
@@ -31,7 +31,7 @@ export function startPlanView(root: HTMLElement, resize: (rows: number) => Promi
       generation++; url = ''; samples.clear(); output.replaceChildren()
       button.disabled = false; select.disabled = false; form.removeAttribute('aria-busy')
     },
-    render(event: Extract<ClprEvent, { ev: 'result' }>) {
+    render(event: ClprResult) {
       if (url !== event.url) { samples.clear(); url = event.url }
       select.value = String(event.rows)
       output.replaceChildren()

@@ -3,11 +3,11 @@
 // handler in a module worker. pane-modes.ts decides what the pane is doing and says; this file only
 // builds the elements, creates the workers and writes each view to the page.
 import { SEARCH_SQL, type PgEvent } from './pg-protocol'
-import { manifest } from './clpr-protocol'
+import { manifest, type ClprResult } from './clpr-protocol'
 import { clprControls } from './clpr'
 import { tidyPlan } from './benchmark'
 import { startInspector } from './inspector/inspector'
-import { startModes, type ClprResult, type SearchResult, type Session, type View } from './pane-modes'
+import { startModes, type SearchResult, type Session, type View } from './pane-modes'
 
 const fmt = (n: number) => n.toLocaleString('en-US')
 
