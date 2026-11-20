@@ -40,6 +40,23 @@ The old `/projects/transcript-create` and `/projects/discord-spywatcher` URLs re
 and Backline, respectively. Astro static output emits HTML refresh redirects; the launch server
 can supply HTTP redirects for the same mapping. Project URLs retain their old slug with a trailing slash.
 
+## Routes, redirects and the security policy
+
+`src/content/site-facts.mjs` states the hand-written pages, these redirects and the
+Content-Security-Policy once. `astro.config.mjs`, the sitemap, `scripts/lighthouse.mjs`,
+`scripts/check-live-routes.mjs`, `scripts/check-project-paths.mjs` and the browser tests read it.
+To add a page, add one `{ path }` line to `routes`: it joins the sitemap, the Lighthouse run, the
+live-route check and the specs that visit every page type (`crawlRoutes` in `e2e/fixtures.ts`).
+A `skip` list on a route keeps it out of the named consumers. Project and case-study pages still
+come from the content data.
+
+`deploy/origin.Caddyfile` and `deploy/edge-route.py` are hand-written. `node
+scripts/check-site-facts.mjs` runs in `npm run build` and in CI, and fails when either file's policy
+differs from the definition, when either declares its own redirect, or when `deploy/update.py`
+requires a page that is not a route. Intended differences are listed in that script with a reason;
+the only one is the edge copy's extra `upgrade-insecure-requests`. The GitHub and LinkedIn links on
+the pages and in the Shell come from `src/content/resume.json`.
+
 `node scripts/check-project-paths.mjs` compares built pages against every catalog slug and the
 live site's sitemap captured on 2026-11-15 UTC in `docs/evidence/current-site-sitemap.xml`. Use
 `--live` to compare with the current public sitemap instead. Only project paths are checked here;

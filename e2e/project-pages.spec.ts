@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { allProjects, selectedProjects } from '../src/content/project-presentation'
+import { redirects } from '../src/content/site-facts.mjs'
 import { test, expect } from './fixtures'
 
 test.use({ reducedMotion: 'reduce' })
@@ -98,9 +99,9 @@ test('list links, return link and legacy redirects reach the right project', asy
   await expect(page).toHaveURL('/projects/clpr/')
   await page.getByRole('link', { name: 'All projects', exact: true }).click()
   await expect(page).toHaveURL('/projects/#clpr')
-  for (const [old, current] of [['transcript-create', 'rekolekt'], ['discord-spywatcher', 'backline']]) {
-    await page.goto(`/projects/${old}/`)
-    await expect(page).toHaveURL(`/projects/${current}/`)
+  for (const [old, current] of Object.entries(redirects)) {
+    await page.goto(`${old}/`)
+    await expect(page).toHaveURL(current)
   }
 })
 

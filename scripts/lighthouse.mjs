@@ -2,12 +2,14 @@ import lighthouse from 'lighthouse'
 import { launch } from 'chrome-launcher'
 import { chromium } from '@playwright/test'
 import { spawn } from 'node:child_process'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { setTimeout } from 'node:timers/promises'
+import { routePaths } from '../src/content/site-facts.mjs'
 
 const local = process.argv.includes('--local')
 const base = local ? 'http://127.0.0.1:4189' : (process.argv.find(arg => arg.startsWith('https://')) ?? 'https://patrickfanella.co')
-const paths = process.argv.find(arg => arg.startsWith('--paths='))?.slice(8).split(',') ?? ['/', '/projects/', '/resume/', '/contact/', '/desk/', '/case-studies/clpr/', '/case-studies/clustr/', '/case-studies/rekolekt/', '/case-studies/undertow/']
+const { studies } = JSON.parse(await readFile(new URL('../src/content/project-case-studies.json', import.meta.url), 'utf8'))
+const paths = process.argv.find(arg => arg.startsWith('--paths='))?.slice(8).split(',') ?? [...routePaths('lighthouse'), ...studies.map(study => `/case-studies/${study.slug}/`)]
 const directory = process.env.LIGHTHOUSE_OUTPUT ?? 'test-results/lighthouse'
 await mkdir(directory, { recursive: true })
 let server

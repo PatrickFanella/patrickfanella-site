@@ -37,7 +37,8 @@ It closes its own browser and server on success or failure. A failed capture lea
 The build writes a source fingerprint and worker SHA-256 to
 `dist/_astro/clpr-recording-build.json`. The recorder refuses a stale build. Inputs in
 `recording-inputs.json` cover the worker, protocol, capture, decoder, plans, pinned manifest
-and dependency lockfile, plus the build configuration and recorder itself. `--built` checks
+and dependency lockfile, plus the build configuration, the site facts it reads (the recorder
+serves the harness with that Content-Security-Policy) and the recorder itself. `--built` checks
 that the final build uses the recorded worker.
 The recording also names Clpr's source commit, PostgreSQL, migration count, Chromium version,
 platform, UTC date, payload sizes, startup duration and checkout HEAD. The fingerprint identifies

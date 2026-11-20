@@ -65,6 +65,8 @@ jobs:
         run: node scripts/check-clpr-recording.mjs --built && npm run typecheck
       - name: Check project route coverage
         run: node scripts/check-project-paths.mjs
+      - name: Check the deploy files against the site facts
+        run: node scripts/check-site-facts.mjs
       - name: Install browsers
         run: npx playwright install --with-deps chromium firefox
       - name: Browser tests

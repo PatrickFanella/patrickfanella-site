@@ -1,8 +1,7 @@
 import { chromium } from '@playwright/test'
 import { mkdir, writeFile } from 'node:fs/promises'
-import { test, expect } from './fixtures'
+import { test, expect, crawlRoutes as routes } from './fixtures'
 
-const routes = ['/', '/projects/', '/projects/clpr/', '/case-studies/clpr-search/', '/resume/', '/contact/', '/desk/', '/motion/']
 test.use({ reducedMotion: 'reduce' })
 
 // Native tab zoom changes the browser's layout viewport; CSS zoom and text scaling do not prove it.

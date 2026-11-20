@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'astro/config'
 import { createHash } from 'node:crypto'
+import { contentSecurityPolicy, redirects } from './src/content/site-facts.mjs'
 
 // Each page's script is one module that imports the shared boot chunk, so the browser finds the
 // chunk only once the entry has arrived. Vite's own build preloaded it. Without the preload, the
@@ -46,24 +47,15 @@ const modulePreload = {
   },
 }
 
-// The content security policy the site is served with: patrickfanella.co's production policy, plus
-// 'wasm-unsafe-eval' and worker-src for PostgreSQL on the desk. The homelab preview sends the same
-// header (patrickfanella-preview's origin.Caddyfile on Almaz); keep the two in step. `astro preview`
-// sends it too, so the browser tests fail on any violation.
-const CSP = "default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self' 'unsafe-inline'"
-
 // Static output: /, /desk/ and /motion/ as directories. No client router and no UI framework;
 // the pages hand over with native cross-document view transitions (site.css).
 export default defineConfig({
-  redirects: {
-    '/projects/transcript-create': '/projects/rekolekt/',
-    '/projects/discord-spywatcher': '/projects/backline/',
-  },
+  redirects,
   build: { format: 'directory' },
   // Keep the HTML as written, so the built markup matches the source.
   compressHTML: false,
   integrations: [modulePreload],
-  server: { headers: { 'Content-Security-Policy': CSP } },
+  server: { headers: { 'Content-Security-Policy': contentSecurityPolicy } },
   vite: {
     // PGlite code-splits inside the module worker; keep its assets beside the package in dev.
     worker: { format: 'es' },
