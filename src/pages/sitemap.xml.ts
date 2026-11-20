@@ -1,5 +1,4 @@
-import { selectedProjects } from '../content/project-presentation'
-import studies from '../content/project-case-studies.json'
+import { selectedProjects, studiedProjects } from '../content/project-presentation'
 import { siteMetadata } from '../content/site-metadata'
 import { routePaths } from '../content/site-facts.mjs'
 
@@ -8,8 +7,8 @@ const xml = (value: string) => value.replace(/[<>&"']/g, character => ({ '<': '&
 export function GET() {
   const pages = [
     ...routePaths().map(path => ({ path, images: [] as string[] })),
-    ...studies.studies.map(study => ({ path: `/case-studies/${study.slug}/`, images: selectedProjects.find(project => project.slug === study.slug)!.media.map(media => media.src) })),
-    ...selectedProjects.map(project => ({ path: `/projects/${project.slug}/`, images: project.media.map(media => media.src) })),
+    ...studiedProjects.map(project => ({ path: project.study.path, images: project.media.map(media => media.src) })),
+    ...selectedProjects.map(project => ({ path: project.path, images: project.media.map(media => media.src) })),
   ]
   const entries = pages.map(page => {
     const images = page.images.map(image => `<image:image><image:loc>${xml(new URL(image, siteMetadata.origin).href)}</image:loc></image:image>`).join('')

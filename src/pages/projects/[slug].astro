@@ -1,22 +1,19 @@
 ---
 import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
-import { allProjects, selectedProjects, featuredProjects } from '../../content/project-presentation'
-import sources from '../../content/selected-project-sources.json'
+import { allProjects, type Project } from '../../content/project-presentation'
 import provenance from '../../content/portfolio-provenance.json'
 
 export function getStaticPaths() {
   return allProjects.map(project => ({ params: { slug: project.slug }, props: { project } }))
 }
+interface Props { project: Project }
 const { project } = Astro.props
-const presentation = featuredProjects.find(({ slug }) => slug === project.slug)
-const current = selectedProjects.some(item => item.slug === project.slug)
-const evidence = sources.sources.find(item => item.repo.endsWith(`/${project.slug}`))
-const image = current && !project.thumbnailUrl ? '/assets/brand/patrick/share-card.png' : `/assets/projects/social/${project.slug}.png`
+const { current, evidence } = project
 const source = `https://github.com/${provenance.repository}/blob/${provenance.commit}/${provenance.file}`
-const seo = { breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Work', href: '/projects/' }, { name: project.title, href: `/projects/${project.slug}/` }] }
+const seo = { breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Work', href: '/projects/' }, { name: project.title, href: project.path }] }
 ---
-<ContentPage title={`${project.title} | Patrick Fanella`} description={project.summary} ogType="article" socialImage={image} socialAlt={project.thumbnailAlt ?? `${project.title} project image`} noindex={!current} seo={seo}>
+<ContentPage title={`${project.title} | Patrick Fanella`} description={project.summary} ogType="article" socialImage={project.socialImage} socialAlt={project.thumbnailAlt ?? `${project.title} project image`} noindex={!current} seo={seo}>
 
   <article class="project-detail">
     <a href={current ? `/projects/#${project.slug}` : '/projects/'}>All projects</a>
@@ -30,8 +27,8 @@ const seo = { breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Work', href: '
         <div><dt>Period</dt><dd>{project.periodLabel ?? project.year}</dd></div>
       </dl>
       <nav class="project-links" aria-label="Project links">
-        {presentation && <a href={presentation.study}>Read the case study</a>}
-        {project.slug === 'clpr' && <a href="/case-studies/clpr-search/">Read the search decisions study</a>}
+        {project.study && <a href={project.study.path}>Read the case study</a>}
+        {project.furtherStudies.map(study => <a href={study.href}>{study.label}</a>)}
         {project.liveUrl && <a href={project.liveUrl}>Visit {project.title}</a>}
         {project.repoUrl && <a href={project.repoUrl}>Repository</a>}
         {project.sourceUrl && <a href={project.sourceUrl}>Download source</a>}
@@ -49,6 +46,6 @@ const seo = { breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Work', href: '
     {project.media.slice(1).map(media => <ProjectMedia media={media} sizes="(max-width: 1080px) calc(100vw - 32px), 1048px" />)}
     {project.lessons.length > 0 && <section><h2>What I learned</h2><ul>{project.lessons.map(text => <li>{text}</li>)}</ul></section>}
     {project.relatedProjects && <section><h2>Related work</h2><ul>{project.relatedProjects.map(related => <li><a href={`/projects/${related.slug}/`}>{related.label}</a>: {related.relationship}</li>)}</ul></section>}
-    {current && evidence ? <p class="source-note">Copy reviewed November 16, 2026 against the <a href={`https://github.com/${evidence.repo}/blob/${evidence.sha}/README.md`}>pinned project source</a>. Images retain their own capture dates. Repository scope and screenshots do not establish every release or device qualification.</p> : <p class="source-note">Historical content from the <a href={source}>pinned portfolio catalog</a>, commit <code>{provenance.commit.slice(0, 7)}</code>, dated November 13, 2026.</p>}
+    {evidence ? <p class="source-note">Copy reviewed November 16, 2026 against the <a href={evidence.readmeUrl}>pinned project source</a>. Images retain their own capture dates. Repository scope and screenshots do not establish every release or device qualification.</p> : <p class="source-note">Historical content from the <a href={source}>pinned portfolio catalog</a>, commit <code>{provenance.commit.slice(0, 7)}</code>, dated November 13, 2026.</p>}
   </article>
 </ContentPage>

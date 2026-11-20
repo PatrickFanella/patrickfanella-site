@@ -49,8 +49,8 @@ import Inspector from '../../desk/inspector/Inspector.astro'
     <section class="pane projects" data-pane="2" tabindex="-1" aria-labelledby="p2" style="--i: 1">
       <header class="ptitle"><h2 class="pname" id="p2"><i aria-hidden="true">2</i>projects</h2><span>ls ~/projects</span></header>
       <div class="pbody">
-        <ol class="work">{featuredProjects.map(({ project, study }) => <li>
-          <h3><a href={study} data-bleed="c">{project.title}</a><span>{project.deliveryStatus}</span></h3>
+        <ol class="work">{featuredProjects.map(project => <li>
+          <h3><a href={project.study.path} data-bleed="c">{project.title}</a><span>{project.deliveryStatus}</span></h3>
           <p>{project.summary}</p>
         </li>)}</ol>
         <p class="more-work">Browse the <a href="/projects/">selected project list</a>.</p>
