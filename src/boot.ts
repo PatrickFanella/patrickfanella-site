@@ -4,6 +4,7 @@ import '@fontsource-variable/hanken-grotesk'
 import '@fontsource-variable/martian-mono'
 import './styles/site.css'
 import { createInk, type Ink, type Theme } from './ink/engine'
+import { DISPLAY_FACE } from './display-face'
 import { bleed, reduced, splash } from './motion/motion'
 
 const root = document.documentElement
@@ -22,8 +23,8 @@ function syncBrowserTheme() {
 
 export interface Page { ink: Ink | null; bleeder: ReturnType<typeof bleed> | null }
 
-/** The display face the name and headings are set in; layout is final once it has loaded. */
-export const displayFace = () => document.fonts.load('900 100px "Big Shoulders Display Variable"')
+/** Layout is final once the display face has loaded. */
+export const displayFace = () => document.fonts.load(DISPLAY_FACE)
 
 /**
  * Starts the page and brings its ink to rest or to life once the display face and the solver are

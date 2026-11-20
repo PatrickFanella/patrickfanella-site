@@ -43,6 +43,7 @@ The pages are built with Astro as static HTML. There is no client router and no 
 - `src/ink/mask.ts`: draws the page into the solver's mask. Letters marked `data-ink-letter` are solid and pour from their feet once they carry `data-pour`. Elements marked `data-ink-solid` are solid rectangles.
 - `src/ink/engine.ts`: the frame loop, choosing a path, and the API the pages use: `setEmitters`, `burst`, `stir`, `setTheme`, `preroll`, and `ready`, which `boot()` waits on before the pour starts. Up to four bursts run at once, each with a direction, spread and length.
 - `src/motion/motion.ts`: the motion set. Pour-in, bleed, splash, stir, unfold and fitting the name to the width.
+- `src/display-face.ts`: the display face as `document.fonts.load` takes it, shared by `boot()` and the specs.
 - `src/boot.ts`: start-up shared by every page: fonts, theme switch, ink, readout. Once the display face and the solver are ready it starts the ink: running, or one still frame run ahead with reduced motion. A page that pours letters passes `boot()` the step that lands them.
 - `src/desk/desk.ts`: the desk page: pours the name from the about pane and moves focus between panes.
 - `src/desk/pg.worker.ts`: PostgreSQL (PGlite, bundled from npm) in a module worker. It seeds the clips, times three batches of the query without and with the index, and posts each step. It reports failures inside PGlite's start-up, which never reach the page's `Worker.onerror`. The worker stays available for shell searches.

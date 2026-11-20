@@ -1,4 +1,5 @@
 import { test, expect, poured } from './fixtures'
+import { DISPLAY_FACE } from '../src/display-face'
 
 test('the name pours in and is fitted to the width', async ({ page }) => {
   await page.goto('/')
@@ -41,12 +42,12 @@ test.describe('with reduced motion', () => {
   // and hold the page for 20 s. A screenshot needs a new frame from the GPU, so it waits out
   // any solver work still queued.
   test('the page settles within 3 s of the fonts loading', async ({ page }) => {
-    await page.addInitScript(() => {
+    await page.addInitScript((face) => {
       addEventListener('DOMContentLoaded', () => {
-        void document.fonts.load('900 100px "Big Shoulders Display Variable"').then(() => document.fonts.ready)
+        void document.fonts.load(face).then(() => document.fonts.ready)
           .then(() => { (window as unknown as { fontsAt: number }).fontsAt = performance.timeOrigin + performance.now() })
       })
-    })
+    }, DISPLAY_FACE)
     await page.goto('/')
     await poured(page)
     await expect(page.locator('[data-k=fps]')).toHaveText('still frame')
