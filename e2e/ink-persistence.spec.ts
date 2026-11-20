@@ -219,36 +219,31 @@ test('a reduced-motion still is made again after a rotation', async ({ page }) =
   expect(await shotInk(page, upright), 'ink left where the name used to stand').toBeLessThan(0.02)
 })
 
-// A phone's toolbar showing and hiding changes the height by 120 px or less, which keeps the
-// carried still. Showing cuts the bottom off it, and the still is not stepped again, so when the
-// toolbar hid again the strip stayed bare for good. The viewport here is short enough for a
-// toolbar to cut it just under the feet of the name, where there is ink however few steps the
-// still's time budget allowed.
-test('a reduced-motion still is made again when a toolbar hiding uncovers bare ground', async ({ page }) => {
-  const TALL = 220
-  await page.setViewportSize({ width: PHONE.width, height: TALL })
+// A phone's toolbar showing and hiding changes the height by 120 px or less. Scrolling does that
+// all the time, so a still made again each time reads as the ink freezing and then jumping to a
+// new frame (#106 on an iPhone with Reduce Motion on). The still is kept: after the toolbar shows
+// and hides, the solver runs no steps, which would be hundreds of WebGL2 draw calls.
+test('a reduced-motion still is kept while a toolbar shows and hides', async ({ page }) => {
+  await page.addInitScript(() => {
+    const w = window as unknown as { glCalls: number }; w.glCalls = 0
+    const proto = WebGL2RenderingContext.prototype, draw = proto.drawArrays
+    proto.drawArrays = function (...args: Parameters<typeof draw>) { w.glCalls++; return draw.apply(this, args) }
+  })
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/?ink=webgl2')
-  await page.addStyleTag({ content: 'body *:not(#ink) { visibility: hidden !important }' })
-  const feet = () => page.evaluate(() => {
-    const r = [...document.querySelectorAll('[data-ink-letter]')].map((el) => el.getBoundingClientRect())
-    const x = Math.min(...r.map((q) => q.left))
-    return { x, bottom: Math.max(...r.map((q) => q.bottom)), width: Math.max(...r.map((q) => q.right)) - x }
-  })
-  // The 22 px that start 3 px under the name. The name's size settles with its font, so poll.
-  // A loaded machine fits few steps into the still, so the floors are low; bare ground reads 0.
-  const under = async () => { const f = await feet(); return { x: f.x, y: Math.round(f.bottom) + 3, width: f.width, height: 22 } }
-  await expect.poll(async () => shotInk(page, await under()), { message: 'ink under the feet of the name in the first still', timeout: 120_000 }).toBeGreaterThan(0.03)
-  const strip = await under(), short = strip.y - 2
-  expect(TALL - short, 'px of height the toolbar takes: a change small enough to keep the still').toBeGreaterThan(20)
-  expect(TALL - short).toBeLessThanOrEqual(120)
+  const calls = () => page.evaluate(() => (window as unknown as { glCalls: number }).glCalls)
+  // The first still is made once the page has loaded; wait until the calls stop growing.
+  let before = -1
+  await expect.poll(async () => { const n = await calls(); const settled = n > 0 && n === before; before = n; return settled }, { timeout: 120_000, intervals: [1000] }).toBe(true)
 
-  // The toolbar shows: the viewport now ends just above the strip.
-  await page.setViewportSize({ width: PHONE.width, height: short })
-  await expect.poll(() => page.evaluate(() => document.querySelector<HTMLCanvasElement>('#ink')!.height)).toBe(short * DPR)
-  // It hides again: the strip that was cut off has ink again.
-  await page.setViewportSize({ width: PHONE.width, height: TALL })
-  await expect.poll(() => shotInk(page, strip), { message: 'ink in the strip the toolbar uncovered', timeout: 60_000 }).toBeGreaterThan(0.03)
+  for (const height of [PHONE.height - 80, PHONE.height, PHONE.height - 120, PHONE.height]) {
+    await page.setViewportSize({ width: PHONE.width, height })
+    await expect.poll(() => page.evaluate(() => document.querySelector<HTMLCanvasElement>('#ink')!.height)).toBe(height * DPR)
+  }
+  // A remake waits 200 ms for the size to settle; give it time to show up if it were going to.
+  await page.waitForTimeout(1500)
+  // One draw per resize at most; a single solver step alone takes more than 10 calls.
+  expect(await calls() - before, 'WebGL2 draw calls after the toolbar showed and hid').toBeLessThan(40)
 })
 
 // A frame that is not displayed has a viewport of 0 by 0. The site may not be framed, so the

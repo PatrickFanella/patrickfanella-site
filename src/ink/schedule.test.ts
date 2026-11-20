@@ -118,23 +118,18 @@ describe('resize', () => {
 })
 
 describe('reduced-motion still', () => {
-  it('keeps the still when only a toolbar cuts the bottom', () => {
-    expect(stillRemake(390, 764, 390, 844, 844)).toEqual({ cut: 764, remake: false })
-    expect(stillRemake(390, 724, 390, 844, 764)).toEqual({ cut: 724, remake: false })
+  it('keeps the still while a toolbar shows or hides, so scrolling never swaps the frame', () => {
+    expect(stillRemake(390, 764, 390, 844)).toBe(false)
+    expect(stillRemake(390, 844, 390, 764)).toBe(false)
   })
 
   it('remakes it when the width changes', () => {
-    expect(stillRemake(844, 390, 390, 844, 844).remake).toBe(true)
+    expect(stillRemake(844, 390, 390, 844)).toBe(true)
   })
 
   it('remakes it when the height moves by more than the toolbar', () => {
-    expect(stillRemake(390, 723, 390, 844, 844).remake).toBe(true)
-    expect(stillRemake(390, 724, 390, 844, 844).remake).toBe(false)
-    expect(stillRemake(390, 965, 390, 844, 965).remake).toBe(true)
-  })
-
-  it('remakes it when the toolbar hides and the viewport is taller than what is left', () => {
-    const cut = stillRemake(390, 764, 390, 844, 844).cut
-    expect(stillRemake(390, 844, 390, 844, cut)).toEqual({ cut: 764, remake: true })
+    expect(stillRemake(390, 723, 390, 844)).toBe(true)
+    expect(stillRemake(390, 724, 390, 844)).toBe(false)
+    expect(stillRemake(390, 965, 390, 844)).toBe(true)
   })
 })
