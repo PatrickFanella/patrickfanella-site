@@ -22,7 +22,15 @@ function syncBrowserTheme() {
 
 export interface Page { ink: Ink | null; bleeder: ReturnType<typeof bleed> | null }
 
-export function boot(): Page {
+/** The display face the name and headings are set in; layout is final once it has loaded. */
+export const displayFace = () => document.fonts.load('900 100px "Big Shoulders Display Variable"')
+
+/**
+ * Starts the page and brings its ink to rest or to life once the display face and the solver are
+ * ready. `pour` runs at that point, with null when no ink can be drawn: it measures the final
+ * layout and lands the page's letters.
+ */
+export function boot(pour?: (ink: Ink | null) => void): Page {
   const t = storedTheme(); if (t) root.dataset.theme = t
   syncBrowserTheme()
   const canvas = document.getElementById('ink') as HTMLCanvasElement | null
@@ -43,6 +51,15 @@ export function boot(): Page {
   const bleeder = ink ? bleed(ink) : null
   if (ink) splash(ink)
   if (ink) readout(ink)
+  void Promise.all([displayFace().catch(() => []).then(() => document.fonts.ready), ink?.ready]).then(() => {
+    ink?.invalidate()
+    // With motion the tank is running before the pour, so each splash lands in moving water. With
+    // reduced motion the solver runs ahead over what was poured and the page shows one still frame.
+    const still = reduced()
+    if (!still) ink?.setRunning(true)
+    pour?.(ink)
+    if (still) ink?.preroll(240, 1500)
+  })
   return { ink, bleeder }
 }
 

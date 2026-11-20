@@ -1,7 +1,7 @@
 import { boot } from './boot'
-import { pourIn, reduced, splitLetters, stirSweep, unfold } from './motion/motion'
+import { pourIn, splitLetters, stirSweep, unfold } from './motion/motion'
 
-const { ink } = boot()
+const { ink } = boot((ink) => { layout(); void pourIn(letters, ink) })
 const word = document.getElementById('demo-pour')!
 const letters = splitLetters(word, 'coy')
 const layout = () => { word.style.fontSize = ''; ink?.invalidate() }
@@ -22,13 +22,4 @@ const replay: Record<string, () => void> = {
 document.addEventListener('click', (e) => {
   const b = (e.target as Element).closest<HTMLElement>('[data-replay]')
   if (b) replay[b.dataset.replay!]?.()
-})
-
-const faces = document.fonts.load('900 100px "Big Shoulders Display Variable"').catch(() => []).then(() => document.fonts.ready)
-void Promise.all([faces, ink?.ready]).then(() => {
-  layout()
-  if (!ink) { void pourIn(letters, null); return }
-  if (reduced()) { void pourIn(letters, ink); ink.preroll(240, 1500); return }
-  ink.setRunning(true)
-  void pourIn(letters, ink)
 })

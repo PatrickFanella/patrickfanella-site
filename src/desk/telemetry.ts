@@ -1,3 +1,4 @@
+import { displayFace } from '../boot'
 import type { Ink } from '../ink/engine'
 import type { PgEvent } from './pg-protocol'
 
@@ -33,7 +34,7 @@ export function startTelemetry(ink: Ink | null): (event: PgEvent) => void {
     item.append(time, text); log.append(item)
   }
   record('page', 'Desk module started')
-  document.fonts.load('900 100px "Big Shoulders Display Variable"')
+  displayFace()
     .then(() => document.fonts.ready).then(() => record('fonts', 'Fonts ready'))
     .catch(() => record('fonts', 'Font loading failed; fallback type in use'))
   let path = ''
