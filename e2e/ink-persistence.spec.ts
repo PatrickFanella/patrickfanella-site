@@ -16,6 +16,8 @@ interface Probe {
   inked(fromX?: number): number
   /** How far down that band the ink sits on average, in CSS px. */
   depth(): number
+  /** The share of the whole canvas that holds ink right now. */
+  whole(): number
   /** `inked()` each time the canvas was given a new size, read before the browser painted it. */
   atResize: number[]
   /** `depth()` at the same moments. */
@@ -25,13 +27,13 @@ interface Probe {
 function install() {
   const BAND = 380, N = 48
   // The ink pixels of the band, and the sum of their rows, on an N by N copy.
-  const read = (fromX = 0) => {
+  const read = (fromX = 0, band = BAND) => {
     const ink = document.querySelector<HTMLCanvasElement>('#ink')!
     const copy = document.createElement('canvas'); copy.width = N; copy.height = N
     const ctx = copy.getContext('2d', { willReadFrequently: true })!
     // Every viewport below is at least 380 px tall, so they all show this band.
     const x0 = ink.width * fromX / innerWidth
-    ctx.drawImage(ink, x0, 0, ink.width - x0, ink.height * BAND / innerHeight, 0, 0, N, N)
+    ctx.drawImage(ink, x0, 0, ink.width - x0, ink.height * band / innerHeight, 0, 0, N, N)
     const px = ctx.getImageData(0, 0, N, N).data
     // The ground is flat; take its colour from the top left corner of the whole canvas.
     const one = document.createElement('canvas'); one.width = 1; one.height = 1
@@ -46,8 +48,9 @@ function install() {
   }
   const inked = (fromX = 0) => read(fromX).n / (N * N)
   const depth = () => { const { n, rows } = read(); return n ? rows / n * BAND / N : -1 }
+  const whole = () => read(0, innerHeight).n / (N * N)
   const atResize: number[] = [], depthAtResize: number[] = [];
-  (window as unknown as { inkProbe: Probe }).inkProbe = { inked, depth, atResize, depthAtResize }
+  (window as unknown as { inkProbe: Probe }).inkProbe = { inked, depth, whole, atResize, depthAtResize }
   // The observer runs as soon as the callback that sized the canvas returns, before a paint.
   addEventListener('DOMContentLoaded', () => {
     new MutationObserver(() => { atResize.push(inked()); depthAtResize.push(depth()) })
@@ -61,6 +64,13 @@ function inked(page: Page, fromX = 0) {
     // Two frames: the first lets a queued resize run, the engine's callback then draws ahead of this one.
     requestAnimationFrame(() => requestAnimationFrame(() => resolve((window as unknown as { inkProbe: Probe }).inkProbe.inked(x))))
   }), fromX)
+}
+
+/** Ink coverage of the whole canvas, read after the engine has drawn a frame. */
+function wholeInk(page: Page) {
+  return page.evaluate(() => new Promise<number>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve((window as unknown as { inkProbe: Probe }).inkProbe.whole())))
+  }))
 }
 
 /** Resize the viewport and wait until the ink canvas has taken the new size. */
@@ -78,7 +88,9 @@ for (const [path, start] of [['/', null], ['/motion/', '#demo-pour'], ['/desk/',
     await page.addInitScript(install)
     await page.goto(`${path}?ink=webgl2`)
     if (start) await page.locator(start).evaluate((el) => el.scrollIntoView({ block: 'start' }))
-    await expect.poll(() => inked(page), { timeout: 120_000 }).toBeGreaterThan(0.1)
+    // Only a start gate: enough ink for the ratios below to mean something. Once poured, the band
+    // holds 0.07 to 0.23 here, and /desk/ and /motion/ dip under 0.1 as the ink drifts.
+    await expect.poll(() => inked(page), { timeout: 120_000 }).toBeGreaterThan(0.05)
 
     // A reset leaves a tenth of the ink or less (measured on main: 0.32 to 0.01 on /, 0.13 to 0.015 on /desk/).
     const kept = async (what: string, act: () => Promise<unknown>, floor = 0.6) => {
@@ -124,6 +136,7 @@ for (const [path, start] of [['/', null], ['/motion/', '#demo-pour'], ['/desk/',
     // The ink is anchored at the top left: it must not move down or up the screen with the bottom
     // edge, which would shift it by the whole 80 px. Read in the frame of the resize, it has had
     // only a step or two to flow.
+    const wholeBefore = await wholeInk(page)
     for (const height of [744, 664, 584, 664]) {
       let was = 0
       await kept(`the viewport height changing to ${height} px`, async () => {
@@ -136,6 +149,11 @@ for (const [path, start] of [['/', null], ['/motion/', '#demo-pour'], ['/desk/',
       const now = await page.evaluate(() => (window as unknown as { inkProbe: Probe }).inkProbe.depthAtResize.at(-1)!)
       expect(Math.abs(now - was), `how far the ink moved on screen when the height changed to ${height} px (${was.toFixed(1)} to ${now.toFixed(1)} px down)`).toBeLessThan(40)
     }
+    // The band above cannot see the bottom of the canvas, where each smaller height cuts ink off
+    // and each larger one adds bare ground for the pour to fill. Over the whole canvas, back at the
+    // first height, most of the ink must still be there (0.69 to 0.81 of it here; a reset leaves a tenth).
+    const wholeAfter = await wholeInk(page)
+    expect(wholeAfter / wholeBefore, `share of the whole canvas's ink left after the toolbar cycle (${wholeBefore.toFixed(3)} to ${wholeAfter.toFixed(3)})`).toBeGreaterThan(0.35)
     // Sizing a canvas clears it. The ink must be drawn back before the browser paints, not a frame later.
     const before = await inked(page)
     const atResize = await page.evaluate(() => (window as unknown as { inkProbe: Probe }).inkProbe.atResize)
@@ -201,6 +219,38 @@ test('a reduced-motion still is made again after a rotation', async ({ page }) =
   expect(await shotInk(page, upright), 'ink left where the name used to stand').toBeLessThan(0.02)
 })
 
+// A phone's toolbar showing and hiding changes the height by 120 px or less, which keeps the
+// carried still. Showing cuts the bottom off it, and the still is not stepped again, so when the
+// toolbar hid again the strip stayed bare for good. The viewport here is short enough for a
+// toolbar to cut it just under the feet of the name, where there is ink however few steps the
+// still's time budget allowed.
+test('a reduced-motion still is made again when a toolbar hiding uncovers bare ground', async ({ page }) => {
+  const TALL = 220
+  await page.setViewportSize({ width: PHONE.width, height: TALL })
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/?ink=webgl2')
+  await page.addStyleTag({ content: 'body *:not(#ink) { visibility: hidden !important }' })
+  const feet = () => page.evaluate(() => {
+    const r = [...document.querySelectorAll('[data-ink-letter]')].map((el) => el.getBoundingClientRect())
+    const x = Math.min(...r.map((q) => q.left))
+    return { x, bottom: Math.max(...r.map((q) => q.bottom)), width: Math.max(...r.map((q) => q.right)) - x }
+  })
+  // The 22 px that start 3 px under the name. The name's size settles with its font, so poll.
+  // A loaded machine fits few steps into the still, so the floors are low; bare ground reads 0.
+  const under = async () => { const f = await feet(); return { x: f.x, y: Math.round(f.bottom) + 3, width: f.width, height: 22 } }
+  await expect.poll(async () => shotInk(page, await under()), { message: 'ink under the feet of the name in the first still', timeout: 120_000 }).toBeGreaterThan(0.03)
+  const strip = await under(), short = strip.y - 2
+  expect(TALL - short, 'px of height the toolbar takes: a change small enough to keep the still').toBeGreaterThan(20)
+  expect(TALL - short).toBeLessThanOrEqual(120)
+
+  // The toolbar shows: the viewport now ends just above the strip.
+  await page.setViewportSize({ width: PHONE.width, height: short })
+  await expect.poll(() => page.evaluate(() => document.querySelector<HTMLCanvasElement>('#ink')!.height)).toBe(short * DPR)
+  // It hides again: the strip that was cut off has ink again.
+  await page.setViewportSize({ width: PHONE.width, height: TALL })
+  await expect.poll(() => shotInk(page, strip), { message: 'ink in the strip the toolbar uncovered', timeout: 60_000 }).toBeGreaterThan(0.03)
+})
+
 // A frame that is not displayed has a viewport of 0 by 0. The site may not be framed, so the
 // test reports that size itself until it is told to stop. The page's own layout is not what is
 // under test, so ink is asked for with a press on a button that splashes.
@@ -215,8 +265,12 @@ test('a page that loads with no viewport starts its ink once it has one', async 
   })
   await page.goto('/motion/?ink=webgl2')
   expect(await page.evaluate(() => [innerWidth, innerHeight])).toEqual([0, 0])
-  // Give the solver time to start (and, before the fix, to fail on grids it never laid out).
-  await page.waitForTimeout(3000)
+  // The page pours its word once the engine's `ready` settles: with no viewport that is when the
+  // solver exists but has no grids (and, before the fix, when it had failed on grids it never laid
+  // out). Wait for the first letter to land, however long start-up takes, so that the resize
+  // below is the late start and not the solver's ordinary one.
+  await expect(page.locator('#demo-pour [data-pour]').first()).toBeAttached({ timeout: 120_000 })
+  expect(await page.evaluate(() => [innerWidth, innerHeight, document.querySelector<HTMLCanvasElement>('#ink')!.width])).toEqual([0, 0, 300])
   await page.evaluate(() => { (window as unknown as { hasViewport: boolean }).hasViewport = true; dispatchEvent(new Event('resize')) })
   await expect.poll(() => page.evaluate(() => document.querySelector<HTMLCanvasElement>('#ink')!.width)).toBe(PHONE.width * DPR)
   // Put the button inside the band that `inked` reads, and press it where it is.

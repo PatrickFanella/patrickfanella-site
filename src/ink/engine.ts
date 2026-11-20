@@ -210,8 +210,12 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
       // A still (reduced motion) is never stepped again, so the carried ink would keep the old
       // layout's letter gaps and new space would stay bare. Once the size settles and the page
       // has laid out, make the still again from an empty tank, as a load at this size would. A
-      // toolbar's change of height keeps the carried still: anchored at the top, it stays aligned.
-      if (still && !wanted && (innerWidth !== stillW || Math.abs(innerHeight - stillH) > TOOLBAR_PX)) {
+      // toolbar that shows only cuts the bottom off the carried still: anchored at the top, it
+      // stays aligned and is kept. One that hides uncovers space the still never reached, or a
+      // strip an earlier cut left bare, so any height past what is left of the still makes it again.
+      if (!still || wanted) return
+      stillCut = Math.min(stillCut, innerHeight)
+      if (innerWidth !== stillW || Math.abs(innerHeight - stillH) > TOOLBAR_PX || innerHeight > stillCut) {
         clearTimeout(again)
         again = window.setTimeout(() => {
           if (!still || wanted || !be || sized !== be) return
@@ -230,8 +234,9 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   // Choosing a solver. Calls made before one is ready are kept: emitters, bursts and
   // the pointer in the state above, a preroll here, running in `wanted`.
   let pending: [number, number] | null = null
-  // The still the page asked for (reduced motion), and the viewport it was last made for.
-  let still: [number, number] | null = null, stillW = 0, stillH = 0
+  // The still the page asked for (reduced motion), the viewport it was last made for, and the
+  // least height a resize has cut it to since.
+  let still: [number, number] | null = null, stillW = 0, stillH = 0, stillCut = 0
   let settle!: () => void
   const ready = new Promise<void>((r) => { settle = r })
   // A step returns once its work is sent, long before the GPU has run it. Timing that alone let
@@ -239,7 +244,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   function preroll(steps: number, budgetMs: number) {
     still = [steps, budgetMs]
     if (!live || !be || sized !== be) { pending = [steps, budgetMs]; return 0 }
-    stillW = innerWidth; stillH = innerHeight
+    stillW = innerWidth; stillH = stillCut = innerHeight
     const b = be, finish = b.finish?.bind(b), t0 = performance.now(); let n = 0
     try {
       if (finish) {
