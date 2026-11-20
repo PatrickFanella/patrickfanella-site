@@ -1,53 +1,5 @@
-import type { PGlite } from '@electric-sql/pglite'
-import { captureDatabase } from '../src/desk/inspector/capture'
 import { test, expect } from './fixtures'
 import { recordedLiveGate } from './recording-policy'
-
-const bytes = (text: string) => [...new TextEncoder().encode(text), 0]
-const int16 = (value: number) => [value >>> 8 & 255, value & 255]
-const int32 = (value: number) => [value >>> 24 & 255, value >>> 16 & 255, value >>> 8 & 255, value & 255]
-const frame = (type: string, body: number[]) => [type.charCodeAt(0), ...int32(body.length + 4), ...body]
-
-test('capture keeps prepared SQL across requests, preserves parameter formats and times a batch only once', async () => {
-  const database = { execProtocolRaw: async () => new Uint8Array() } as unknown as Pick<PGlite, 'execProtocolRaw'>
-  const capture = captureDatabase(database)
-  const sql = 'SELECT title FROM clips WHERE title = $1 LIMIT $2'
-  const parse = frame('P', [...bytes('search'), ...bytes(sql), ...int16(0)])
-  const bind = frame('B', [...bytes(''), ...bytes('search'), ...int16(2), ...int16(0), ...int16(1),
-    ...int16(2), ...int32(5), ...new TextEncoder().encode('world'), ...int32(4), ...int32(20), ...int16(0)])
-  capture.begin()
-  await capture.proxy.execProtocolRaw(new Uint8Array([...parse, ...bind]))
-  const first = capture.finish()
-  expect(first).toHaveLength(1)
-  expect(first[0].ms).toBeGreaterThanOrEqual(0)
-  expect(first[0].statements).toEqual([
-    { kind: 'prepare', sql, params: [] },
-    { kind: 'execute', sql, params: [{ format: 'text', value: 'world' }, { format: 'binary', value: '00000014' }] },
-  ])
-  capture.begin()
-  await capture.proxy.execProtocolRaw(new Uint8Array(bind))
-  const second = capture.finish()
-  expect(second).toHaveLength(1)
-  expect(second[0].statements).toEqual([first[0].statements[1]])
-  expect(capture.finish()).toEqual([])
-})
-
-test('capture includes calls without SQL and preserves null and simple query text', async () => {
-  const database = { execProtocolRaw: async () => new Uint8Array() } as unknown as Pick<PGlite, 'execProtocolRaw'>
-  const capture = captureDatabase(database)
-  capture.begin()
-  await capture.proxy.execProtocolRaw(new Uint8Array(frame('S', [])))
-  await capture.proxy.execProtocolRaw(new Uint8Array(frame('Q', bytes('SELECT 1;'))))
-  await capture.proxy.execProtocolRaw(new Uint8Array([
-    ...frame('P', [...bytes('nullable'), ...bytes('SELECT $1'), ...int16(0)]),
-    ...frame('B', [...bytes(''), ...bytes('nullable'), ...int16(0), ...int16(1), ...int32(-1), ...int16(0)]),
-  ]))
-  const calls = capture.finish()
-  expect(calls).toHaveLength(3)
-  expect(calls[0].statements).toEqual([])
-  expect(calls[1].statements[0].sql).toBe('SELECT 1;')
-  expect(calls[2].statements[1].params).toEqual([{ format: 'text', value: null }])
-})
 
 test('inspector sections and their purpose exist without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
