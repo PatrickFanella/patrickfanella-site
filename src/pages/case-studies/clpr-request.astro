@@ -3,8 +3,8 @@ import ContentPage from '../../layouts/ContentPage.astro'
 import CaseStudy from '../../components/CaseStudy.astro'
 import { clprSearch } from '../../content/case-studies/clpr-search'
 ---
-<ContentPage title="Clpr request setup | Patrick Fanella" description="Clpr source pinned to a commit, with notes beside the relevant lines." readingSurface ogType="article" socialImage="/assets/projects/social/clpr.png" socialAlt="Clpr’s public Discover collections view.">
-  <p class="lead"><a href="/case-studies/clpr-search/">How Clpr ranks and pages a clip search</a>. The request setup is below.</p>
+<ContentPage title="Clpr request setup | Patrick Fanella" description="Clpr source pinned to a commit, with notes beside the relevant lines." readingSurface ogType="article" socialImage="/assets/projects/social/clpr.png" socialAlt="Clpr’s public Discover collections view." seo={{ breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Case studies', href: '/case-studies/' }, { name: 'Clpr request setup', href: '/case-studies/clpr-request/' }] }}>
   <CaseStudy study={clprSearch} />
+  <p>Next: <a href="/case-studies/clpr-search/">How Clpr ranks and pages a clip search</a>, or <a href="/desk/">open the Desk</a>.</p>
   <script>import '../../case-study.ts'</script>
 </ContentPage>
