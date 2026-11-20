@@ -1,5 +1,6 @@
 [
   "astro.config.mjs",
+  "src/content/site-facts.mjs",
   "scripts/record-clpr.mjs",
   "src/desk/inspector/recording-inputs.json",
   "package-lock.json",

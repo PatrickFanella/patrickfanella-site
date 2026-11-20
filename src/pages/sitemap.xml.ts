@@ -1,12 +1,13 @@
 import { selectedProjects } from '../content/project-presentation'
 import studies from '../content/project-case-studies.json'
 import { siteMetadata } from '../content/site-metadata'
+import { routePaths } from '../content/site-facts.mjs'
 
 const xml = (value: string) => value.replace(/[<>&"']/g, character => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' })[character]!)
 
 export function GET() {
   const pages = [
-    ...['/', '/projects/', '/resume/', '/contact/', '/desk/', '/motion/', '/case-studies/', '/case-studies/clpr-search/', '/case-studies/clpr-request/'].map(path => ({ path, images: [] as string[] })),
+    ...routePaths().map(path => ({ path, images: [] as string[] })),
     ...studies.studies.map(study => ({ path: `/case-studies/${study.slug}/`, images: selectedProjects.find(project => project.slug === study.slug)!.media.map(media => media.src) })),
     ...selectedProjects.map(project => ({ path: `/projects/${project.slug}/`, images: project.media.map(media => media.src) })),
   ]

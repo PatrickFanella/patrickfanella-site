@@ -1,6 +1,5 @@
-import { test, expect } from './fixtures'
+import { test, expect, crawlRoutes as routes } from './fixtures'
 
-const routes = ['/', '/projects/', '/projects/clpr/', '/resume/', '/contact/', '/case-studies/clpr-search/', '/desk/', '/motion/']
 test.use({ reducedMotion: 'reduce' })
 
 for (const width of [320, 390, 1280]) test(`shared header fits and has usable targets at ${width}px`, async ({ page }) => {

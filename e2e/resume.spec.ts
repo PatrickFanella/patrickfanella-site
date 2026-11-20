@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import AxeBuilder from '@axe-core/playwright'
 import resume from '../src/content/resume.json' with { type: 'json' }
 import artifact from '../src/content/resume-artifact.json' with { type: 'json' }
-import { test, expect } from './fixtures'
+import { test, expect, crawlRoutes } from './fixtures'
 
 test.use({ reducedMotion: 'reduce' })
 test('résumé matches its source, downloads the exact PDF and prints on one page', async ({ page }, info) => {
@@ -54,7 +54,7 @@ for (const colorScheme of ['light', 'dark'] as const) test(`résumé is accessib
 test('recruiting links agree across page types without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })
   const page = await context.newPage()
-  for (const path of ['/', '/contact/', '/resume/', '/projects/', '/projects/clpr/', '/case-studies/clpr-search/', '/desk/', '/motion/']) {
+  for (const path of crawlRoutes) {
     await page.goto(path)
     const links = page.locator('a[href^="mailto:"]')
     expect(await links.count(), path).toBeGreaterThan(0)

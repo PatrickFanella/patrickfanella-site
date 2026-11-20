@@ -1,4 +1,5 @@
 import { recruitingEmail } from '../content/contact'
+import resume from '../content/resume.json'
 import type { Psql } from './psql'
 
 /** Each completed command appends one entry to the live log; user text is always plain text. */
@@ -39,7 +40,7 @@ export function startShell(form: HTMLFormElement, psql: Psql) {
           say('Clpr: Twitch clip search and moderation. HasanAra: searchable broadcast archive. Undertow: browser music-video editor (live beta).')
           link('Browse all projects and delivery statuses', '/projects/'); break
         case 'resume': say('Senior backend and full-stack engineer. Go, Python, TypeScript and PostgreSQL. Chicago or remote.'); link('Read the résumé and download the PDF', '/resume/'); break
-        case 'contact': link(recruitingEmail, `mailto:${recruitingEmail}`); link('GitHub: PatrickFanella', 'https://github.com/PatrickFanella'); link('LinkedIn: Patrick Fanella', 'https://linkedin.com/in/patrick-fanella'); break
+        case 'contact': link(recruitingEmail, `mailto:${recruitingEmail}`); link('GitHub: PatrickFanella', resume.github); link('LinkedIn: Patrick Fanella', resume.linkedin); break
         case 'search': {
           if (!args.length) { say('Usage: search <words>, for example search world record.'); break }
           const result = await psql.search(args.join(' '))

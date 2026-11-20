@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/render-resume.mjs --check && node scripts/check-clpr-recording.mjs && astro check && tsc --noEmit && tsc --noEmit -p e2e && astro build",
+    "build": "node scripts/render-resume.mjs --check && node scripts/check-clpr-recording.mjs && node scripts/check-site-facts.mjs && astro check && tsc --noEmit && tsc --noEmit -p e2e && astro build",
     "record:clpr": "npm run build && node scripts/record-clpr.mjs && npm run build",
     "lighthouse:ci": "node scripts/lighthouse.mjs --local",
     "check:live": "node scripts/check-live-routes.mjs",

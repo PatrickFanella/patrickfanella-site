@@ -1,6 +1,7 @@
 ---
 import SiteHeader from '../../components/SiteHeader.astro'
 import { recruitingEmail } from '../../content/contact'
+import resume from '../../content/resume.json'
 import Page from '../../layouts/Page.astro'
 ---
 <Page title="Motion & Interaction | Patrick Fanella" description="Explore the portfolio’s transitions and interactions, with timing details and reduced-motion alternatives, by Patrick Fanella." bodyClass="motion-page">
@@ -126,8 +127,8 @@ import Page from '../../layouts/Page.astro'
     <p>Patrick Fanella. Software, sound, culture.</p>
     <nav aria-label="Contact">
       <a href={`mailto:${recruitingEmail}`} data-bleed="y">{recruitingEmail}</a>
-      <a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a>
-      <a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a>
+      <a href={resume.github} data-bleed="c">GitHub</a>
+      <a href={resume.linkedin} data-bleed="o">LinkedIn</a>
     </nav>
   </footer>
   <Fragment slot="head"><script>import '../../motion-page.ts'</script></Fragment>

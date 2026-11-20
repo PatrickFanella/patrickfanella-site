@@ -1,4 +1,8 @@
 import { test as base, expect, type Page } from '@playwright/test'
+import { routePaths } from '../src/content/site-facts.mjs'
+
+/** Every page type the route-crawling specs visit; one project page stands in for the generated ones. */
+export const crawlRoutes = [...routePaths('crawl'), '/projects/clpr/']
 
 // Every test fails if the page logs a console error or throws.
 export const test = base.extend<{ errors: string[] }>({
