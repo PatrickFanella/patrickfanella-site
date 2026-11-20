@@ -26,7 +26,8 @@ export function clprControls(liveLabel: string) {
   const start = document.createElement('button'); start.type = 'button'; start.textContent = liveLabel
   const stop = document.createElement('button'); stop.type = 'button'
   const benchmark = document.createElement('button'); benchmark.type = 'button'; benchmark.textContent = 'Run SQL benchmark'
-  const status = document.createElement('p'); status.setAttribute('role', 'status'); status.dataset.clprStatus = ''
+  // Focusable from script only: a control that disables itself hands focus here (see psql.ts).
+  const status = document.createElement('p'); status.setAttribute('role', 'status'); status.dataset.clprStatus = ''; status.tabIndex = -1
   buttons.append(start, stop, benchmark); controls.append(example, meta, provenance, buttons, status)
   return { controls, example, input, sample, start, stop, benchmark, status }
 }
