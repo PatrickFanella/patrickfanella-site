@@ -48,17 +48,17 @@ import { siteMetadata } from '../content/site-metadata'
           <p>{employmentFeature.outcome}</p>
           <a href={employmentFeature.href}>Read the DeliverZero experience</a>
         </article>
-        {featuredProjects.map(({ project, media, dimensions, study }) => <article class="featured-project panel">
+        {featuredProjects.map(({ media: [media], ...project }) => <article class="featured-project panel">
           <figure>
-            <img src={media.src} srcset={'srcSet' in media ? media.srcSet : undefined} sizes="(max-width: 860px) calc(100vw - 32px), 58vw" width={dimensions!.width} height={dimensions!.height} alt={media.alt} loading="lazy" decoding="async" />
+            <img src={media.src} srcset={media.srcSet} sizes="(max-width: 860px) calc(100vw - 32px), 58vw" width={media.width} height={media.height} alt={media.alt} loading="lazy" decoding="async" />
             <figcaption>{media.caption}</figcaption>
           </figure>
           <div class="featured-copy">
-            <h3><a href={`/projects/${project.slug}/`}>{project.title}</a></h3>
+            <h3><a href={project.path}>{project.title}</a></h3>
             <p>{project.summary}</p><p class="dim">{project.deliveryStatus}</p>
             <nav aria-label={`${project.title} destinations`}>
-              <a href={study}>Read the case study</a>
-              <a href={`/projects/${project.slug}/`}>Project and source</a>
+              <a href={project.study.path}>Read the case study</a>
+              <a href={project.path}>Project and source</a>
               <a href={project.liveUrl}>Open {project.title}</a>
             </nav>
           </div>
