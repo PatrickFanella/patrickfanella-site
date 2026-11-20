@@ -99,8 +99,11 @@ test('list links, return link and legacy redirects reach the right project', asy
   await expect(page).toHaveURL('/projects/clpr/')
   await page.getByRole('link', { name: 'All projects', exact: true }).click()
   await expect(page).toHaveURL('/projects/#clpr')
-  // One pair stated here, so an emptied or shortened map cannot pass unnoticed.
-  expect(redirects['/projects/transcript-create']).toBe('/projects/rekolekt/')
+  // Stated here as well, so a changed, emptied or shortened map cannot pass unnoticed.
+  expect(redirects).toEqual({
+    '/projects/transcript-create': '/projects/rekolekt/',
+    '/projects/discord-spywatcher': '/projects/backline/',
+  })
   for (const [old, current] of Object.entries(redirects)) {
     await page.goto(`${old}/`)
     await expect(page).toHaveURL(current)

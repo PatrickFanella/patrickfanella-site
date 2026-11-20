@@ -37,8 +37,8 @@ distinguish public data from the isolated Undertow demonstration. The pages load
 or fonts. Running the capture processor does not need a login or another browser session.
 
 The old `/projects/transcript-create` and `/projects/discord-spywatcher` URLs redirect to Rekolekt
-and Backline, respectively. Astro static output emits HTML refresh redirects; the launch server
-can supply HTTP redirects for the same mapping. Project URLs retain their old slug with a trailing slash.
+and Backline, respectively. Astro static output emits HTML refresh redirects, and those pages are
+the only redirects: the deploy files must not add their own, and the check below fails if they do. Project URLs retain their old slug with a trailing slash.
 
 ## Routes, redirects and the security policy
 
@@ -52,7 +52,8 @@ come from the content data.
 
 `deploy/origin.Caddyfile` and `deploy/edge-route.py` are hand-written. `node
 scripts/check-site-facts.mjs` runs in `npm run build` and in CI, and fails when either file's policy
-differs from the definition or appears more than once, when either contains a redirect, or when
+differs from the definition or appears more than once (a second header name in the Caddyfile, or a
+second `CSP` assignment or `default-src` in the edge script), when either contains a redirect, or when
 `deploy/update.py` requires a page that is not a route. The redirect search covers the whole text of
 both files for `redir`, `rewrite`, `handle_path`, `uri` rewrites, a `Location` header, a `respond`
 with a 3xx status, and the old paths in `redirects`; a redirect written another way is not detected. Intended differences are listed in that script with a reason;
