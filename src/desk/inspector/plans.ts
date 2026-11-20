@@ -1,5 +1,6 @@
 import type { PGlite } from '@electric-sql/pglite'
-import type { Parameter, Statement } from './capture'
+import type { Statement } from './capture'
+import type { Parameter } from './wire'
 
 export const tableSizes = [8, 1008, 10008, 30008, 50008] as const
 export interface PlanNode {

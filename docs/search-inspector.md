@@ -32,6 +32,10 @@ word (the untyped startup message has only its length word). Protocol decoding f
 Bind values retain text/binary labels. DataRow reports each column’s byte length; raw values
 remain hex because their formats come from RowDescription. These are in-process protocol
 messages, not TCP packets. Capture/decoding overhead is outside the measured bridge interval.
+The SQL tab reads its statements from these decoded messages: `wire.ts` is the only frame
+parser, and `capture.ts` pairs each Bind with the SQL of the Parse that named it. A frame that
+ends before its declared length, or a field that runs past its frame, is rejected before the
+call reaches PostgreSQL.
 
 Plan uses the captured clip-ranking SELECT and its actual parameters. PostgreSQL’s
 ParameterDescription supplies the OIDs needed to decode binary integer parameters for EXPLAIN;
@@ -69,13 +73,15 @@ The recorded chart covers all five sizes. Live searches start a fresh series. Se
 [the recording procedure and budget gate](clpr-recording.md) for the CI artifact, source hashes,
 memory method and live-mode limits. The older recorded benchmark belongs to the SQL-only mode.
 
-Checks: npm run build; npx playwright test e2e/clpr.spec.ts e2e/inspector.spec.ts e2e/plans-wire.spec.ts.
-The three scripted searches are world record, zzzznomatch and cooking; each checks response,
-headers, SQL clauses, parameters and timing totals. Additional checks cover a reused prepared
-statement, multiple operations in one timed call, null/binary parameters, sections without
-JavaScript, keyboard tabs, a narrow dark viewport, stop/retry and artifact failure. Wire checks
-cover frame bounds, directional message names, UTF-8 byte lengths, unknown messages, reply
-totals and prepared-statement parameter OIDs. The live plan test measures all five sizes,
+Checks: npm run test:unit; npm run build; npx playwright test e2e/clpr.spec.ts e2e/inspector.spec.ts e2e/plans-wire.spec.ts.
+The unit tests beside `wire.ts`, `capture.ts` and `plans.ts` need no page. They cover frame
+bounds and truncated frames, directional message names, UTF-8 byte lengths, unknown messages,
+a reused prepared statement, multiple operations in one timed call, null/binary parameters,
+reply totals, prepared-statement parameter OIDs, and the rollback that restores indexes and
+planner settings after the GIN comparison. In Playwright, the three scripted searches are world
+record, zzzznomatch and cooking; each checks response, headers, SQL clauses, parameters and
+timing totals. Additional checks cover sections without JavaScript, keyboard tabs, a narrow
+dark viewport, stop/retry and artifact failure. The live plan test measures all five sizes,
 checks sequential/GIN choices and costs, shrinks back to eight, changes the search, and checks
 accessibility and narrow layout.
 
