@@ -1,11 +1,13 @@
 import resume from './resume.json' with { type: 'json' }
 import icons from './site-icons.json' with { type: 'json' }
+import { NumberWord } from './number-words.mjs'
+import { catalog } from './projects.mjs'
 
 export const siteMetadata = {
   name: resume.name,
   origin: resume.website,
   title: 'Patrick Fanella | Senior Backend & Full-Stack Engineer',
-  description: 'Senior backend and full-stack engineer. Go, Python, TypeScript and PostgreSQL. Four engineering case studies, projects and résumé. Chicago or remote.',
+  description: `Senior backend and full-stack engineer. Go, Python, TypeScript and PostgreSQL. ${NumberWord(catalog.studied.length)} engineering case studies, projects and résumé. Chicago or remote.`,
   socialAlt: 'Patrick Fanella. Software, sound, culture. Ink in Motion identity.',
   lightColor: '#e9eff2',
   darkColor: '#10131e',

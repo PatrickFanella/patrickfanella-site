@@ -17,7 +17,7 @@ const seo = { breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Work', href: '
 
   <article class="project-detail">
     <a href={current ? `/projects/#${project.slug}` : '/projects/'}>All projects</a>
-    {!current && <p class="source-note">Historical project entry retained for existing links. This page records the earlier portfolio snapshot; it is outside the current selection and has not been requalified as a live service.</p>}
+    {!current && <p class="source-note">Historical project entry, kept so existing links still work. It shows the project as the earlier portfolio snapshot recorded it. It is not in the current selection, and I have not rechecked it as a live service.</p>}
     <header>
       <h1 data-project-name={project.slug}>{project.title}</h1>
       <p class="lead">{project.summary}</p>
