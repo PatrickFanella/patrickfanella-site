@@ -1,0 +1,1 @@
+var e=document.querySelector(`[data-print]`);e.hidden=!1,e.addEventListener(`click`,()=>window.print());

@@ -1,0 +1,1 @@
+import{a as e,i as t,n,r,s as i,t as a}from"./boot.DihkZl6P.js";var{ink:o}=a(e=>{l=!0,u(),t(c,e)}),s=document.getElementById(`name`),c=e(s,`ooyycccccyyooo`),l=!1,u=()=>{l&&(n(s,innerWidth<=700?.17:.27),o?.invalidate())};new ResizeObserver(u).observe(s),i(),r();for(let e of document.querySelectorAll(`.featured-work > .panel`))e.dataset.rise=``;

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Undertow | Patrick Fanella</title>
+  <meta name="description" content="A layered music-video editor with timed lyrics and local MP4/WebM export, built around a browser rendering and encoding pipeline.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Patrick Fanella">
+  <meta name="application-name" content="Patrick Fanella">
+  <link rel="canonical" href="https://patrickfanella.co/projects/undertow/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Patrick Fanella">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Undertow | Patrick Fanella">
+  <meta property="og:description" content="A layered music-video editor with timed lyrics and local MP4/WebM export, built around a browser rendering and encoding pipeline.">
+  <meta property="og:url" content="https://patrickfanella.co/projects/undertow/">
+  <meta property="og:image" content="https://patrickfanella.co/assets/projects/social/undertow.png">
+  <meta property="og:image:secure_url" content="https://patrickfanella.co/assets/projects/social/undertow.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Undertow | Patrick Fanella">
+  <meta name="twitter:description" content="A layered music-video editor with timed lyrics and local MP4/WebM export, built around a browser rendering and encoding pipeline.">
+  <meta name="twitter:image" content="https://patrickfanella.co/assets/projects/social/undertow.png">
+  <meta name="twitter:image:alt" content="Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork.">
+  <link rel="icon" href="/favicon.ico?v=dc08099b7e31" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" href="/favicon-96x96.png?v=23946a6478c8" sizes="96x96" type="image/png">
+  <link rel="icon" href="/favicon.svg?v=dfb0d29a33b4" sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1e993fae8d14" sizes="180x180">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#e9eff2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10131e" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/big-shoulders-display-latin-wght-normal.Bn_gnr7w.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/hanken-grotesk-latin-wght-normal.CaVRRdDk.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/martian-mono-latin-wght-normal.5W32yIyr.woff2" crossorigin="anonymous">
+  <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
+  <style>@view-transition { navigation: auto; }</style>
+  <noscript><style>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://patrickfanella.co/#person","name":"Patrick Fanella","url":"https://patrickfanella.co/","jobTitle":"Senior full-stack and backend engineer","sameAs":["https://github.com/PatrickFanella","https://linkedin.com/in/patrick-fanella"]},{"@type":"WebSite","@id":"https://patrickfanella.co/#website","name":"Patrick Fanella","url":"https://patrickfanella.co/","inLanguage":"en-US","publisher":{"@id":"https://patrickfanella.co/#person"}},{"@type":"WebPage","@id":"https://patrickfanella.co/projects/undertow/#webpage","url":"https://patrickfanella.co/projects/undertow/","name":"Undertow | Patrick Fanella","description":"A layered music-video editor with timed lyrics and local MP4/WebM export, built around a browser rendering and encoding pipeline.","inLanguage":"en-US","isPartOf":{"@id":"https://patrickfanella.co/#website"},"breadcrumb":{"@id":"https://patrickfanella.co/projects/undertow/#breadcrumbs"}},{"@type":"BreadcrumbList","@id":"https://patrickfanella.co/projects/undertow/#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patrickfanella.co/"},{"@type":"ListItem","position":2,"name":"Work","item":"https://patrickfanella.co/projects/"},{"@type":"ListItem","position":3,"name":"Undertow","item":"https://patrickfanella.co/projects/undertow/"}]}]}</script><link rel="expect" href="#content-footer" blocking="render"><script src="/project-transition.js"></script><script type="module" src="/_astro/ContentPage.astro_astro_type_script_index_0_lang.Nt2nQzdy.js"></script>
+<link rel="modulepreload" href="/_astro/boot.DihkZl6P.js">
+<link rel="stylesheet" href="/_astro/boot.BAdwbN-G.css">
+<link rel="stylesheet" href="/_astro/ContentPage.f9fTo-8I.css"></head>
+<body class="content-page">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="bar site-header" data-site-header>
+  <a class="mark" href="/" aria-label="patrickfanella.co — Home" data-bleed="y"><img class="home-mark" src="/assets/brand/patrick/pf-solid-wavy.svg" width="32" height="32" alt=""><span class="home-long">patrickfanella.co</span></a>
+  
+  <nav aria-label="Main">
+    <a href="/projects/" aria-current="location" data-bleed="c">Work</a>
+    <a href="/resume/" data-bleed="y">Résumé</a>
+    <a href="/contact/" data-bleed="o">Contact</a>
+  </nav>
+  <button type="button" class="switch" data-theme-switch data-splash="y" hidden><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
+</header>
+  <main id="content" class="content-main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol><li>
+    <a href="/">Home</a>
+  </li><li>
+    <a href="/projects/">Work</a>
+  </li><li>
+    <span aria-current="page">Undertow</span>
+  </li></ol>
+</nav>
+    
+
+  <article class="project-detail">
+    <a href="/projects/#undertow">All projects</a>
+    
+    <header>
+      <h1 data-project-name="undertow">Undertow</h1>
+      <p class="lead">A layered music-video editor with timed lyrics and local MP4/WebM export, built around a browser rendering and encoding pipeline.</p>
+      <dl class="project-facts">
+        <div><dt>Status</dt><dd>Public editor; optional cloud features in testing</dd></div>
+        <div><dt>Role</dt><dd>Full-stack engineer</dd></div>
+        <div><dt>Period</dt><dd>2026–present</dd></div>
+      </dl>
+      <nav class="project-links" aria-label="Project links">
+        <a href="/case-studies/undertow/">Read the case study</a>
+        
+        <a href="https://undertow.subcult.tv">Visit Undertow</a>
+        <a href="https://github.com/subculture-collective/undertow">Repository</a>
+        
+      </nav>
+    </header>
+    <figure>
+  <img src="/assets/projects/screenshots/2026-11-16-undertow-editor-1280.webp" width="1280" height="800" srcset="/assets/projects/screenshots/2026-11-16-undertow-editor-640.webp 640w, /assets/projects/screenshots/2026-11-16-undertow-editor-1280.webp 1280w" sizes="(max-width: 1080px) calc(100vw - 32px), 1048px" alt="Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork." loading="eager" decoding="async">
+  <figcaption>Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork. Captured November 16, 2026.</figcaption>
+</figure>
+    <section>
+      <h2>Product and scope</h2>
+      <p>I built the browser editor and local rendering pipeline. A project combines audio-reactive visuals, artwork and timed lyrics, with separate layouts for landscape, portrait and square exports. Local editing and rendering work without an account.</p>
+      <dl class="project-facts"><div><dt>Stack</dt><dd>React, TypeScript, Web Audio, WebCodecs, Canvas, MediaBunny</dd></div></dl>
+    </section>
+    <section><h2>The problem</h2><p>A musician needs a finished video as well as a convincing preview. Browser codecs, frame timing and large output files make the export path as important as the editor.</p></section>
+    <section><h2>What I built</h2><ul><li>Built layered visual composition, audio analysis and timed lyric controls.</li><li>Built per-format layouts, project persistence and local video export.</li><li>Added chunked output handling and an end-to-end browser export self-test.</li></ul></section>
+    <section><h2>How it fits together</h2><p>The compositor draws each output frame and hands it to the browser encoder through MediaBunny. Codec negotiation follows the browser’s actual capabilities.</p><p>Seekable Blob chunks let the muxer patch file headers without allocating one file-sized ArrayBuffer. The export loop yields to the browser to keep the interface responsive.</p></section>
+    <figure>
+  <img src="/assets/projects/screenshots/2026-11-16-undertow-export-1280.webp" width="1280" height="800" srcset="/assets/projects/screenshots/2026-11-16-undertow-export-640.webp 640w, /assets/projects/screenshots/2026-11-16-undertow-export-1280.webp 1280w" sizes="(max-width: 1080px) calc(100vw - 32px), 1048px" alt="The local video-export controls for the Night Signal demonstration project." loading="lazy" decoding="async">
+  <figcaption>The local video-export controls for the Night Signal demonstration project. Captured November 16, 2026.</figcaption>
+</figure>
+    <section><h2>What I learned</h2><ul><li>A successful preview does not prove export works. Container bytes, codec support, frame timing and memory require their own checks.</li><li>Encoding limits belong in the interface: some browsers cannot produce audio, and hardware support varies.</li></ul></section>
+    
+    <p class="source-note">Copy reviewed November 16, 2026 against the <a href="https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/README.md">pinned project source</a>. Images retain their own capture dates. Repository scope and screenshots do not establish every release or device qualification.</p>
+  </article>
+
+  </main>
+  <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="mailto:fanella.patrick@gmail.com">fanella.patrick@gmail.com</a><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Case studies</a></nav></footer>
+  
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Clustr | Patrick Fanella</title>
+  <meta name="description" content="A Reddit community explorer connecting a durable Go crawler, reproducible graph builds and an interactive 2D/3D map.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Patrick Fanella">
+  <meta name="application-name" content="Patrick Fanella">
+  <link rel="canonical" href="https://patrickfanella.co/projects/clustr/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Patrick Fanella">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Clustr | Patrick Fanella">
+  <meta property="og:description" content="A Reddit community explorer connecting a durable Go crawler, reproducible graph builds and an interactive 2D/3D map.">
+  <meta property="og:url" content="https://patrickfanella.co/projects/clustr/">
+  <meta property="og:image" content="https://patrickfanella.co/assets/projects/social/clustr.png">
+  <meta property="og:image:secure_url" content="https://patrickfanella.co/assets/projects/social/clustr.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Clustr’s published-world dashboard, showing revision 744 and catalog 15.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Clustr | Patrick Fanella">
+  <meta name="twitter:description" content="A Reddit community explorer connecting a durable Go crawler, reproducible graph builds and an interactive 2D/3D map.">
+  <meta name="twitter:image" content="https://patrickfanella.co/assets/projects/social/clustr.png">
+  <meta name="twitter:image:alt" content="Clustr’s published-world dashboard, showing revision 744 and catalog 15.">
+  <link rel="icon" href="/favicon.ico?v=dc08099b7e31" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" href="/favicon-96x96.png?v=23946a6478c8" sizes="96x96" type="image/png">
+  <link rel="icon" href="/favicon.svg?v=dfb0d29a33b4" sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1e993fae8d14" sizes="180x180">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#e9eff2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10131e" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/big-shoulders-display-latin-wght-normal.Bn_gnr7w.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/hanken-grotesk-latin-wght-normal.CaVRRdDk.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/martian-mono-latin-wght-normal.5W32yIyr.woff2" crossorigin="anonymous">
+  <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
+  <style>@view-transition { navigation: auto; }</style>
+  <noscript><style>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://patrickfanella.co/#person","name":"Patrick Fanella","url":"https://patrickfanella.co/","jobTitle":"Senior full-stack and backend engineer","sameAs":["https://github.com/PatrickFanella","https://linkedin.com/in/patrick-fanella"]},{"@type":"WebSite","@id":"https://patrickfanella.co/#website","name":"Patrick Fanella","url":"https://patrickfanella.co/","inLanguage":"en-US","publisher":{"@id":"https://patrickfanella.co/#person"}},{"@type":"WebPage","@id":"https://patrickfanella.co/projects/clustr/#webpage","url":"https://patrickfanella.co/projects/clustr/","name":"Clustr | Patrick Fanella","description":"A Reddit community explorer connecting a durable Go crawler, reproducible graph builds and an interactive 2D/3D map.","inLanguage":"en-US","isPartOf":{"@id":"https://patrickfanella.co/#website"},"breadcrumb":{"@id":"https://patrickfanella.co/projects/clustr/#breadcrumbs"}},{"@type":"BreadcrumbList","@id":"https://patrickfanella.co/projects/clustr/#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patrickfanella.co/"},{"@type":"ListItem","position":2,"name":"Work","item":"https://patrickfanella.co/projects/"},{"@type":"ListItem","position":3,"name":"Clustr","item":"https://patrickfanella.co/projects/clustr/"}]}]}</script><link rel="expect" href="#content-footer" blocking="render"><script src="/project-transition.js"></script><script type="module" src="/_astro/ContentPage.astro_astro_type_script_index_0_lang.Nt2nQzdy.js"></script>
+<link rel="modulepreload" href="/_astro/boot.DihkZl6P.js">
+<link rel="stylesheet" href="/_astro/boot.BAdwbN-G.css">
+<link rel="stylesheet" href="/_astro/ContentPage.f9fTo-8I.css"></head>
+<body class="content-page">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="bar site-header" data-site-header>
+  <a class="mark" href="/" aria-label="patrickfanella.co — Home" data-bleed="y"><img class="home-mark" src="/assets/brand/patrick/pf-solid-wavy.svg" width="32" height="32" alt=""><span class="home-long">patrickfanella.co</span></a>
+  
+  <nav aria-label="Main">
+    <a href="/projects/" aria-current="location" data-bleed="c">Work</a>
+    <a href="/resume/" data-bleed="y">Résumé</a>
+    <a href="/contact/" data-bleed="o">Contact</a>
+  </nav>
+  <button type="button" class="switch" data-theme-switch data-splash="y" hidden><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
+</header>
+  <main id="content" class="content-main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol><li>
+    <a href="/">Home</a>
+  </li><li>
+    <a href="/projects/">Work</a>
+  </li><li>
+    <span aria-current="page">Clustr</span>
+  </li></ol>
+</nav>
+    
+
+  <article class="project-detail">
+    <a href="/projects/#clustr">All projects</a>
+    
+    <header>
+      <h1 data-project-name="clustr">Clustr</h1>
+      <p class="lead">A Reddit community explorer connecting a durable Go crawler, reproducible graph builds and an interactive 2D/3D map.</p>
+      <dl class="project-facts">
+        <div><dt>Status</dt><dd>Public application; active development</dd></div>
+        <div><dt>Role</dt><dd>Backend and full-stack engineer</dd></div>
+        <div><dt>Period</dt><dd>2026–present</dd></div>
+      </dl>
+      <nav class="project-links" aria-label="Project links">
+        <a href="/case-studies/clustr/">Read the case study</a>
+        
+        <a href="https://clustr.subcult.tv">Visit Clustr</a>
+        <a href="https://github.com/subculture-collective/clustr">Repository</a>
+        
+      </nav>
+    </header>
+    <figure>
+  <img src="/assets/projects/screenshots/2026-11-16-clustr-data-1280.webp" width="1280" height="800" srcset="/assets/projects/screenshots/2026-11-16-clustr-data-640.webp 640w, /assets/projects/screenshots/2026-11-16-clustr-data-1280.webp 1280w" sizes="(max-width: 1080px) calc(100vw - 32px), 1048px" alt="Clustr’s published-world dashboard, showing revision 744 and catalog 15." loading="eager" decoding="async">
+  <figcaption>Clustr’s published-world dashboard, showing revision 744 and catalog 15. Captured November 16, 2026.</figcaption>
+</figure>
+    <section>
+      <h2>Product and scope</h2>
+      <p>I built Clustr’s data collection, graph publication and browser explorer. Reddit activity becomes a weighted map of communities, with search, shareable views and a revision-aware API for the web app and a separate Unity prototype.</p>
+      <dl class="project-facts"><div><dt>Stack</dt><dd>Go, PostgreSQL, React, TypeScript, WebGL</dd></div></dl>
+    </section>
+    <section><h2>The problem</h2><p>External data changes while people explore it. A useful community map needs bounded collection, recoverable work and a consistent published graph.</p></section>
+    <section><h2>What I built</h2><ul><li>Built a crawler with global rate limits, durable requests, worker leases and retry outcomes.</li><li>Built weighted graph construction and reproducible community partitioning.</li><li>Published immutable graph revisions for 2D/3D exploration, search and linked entity views.</li></ul></section>
+    <section><h2>How it fits together</h2><p>A Go crawler writes normalized PostgreSQL records. A separate build stage constructs communities and spatial data before publishing a complete revision.</p><p>Publication commits the graph artifacts and current pointer atomically. Stable ordering and an explicit seed make the weighted Louvain partition reproducible.</p></section>
+    <figure>
+  <img src="/assets/projects/screenshots/2026-11-16-clustr-universe-1280.webp" width="1280" height="800" srcset="/assets/projects/screenshots/2026-11-16-clustr-universe-640.webp 640w, /assets/projects/screenshots/2026-11-16-clustr-universe-1280.webp 1280w" sizes="(max-width: 1080px) calc(100vw - 32px), 1048px" alt="Clustr’s 3D community universe with its search and navigation controls." loading="lazy" decoding="async">
+  <figcaption>Clustr’s 3D community universe with its search and navigation controls. Captured November 16, 2026.</figcaption>
+</figure>
+    <section><h2>What I learned</h2><ul><li>Data collection and publication have different failure boundaries. A partial crawl should not become a half-published world.</li><li>Graph caps and rendering detail are engineering budgets, not claims about the size of the live dataset.</li></ul></section>
+    
+    <p class="source-note">Copy reviewed November 16, 2026 against the <a href="https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/README.md">pinned project source</a>. Images retain their own capture dates. Repository scope and screenshots do not establish every release or device qualification.</p>
+  </article>
+
+  </main>
+  <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="mailto:fanella.patrick@gmail.com">fanella.patrick@gmail.com</a><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Case studies</a></nav></footer>
+  
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Invisible Museum | Patrick Fanella</title>
+  <meta name="description" content="A place-based museum prototype pairing a SwiftUI iOS app with a Go backend, letting physical locations host lightweight exhibits and stories.">
+  <meta name="robots" content="noindex, follow">
+  <meta name="author" content="Patrick Fanella">
+  <meta name="application-name" content="Patrick Fanella">
+  <link rel="canonical" href="https://patrickfanella.co/projects/invisible-museum/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Patrick Fanella">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Invisible Museum | Patrick Fanella">
+  <meta property="og:description" content="A place-based museum prototype pairing a SwiftUI iOS app with a Go backend, letting physical locations host lightweight exhibits and stories.">
+  <meta property="og:url" content="https://patrickfanella.co/projects/invisible-museum/">
+  <meta property="og:image" content="https://patrickfanella.co/assets/projects/social/invisible-museum.png">
+  <meta property="og:image:secure_url" content="https://patrickfanella.co/assets/projects/social/invisible-museum.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Invisible Museum project identity">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Invisible Museum | Patrick Fanella">
+  <meta name="twitter:description" content="A place-based museum prototype pairing a SwiftUI iOS app with a Go backend, letting physical locations host lightweight exhibits and stories.">
+  <meta name="twitter:image" content="https://patrickfanella.co/assets/projects/social/invisible-museum.png">
+  <meta name="twitter:image:alt" content="Invisible Museum project identity">
+  <link rel="icon" href="/favicon.ico?v=dc08099b7e31" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" href="/favicon-96x96.png?v=23946a6478c8" sizes="96x96" type="image/png">
+  <link rel="icon" href="/favicon.svg?v=dfb0d29a33b4" sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1e993fae8d14" sizes="180x180">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#e9eff2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10131e" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/big-shoulders-display-latin-wght-normal.Bn_gnr7w.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/hanken-grotesk-latin-wght-normal.CaVRRdDk.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/martian-mono-latin-wght-normal.5W32yIyr.woff2" crossorigin="anonymous">
+  <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
+  <style>@view-transition { navigation: auto; }</style>
+  <noscript><style>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://patrickfanella.co/#person","name":"Patrick Fanella","url":"https://patrickfanella.co/","jobTitle":"Senior full-stack and backend engineer","sameAs":["https://github.com/PatrickFanella","https://linkedin.com/in/patrick-fanella"]},{"@type":"WebSite","@id":"https://patrickfanella.co/#website","name":"Patrick Fanella","url":"https://patrickfanella.co/","inLanguage":"en-US","publisher":{"@id":"https://patrickfanella.co/#person"}},{"@type":"WebPage","@id":"https://patrickfanella.co/projects/invisible-museum/#webpage","url":"https://patrickfanella.co/projects/invisible-museum/","name":"Invisible Museum | Patrick Fanella","description":"A place-based museum prototype pairing a SwiftUI iOS app with a Go backend, letting physical locations host lightweight exhibits and stories.","inLanguage":"en-US","isPartOf":{"@id":"https://patrickfanella.co/#website"},"breadcrumb":{"@id":"https://patrickfanella.co/projects/invisible-museum/#breadcrumbs"}},{"@type":"BreadcrumbList","@id":"https://patrickfanella.co/projects/invisible-museum/#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patrickfanella.co/"},{"@type":"ListItem","position":2,"name":"Work","item":"https://patrickfanella.co/projects/"},{"@type":"ListItem","position":3,"name":"Invisible Museum","item":"https://patrickfanella.co/projects/invisible-museum/"}]}]}</script><link rel="expect" href="#content-footer" blocking="render"><script src="/project-transition.js"></script><script type="module" src="/_astro/ContentPage.astro_astro_type_script_index_0_lang.Nt2nQzdy.js"></script>
+<link rel="modulepreload" href="/_astro/boot.DihkZl6P.js">
+<link rel="stylesheet" href="/_astro/boot.BAdwbN-G.css">
+<link rel="stylesheet" href="/_astro/ContentPage.f9fTo-8I.css"></head>
+<body class="content-page">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="bar site-header" data-site-header>
+  <a class="mark" href="/" aria-label="patrickfanella.co — Home" data-bleed="y"><img class="home-mark" src="/assets/brand/patrick/pf-solid-wavy.svg" width="32" height="32" alt=""><span class="home-long">patrickfanella.co</span></a>
+  
+  <nav aria-label="Main">
+    <a href="/projects/" aria-current="location" data-bleed="c">Work</a>
+    <a href="/resume/" data-bleed="y">Résumé</a>
+    <a href="/contact/" data-bleed="o">Contact</a>
+  </nav>
+  <button type="button" class="switch" data-theme-switch data-splash="y" hidden><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
+</header>
+  <main id="content" class="content-main">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol><li>
+    <a href="/">Home</a>
+  </li><li>
+    <a href="/projects/">Work</a>
+  </li><li>
+    <span aria-current="page">Invisible Museum</span>
+  </li></ol>
+</nav>
+    
+
+  <article class="project-detail">
+    <a href="/projects/">All projects</a>
+    <p class="source-note">Historical project entry, kept so existing links still work. It shows the project as the earlier portfolio snapshot recorded it. It is not in the current selection, and I have not rechecked it as a live service.</p>
+    <header>
+      <h1 data-project-name="invisible-museum">Invisible Museum</h1>
+      <p class="lead">A place-based museum prototype pairing a SwiftUI iOS app with a Go backend, letting physical locations host lightweight exhibits and stories.</p>
+      <dl class="project-facts">
+        <div><dt>Status</dt><dd>Status not stated in source</dd></div>
+        <div><dt>Role</dt><dd>Prototype engineer</dd></div>
+        <div><dt>Period</dt><dd>2026</dd></div>
+      </dl>
+      <nav class="project-links" aria-label="Project links">
+        
+        
+        
+        
+        
+      </nav>
+    </header>
+    
+    <section>
+      <h2>Product and scope</h2>
+      <p>Invisible Museum is a place-based museum prototype. A SwiftUI iOS app reads lightweight exhibits, stories, and artifacts tied to physical locations from a Dockerized Go and PostgreSQL backend.</p>
+      <dl class="project-facts"><div><dt>Stack</dt><dd>SwiftUI, Go, PostgreSQL, Docker, iOS, Place-based Media</dd></div></dl>
+    </section>
+    <section><h2>The problem</h2><p>Stories about a place often lose context inside a general archive or feed. A location-aware exhibit can present them where they happened.</p></section>
+    <section><h2>What I built</h2><ul><li>Built a SwiftUI prototype for discovering exhibits tied to real-world locations.</li><li>Added a Dockerized Go/PostgreSQL backend so place metadata and exhibit content can be served locally.</li><li>Explored museum UX as a location-aware layer instead of a conventional archive or gallery feed.</li></ul></section>
+    <section><h2>How it fits together</h2><p>SwiftUI client handles the mobile exhibit experience while a Go backend exposes location and exhibit APIs.</p><p>PostgreSQL stores places, exhibit records, and supporting metadata for local development and deployment.</p><p>Dockerized backend makes it possible to test the mobile experience against a realistic service instead of mocks.</p></section>
+    
+    <section><h2>What I learned</h2><ul><li>Someone using this is already walking, so the mobile screen has to be small and fast.</li><li>Attaching exhibits to places turns the data model around: the place comes first and the collection second.</li></ul></section>
+    
+    <p class="source-note">Historical content from the <a href="https://github.com/subculture-collective/patrickfanella-co/blob/9ed782785c7366b04bf0c626b39f8a6fcf1e3b54/db/seed/portfolio.json">pinned portfolio catalog</a>, commit <code>9ed7827</code>, dated November 13, 2026.</p>
+  </article>
+
+  </main>
+  <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="mailto:fanella.patrick@gmail.com">fanella.patrick@gmail.com</a><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Case studies</a></nav></footer>
+  
+
+</body>
+</html>

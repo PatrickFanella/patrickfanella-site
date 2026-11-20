@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Clustr: From Reddit activity to an explorable graph | Patrick Fanella</title>
+  <meta name="description" content="A durable crawler, reproducible community partitions and atomic graph publication behind a 2D/3D explorer.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Patrick Fanella">
+  <meta name="application-name" content="Patrick Fanella">
+  <link rel="canonical" href="https://patrickfanella.co/case-studies/clustr/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Patrick Fanella">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Clustr: From Reddit activity to an explorable graph | Patrick Fanella">
+  <meta property="og:description" content="A durable crawler, reproducible community partitions and atomic graph publication behind a 2D/3D explorer.">
+  <meta property="og:url" content="https://patrickfanella.co/case-studies/clustr/">
+  <meta property="og:image" content="https://patrickfanella.co/assets/projects/social/clustr.png">
+  <meta property="og:image:secure_url" content="https://patrickfanella.co/assets/projects/social/clustr.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Clustr’s published-world dashboard, showing revision 744 and catalog 15.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Clustr: From Reddit activity to an explorable graph | Patrick Fanella">
+  <meta name="twitter:description" content="A durable crawler, reproducible community partitions and atomic graph publication behind a 2D/3D explorer.">
+  <meta name="twitter:image" content="https://patrickfanella.co/assets/projects/social/clustr.png">
+  <meta name="twitter:image:alt" content="Clustr’s published-world dashboard, showing revision 744 and catalog 15.">
+  <link rel="icon" href="/favicon.ico?v=dc08099b7e31" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" href="/favicon-96x96.png?v=23946a6478c8" sizes="96x96" type="image/png">
+  <link rel="icon" href="/favicon.svg?v=dfb0d29a33b4" sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1e993fae8d14" sizes="180x180">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#e9eff2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10131e" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/big-shoulders-display-latin-wght-normal.Bn_gnr7w.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/hanken-grotesk-latin-wght-normal.CaVRRdDk.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/martian-mono-latin-wght-normal.5W32yIyr.woff2" crossorigin="anonymous">
+  <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
+  <style>@view-transition { navigation: auto; }</style>
+  <noscript><style>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://patrickfanella.co/#person","name":"Patrick Fanella","url":"https://patrickfanella.co/","jobTitle":"Senior full-stack and backend engineer","sameAs":["https://github.com/PatrickFanella","https://linkedin.com/in/patrick-fanella"]},{"@type":"WebSite","@id":"https://patrickfanella.co/#website","name":"Patrick Fanella","url":"https://patrickfanella.co/","inLanguage":"en-US","publisher":{"@id":"https://patrickfanella.co/#person"}},{"@type":"WebPage","@id":"https://patrickfanella.co/case-studies/clustr/#webpage","url":"https://patrickfanella.co/case-studies/clustr/","name":"Clustr: From Reddit activity to an explorable graph | Patrick Fanella","description":"A durable crawler, reproducible community partitions and atomic graph publication behind a 2D/3D explorer.","inLanguage":"en-US","isPartOf":{"@id":"https://patrickfanella.co/#website"},"mainEntity":{"@id":"https://patrickfanella.co/case-studies/clustr/#article"},"breadcrumb":{"@id":"https://patrickfanella.co/case-studies/clustr/#breadcrumbs"}},{"@type":"BreadcrumbList","@id":"https://patrickfanella.co/case-studies/clustr/#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patrickfanella.co/"},{"@type":"ListItem","position":2,"name":"Case studies","item":"https://patrickfanella.co/case-studies/"},{"@type":"ListItem","position":3,"name":"Clustr","item":"https://patrickfanella.co/case-studies/clustr/"}]},{"@type":"Article","@id":"https://patrickfanella.co/case-studies/clustr/#article","headline":"From Reddit activity to an explorable graph","description":"A durable crawler, reproducible community partitions and atomic graph publication behind a 2D/3D explorer.","image":"https://patrickfanella.co/assets/projects/screenshots/2026-11-16-clustr-data-1280.webp","inLanguage":"en-US","author":{"@id":"https://patrickfanella.co/#person"},"publisher":{"@id":"https://patrickfanella.co/#person"},"mainEntityOfPage":{"@id":"https://patrickfanella.co/case-studies/clustr/#webpage"}}]}</script><link rel="expect" href="#content-footer" blocking="render"><script src="/project-transition.js"></script><script type="module" src="/_astro/ContentPage.astro_astro_type_script_index_0_lang.Nt2nQzdy.js"></script>
+<link rel="modulepreload" href="/_astro/boot.DihkZl6P.js">
+<link rel="stylesheet" href="/_astro/boot.BAdwbN-G.css">
+<link rel="stylesheet" href="/_astro/ContentPage.f9fTo-8I.css"></head>
+<body class="content-page">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="bar site-header" data-site-header>
+  <a class="mark" href="/" aria-label="patrickfanella.co — Home" data-bleed="y"><img class="home-mark" src="/assets/brand/patrick/pf-solid-wavy.svg" width="32" height="32" alt=""><span class="home-long">patrickfanella.co</span></a>
+  
+  <nav aria-label="Main">
+    <a href="/projects/" data-bleed="c">Work</a>
+    <a href="/resume/" data-bleed="y">Résumé</a>
+    <a href="/contact/" data-bleed="o">Contact</a>
+  </nav>
+  <button type="button" class="switch" data-theme-switch data-splash="y" hidden><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
+</header>
+  <main id="content" class="content-main reading-surface">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol><li>
+    <a href="/">Home</a>
+  </li><li>
+    <a href="/case-studies/">Case studies</a>
+  </li><li>
+    <span aria-current="page">Clustr</span>
+  </li></ol>
+</nav>
+    
+  <article class="product-study">
+    <a href="/case-studies/">All case studies</a>
+    <header>
+      <p class="study-project">Clustr</p>
+      <h1>From Reddit activity to an explorable graph</h1>
+      <p class="lead">Clustr turns Reddit activity into a map of communities and the relationships between them. The interesting engineering problem is keeping collection, graph construction and exploration coherent while the underlying data keeps changing.</p>
+      <dl class="project-facts">
+        <div><dt>My work</dt><dd>Go collection and graph pipeline, PostgreSQL and browser explorer</dd></div>
+        <div><dt>Delivery</dt><dd>A public community explorer backed by a revision-aware graph API.</dd></div>
+        <div><dt>Status</dt><dd>Public application; active development</dd></div>
+      </dl>
+      <nav class="project-links" aria-label="Case study destinations">
+        <a href="https://clustr.subcult.tv">Open Clustr</a>
+        <a href="https://github.com/subculture-collective/clustr">Source on GitHub</a>
+        <a href="/projects/clustr/">Project details</a>
+      </nav>
+    </header>
+    <figure>
+  <img src="/assets/projects/screenshots/2026-11-16-clustr-data-1280.webp" width="1280" height="800" srcset="/assets/projects/screenshots/2026-11-16-clustr-data-640.webp 640w, /assets/projects/screenshots/2026-11-16-clustr-data-1280.webp 1280w" sizes="(max-width: 1080px) calc(100vw - 64px), 968px" alt="Clustr’s published-world dashboard, showing revision 744 and catalog 15." loading="eager" decoding="async">
+  <figcaption>Clustr’s published-world dashboard, showing revision 744 and catalog 15. Captured November 16, 2026.</figcaption>
+</figure>
+    <nav class="study-contents" aria-label="In this case study">
+      <h2>In this study</h2>
+      <ol><li><a href="#problem">A graph needs a collection policy</a></li><li><a href="#collection">Make interrupted collection recoverable</a></li><li><a href="#publication">Publish a world rather than a work in progress</a></li><li><a href="#evidence">Let readers follow the same revision</a></li></ol>
+    </nav>
+    <div class="study-reading">
+      
+        <section id="problem" tabindex="-1" aria-labelledby="problem-heading">
+          <h2 id="problem-heading">A graph needs a collection policy</h2>
+          <p>Collecting external data is bounded by API quotas, network failures and the cost of revisiting existing records. A map also needs a defined interpretation: links represent observed relationships, not a complete or permanent account of a community.</p><p>I built the Go collection and publication pipeline and its browser explorer. The public application offers a 3D universe, a 2D map, data views and linked entity inspection. A separate Unity client consumes the same API and remains a prototype.</p>
+          
+          <ul class="study-sources" aria-label="Sources for A graph needs a collection policy"><li><a href="https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/README.md">Project scope and collection pipeline</a></li></ul>
+        </section>
+        
+        <section id="collection" tabindex="-1" aria-labelledby="collection-heading">
+          <h2 id="collection-heading">Make interrupted collection recoverable</h2>
+          <p>A durable crawl request is separate from a particular worker attempt. The lifecycle code records a worker identity, lease and attempt outcome, and distinguishes complete, partial, retryable, permanent-failure and cancelled work.</p><p>An explicit request can bring an existing community forward for another crawl. A historical successful job therefore does not become a permanent marker that prevents the data from ever being refreshed.</p>
+          <p class="study-tradeoff"><strong>The tradeoff.</strong> Leases and retries add state to operate and test. They also make unfinished work visible instead of hiding it in a worker process that may disappear.</p>
+          <ul class="study-sources" aria-label="Sources for Make interrupted collection recoverable"><li><a href="https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/backend/internal/crawler/lifecycle.go">Durable crawl lifecycle</a></li></ul>
+        </section>
+        <figure>
+  <img src="/assets/projects/screenshots/2026-11-16-clustr-universe-1280.webp" width="1280" height="800" srcset="/assets/projects/screenshots/2026-11-16-clustr-universe-640.webp 640w, /assets/projects/screenshots/2026-11-16-clustr-universe-1280.webp 1280w" sizes="(max-width: 1080px) calc(100vw - 64px), 968px" alt="Clustr’s 3D community universe with its search and navigation controls." loading="lazy" decoding="async">
+  <figcaption>Clustr’s 3D community universe with its search and navigation controls. Captured November 16, 2026.</figcaption>
+</figure>
+        <section id="publication" tabindex="-1" aria-labelledby="publication-heading">
+          <h2 id="publication-heading">Publish a world rather than a work in progress</h2>
+          <p>Graph generation and publication are separate from the crawler. The publication path bounds node and link counts, constructs the required artifacts, then commits those artifacts and the current revision pointer atomically.</p><p>The weighted Louvain boundary sorts source identities and edges and uses an explicit random seed. Repeated builds can therefore reproduce the partition for the same inputs and parameters, which makes graph changes easier to investigate.</p>
+          <p class="study-tradeoff"><strong>The tradeoff.</strong> A published revision is a consistent snapshot, so it deliberately trails collection. Caps keep resource use bounded but also define what the explorer can show.</p>
+          <ul class="study-sources" aria-label="Sources for Publish a world rather than a work in progress"><li><a href="https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/backend/internal/graph/revisions.go">Revision publication</a></li><li><a href="https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/backend/internal/affinity/hierarchy.go">Reproducible partition boundary</a></li></ul>
+        </section>
+        
+        <section id="evidence" tabindex="-1" aria-labelledby="evidence-heading">
+          <h2 id="evidence-heading">Let readers follow the same revision</h2>
+          <p>The explorer and API expose views of the published world rather than querying every crawler table directly. The revision integration test checks that publication refuses an absent or unpublished spatial catalog without moving the current pointer.</p><p>The screenshots show the actual public application captured on November 16, 2026. Rendering and dataset coverage have their own limits; a graph image does not establish collection completeness or a benchmark for large-world performance.</p>
+          
+          <ul class="study-sources" aria-label="Sources for Let readers follow the same revision"><li><a href="https://github.com/subculture-collective/clustr/blob/27ff4e4ca0112474aa608dbe1bdc5d6bdf899b75/backend/internal/graph/revisions_integration_test.go">Publication integration test</a></li><li><a href="https://clustr.subcult.tv">Explore Clustr</a></li></ul>
+        </section>
+        
+      <section aria-labelledby="evidence-limits">
+        <h2 id="evidence-limits">Evidence and limits</h2>
+        <p>Community relationships reflect collected activity and the selected graph model. Configured node caps are resource budgets, not measurements of the published dataset.</p>
+        <p class="source-note">Source and copy review: November 16, 2026. Implementation links name the reviewed commits; screenshots name their capture dates and data context.</p>
+      </section>
+    </div>
+    <nav class="study-next project-links" aria-label="Continue reading">
+      <a href="/projects/">All selected work</a>
+      <a href="/resume/">Experience and résumé</a>
+      <a href="/contact/">Contact me</a>
+    </nav>
+  </article>
+
+  </main>
+  <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="mailto:fanella.patrick@gmail.com">fanella.patrick@gmail.com</a><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Case studies</a></nav></footer>
+  
+
+</body>
+</html>

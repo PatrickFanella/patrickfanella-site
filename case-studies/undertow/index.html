@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Undertow: A video rendering pipeline inside the browser | Patrick Fanella</title>
+  <meta name="description" content="Building a layered music-video editor with local encoding, bounded output buffers and explicit codec limits.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Patrick Fanella">
+  <meta name="application-name" content="Patrick Fanella">
+  <link rel="canonical" href="https://patrickfanella.co/case-studies/undertow/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Patrick Fanella">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Undertow: A video rendering pipeline inside the browser | Patrick Fanella">
+  <meta property="og:description" content="Building a layered music-video editor with local encoding, bounded output buffers and explicit codec limits.">
+  <meta property="og:url" content="https://patrickfanella.co/case-studies/undertow/">
+  <meta property="og:image" content="https://patrickfanella.co/assets/projects/social/undertow.png">
+  <meta property="og:image:secure_url" content="https://patrickfanella.co/assets/projects/social/undertow.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Undertow: A video rendering pipeline inside the browser | Patrick Fanella">
+  <meta name="twitter:description" content="Building a layered music-video editor with local encoding, bounded output buffers and explicit codec limits.">
+  <meta name="twitter:image" content="https://patrickfanella.co/assets/projects/social/undertow.png">
+  <meta name="twitter:image:alt" content="Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork.">
+  <link rel="icon" href="/favicon.ico?v=dc08099b7e31" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" href="/favicon-96x96.png?v=23946a6478c8" sizes="96x96" type="image/png">
+  <link rel="icon" href="/favicon.svg?v=dfb0d29a33b4" sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1e993fae8d14" sizes="180x180">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#e9eff2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10131e" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/big-shoulders-display-latin-wght-normal.Bn_gnr7w.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/hanken-grotesk-latin-wght-normal.CaVRRdDk.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/martian-mono-latin-wght-normal.5W32yIyr.woff2" crossorigin="anonymous">
+  <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
+  <style>@view-transition { navigation: auto; }</style>
+  <noscript><style>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://patrickfanella.co/#person","name":"Patrick Fanella","url":"https://patrickfanella.co/","jobTitle":"Senior full-stack and backend engineer","sameAs":["https://github.com/PatrickFanella","https://linkedin.com/in/patrick-fanella"]},{"@type":"WebSite","@id":"https://patrickfanella.co/#website","name":"Patrick Fanella","url":"https://patrickfanella.co/","inLanguage":"en-US","publisher":{"@id":"https://patrickfanella.co/#person"}},{"@type":"WebPage","@id":"https://patrickfanella.co/case-studies/undertow/#webpage","url":"https://patrickfanella.co/case-studies/undertow/","name":"Undertow: A video rendering pipeline inside the browser | Patrick Fanella","description":"Building a layered music-video editor with local encoding, bounded output buffers and explicit codec limits.","inLanguage":"en-US","isPartOf":{"@id":"https://patrickfanella.co/#website"},"mainEntity":{"@id":"https://patrickfanella.co/case-studies/undertow/#article"},"breadcrumb":{"@id":"https://patrickfanella.co/case-studies/undertow/#breadcrumbs"}},{"@type":"BreadcrumbList","@id":"https://patrickfanella.co/case-studies/undertow/#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patrickfanella.co/"},{"@type":"ListItem","position":2,"name":"Case studies","item":"https://patrickfanella.co/case-studies/"},{"@type":"ListItem","position":3,"name":"Undertow","item":"https://patrickfanella.co/case-studies/undertow/"}]},{"@type":"Article","@id":"https://patrickfanella.co/case-studies/undertow/#article","headline":"A video rendering pipeline inside the browser","description":"Building a layered music-video editor with local encoding, bounded output buffers and explicit codec limits.","image":"https://patrickfanella.co/assets/projects/screenshots/2026-11-16-undertow-editor-1280.webp","inLanguage":"en-US","author":{"@id":"https://patrickfanella.co/#person"},"publisher":{"@id":"https://patrickfanella.co/#person"},"mainEntityOfPage":{"@id":"https://patrickfanella.co/case-studies/undertow/#webpage"}}]}</script><link rel="expect" href="#content-footer" blocking="render"><script src="/project-transition.js"></script><script type="module" src="/_astro/ContentPage.astro_astro_type_script_index_0_lang.Nt2nQzdy.js"></script>
+<link rel="modulepreload" href="/_astro/boot.DihkZl6P.js">
+<link rel="stylesheet" href="/_astro/boot.BAdwbN-G.css">
+<link rel="stylesheet" href="/_astro/ContentPage.f9fTo-8I.css"></head>
+<body class="content-page">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="bar site-header" data-site-header>
+  <a class="mark" href="/" aria-label="patrickfanella.co — Home" data-bleed="y"><img class="home-mark" src="/assets/brand/patrick/pf-solid-wavy.svg" width="32" height="32" alt=""><span class="home-long">patrickfanella.co</span></a>
+  
+  <nav aria-label="Main">
+    <a href="/projects/" data-bleed="c">Work</a>
+    <a href="/resume/" data-bleed="y">Résumé</a>
+    <a href="/contact/" data-bleed="o">Contact</a>
+  </nav>
+  <button type="button" class="switch" data-theme-switch data-splash="y" hidden><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
+</header>
+  <main id="content" class="content-main reading-surface">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol><li>
+    <a href="/">Home</a>
+  </li><li>
+    <a href="/case-studies/">Case studies</a>
+  </li><li>
+    <span aria-current="page">Undertow</span>
+  </li></ol>
+</nav>
+    
+  <article class="product-study">
+    <a href="/case-studies/">All case studies</a>
+    <header>
+      <p class="study-project">Undertow</p>
+      <h1>A video rendering pipeline inside the browser</h1>
+      <p class="lead">Undertow gives a musician a way to turn a track, artwork and timed lyrics into a video. The editor is only the beginning: the same project has to produce frames, encode them and finish a playable file within the browser’s limits.</p>
+      <dl class="project-facts">
+        <div><dt>My work</dt><dd>React editor, audio-reactive composition and local WebCodecs export</dd></div>
+        <div><dt>Delivery</dt><dd>A public editor that renders MP4 or WebM locally without requiring an account.</dd></div>
+        <div><dt>Status</dt><dd>Public editor; optional cloud features in testing</dd></div>
+      </dl>
+      <nav class="project-links" aria-label="Case study destinations">
+        <a href="https://undertow.subcult.tv">Open Undertow</a>
+        <a href="https://github.com/subculture-collective/undertow">Source on GitHub</a>
+        <a href="/projects/undertow/">Project details</a>
+      </nav>
+    </header>
+    <figure>
+  <img src="/assets/projects/screenshots/2026-11-16-undertow-editor-1280.webp" width="1280" height="800" srcset="/assets/projects/screenshots/2026-11-16-undertow-editor-640.webp 640w, /assets/projects/screenshots/2026-11-16-undertow-editor-1280.webp 1280w" sizes="(max-width: 1080px) calc(100vw - 64px), 968px" alt="Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork." loading="eager" decoding="async">
+  <figcaption>Undertow editing Night Signal, an isolated demo with original synthesized audio and approved PF artwork. Captured November 16, 2026.</figcaption>
+</figure>
+    <nav class="study-contents" aria-label="In this case study">
+      <h2>In this study</h2>
+      <ol><li><a href="#problem">Treat the export as part of the editor</a></li><li><a href="#frames">Keep frame production and encoding explicit</a></li><li><a href="#memory">Let the muxer seek without one giant buffer</a></li><li><a href="#evidence">Separate the local product from optional services</a></li></ol>
+    </nav>
+    <div class="study-reading">
+      
+        <section id="problem" tabindex="-1" aria-labelledby="problem-heading">
+          <h2 id="problem-heading">Treat the export as part of the editor</h2>
+          <p>A preview can look right while the exported file has the wrong timing, no audio or an allocation failure. The editor therefore needs a real rendering pipeline, not a screen recording of the preview.</p><p>I built the React editor, layered compositor and local export path. Projects keep separate landscape, portrait and square layouts. Visuals can react to audio, and timed lyrics can sit alongside artwork, text and video layers.</p>
+          
+          <ul class="study-sources" aria-label="Sources for Treat the export as part of the editor"><li><a href="https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/README.md">Editor and export capabilities</a></li></ul>
+        </section>
+        
+        <section id="frames" tabindex="-1" aria-labelledby="frames-heading">
+          <h2 id="frames-heading">Keep frame production and encoding explicit</h2>
+          <p>The export loop analyzes, draws and encodes frames through MediaBunny and the browser’s codec APIs. It negotiates an encodable video and audio format instead of assuming every browser supports the same combination.</p><p>Encoder promises do not necessarily yield control back to the page. The pipeline explicitly yields a macrotask, and the frame-capture path handles GPU/CPU copying with a pixel-readback fallback.</p>
+          <p class="study-tradeoff"><strong>The tradeoff.</strong> Local rendering keeps media on the user’s device, but codec availability and encoding speed depend on that browser and hardware. A supported resolution is not a promise that every device can encode it.</p>
+          <ul class="study-sources" aria-label="Sources for Keep frame production and encoding explicit"><li><a href="https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/src/export/exportVideo.ts">Frame capture and export loop</a></li></ul>
+        </section>
+        <figure>
+  <img src="/assets/projects/screenshots/2026-11-16-undertow-export-1280.webp" width="1280" height="800" srcset="/assets/projects/screenshots/2026-11-16-undertow-export-640.webp 640w, /assets/projects/screenshots/2026-11-16-undertow-export-1280.webp 1280w" sizes="(max-width: 1080px) calc(100vw - 64px), 968px" alt="The local video-export controls for the Night Signal demonstration project." loading="lazy" decoding="async">
+  <figcaption>The local video-export controls for the Night Signal demonstration project. Captured November 16, 2026.</figcaption>
+</figure>
+        <section id="memory" tabindex="-1" aria-labelledby="memory-heading">
+          <h2 id="memory-heading">Let the muxer seek without one giant buffer</h2>
+          <p>Video containers need to patch metadata written earlier in the file. Undertow’s BlobChunks output maps writes into seekable chunks so the muxer can revise headers without allocating an ArrayBuffer as large as the finished video.</p><p>The regression test first constrains individual ArrayBuffer allocations, demonstrates the original in-memory path failing, then exports and demuxes a larger file through the chunked path. Another check verifies bytes when a header write crosses a chunk boundary.</p>
+          <p class="study-tradeoff"><strong>The tradeoff.</strong> Chunking avoids a single large contiguous allocation. It does not make output storage free or remove the device’s overall memory limit.</p>
+          <ul class="study-sources" aria-label="Sources for Let the muxer seek without one giant buffer"><li><a href="https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/src/export/blobOutput.ts">Seekable chunked output</a></li><li><a href="https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/tests/export-memory.test.ts">Allocation and byte-integrity regression tests</a></li></ul>
+        </section>
+        
+        <section id="evidence" tabindex="-1" aria-labelledby="evidence-heading">
+          <h2 id="evidence-heading">Separate the local product from optional services</h2>
+          <p>The public editor works without an account. Optional accounts and cloud rendering are a separate capability in testing, and live paid billing is off. They are not needed to explain the local rendering work.</p><p>The screenshots use an isolated demonstration project, an original eight-second synthesized track and the portfolio’s approved PF artwork. They show the real editor and export controls, not a client commission or a measured encoding benchmark. The repository also provides a browser self-test that encodes and reads actual output files.</p>
+          
+          <ul class="study-sources" aria-label="Sources for Separate the local product from optional services"><li><a href="https://github.com/subculture-collective/undertow/blob/3440d7f17de91d3371f77702f9d374677499fa20/src/selftest.ts">Browser export self-test</a></li><li><a href="https://undertow.subcult.tv">Open Undertow</a></li></ul>
+        </section>
+        
+      <section aria-labelledby="evidence-limits">
+        <h2 id="evidence-limits">Evidence and limits</h2>
+        <p>Encoding support, audio output and achievable resolutions vary by browser and hardware. The captured demonstration does not qualify every device or the optional cloud-rendering service.</p>
+        <p class="source-note">Source and copy review: November 16, 2026. Implementation links name the reviewed commits; screenshots name their capture dates and data context.</p>
+      </section>
+    </div>
+    <nav class="study-next project-links" aria-label="Continue reading">
+      <a href="/projects/">All selected work</a>
+      <a href="/resume/">Experience and résumé</a>
+      <a href="/contact/">Contact me</a>
+    </nav>
+  </article>
+
+  </main>
+  <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="mailto:fanella.patrick@gmail.com">fanella.patrick@gmail.com</a><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Case studies</a></nav></footer>
+  
+
+</body>
+</html>

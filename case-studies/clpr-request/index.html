@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Clpr request setup | Patrick Fanella</title>
+  <meta name="description" content="Clpr source pinned to a commit, with notes beside the relevant lines.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Patrick Fanella">
+  <meta name="application-name" content="Patrick Fanella">
+  <link rel="canonical" href="https://patrickfanella.co/case-studies/clpr-request/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Patrick Fanella">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Clpr request setup | Patrick Fanella">
+  <meta property="og:description" content="Clpr source pinned to a commit, with notes beside the relevant lines.">
+  <meta property="og:url" content="https://patrickfanella.co/case-studies/clpr-request/">
+  <meta property="og:image" content="https://patrickfanella.co/assets/projects/social/clpr.png">
+  <meta property="og:image:secure_url" content="https://patrickfanella.co/assets/projects/social/clpr.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Clpr’s public Discover collections view.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Clpr request setup | Patrick Fanella">
+  <meta name="twitter:description" content="Clpr source pinned to a commit, with notes beside the relevant lines.">
+  <meta name="twitter:image" content="https://patrickfanella.co/assets/projects/social/clpr.png">
+  <meta name="twitter:image:alt" content="Clpr’s public Discover collections view.">
+  <link rel="icon" href="/favicon.ico?v=dc08099b7e31" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" href="/favicon-96x96.png?v=23946a6478c8" sizes="96x96" type="image/png">
+  <link rel="icon" href="/favicon.svg?v=dfb0d29a33b4" sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1e993fae8d14" sizes="180x180">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#e9eff2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10131e" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/big-shoulders-display-latin-wght-normal.Bn_gnr7w.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/hanken-grotesk-latin-wght-normal.CaVRRdDk.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/martian-mono-latin-wght-normal.5W32yIyr.woff2" crossorigin="anonymous">
+  <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
+  <style>@view-transition { navigation: auto; }</style>
+  <noscript><style>[data-pour-in] [data-word] { visibility: visible !important; animation: none !important; }</style></noscript>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://patrickfanella.co/#person","name":"Patrick Fanella","url":"https://patrickfanella.co/","jobTitle":"Senior full-stack and backend engineer","sameAs":["https://github.com/PatrickFanella","https://linkedin.com/in/patrick-fanella"]},{"@type":"WebSite","@id":"https://patrickfanella.co/#website","name":"Patrick Fanella","url":"https://patrickfanella.co/","inLanguage":"en-US","publisher":{"@id":"https://patrickfanella.co/#person"}},{"@type":"WebPage","@id":"https://patrickfanella.co/case-studies/clpr-request/#webpage","url":"https://patrickfanella.co/case-studies/clpr-request/","name":"Clpr request setup | Patrick Fanella","description":"Clpr source pinned to a commit, with notes beside the relevant lines.","inLanguage":"en-US","isPartOf":{"@id":"https://patrickfanella.co/#website"},"breadcrumb":{"@id":"https://patrickfanella.co/case-studies/clpr-request/#breadcrumbs"}},{"@type":"BreadcrumbList","@id":"https://patrickfanella.co/case-studies/clpr-request/#breadcrumbs","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://patrickfanella.co/"},{"@type":"ListItem","position":2,"name":"Case studies","item":"https://patrickfanella.co/case-studies/"},{"@type":"ListItem","position":3,"name":"Clpr request setup","item":"https://patrickfanella.co/case-studies/clpr-request/"}]}]}</script><link rel="expect" href="#content-footer" blocking="render"><script src="/project-transition.js"></script><script type="module" src="/_astro/ContentPage.astro_astro_type_script_index_0_lang.Nt2nQzdy.js"></script>
+<link rel="modulepreload" href="/_astro/boot.DihkZl6P.js">
+<link rel="stylesheet" href="/_astro/boot.BAdwbN-G.css">
+<link rel="stylesheet" href="/_astro/clpr-search.XW_MWu7W.css">
+<link rel="stylesheet" href="/_astro/ContentPage.f9fTo-8I.css"></head>
+<body class="content-page">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="bar site-header" data-site-header>
+  <a class="mark" href="/" aria-label="patrickfanella.co — Home" data-bleed="y"><img class="home-mark" src="/assets/brand/patrick/pf-solid-wavy.svg" width="32" height="32" alt=""><span class="home-long">patrickfanella.co</span></a>
+  
+  <nav aria-label="Main">
+    <a href="/projects/" data-bleed="c">Work</a>
+    <a href="/resume/" data-bleed="y">Résumé</a>
+    <a href="/contact/" data-bleed="o">Contact</a>
+  </nav>
+  <button type="button" class="switch" data-theme-switch data-splash="y" hidden><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
+</header>
+  <main id="content" class="content-main reading-surface">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol><li>
+    <a href="/">Home</a>
+  </li><li>
+    <a href="/case-studies/">Case studies</a>
+  </li><li>
+    <span aria-current="page">Clpr request setup</span>
+  </li></ol>
+</nav>
+    
+  <article class="case-study" aria-labelledby="study-title" data-astro-cid-p5wr5ghm>
+  <header data-astro-cid-p5wr5ghm><h1 id="study-title" data-astro-cid-p5wr5ghm>A search request becomes four independent result sets</h1><p class="lead" data-astro-cid-p5wr5ghm>A short reading of Clpr’s pinned PostgreSQL search repository.</p></header>
+  
+  
+  <p class="source-label" data-astro-cid-p5wr5ghm><a href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L26-L47" data-astro-cid-p5wr5ghm>Open pinned source on GitHub</a></p>
+  <div class="study-grid" aria-label="Source and reading notes" data-astro-cid-p5wr5ghm>
+    <section class="excerpt-row" aria-label="Unannotated excerpt 26 to 27" data-astro-cid-p5wr5ghm>
+      <div class="source" tabindex="0" role="region" aria-label="Source lines 26 to 27" data-astro-cid-p5wr5ghm>
+        <pre class="astro-code astro-code-themes github-light-high-contrast github-dark-high-contrast" style="background-color:#ffffff;--shiki-dark-bg:#0a0c10;color:#0e1116;--shiki-dark:#f0f3f6; overflow-x: auto;" tabindex="0" data-astro-cid-p5wr5ghm data-language="go"><code><span class="line" id="L26" data-line="26"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L26" aria-label="Open source line 26 on GitHub">26</a><span class="line-text"><span style="color:#66707B;--shiki-dark:#BDC4CC">// Search performs a universal search across all types</span></span></span>
+<span class="line" id="L27" data-line="27"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L27" aria-label="Open source line 27 on GitHub">27</a><span class="line-text"><span style="color:#A0111F;--shiki-dark:#FF9492">func</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> (</span><span style="color:#702C00;--shiki-dark:#FFB757">r </span><span style="color:#A0111F;--shiki-dark:#FF9492">*</span><span style="color:#702C00;--shiki-dark:#FFB757">SearchRepository</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">) </span><span style="color:#622CBC;--shiki-dark:#DBB7FF">Search</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">(</span><span style="color:#702C00;--shiki-dark:#FFB757">ctx</span><span style="color:#702C00;--shiki-dark:#FFB757"> context</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">.</span><span style="color:#702C00;--shiki-dark:#FFB757">Context</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">, </span><span style="color:#702C00;--shiki-dark:#FFB757">req</span><span style="color:#A0111F;--shiki-dark:#FF9492"> *</span><span style="color:#702C00;--shiki-dark:#FFB757">models</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">.</span><span style="color:#702C00;--shiki-dark:#FFB757">SearchRequest</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">) (</span><span style="color:#A0111F;--shiki-dark:#FF9492">*</span><span style="color:#702C00;--shiki-dark:#FFB757">models</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">.</span><span style="color:#702C00;--shiki-dark:#FFB757">SearchResponse</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">, </span><span style="color:#A0111F;--shiki-dark:#FF9492">error</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">) {</span></span></span></code></pre>
+      </div>
+      
+    </section><section class="excerpt-row" data-note="initialize-response" aria-label="Initialize response annotation" data-astro-cid-p5wr5ghm>
+      <div class="source" tabindex="0" role="region" aria-label="Source lines 28 to 35" data-astro-cid-p5wr5ghm>
+        <pre class="astro-code astro-code-themes github-light-high-contrast github-dark-high-contrast" style="background-color:#ffffff;--shiki-dark-bg:#0a0c10;color:#0e1116;--shiki-dark:#f0f3f6; overflow-x: auto;" tabindex="0" data-astro-cid-p5wr5ghm data-language="go"><code><span class="line highlighted" id="L28" data-line="28" style="anchor-name: --line-initialize-response"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L28" aria-label="Open source line 28 on GitHub">28</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">	response </span><span style="color:#A0111F;--shiki-dark:#FF9492">:=</span><span style="color:#A0111F;--shiki-dark:#FF9492"> &#x26;</span><span style="color:#702C00;--shiki-dark:#FFB757">models</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">.</span><span style="color:#702C00;--shiki-dark:#FFB757">SearchResponse</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">{</span></span><a class="line-note-label" href="#note-initialize-response">Note: Initialize response</a></span>
+<span class="line highlighted" id="L29" data-line="29"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L29" aria-label="Open source line 29 on GitHub">29</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">		Query:   req.Query,</span></span></span>
+<span class="line highlighted" id="L30" data-line="30"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L30" aria-label="Open source line 30 on GitHub">30</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">		Results: models.</span><span style="color:#622CBC;--shiki-dark:#DBB7FF">EmptySearchResults</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">(),</span></span></span>
+<span class="line highlighted" id="L31" data-line="31"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L31" aria-label="Open source line 31 on GitHub">31</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">		Counts:  </span><span style="color:#702C00;--shiki-dark:#FFB757">models</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">.</span><span style="color:#702C00;--shiki-dark:#FFB757">SearchCounts</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">{},</span></span></span>
+<span class="line highlighted" id="L32" data-line="32"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L32" aria-label="Open source line 32 on GitHub">32</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">		Meta: </span><span style="color:#702C00;--shiki-dark:#FFB757">models</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">.</span><span style="color:#702C00;--shiki-dark:#FFB757">SearchMeta</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">{</span></span></span>
+<span class="line highlighted" id="L33" data-line="33"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L33" aria-label="Open source line 33 on GitHub">33</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">			Page:  req.Page,</span></span></span>
+<span class="line highlighted" id="L34" data-line="34"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L34" aria-label="Open source line 34 on GitHub">34</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">			Limit: req.Limit,</span></span></span>
+<span class="line highlighted" id="L35" data-line="35"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L35" aria-label="Open source line 35 on GitHub">35</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">		},</span></span></span></code></pre>
+      </div>
+      <aside class="note" id="note-initialize-response" tabindex="-1" style="position-anchor: --line-initialize-response" data-astro-cid-p5wr5ghm><h2 data-astro-cid-p5wr5ghm>Initialize response</h2><p class="line-label" data-astro-cid-p5wr5ghm>Lines <a href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L28-L35" data-astro-cid-p5wr5ghm>28–35</a></p><p data-astro-cid-p5wr5ghm>The response preserves the submitted query and page settings, and starts with empty result collections.</p>
+        
+        
+      </aside>
+    </section><section class="excerpt-row" aria-label="Unannotated excerpt 36 to 37" data-astro-cid-p5wr5ghm>
+      <div class="source" tabindex="0" role="region" aria-label="Source lines 36 to 37" data-astro-cid-p5wr5ghm>
+        <pre class="astro-code astro-code-themes github-light-high-contrast github-dark-high-contrast" style="background-color:#ffffff;--shiki-dark-bg:#0a0c10;color:#0e1116;--shiki-dark:#f0f3f6; overflow-x: auto;" tabindex="0" data-astro-cid-p5wr5ghm data-language="go"><code><span class="line" id="L36" data-line="36"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L36" aria-label="Open source line 36 on GitHub">36</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">	}</span></span></span>
+<span class="line" id="L37" data-line="37"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L37" aria-label="Open source line 37 on GitHub">37</a><span class="line-text"></span></span></code></pre>
+      </div>
+      
+    </section><section class="excerpt-row" data-note="normalize-query" aria-label="Normalize query annotation" data-astro-cid-p5wr5ghm>
+      <div class="source" tabindex="0" role="region" aria-label="Source lines 38 to 39" data-astro-cid-p5wr5ghm>
+        <pre class="astro-code astro-code-themes github-light-high-contrast github-dark-high-contrast" style="background-color:#ffffff;--shiki-dark-bg:#0a0c10;color:#0e1116;--shiki-dark:#f0f3f6; overflow-x: auto;" tabindex="0" data-astro-cid-p5wr5ghm data-language="go"><code><span class="line highlighted" id="L38" data-line="38" style="anchor-name: --line-normalize-query"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L38" aria-label="Open source line 38 on GitHub">38</a><span class="line-text"><span style="color:#66707B;--shiki-dark:#BDC4CC">	// Parse query into tsquery format</span></span><a class="line-note-label" href="#note-normalize-query">Note: Normalize query</a></span>
+<span class="line highlighted" id="L39" data-line="39"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L39" aria-label="Open source line 39 on GitHub">39</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">	tsQuery </span><span style="color:#A0111F;--shiki-dark:#FF9492">:=</span><span style="color:#622CBC;--shiki-dark:#DBB7FF"> parseQueryToTSQuery</span><span style="color:#0E1116;--shiki-dark:#F0F3F6">(req.Query)</span></span></span></code></pre>
+      </div>
+      <aside class="note" id="note-normalize-query" tabindex="-1" style="position-anchor: --line-normalize-query" data-astro-cid-p5wr5ghm><h2 data-astro-cid-p5wr5ghm>Normalize query</h2><p class="line-label" data-astro-cid-p5wr5ghm>Lines <a href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L38-L39" data-astro-cid-p5wr5ghm>38–39</a></p><p data-astro-cid-p5wr5ghm>The request text is converted to a PostgreSQL tsquery before type-specific repository calls.</p>
+        
+        
+      </aside>
+    </section><section class="excerpt-row" aria-label="Unannotated excerpt 40 to 40" data-astro-cid-p5wr5ghm>
+      <div class="source" tabindex="0" role="region" aria-label="Source lines 40 to 40" data-astro-cid-p5wr5ghm>
+        <pre class="astro-code astro-code-themes github-light-high-contrast github-dark-high-contrast" style="background-color:#ffffff;--shiki-dark-bg:#0a0c10;color:#0e1116;--shiki-dark:#f0f3f6; overflow-x: auto;" tabindex="0" data-astro-cid-p5wr5ghm data-language="go"><code><span class="line" id="L40" data-line="40"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L40" aria-label="Open source line 40 on GitHub">40</a><span class="line-text"></span></span></code></pre>
+      </div>
+      
+    </section><section class="excerpt-row" data-note="select-result-types" aria-label="Select result types annotation" data-astro-cid-p5wr5ghm>
+      <div class="source" tabindex="0" role="region" aria-label="Source lines 41 to 46" data-astro-cid-p5wr5ghm>
+        <pre class="astro-code astro-code-themes github-light-high-contrast github-dark-high-contrast" style="background-color:#ffffff;--shiki-dark-bg:#0a0c10;color:#0e1116;--shiki-dark:#f0f3f6; overflow-x: auto;" tabindex="0" data-astro-cid-p5wr5ghm data-language="go"><code><span class="line highlighted" id="L41" data-line="41" style="anchor-name: --line-select-result-types"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L41" aria-label="Open source line 41 on GitHub">41</a><span class="line-text"><span style="color:#66707B;--shiki-dark:#BDC4CC">	// Determine what types to search</span></span><a class="line-note-label" href="#note-select-result-types">Note: Select result types</a></span>
+<span class="line highlighted" id="L42" data-line="42"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L42" aria-label="Open source line 42 on GitHub">42</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">	searchAll </span><span style="color:#A0111F;--shiki-dark:#FF9492">:=</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> req.Type </span><span style="color:#A0111F;--shiki-dark:#FF9492">==</span><span style="color:#032563;--shiki-dark:#ADDCFF"> ""</span><span style="color:#A0111F;--shiki-dark:#FF9492"> ||</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> req.Type </span><span style="color:#A0111F;--shiki-dark:#FF9492">==</span><span style="color:#032563;--shiki-dark:#ADDCFF"> "all"</span></span></span>
+<span class="line highlighted" id="L43" data-line="43"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L43" aria-label="Open source line 43 on GitHub">43</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">	searchClips </span><span style="color:#A0111F;--shiki-dark:#FF9492">:=</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> searchAll </span><span style="color:#A0111F;--shiki-dark:#FF9492">||</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> req.Type </span><span style="color:#A0111F;--shiki-dark:#FF9492">==</span><span style="color:#032563;--shiki-dark:#ADDCFF"> "clips"</span></span></span>
+<span class="line highlighted" id="L44" data-line="44"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L44" aria-label="Open source line 44 on GitHub">44</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">	searchCreators </span><span style="color:#A0111F;--shiki-dark:#FF9492">:=</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> searchAll </span><span style="color:#A0111F;--shiki-dark:#FF9492">||</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> req.Type </span><span style="color:#A0111F;--shiki-dark:#FF9492">==</span><span style="color:#032563;--shiki-dark:#ADDCFF"> "creators"</span></span></span>
+<span class="line highlighted" id="L45" data-line="45"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L45" aria-label="Open source line 45 on GitHub">45</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">	searchGames </span><span style="color:#A0111F;--shiki-dark:#FF9492">:=</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> searchAll </span><span style="color:#A0111F;--shiki-dark:#FF9492">||</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> req.Type </span><span style="color:#A0111F;--shiki-dark:#FF9492">==</span><span style="color:#032563;--shiki-dark:#ADDCFF"> "games"</span></span></span>
+<span class="line highlighted" id="L46" data-line="46"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L46" aria-label="Open source line 46 on GitHub">46</a><span class="line-text"><span style="color:#0E1116;--shiki-dark:#F0F3F6">	searchTags </span><span style="color:#A0111F;--shiki-dark:#FF9492">:=</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> searchAll </span><span style="color:#A0111F;--shiki-dark:#FF9492">||</span><span style="color:#0E1116;--shiki-dark:#F0F3F6"> req.Type </span><span style="color:#A0111F;--shiki-dark:#FF9492">==</span><span style="color:#032563;--shiki-dark:#ADDCFF"> "tags"</span></span></span></code></pre>
+      </div>
+      <aside class="note" id="note-select-result-types" tabindex="-1" style="position-anchor: --line-select-result-types" data-astro-cid-p5wr5ghm><h2 data-astro-cid-p5wr5ghm>Select result types</h2><p class="line-label" data-astro-cid-p5wr5ghm>Lines <a href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L41-L46" data-astro-cid-p5wr5ghm>41–46</a></p><p data-astro-cid-p5wr5ghm>An empty or “all” type enables clips, creators, games, and tags; a specific type enables its matching branch.</p>
+        
+        
+      </aside>
+    </section><section class="excerpt-row" aria-label="Unannotated excerpt 47 to 47" data-astro-cid-p5wr5ghm>
+      <div class="source" tabindex="0" role="region" aria-label="Source lines 47 to 47" data-astro-cid-p5wr5ghm>
+        <pre class="astro-code astro-code-themes github-light-high-contrast github-dark-high-contrast" style="background-color:#ffffff;--shiki-dark-bg:#0a0c10;color:#0e1116;--shiki-dark:#f0f3f6; overflow-x: auto;" tabindex="0" data-astro-cid-p5wr5ghm data-language="go"><code><span class="line" id="L47" data-line="47"><a class="line-number" href="https://github.com/PatrickFanella/clpr/blob/1eab1a62535e562e327fbf4b197c094e81abe619/backend/internal/repository/search_repository.go#L47" aria-label="Open source line 47 on GitHub">47</a><span class="line-text"></span></span></code></pre>
+      </div>
+      
+    </section>
+  </div>
+  <p class="source-note" data-astro-cid-p5wr5ghm>Commit <code data-astro-cid-p5wr5ghm>1eab1a62535e562e327fbf4b197c094e81abe619</code>, <code data-astro-cid-p5wr5ghm>backend/internal/repository/search_repository.go</code>. Archived source SHA-256: <code data-astro-cid-p5wr5ghm>073e770bbd98884ad051bf7f906776f746fa0a6568c7da62142cbd4b786d10fc</code>.</p>
+</article>
+  <p>Next: <a href="/case-studies/clpr-search/">How Clpr ranks and pages a clip search</a>, or <a href="/desk/">open the Desk</a>.</p>
+  <script type="module" src="/_astro/clpr-request.astro_astro_type_script_index_0_lang.C43884o3.js"></script>
+<link rel="modulepreload" href="/_astro/case-study.BC2gDHjK.js">
+
+  </main>
+  <footer class="foot" id="content-footer"><p>Patrick Fanella</p><nav aria-label="Elsewhere"><a href="mailto:fanella.patrick@gmail.com">fanella.patrick@gmail.com</a><a href="/">Home</a><a href="/motion/">Motion set</a><a href="/case-studies/">Case studies</a></nav></footer>
+  
+
+</body>
+</html>

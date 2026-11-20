@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Engineering Desk | Patrick Fanella</title>
+  <meta name="description" content="Inspect Clpr’s pinned Go search code, PostgreSQL queries, protocol traffic and query plans in an interactive engineering desk by Patrick Fanella.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Patrick Fanella">
+  <meta name="application-name" content="Patrick Fanella">
+  <link rel="canonical" href="https://patrickfanella.co/desk/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Patrick Fanella">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Engineering Desk | Patrick Fanella">
+  <meta property="og:description" content="Inspect Clpr’s pinned Go search code, PostgreSQL queries, protocol traffic and query plans in an interactive engineering desk by Patrick Fanella.">
+  <meta property="og:url" content="https://patrickfanella.co/desk/">
+  <meta property="og:image" content="https://patrickfanella.co/assets/brand/patrick/share-card.png">
+  <meta property="og:image:secure_url" content="https://patrickfanella.co/assets/brand/patrick/share-card.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Patrick Fanella. Software, sound, culture. Ink in Motion identity.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Engineering Desk | Patrick Fanella">
+  <meta name="twitter:description" content="Inspect Clpr’s pinned Go search code, PostgreSQL queries, protocol traffic and query plans in an interactive engineering desk by Patrick Fanella.">
+  <meta name="twitter:image" content="https://patrickfanella.co/assets/brand/patrick/share-card.png">
+  <meta name="twitter:image:alt" content="Patrick Fanella. Software, sound, culture. Ink in Motion identity.">
+  <link rel="icon" href="/favicon.ico?v=dc08099b7e31" sizes="16x16 32x32 48x48" type="image/x-icon">
+  <link rel="icon" href="/favicon-96x96.png?v=23946a6478c8" sizes="96x96" type="image/png">
+  <link rel="icon" href="/favicon.svg?v=dfb0d29a33b4" sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1e993fae8d14" sizes="180x180">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#e9eff2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10131e" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/big-shoulders-display-latin-wght-normal.Bn_gnr7w.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/hanken-grotesk-latin-wght-normal.CaVRRdDk.woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" type="font/woff2" href="/_astro/martian-mono-latin-wght-normal.5W32yIyr.woff2" crossorigin="anonymous">
+  <!-- Opt in before pagereveal, including when external stylesheets are still loading. -->
+  <style>@view-transition { navigation: auto; }</style>
+  
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://patrickfanella.co/#person","name":"Patrick Fanella","url":"https://patrickfanella.co/","jobTitle":"Senior full-stack and backend engineer","sameAs":["https://github.com/PatrickFanella","https://linkedin.com/in/patrick-fanella"]},{"@type":"WebSite","@id":"https://patrickfanella.co/#website","name":"Patrick Fanella","url":"https://patrickfanella.co/","inLanguage":"en-US","publisher":{"@id":"https://patrickfanella.co/#person"}},{"@type":"WebPage","@id":"https://patrickfanella.co/desk/#webpage","url":"https://patrickfanella.co/desk/","name":"Engineering Desk | Patrick Fanella","description":"Inspect Clpr’s pinned Go search code, PostgreSQL queries, protocol traffic and query plans in an interactive engineering desk by Patrick Fanella.","inLanguage":"en-US","isPartOf":{"@id":"https://patrickfanella.co/#website"}}]}</script><script type="module" src="/_astro/index.astro_astro_type_script_index_0_lang.DYa7smZ_.js"></script>
+<link rel="modulepreload" href="/_astro/boot.DihkZl6P.js">
+<link rel="stylesheet" href="/_astro/boot.BAdwbN-G.css">
+<link rel="stylesheet" href="/_astro/index.C6VCiJJu.css"></head>
+<body class="desk">
+  <canvas id="ink" aria-hidden="true"></canvas>
+  
+  
+  <noscript><style>.desk .wm .pane { animation: none; backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--desk-pane-solid); }</style></noscript>
+  <a class="skip" href="#about">Skip to the desk</a>
+
+  <header class="bar site-header" data-site-header>
+  <a class="mark" href="/" aria-label="patrickfanella.co — Home" data-bleed="y"><img class="home-mark" src="/assets/brand/patrick/pf-solid-wavy.svg" width="32" height="32" alt=""><span class="home-long">patrickfanella.co</span></a>
+  
+    <nav class="tags" aria-label="Panes">
+      <button type="button" data-go="1" style="--acc: var(--desk-1)" aria-label="Pane 1, about" aria-keyshortcuts="Alt+1" aria-current="true">1</button>
+      <button type="button" data-go="2" style="--acc: var(--desk-2)" aria-label="Pane 2, projects" aria-keyshortcuts="Alt+2">2</button>
+      <button type="button" data-go="3" style="--acc: var(--desk-3)" aria-label="Pane 3, psql" aria-keyshortcuts="Alt+3">3</button>
+      <button type="button" data-go="4" style="--acc: var(--desk-4)" aria-label="Pane 4, log" aria-keyshortcuts="Alt+4">4</button>
+      <button type="button" data-go="5" style="--acc: var(--desk-5)" aria-label="Pane 5, process" aria-keyshortcuts="Alt+5">5</button>
+    </nav>
+  
+  <nav aria-label="Main">
+    <a href="/projects/" data-bleed="c">Work</a>
+    <a href="/resume/" data-bleed="y">Résumé</a>
+    <a href="/contact/" data-bleed="o">Contact</a>
+  </nav>
+  <button type="button" class="switch" data-theme-switch data-splash="y" hidden><i aria-hidden="true"></i><span class="sr-only">Theme: </span><span data-theme-name>Light</span></button>
+</header>
+
+  <main class="wm">
+    <section class="pane about" id="about" data-pane="1" tabindex="-1" aria-labelledby="p1">
+      <header class="ptitle"><b class="pname" id="p1"><i aria-hidden="true">1</i>about</b><span>visitor@patrickfanella.co: ~</span></header>
+      <div class="pbody">
+        <p class="cmdline"><span class="ps1">~</span> $ whoami</p>
+        <h1 id="name" class="desk-name poured" data-pour-in><span data-word>Patrick</span> <span data-word>Fanella</span></h1>
+        <p class="role">Senior backend and full-stack engineer</p>
+        <p class="pitch">I build and run services in Go, Python and TypeScript on PostgreSQL. At DeliverZero I built the inventory, returns and partner integrations that cut manual operations work by about 25%. Chicago or remote, and interviewing now.</p>
+        <ul class="links" aria-label="Contact and code">
+          <li><a href="mailto:fanella.patrick@gmail.com" data-bleed="y">fanella.patrick@gmail.com</a></li>
+          <li><a href="https://github.com/PatrickFanella" data-bleed="c">GitHub</a></li>
+          <li><a href="https://linkedin.com/in/patrick-fanella" data-bleed="o">LinkedIn</a></li>
+          <li><a href="/resume/" data-bleed="y">Résumé</a></li>
+        </ul>
+        <form class="shell" data-shell data-projects-reply="Clpr: Twitch clip search and moderation. Clustr: Reddit community map in 2D and 3D. HasanAra: searchable broadcast archive. Undertow: browser music-video editor (live beta)." hidden>
+          <label for="command"><span class="ps1">~</span> $ <span class="sr-only">Desk command</span></label>
+          <input id="command" name="command" autocomplete="off" spellcheck="false" maxlength="200" aria-describedby="shell-help">
+          <button type="submit">Run</button>
+          <p id="shell-help">Type help for commands. Up and Down recall command history.</p>
+        </form>
+        <div class="shell-output" data-shell-output role="log" aria-label="Command output" aria-live="polite" aria-relevant="additions" tabindex="0"></div>
+      </div>
+    </section>
+
+    <section class="pane projects" data-pane="2" tabindex="-1" aria-labelledby="p2" style="--i: 1">
+      <header class="ptitle"><h2 class="pname" id="p2"><i aria-hidden="true">2</i>projects</h2><span>ls ~/projects</span></header>
+      <div class="pbody">
+        <ol class="work"><li>
+          <h3><a href="/case-studies/clpr/" data-bleed="c">Clpr</a><span>Public application</span></h3>
+          <p>A Twitch clip discovery product with creator and topic search, curated collections, playlists and moderation.</p>
+        </li><li>
+          <h3><a href="/case-studies/clustr/" data-bleed="c">Clustr</a><span>Public application; active development</span></h3>
+          <p>A Reddit community explorer connecting a durable Go crawler, reproducible graph builds and an interactive 2D/3D map.</p>
+        </li><li>
+          <h3><a href="/case-studies/rekolekt/" data-bleed="c">Rekolekt + HasanAra</a><span>Backend in use; public archive</span></h3>
+          <p>A reusable recording-archive backend and its public HasanAra application, connecting long-running ingestion to timestamped transcript search.</p>
+        </li><li>
+          <h3><a href="/case-studies/undertow/" data-bleed="c">Undertow</a><span>Public editor; optional cloud features in testing</span></h3>
+          <p>A layered music-video editor with timed lyrics and local MP4/WebM export, built around a browser rendering and encoding pipeline.</p>
+        </li></ol>
+        <p class="more-work">Browse the <a href="/projects/">selected project list</a>.</p>
+      </div>
+    </section>
+
+    <section class="pane psql" data-pane="3" tabindex="-1" aria-labelledby="p3" style="--i: 2">
+      <header class="ptitle"><h2 class="pname" id="p3"><i aria-hidden="true">3</i>psql</h2><span data-pg-sub>recorded run</span></header>
+      <div class="pbody">
+        <noscript><p class="empty">The complete recorded inspector is below. Live searches need JavaScript and an explicit start; reading this evidence downloads no database or WebAssembly.</p></noscript>
+        <div class="inspector" data-inspector data-mode="recorded" data-live-allowed="false" data-live-reason="Clpr live mode is off: the worker or its budget changed since this recording. A new recording is needed." data-live-label="Start Clpr live mode (22.89 MB download; 1,670 MiB measured peak)">
+  <div class="evidence-entry">
+    <h3>Try a clip search</h3>
+    <p><a href="https://clpr.tv">Clpr is the production app</a>. This Desk demonstrates its pinned PostgreSQL search path against eight labelled fixture clips.</p>
+    <p><strong>Recorded example: world record</strong>. 2 returned clips:</p>
+    <ul><li>speedrun world record attempt</li><li>chat reacts to the world record</li></ul>
+    <p>Recorded plan comparison at 8 clips: sequential cost 1.12, GIN cost 21.22. These are planner estimates, not milliseconds or production measurements. The Plan tab contains all five sizes and the captured plans.</p>
+    <p>The live example searches fixtures in this tab. The separate SQL benchmark loads generated data; it does not query the production service. Nothing heavy starts until you choose a live action.</p>
+  </div>
+  <div data-inspector-recording>
+    <p><strong>Recorded run</strong>, <time datetime="2026-11-15T08:46:07.846Z">2026-11-15</time>.
+      Recorded locally in headless Chromium 159.0.8154.6, PostgreSQL 18.6; all 155 migrations.</p>
+    <p>Source: <a href="https://github.com/subculture-collective/clpr/tree/112bea9863d21f6e2cb5131f2952bc5f23d5b092">Clpr 112bea9</a>;
+      <a href="https://github.com/PatrickFanella/patrickfanella-site/tree/df1654ae8be7f49401bf2726102aee63b24b0217">site df1654a</a>.
+      These results were recorded elsewhere; they are not measurements from your device.</p>
+    <p>22.89 MB of worker payloads, including 5.13 MB compressed Clpr Wasm.
+      Startup 3.0 s. Sampled peak Chromium process-tree RSS: 1,670 MiB;
+      budget 2048 MiB. Includes WebAssembly and shared pages counted per process; sampled every 50 ms through 50,008 clips. Device use can differ.</p>
+    <details><summary>Recording provenance</summary><p>Platform: linux x64 6.12.116+deb13-amd64. Memory samples: 621.</p>
+      <pre tabindex="0">Source fingerprint: 0d89cb3669c7ec2ed6a4be50b2544c69134350e1afab5c420a61dacf9a29d900
+Built worker SHA-256: 9de03613a59d0748bd703099c004f2b8a73c489286aaa896127f7ed959775169</pre></details>
+    <p>Clpr live mode is off: the worker or its budget changed since this recording. A new recording is needed. The recorded run remains readable.</p>
+  </div>
+  <p data-inspector-request>Recorded GET /api/v1/search?q=world+record&amp;type=clips · HTTP 200 · 8 fixture clips. Plan samples cover 8 through 50,008 clips.</p>
+  <div data-inspector-tabs hidden aria-label="Search inspector"></div>
+  <section id="inspector-response" aria-labelledby="inspector-response-title" tabindex="0">
+    <h3 id="inspector-response-title">Response</h3>
+    <div data-inspector-response><p>2 returned clips: speedrun world record attempt; chat reacts to the world record</p><h4>Raw headers</h4><pre tabindex="0">HTTP 200
+Content-Type: application/json; charset=utf-8</pre>
+    <h4>JSON response</h4><pre tabindex="0">{
+  &quot;query&quot;: &quot;world record&quot;,
+  &quot;results&quot;: {
+    &quot;clips&quot;: [
+      {
+        &quot;id&quot;: &quot;53a0f77b-8a0b-4b63-af26-9206b707d61b&quot;,
+        &quot;twitch_clip_id&quot;: &quot;fixture-0&quot;,
+        &quot;twitch_clip_url&quot;: &quot;https://example.invalid/clip/0&quot;,
+        &quot;embed_url&quot;: &quot;https://example.invalid/clip/0&quot;,
+        &quot;title&quot;: &quot;speedrun world record attempt&quot;,
+        &quot;creator_name&quot;: &quot;runner_a&quot;,
+        &quot;broadcaster_name&quot;: &quot;runner_a&quot;,
+        &quot;view_count&quot;: 0,
+        &quot;created_at&quot;: &quot;2026-11-01T00:00:00Z&quot;,
+        &quot;imported_at&quot;: &quot;2026-11-15T08:45:39.538Z&quot;,
+        &quot;vote_score&quot;: 41,
+        &quot;comment_count&quot;: 0,
+        &quot;favorite_count&quot;: 0,
+        &quot;is_featured&quot;: false,
+        &quot;is_nsfw&quot;: false,
+        &quot;is_removed&quot;: false,
+        &quot;is_hidden&quot;: false,
+        &quot;dmca_removed&quot;: false,
+        &quot;source_type&quot;: &quot;&quot;,
+        &quot;source_platform&quot;: &quot;&quot;,
+        &quot;duration_verified&quot;: false
+      },
+      {
+        &quot;id&quot;: &quot;b44edb07-4584-43ed-b93f-4b37ffa15a01&quot;,
+        &quot;twitch_clip_id&quot;: &quot;fixture-1&quot;,
+        &quot;twitch_clip_url&quot;: &quot;https://example.invalid/clip/1&quot;,
+        &quot;embed_url&quot;: &quot;https://example.invalid/clip/1&quot;,
+        &quot;title&quot;: &quot;chat reacts to the world record&quot;,
+        &quot;creator_name&quot;: &quot;streamer_b&quot;,
+        &quot;broadcaster_name&quot;: &quot;streamer_b&quot;,
+        &quot;view_count&quot;: 0,
+        &quot;created_at&quot;: &quot;2026-11-01T07:00:00Z&quot;,
+        &quot;imported_at&quot;: &quot;2026-11-15T08:45:39.546Z&quot;,
+        &quot;vote_score&quot;: 33,
+        &quot;comment_count&quot;: 0,
+        &quot;favorite_count&quot;: 0,
+        &quot;is_featured&quot;: false,
+        &quot;is_nsfw&quot;: false,
+        &quot;is_removed&quot;: false,
+        &quot;is_hidden&quot;: false,
+        &quot;dmca_removed&quot;: false,
+        &quot;source_type&quot;: &quot;&quot;,
+        &quot;source_platform&quot;: &quot;&quot;,
+        &quot;duration_verified&quot;: false
+      }
+    ],
+    &quot;creators&quot;: [],
+    &quot;games&quot;: [],
+    &quot;twitch_categories&quot;: [],
+    &quot;tags&quot;: []
+  },
+  &quot;counts&quot;: {
+    &quot;clips&quot;: 2,
+    &quot;creators&quot;: 0,
+    &quot;games&quot;: 0,
+    &quot;twitch_categories&quot;: 0,
+    &quot;tags&quot;: 0
+  },
+  &quot;facets&quot;: {
+    &quot;date_range&quot;: {
+      &quot;last_hour&quot;: 0,
+      &quot;last_day&quot;: 0,
+      &quot;last_week&quot;: 0,
+      &quot;last_month&quot;: 0,
+      &quot;older&quot;: 0
+    }
+  },
+  &quot;meta&quot;: {
+    &quot;page&quot;: 1,
+    &quot;limit&quot;: 20,
+    &quot;total_items&quot;: 2,
+    &quot;total_pages&quot;: 1
+  }
+}</pre></div>
+  </section>
+  <section id="inspector-sql" aria-labelledby="inspector-sql-title" tabindex="0">
+    <h3 id="inspector-sql-title">SQL</h3>
+    <div data-inspector-sql><p>3 executions; 3 prepares. Statements and parameter formats captured from pgx. Binary parameters are shown as hex bytes; their types are not guessed.</p><section><h4>1. Prepare</h4><dl><dt>Read</dt><dd>clips c</dd><dt>Filter</dt><dd>c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1)</dd></dl>
+      <details><summary>Full SQL</summary><pre tabindex="0">SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1)</pre></details></section><section><h4>2. Execute</h4><dl><dt>Read</dt><dd>clips c</dd><dt>Filter</dt><dd>c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1)</dd></dl>
+      <details><summary>Full SQL</summary><pre tabindex="0">SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1)</pre></details><p>Parameters ($1, $2, … in order)</p><pre tabindex="0">[
+  {
+    &quot;format&quot;: &quot;text&quot;,
+    &quot;value&quot;: &quot;world:* &amp; record:*&quot;,
+    &quot;oid&quot;: 25
+  }
+]</pre></section><section><h4>3. Prepare</h4><dl><dt>Read</dt><dd>clips c</dd><dt>Filter</dt><dd>c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1)</dd><dt>Order</dt><dd>ts_rank(c.search_vector, to_tsquery(&#39;english&#39;, $1)) DESC, c.vote_score DESC, c.created_at DESC</dd><dt>Limit</dt><dd>$2</dd><dt>Offset</dt><dd>$3</dd></dl>
+      <details><summary>Full SQL</summary><pre tabindex="0">
+		SELECT
+			c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,
+			c.title, c.creator_name, c.creator_id, c.broadcaster_name,
+			c.broadcaster_id, c.game_id, c.game_name, c.language,
+			c.thumbnail_url, c.duration, c.view_count, c.created_at,
+			c.imported_at, c.vote_score, c.comment_count, c.favorite_count,
+			c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text
+		FROM clips c
+		WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1)
+		ORDER BY ts_rank(c.search_vector, to_tsquery(&#39;english&#39;, $1)) DESC, c.vote_score DESC, c.created_at DESC
+		LIMIT $2 OFFSET $3
+	</pre></details></section><section><h4>4. Execute</h4><dl><dt>Read</dt><dd>clips c</dd><dt>Filter</dt><dd>c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1)</dd><dt>Order</dt><dd>ts_rank(c.search_vector, to_tsquery(&#39;english&#39;, $1)) DESC, c.vote_score DESC, c.created_at DESC</dd><dt>Limit</dt><dd>$2</dd><dt>Offset</dt><dd>$3</dd></dl>
+      <details><summary>Full SQL</summary><pre tabindex="0">
+		SELECT
+			c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,
+			c.title, c.creator_name, c.creator_id, c.broadcaster_name,
+			c.broadcaster_id, c.game_id, c.game_name, c.language,
+			c.thumbnail_url, c.duration, c.view_count, c.created_at,
+			c.imported_at, c.vote_score, c.comment_count, c.favorite_count,
+			c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text
+		FROM clips c
+		WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1)
+		ORDER BY ts_rank(c.search_vector, to_tsquery(&#39;english&#39;, $1)) DESC, c.vote_score DESC, c.created_at DESC
+		LIMIT $2 OFFSET $3
+	</pre></details><p>Parameters ($1, $2, … in order)</p><pre tabindex="0">[
+  {
+    &quot;format&quot;: &quot;text&quot;,
+    &quot;value&quot;: &quot;world:* &amp; record:*&quot;,
+    &quot;oid&quot;: 25
+  },
+  {
+    &quot;format&quot;: &quot;binary&quot;,
+    &quot;value&quot;: &quot;0000000000000014&quot;,
+    &quot;oid&quot;: 20
+  },
+  {
+    &quot;format&quot;: &quot;binary&quot;,
+    &quot;value&quot;: &quot;0000000000000000&quot;,
+    &quot;oid&quot;: 20
+  }
+]</pre></section><section><h4>5. Prepare</h4><dl><dt>Write</dt><dd>search_queries (user_id, query, result_count)</dd></dl>
+      <details><summary>Full SQL</summary><pre tabindex="0">
+		INSERT INTO search_queries (user_id, query, result_count)
+		VALUES ($1, $2, $3)
+	</pre></details></section><section><h4>6. Execute</h4><dl><dt>Write</dt><dd>search_queries (user_id, query, result_count)</dd></dl>
+      <details><summary>Full SQL</summary><pre tabindex="0">
+		INSERT INTO search_queries (user_id, query, result_count)
+		VALUES ($1, $2, $3)
+	</pre></details><p>Parameters ($1, $2, … in order)</p><pre tabindex="0">[
+  {
+    &quot;format&quot;: &quot;binary&quot;,
+    &quot;value&quot;: null,
+    &quot;oid&quot;: 2950
+  },
+  {
+    &quot;format&quot;: &quot;text&quot;,
+    &quot;value&quot;: &quot;world record&quot;,
+    &quot;oid&quot;: 25
+  },
+  {
+    &quot;format&quot;: &quot;binary&quot;,
+    &quot;value&quot;: &quot;00000002&quot;,
+    &quot;oid&quot;: 23
+  }
+]</pre></section></div>
+  </section>
+  <section id="inspector-timing" aria-labelledby="inspector-timing-title" tabindex="0">
+    <h3 id="inspector-timing-title">Timing</h3>
+    <div data-inspector-timing><dl data-timing><dt>Total handler request</dt><dd data-ms="39.900000005960464">39.9 ms</dd><dt>Inside PostgreSQL calls</dt><dd data-ms="7.499999992549419">7.5 ms</dd><dt>Outside PostgreSQL calls</dt><dd data-ms="32.400000013411045">32.4 ms</dd></dl>
+    <p>7 bridge calls. Inside time is wall time awaiting execProtocolRaw, including protocol work and PostgreSQL. Outside time is the request total minus those calls: Go, Gin, pgx, bridge and JavaScript overhead together. These parts are not measured separately. Browser clock rounding applies; these are fixture timings, not production latency.</p></div>
+  </section>
+  <section id="inspector-wire" aria-labelledby="inspector-wire-title" tabindex="0">
+    <h3 id="inspector-wire-title">Wire</h3>
+    <div data-inspector-wire><p>Actual PostgreSQL protocol bytes at the in-process pgx bridge, grouped by call. Counts include the type byte and four-byte length. These are not network packets or network latency.</p><h4>Call 1: 41 bytes sent, 423 bytes received; 1.0 ms</h4><p>pgx → PostgreSQL</p><ol><li>StartupMessage (untyped): 41 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">00 00 00 29 00 03 00 00 75 73 65 72 00 70 6f 73 74 67 72 65 73 00 64 61 74 61 62 61 73 65 00 70 6f 73 74 67 72 65 73 00 00</pre></details></li></ol><p>PostgreSQL → pgx</p><ol><li>Authentication (R): 9 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">52 00 00 00 08 00 00 00 00</pre></details></li><li>ParameterStatus (S): 24 bytes. in_hot_standby = off<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 17 69 6e 5f 68 6f 74 5f 73 74 61 6e 64 62 79 00 6f 66 66 00</pre></details></li><li>ParameterStatus (S): 26 bytes. integer_datetimes = on<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 19 69 6e 74 65 67 65 72 5f 64 61 74 65 74 69 6d 65 73 00 6f 6e 00</pre></details></li><li>ParameterStatus (S): 18 bytes. TimeZone = UTC<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 11 54 69 6d 65 5a 6f 6e 65 00 55 54 43 00</pre></details></li><li>ParameterStatus (S): 28 bytes. IntervalStyle = postgres<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 1b 49 6e 74 65 72 76 61 6c 53 74 79 6c 65 00 70 6f 73 74 67 72 65 73 00</pre></details></li><li>ParameterStatus (S): 24 bytes. search_path = public<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 17 73 65 61 72 63 68 5f 70 61 74 68 00 70 75 62 6c 69 63 00</pre></details></li><li>ParameterStatus (S): 21 bytes. is_superuser = on<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 14 69 73 5f 73 75 70 65 72 75 73 65 72 00 6f 6e 00</pre></details></li><li>ParameterStatus (S): 23 bytes. application_name = <details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 16 61 70 70 6c 69 63 61 74 69 6f 6e 5f 6e 61 6d 65 00 00</pre></details></li><li>ParameterStatus (S): 39 bytes. default_transaction_read_only = off<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 26 64 65 66 61 75 6c 74 5f 74 72 61 6e 73 61 63 74 69 6f 6e 5f 72 65 61 64 5f 6f 6e 6c 79 00 6f 66 66 00</pre></details></li><li>ParameterStatus (S): 27 bytes. scram_iterations = 4096<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 1a 73 63 72 61 6d 5f 69 74 65 72 61 74 69 6f 6e 73 00 34 30 39 36 00</pre></details></li><li>ParameterStatus (S): 24 bytes. DateStyle = ISO, MDY<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 17 44 61 74 65 53 74 79 6c 65 00 49 53 4f 2c 20 4d 44 59 00</pre></details></li><li>ParameterStatus (S): 36 bytes. standard_conforming_strings = on<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 23 73 74 61 6e 64 61 72 64 5f 63 6f 6e 66 6f 72 6d 69 6e 67 5f 73 74 72 69 6e 67 73 00 6f 6e 00</pre></details></li><li>ParameterStatus (S): 28 bytes. session_authorization = <details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 1b 73 65 73 73 69 6f 6e 5f 61 75 74 68 6f 72 69 7a 61 74 69 6f 6e 00 00</pre></details></li><li>ParameterStatus (S): 26 bytes. client_encoding = UTF8<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 19 63 6c 69 65 6e 74 5f 65 6e 63 6f 64 69 6e 67 00 55 54 46 38 00</pre></details></li><li>ParameterStatus (S): 25 bytes. server_version = 18.6<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 18 73 65 72 76 65 72 5f 76 65 72 73 69 6f 6e 00 31 38 2e 36 00</pre></details></li><li>ParameterStatus (S): 26 bytes. server_encoding = UTF8<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 19 73 65 72 76 65 72 5f 65 6e 63 6f 64 69 6e 67 00 55 54 46 38 00</pre></details></li><li>BackendKeyData (K): 13 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">4b 00 00 00 0c 00 00 00 2a 00 2b e1 00</pre></details></li><li>ReadyForQuery (Z): 6 bytes. transaction status I<details><summary>Raw message hex</summary><pre tabindex="0">5a 00 00 00 05 49</pre></details></li></ol><h4>Call 2: 292 bytes sent, 192 bytes received; 0.7 ms</h4><p>pgx → PostgreSQL</p><ol><li>Parse (P): 222 bytes. statement &quot;stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b&quot;; SELECT COUNT(*) FROM clips c WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1); parameter OIDs []<details><summary>Raw message hex</summary><pre tabindex="0">50 00 00 00 dd 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00 53 45 4c 45 43 54 20 43 4f 55 4e 54 28 2a 29 20 46 52 4f 4d 20 63 6c 69 70 73 20 63 20 57 48 45 52 45 20 63 2e 69 73 5f 72 65 6d 6f 76 65 64 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 69 73 5f 68 69 64 64 65 6e 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 64 6d 63 61 5f 72 65 6d 6f 76 65 64 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 73 65 61 72 63 68 5f 76 65 63 74 6f 72 20 40 40 20 74 6f 5f 74 73 71 75 65 72 79 28 27 65 6e 67 6c 69 73 68 27 2c 20 24 31 29 00 00 00</pre></details></li><li>Describe (D): 65 bytes. statement &quot;stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b&quot;<details><summary>Raw message hex</summary><pre tabindex="0">44 00 00 00 40 53 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00</pre></details></li><li>Sync (S): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 04</pre></details></li></ol><p>PostgreSQL → pgx</p><ol><li>ParseComplete (1): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">31 00 00 00 04</pre></details></li><li>ParameterDescription (t): 11 bytes. parameter OIDs [25]<details><summary>Raw message hex</summary><pre tabindex="0">74 00 00 00 0a 00 01 00 00 00 19</pre></details></li><li>RowDescription (T): 31 bytes. count: OID 20, text (table 0, column 0, size 8, modifier -1)<details><summary>Raw message hex</summary><pre tabindex="0">54 00 00 00 1e 00 01 63 6f 75 6e 74 00 00 00 00 00 00 00 00 00 00 14 00 08 ff ff ff ff 00 00</pre></details></li><li>ParameterStatus (S): 26 bytes. server_encoding = UTF8<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 19 73 65 72 76 65 72 5f 65 6e 63 6f 64 69 6e 67 00 55 54 46 38 00</pre></details></li><li>ParameterStatus (S): 21 bytes. is_superuser = on<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 14 69 73 5f 73 75 70 65 72 75 73 65 72 00 6f 6e 00</pre></details></li><li>ParameterStatus (S): 18 bytes. TimeZone = UTC<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 11 54 69 6d 65 5a 6f 6e 65 00 55 54 43 00</pre></details></li><li>ParameterStatus (S): 24 bytes. DateStyle = ISO, MDY<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 17 44 61 74 65 53 74 79 6c 65 00 49 53 4f 2c 20 4d 44 59 00</pre></details></li><li>ParameterStatus (S): 24 bytes. search_path = public<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 17 73 65 61 72 63 68 5f 70 61 74 68 00 70 75 62 6c 69 63 00</pre></details></li><li>ParameterStatus (S): 26 bytes. client_encoding = UTF8<details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 19 63 6c 69 65 6e 74 5f 65 6e 63 6f 64 69 6e 67 00 55 54 46 38 00</pre></details></li><li>ReadyForQuery (Z): 6 bytes. transaction status I<details><summary>Raw message hex</summary><pre tabindex="0">5a 00 00 00 05 49</pre></details></li></ol><h4>Call 3: 112 bytes sent, 44 bytes received; 1.7 ms</h4><p>pgx → PostgreSQL</p><ol><li>Bind (B): 97 bytes. portal &quot;&quot;; statement &quot;stmtcache_54983769289e46a9ad82fb66ea0f01912462377274ba788b&quot;; $1: &quot;world:* &amp; record:*&quot; (text, 18 bytes); result formats [1]<details><summary>Raw message hex</summary><pre tabindex="0">42 00 00 00 60 00 73 74 6d 74 63 61 63 68 65 5f 35 34 39 38 33 37 36 39 32 38 39 65 34 36 61 39 61 64 38 32 66 62 36 36 65 61 30 66 30 31 39 31 32 34 36 32 33 37 37 32 37 34 62 61 37 38 38 62 00 00 01 00 00 00 01 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 01 00 01</pre></details></li><li>Execute (E): 10 bytes. portal &quot;&quot;; max rows 0 (0 means all)<details><summary>Raw message hex</summary><pre tabindex="0">45 00 00 00 09 00 00 00 00 00</pre></details></li><li>Sync (S): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 04</pre></details></li></ol><p>PostgreSQL → pgx</p><ol><li>BindComplete (2): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">32 00 00 00 04</pre></details></li><li>DataRow (D): 19 bytes. 1 columns: 8 bytes; values are in the raw hex (formats come from RowDescription)<details><summary>Raw message hex</summary><pre tabindex="0">44 00 00 00 12 00 01 00 00 00 08 00 00 00 00 00 00 00 02</pre></details></li><li>CommandComplete (C): 14 bytes. SELECT 1<details><summary>Raw message hex</summary><pre tabindex="0">43 00 00 00 0d 53 45 4c 45 43 54 20 31 00</pre></details></li><li>ReadyForQuery (Z): 6 bytes. transaction status I<details><summary>Raw message hex</summary><pre tabindex="0">5a 00 00 00 05 49</pre></details></li></ol><h4>Call 4: 796 bytes sent, 768 bytes received; 0.7 ms</h4><p>pgx → PostgreSQL</p><ol><li>Parse (P): 726 bytes. statement &quot;stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e&quot;; 
+		SELECT
+			c.id, c.twitch_clip_id, c.twitch_clip_url, c.embed_url,
+			c.title, c.creator_name, c.creator_id, c.broadcaster_name,
+			c.broadcaster_id, c.game_id, c.game_name, c.language,
+			c.thumbnail_url, c.duration, c.view_count, c.created_at,
+			c.imported_at, c.vote_score, c.comment_count, c.favorite_count,
+			c.is_featured, c.is_nsfw, c.is_removed, c.removed_reason, NULL::text
+		FROM clips c
+		WHERE c.is_removed = false AND c.is_hidden = false AND c.dmca_removed = false AND c.search_vector @@ to_tsquery(&#39;english&#39;, $1)
+		ORDER BY ts_rank(c.search_vector, to_tsquery(&#39;english&#39;, $1)) DESC, c.vote_score DESC, c.created_at DESC
+		LIMIT $2 OFFSET $3
+	; parameter OIDs []<details><summary>Raw message hex</summary><pre tabindex="0">50 00 00 02 d5 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00 0a 09 09 53 45 4c 45 43 54 0a 09 09 09 63 2e 69 64 2c 20 63 2e 74 77 69 74 63 68 5f 63 6c 69 70 5f 69 64 2c 20 63 2e 74 77 69 74 63 68 5f 63 6c 69 70 5f 75 72 6c 2c 20 63 2e 65 6d 62 65 64 5f 75 72 6c 2c 0a 09 09 09 63 2e 74 69 74 6c 65 2c 20 63 2e 63 72 65 61 74 6f 72 5f 6e 61 6d 65 2c 20 63 2e 63 72 65 61 74 6f 72 5f 69 64 2c 20 63 2e 62 72 6f 61 64 63 61 73 74 65 72 5f 6e 61 6d 65 2c 0a 09 09 09 63 2e 62 72 6f 61 64 63 61 73 74 65 72 5f 69 64 2c 20 63 2e 67 61 6d 65 5f 69 64 2c 20 63 2e 67 61 6d 65 5f 6e 61 6d 65 2c 20 63 2e 6c 61 6e 67 75 61 67 65 2c 0a 09 09 09 63 2e 74 68 75 6d 62 6e 61 69 6c 5f 75 72 6c 2c 20 63 2e 64 75 72 61 74 69 6f 6e 2c 20 63 2e 76 69 65 77 5f 63 6f 75 6e 74 2c 20 63 2e 63 72 65 61 74 65 64 5f 61 74 2c 0a 09 09 09 63 2e 69 6d 70 6f 72 74 65 64 5f 61 74 2c 20 63 2e 76 6f 74 65 5f 73 63 6f 72 65 2c 20 63 2e 63 6f 6d 6d 65 6e 74 5f 63 6f 75 6e 74 2c 20 63 2e 66 61 76 6f 72 69 74 65 5f 63 6f 75 6e 74 2c 0a 09 09 09 63 2e 69 73 5f 66 65 61 74 75 72 65 64 2c 20 63 2e 69 73 5f 6e 73 66 77 2c 20 63 2e 69 73 5f 72 65 6d 6f 76 65 64 2c 20 63 2e 72 65 6d 6f 76 65 64 5f 72 65 61 73 6f 6e 2c 20 4e 55 4c 4c 3a 3a 74 65 78 74 0a 09 09 46 52 4f 4d 20 63 6c 69 70 73 20 63 0a 09 09 57 48 45 52 45 20 63 2e 69 73 5f 72 65 6d 6f 76 65 64 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 69 73 5f 68 69 64 64 65 6e 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 64 6d 63 61 5f 72 65 6d 6f 76 65 64 20 3d 20 66 61 6c 73 65 20 41 4e 44 20 63 2e 73 65 61 72 63 68 5f 76 65 63 74 6f 72 20 40 40 20 74 6f 5f 74 73 71 75 65 72 79 28 27 65 6e 67 6c 69 73 68 27 2c 20 24 31 29 0a 09 09 4f 52 44 45 52 20 42 59 20 74 73 5f 72 61 6e 6b 28 63 2e 73 65 61 72 63 68 5f 76 65 63 74 6f 72 2c 20 74 6f 5f 74 73 71 75 65 72 79 28 27 65 6e 67 6c 69 73 68 27 2c 20 24 31 29 29 20 44 45 53 43 2c 20 63 2e 76 6f 74 65 5f 73 63 6f 72 65 20 44 45 53 43 2c 20 63 2e 63 72 65 61 74 65 64 5f 61 74 20 44 45 53 43 0a 09 09 4c 49 4d 49 54 20 24 32 20 4f 46 46 53 45 54 20 24 33 0a 09 00 00 00</pre></details></li><li>Describe (D): 65 bytes. statement &quot;stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e&quot;<details><summary>Raw message hex</summary><pre tabindex="0">44 00 00 00 40 53 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00</pre></details></li><li>Sync (S): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 04</pre></details></li></ol><p>PostgreSQL → pgx</p><ol><li>ParseComplete (1): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">31 00 00 00 04</pre></details></li><li>ParameterDescription (t): 19 bytes. parameter OIDs [25, 20, 20]<details><summary>Raw message hex</summary><pre tabindex="0">74 00 00 00 12 00 03 00 00 00 19 00 00 00 14 00 00 00 14</pre></details></li><li>RowDescription (T): 738 bytes. id: OID 2950, text (table 16525, column 1, size 16, modifier -1); twitch_clip_id: OID 1043, text (table 16525, column 2, size -1, modifier 104); twitch_clip_url: OID 25, text (table 16525, column 3, size -1, modifier -1); embed_url: OID 25, text (table 16525, column 4, size -1, modifier -1); title: OID 1043, text (table 16525, column 5, size -1, modifier 259); creator_name: OID 1043, text (table 16525, column 6, size -1, modifier 104); creator_id: OID 1043, text (table 16525, column 7, size -1, modifier 54); broadcaster_name: OID 1043, text (table 16525, column 8, size -1, modifier 104); broadcaster_id: OID 1043, text (table 16525, column 9, size -1, modifier 54); game_id: OID 1043, text (table 16525, column 10, size -1, modifier 54); game_name: OID 1043, text (table 16525, column 11, size -1, modifier 104); language: OID 1043, text (table 16525, column 12, size -1, modifier 14); thumbnail_url: OID 25, text (table 16525, column 13, size -1, modifier -1); duration: OID 701, text (table 16525, column 14, size 8, modifier -1); view_count: OID 23, text (table 16525, column 15, size 4, modifier -1); created_at: OID 1114, text (table 16525, column 16, size 8, modifier -1); imported_at: OID 1114, text (table 16525, column 17, size 8, modifier -1); vote_score: OID 23, text (table 16525, column 18, size 4, modifier -1); comment_count: OID 23, text (table 16525, column 19, size 4, modifier -1); favorite_count: OID 23, text (table 16525, column 20, size 4, modifier -1); is_featured: OID 16, text (table 16525, column 21, size 1, modifier -1); is_nsfw: OID 16, text (table 16525, column 22, size 1, modifier -1); is_removed: OID 16, text (table 16525, column 23, size 1, modifier -1); removed_reason: OID 25, text (table 16525, column 24, size -1, modifier -1); text: OID 25, text (table 0, column 0, size -1, modifier -1)<details><summary>Raw message hex</summary><pre tabindex="0">54 00 00 02 e1 00 19 69 64 00 00 00 40 8d 00 01 00 00 0b 86 00 10 ff ff ff ff 00 00 74 77 69 74 63 68 5f 63 6c 69 70 5f 69 64 00 00 00 40 8d 00 02 00 00 04 13 ff ff 00 00 00 68 00 00 74 77 69 74 63 68 5f 63 6c 69 70 5f 75 72 6c 00 00 00 40 8d 00 03 00 00 00 19 ff ff ff ff ff ff 00 00 65 6d 62 65 64 5f 75 72 6c 00 00 00 40 8d 00 04 00 00 00 19 ff ff ff ff ff ff 00 00 74 69 74 6c 65 00 00 00 40 8d 00 05 00 00 04 13 ff ff 00 00 01 03 00 00 63 72 65 61 74 6f 72 5f 6e 61 6d 65 00 00 00 40 8d 00 06 00 00 04 13 ff ff 00 00 00 68 00 00 63 72 65 61 74 6f 72 5f 69 64 00 00 00 40 8d 00 07 00 00 04 13 ff ff 00 00 00 36 00 00 62 72 6f 61 64 63 61 73 74 65 72 5f 6e 61 6d 65 00 00 00 40 8d 00 08 00 00 04 13 ff ff 00 00 00 68 00 00 62 72 6f 61 64 63 61 73 74 65 72 5f 69 64 00 00 00 40 8d 00 09 00 00 04 13 ff ff 00 00 00 36 00 00 67 61 6d 65 5f 69 64 00 00 00 40 8d 00 0a 00 00 04 13 ff ff 00 00 00 36 00 00 67 61 6d 65 5f 6e 61 6d 65 00 00 00 40 8d 00 0b 00 00 04 13 ff ff 00 00 00 68 00 00 6c 61 6e 67 75 61 67 65 00 00 00 40 8d 00 0c 00 00 04 13 ff ff 00 00 00 0e 00 00 74 68 75 6d 62 6e 61 69 6c 5f 75 72 6c 00 00 00 40 8d 00 0d 00 00 00 19 ff ff ff ff ff ff 00 00 64 75 72 61 74 69 6f 6e 00 00 00 40 8d 00 0e 00 00 02 bd 00 08 ff ff ff ff 00 00 76 69 65 77 5f 63 6f 75 6e 74 00 00 00 40 8d 00 0f 00 00 00 17 00 04 ff ff ff ff 00 00 63 72 65 61 74 65 64 5f 61 74 00 00 00 40 8d 00 10 00 00 04 5a 00 08 ff ff ff ff 00 00 69 6d 70 6f 72 74 65 64 5f 61 74 00 00 00 40 8d 00 11 00 00 04 5a 00 08 ff ff ff ff 00 00 76 6f 74 65 5f 73 63 6f 72 65 00 00 00 40 8d 00 12 00 00 00 17 00 04 ff ff ff ff 00 00 63 6f 6d 6d 65 6e 74 5f 63 6f 75 6e 74 00 00 00 40 8d 00 13 00 00 00 17 00 04 ff ff ff ff 00 00 66 61 76 6f 72 69 74 65 5f 63 6f 75 6e 74 00 00 00 40 8d 00 14 00 00 00 17 00 04 ff ff ff ff 00 00 69 73 5f 66 65 61 74 75 72 65 64 00 00 00 40 8d 00 15 00 00 00 10 00 01 ff ff ff ff 00 00 69 73 5f 6e 73 66 77 00 00 00 40 8d 00 16 00 00 00 10 00 01 ff ff ff ff 00 00 69 73 5f 72 65 6d 6f 76 65 64 00 00 00 40 8d 00 17 00 00 00 10 00 01 ff ff ff ff 00 00 72 65 6d 6f 76 65 64 5f 72 65 61 73 6f 6e 00 00 00 40 8d 00 18 00 00 00 19 ff ff ff ff ff ff 00 00 74 65 78 74 00 00 00 00 00 00 00 00 00 00 19 ff ff ff ff ff ff 00 00</pre></details></li><li>ReadyForQuery (Z): 6 bytes. transaction status I<details><summary>Raw message hex</summary><pre tabindex="0">5a 00 00 00 05 49</pre></details></li></ol><h4>Call 5: 188 bytes sent, 575 bytes received; 2.0 ms</h4><p>pgx → PostgreSQL</p><ol><li>Bind (B): 173 bytes. portal &quot;&quot;; statement &quot;stmtcache_61f4a835572e3971ffb08b06b12312351b6b42f40f3b8b9e&quot;; $1: &quot;world:* &amp; record:*&quot; (text, 18 bytes); $2: 0000000000000014 (binary, 8 bytes); $3: 0000000000000000 (binary, 8 bytes); result formats [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]<details><summary>Raw message hex</summary><pre tabindex="0">42 00 00 00 ac 00 73 74 6d 74 63 61 63 68 65 5f 36 31 66 34 61 38 33 35 35 37 32 65 33 39 37 31 66 66 62 30 38 62 30 36 62 31 32 33 31 32 33 35 31 62 36 62 34 32 66 34 30 66 33 62 38 62 39 65 00 00 03 00 00 00 01 00 01 00 03 00 00 00 12 77 6f 72 6c 64 3a 2a 20 26 20 72 65 63 6f 72 64 3a 2a 00 00 00 08 00 00 00 00 00 00 00 14 00 00 00 08 00 00 00 00 00 00 00 00 00 19 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 01 00 00 00 00</pre></details></li><li>Execute (E): 10 bytes. portal &quot;&quot;; max rows 0 (0 means all)<details><summary>Raw message hex</summary><pre tabindex="0">45 00 00 00 09 00 00 00 00 00</pre></details></li><li>Sync (S): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 04</pre></details></li></ol><p>PostgreSQL → pgx</p><ol><li>BindComplete (2): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">32 00 00 00 04</pre></details></li><li>DataRow (D): 272 bytes. 25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 29 bytes, 8 bytes, NULL, 8 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)<details><summary>Raw message hex</summary><pre tabindex="0">44 00 00 01 0f 00 19 00 00 00 10 53 a0 f7 7b 8a 0b 4b 63 af 26 92 06 b7 07 d6 1b 00 00 00 09 66 69 78 74 75 72 65 2d 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 30 00 00 00 1d 73 70 65 65 64 72 75 6e 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 20 61 74 74 65 6d 70 74 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff 00 00 00 08 72 75 6e 6e 65 72 5f 61 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 2a 7a aa 60 00 00 00 00 08 00 03 03 4b 74 58 c8 50 00 00 00 04 00 00 00 29 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff</pre></details></li><li>DataRow (D): 278 bytes. 25 columns: 16 bytes, 9 bytes, 30 bytes, 30 bytes, 31 bytes, 10 bytes, NULL, 10 bytes, NULL, NULL, NULL, NULL, NULL, NULL, 4 bytes, 8 bytes, 8 bytes, 4 bytes, 4 bytes, 4 bytes, 1 bytes, 1 bytes, 1 bytes, NULL, NULL; values are in the raw hex (formats come from RowDescription)<details><summary>Raw message hex</summary><pre tabindex="0">44 00 00 01 15 00 19 00 00 00 10 b4 4e db 07 45 84 43 ed b9 3f 4b 37 ff a1 5a 01 00 00 00 09 66 69 78 74 75 72 65 2d 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1e 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 69 6e 76 61 6c 69 64 2f 63 6c 69 70 2f 31 00 00 00 1f 63 68 61 74 20 72 65 61 63 74 73 20 74 6f 20 74 68 65 20 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff 00 00 00 0a 73 74 72 65 61 6d 65 72 5f 62 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 04 00 00 00 00 00 00 00 08 00 03 02 30 58 b3 dc 00 00 00 00 08 00 03 03 4b 74 58 e7 90 00 00 00 04 00 00 00 21 00 00 00 04 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 01 00 00 00 00 01 00 00 00 00 01 00 ff ff ff ff ff ff ff ff</pre></details></li><li>CommandComplete (C): 14 bytes. SELECT 2<details><summary>Raw message hex</summary><pre tabindex="0">43 00 00 00 0d 53 45 4c 45 43 54 20 32 00</pre></details></li><li>ReadyForQuery (Z): 6 bytes. transaction status I<details><summary>Raw message hex</summary><pre tabindex="0">5a 00 00 00 05 49</pre></details></li></ol><h4>Call 6: 221 bytes sent, 35 bytes received; 0.4 ms</h4><p>pgx → PostgreSQL</p><ol><li>Parse (P): 151 bytes. statement &quot;stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f&quot;; 
+		INSERT INTO search_queries (user_id, query, result_count)
+		VALUES ($1, $2, $3)
+	; parameter OIDs []<details><summary>Raw message hex</summary><pre tabindex="0">50 00 00 00 96 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00 0a 09 09 49 4e 53 45 52 54 20 49 4e 54 4f 20 73 65 61 72 63 68 5f 71 75 65 72 69 65 73 20 28 75 73 65 72 5f 69 64 2c 20 71 75 65 72 79 2c 20 72 65 73 75 6c 74 5f 63 6f 75 6e 74 29 0a 09 09 56 41 4c 55 45 53 20 28 24 31 2c 20 24 32 2c 20 24 33 29 0a 09 00 00 00</pre></details></li><li>Describe (D): 65 bytes. statement &quot;stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f&quot;<details><summary>Raw message hex</summary><pre tabindex="0">44 00 00 00 40 53 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00</pre></details></li><li>Sync (S): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 04</pre></details></li></ol><p>PostgreSQL → pgx</p><ol><li>ParseComplete (1): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">31 00 00 00 04</pre></details></li><li>ParameterDescription (t): 19 bytes. parameter OIDs [2950, 25, 23]<details><summary>Raw message hex</summary><pre tabindex="0">74 00 00 00 12 00 03 00 00 0b 86 00 00 00 19 00 00 00 17</pre></details></li><li>NoData (n): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">6e 00 00 00 04</pre></details></li><li>ReadyForQuery (Z): 6 bytes. transaction status I<details><summary>Raw message hex</summary><pre tabindex="0">5a 00 00 00 05 49</pre></details></li></ol><h4>Call 7: 127 bytes sent, 32 bytes received; 1.0 ms</h4><p>pgx → PostgreSQL</p><ol><li>Bind (B): 105 bytes. portal &quot;&quot;; statement &quot;stmtcache_6ffc84de7b5cc3a931ee6d0d03888b741594f74d138d650f&quot;; $1: NULL (binary); $2: &quot;world record&quot; (text, 12 bytes); $3: 00000002 (binary, 4 bytes); result formats []<details><summary>Raw message hex</summary><pre tabindex="0">42 00 00 00 68 00 73 74 6d 74 63 61 63 68 65 5f 36 66 66 63 38 34 64 65 37 62 35 63 63 33 61 39 33 31 65 65 36 64 30 64 30 33 38 38 38 62 37 34 31 35 39 34 66 37 34 64 31 33 38 64 36 35 30 66 00 00 03 00 01 00 00 00 01 00 03 ff ff ff ff 00 00 00 0c 77 6f 72 6c 64 20 72 65 63 6f 72 64 00 00 00 04 00 00 00 02 00 00</pre></details></li><li>Describe (D): 7 bytes. portal &quot;&quot;<details><summary>Raw message hex</summary><pre tabindex="0">44 00 00 00 06 50 00</pre></details></li><li>Execute (E): 10 bytes. portal &quot;&quot;; max rows 0 (0 means all)<details><summary>Raw message hex</summary><pre tabindex="0">45 00 00 00 09 00 00 00 00 00</pre></details></li><li>Sync (S): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">53 00 00 00 04</pre></details></li></ol><p>PostgreSQL → pgx</p><ol><li>BindComplete (2): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">32 00 00 00 04</pre></details></li><li>NoData (n): 5 bytes. <details><summary>Raw message hex</summary><pre tabindex="0">6e 00 00 00 04</pre></details></li><li>CommandComplete (C): 16 bytes. INSERT 0 1<details><summary>Raw message hex</summary><pre tabindex="0">43 00 00 00 0f 49 4e 53 45 52 54 20 30 20 31 00</pre></details></li><li>ReadyForQuery (Z): 6 bytes. transaction status I<details><summary>Raw message hex</summary><pre tabindex="0">5a 00 00 00 05 49</pre></details></li></ol></div>
+  </section>
+  <section id="inspector-plan" aria-labelledby="inspector-plan-title" tabindex="0">
+    <h3 id="inspector-plan-title">Plan</h3>
+    <p>Compare sequential and GIN plans for the captured clip search. Eight labelled fixtures stay in the table at every size; extra clips are generated in this tab.</p>
+    <form data-plan-size hidden>
+      <label for="plan-rows">Table size</label>
+      <select id="plan-rows" name="rows">
+        <option value="8">8 clips</option>
+        <option value="1008">1,008 clips</option>
+        <option value="10008">10,008 clips</option>
+        <option value="30008">30,008 clips</option>
+        <option value="50008">50,008 clips</option>
+      </select>
+      <button type="submit">Resize and compare plans</button>
+    </form>
+    <p data-plan-status role="status">Recorded plans for world record; each resize ran VACUUM FULL and ANALYZE before planning.</p>
+    <div data-plan-output><p>Recorded planner costs at this size: sequential 1.12, GIN 21.22. Reading the small table directly costs less than starting the GIN lookup and fetching heap pages.
+    Costs are PostgreSQL estimates in arbitrary units, not milliseconds. The default planner chose sequential scan. Alternatives use local planner switches; the GIN comparison temporarily removes competing secondary indexes in a transaction, then rolls it back. Handler searches keep every index.</p>
+    <p>The sampled cost crossover lies between 8 and 1,008 clips. More rows make a sequential scan more expensive; the matching fraction, row width and statistics also affect this choice.</p><p class="plan-legend"><span class="plan-seq">Solid: sequential</span> / <span class="plan-gin">Dashed: GIN</span></p>
+    <svg class="plan-chart" viewBox="0 0 520 240" role="img" aria-label="Sequential and GIN estimated total cost across measured table sizes. Exact values follow in the table. Row count uses a logarithmic scale; cost uses a linear scale.">
+      <path d="M60 30 V195 H490" class="plan-axis" /><text x="52" y="199" text-anchor="end">0</text><text x="52" y="121.5" text-anchor="end">1,620.69</text><text x="52" y="44" text-anchor="end">3,241.37</text>
+      <text x="60" y="18">Estimated total cost</text><text x="60" y="215">8</text><text x="490" y="215" text-anchor="end">50,008 clips (log scale)</text>
+      <polyline points="60,194.94644239935582 297.9271206483661,191.95247688477403 410.8530984285026,164.9604025458371 464.8745216523659,102.50650188037774 490,40" class="plan-line plan-seq" /><circle cx="60" cy="194.94644239935582" r="5" class="plan-dot plan-seq" /><circle cx="297.9271206483661" cy="191.95247688477403" r="3" class="plan-dot plan-seq" /><circle cx="410.8530984285026" cy="164.9604025458371" r="3" class="plan-dot plan-seq" /><circle cx="464.8745216523659" cy="102.50650188037774" r="3" class="plan-dot plan-seq" /><circle cx="490" cy="40" r="3" class="plan-dot plan-seq" /><polyline points="60,193.9852747449381 297.9271206483661,192.99302455443222 410.8530984285026,184.02021367508183 464.8745216523659,165.3946016653452 490,146.4170397085183" class="plan-line plan-gin" /><circle cx="60" cy="193.9852747449381" r="5" class="plan-dot plan-gin" /><circle cx="297.9271206483661" cy="192.99302455443222" r="3" class="plan-dot plan-gin" /><circle cx="410.8530984285026" cy="184.02021367508183" r="3" class="plan-dot plan-gin" /><circle cx="464.8745216523659" cy="165.3946016653452" r="3" class="plan-dot plan-gin" /><circle cx="490" cy="146.4170397085183" r="3" class="plan-dot plan-gin" />
+    </svg><table data-plan-samples><caption>Recorded measurements; total planner cost</caption><thead><tr><th scope="col">Clips</th><th scope="col">Sequential</th><th scope="col">GIN</th><th scope="col">Default choice</th></tr></thead>
+      <tbody><tr data-rows="8"><td>8</td><td>1.12</td><td>21.22</td><td>Sequential scan</td></tr><tr data-rows="1008"><td>1,008</td><td>63.73</td><td>41.97</td><td>GIN bitmap scan</td></tr><tr data-rows="10008"><td>10,008</td><td>628.19</td><td>229.61</td><td>GIN bitmap scan</td></tr><tr data-rows="30008"><td>30,008</td><td>1,934.23</td><td>619.11</td><td>GIN bitmap scan</td></tr><tr data-rows="50008"><td>50,008</td><td>3,241.37</td><td>1,015.97</td><td>GIN bitmap scan</td></tr></tbody></table>
+    <details><summary>Default plan: cost 1.12; execution 0.3 ms</summary><pre tabindex="0">{
+  &quot;Plan&quot;: {
+    &quot;Node Type&quot;: &quot;Limit&quot;,
+    &quot;Parallel Aware&quot;: false,
+    &quot;Async Capable&quot;: false,
+    &quot;Startup Cost&quot;: 1.11,
+    &quot;Total Cost&quot;: 1.12,
+    &quot;Plan Rows&quot;: 1,
+    &quot;Plan Width&quot;: 883,
+    &quot;Actual Startup Time&quot;: 0.2,
+    &quot;Actual Total Time&quot;: 0.2,
+    &quot;Actual Rows&quot;: 2,
+    &quot;Actual Loops&quot;: 1,
+    &quot;Disabled&quot;: false,
+    &quot;Shared Hit Blocks&quot;: 1,
+    &quot;Shared Read Blocks&quot;: 0,
+    &quot;Shared Dirtied Blocks&quot;: 0,
+    &quot;Shared Written Blocks&quot;: 0,
+    &quot;Local Hit Blocks&quot;: 0,
+    &quot;Local Read Blocks&quot;: 0,
+    &quot;Local Dirtied Blocks&quot;: 0,
+    &quot;Local Written Blocks&quot;: 0,
+    &quot;Temp Read Blocks&quot;: 0,
+    &quot;Temp Written Blocks&quot;: 0,
+    &quot;Plans&quot;: [
+      {
+        &quot;Node Type&quot;: &quot;Sort&quot;,
+        &quot;Parent Relationship&quot;: &quot;Outer&quot;,
+        &quot;Parallel Aware&quot;: false,
+        &quot;Async Capable&quot;: false,
+        &quot;Startup Cost&quot;: 1.11,
+        &quot;Total Cost&quot;: 1.12,
+        &quot;Plan Rows&quot;: 1,
+        &quot;Plan Width&quot;: 883,
+        &quot;Actual Startup Time&quot;: 0.2,
+        &quot;Actual Total Time&quot;: 0.2,
+        &quot;Actual Rows&quot;: 2,
+        &quot;Actual Loops&quot;: 1,
+        &quot;Disabled&quot;: false,
+        &quot;Sort Key&quot;: [
+          &quot;(ts_rank(search_vector, &#39;&#39;&#39;world&#39;&#39;:* &amp; &#39;&#39;record&#39;&#39;:*&#39;::tsquery)) DESC&quot;,
+          &quot;vote_score DESC&quot;,
+          &quot;created_at DESC&quot;
+        ],
+        &quot;Sort Method&quot;: &quot;quicksort&quot;,
+        &quot;Sort Space Used&quot;: 17,
+        &quot;Sort Space Type&quot;: &quot;Memory&quot;,
+        &quot;Shared Hit Blocks&quot;: 1,
+        &quot;Shared Read Blocks&quot;: 0,
+        &quot;Shared Dirtied Blocks&quot;: 0,
+        &quot;Shared Written Blocks&quot;: 0,
+        &quot;Local Hit Blocks&quot;: 0,
+        &quot;Local Read Blocks&quot;: 0,
+        &quot;Local Dirtied Blocks&quot;: 0,
+        &quot;Local Written Blocks&quot;: 0,
+        &quot;Temp Read Blocks&quot;: 0,
+        &quot;Temp Written Blocks&quot;: 0,
+        &quot;Plans&quot;: [
+          {
+            &quot;Node Type&quot;: &quot;Seq Scan&quot;,
+            &quot;Parent Relationship&quot;: &quot;Outer&quot;,
+            &quot;Parallel Aware&quot;: false,
+            &quot;Async Capable&quot;: false,
+            &quot;Relation Name&quot;: &quot;clips&quot;,
+            &quot;Alias&quot;: &quot;c&quot;,
+            &quot;Startup Cost&quot;: 0,
+            &quot;Total Cost&quot;: 1.1,
+            &quot;Plan Rows&quot;: 1,
+            &quot;Plan Width&quot;: 883,
+            &quot;Actual Startup Time&quot;: 0.1,
+            &quot;Actual Total Time&quot;: 0.1,
+            &quot;Actual Rows&quot;: 2,
+            &quot;Actual Loops&quot;: 1,
+            &quot;Disabled&quot;: false,
+            &quot;Filter&quot;: &quot;((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ &#39;&#39;&#39;world&#39;&#39;:* &amp; &#39;&#39;record&#39;&#39;:*&#39;::tsquery))&quot;,
+            &quot;Rows Removed by Filter&quot;: 6,
+            &quot;Shared Hit Blocks&quot;: 1,
+            &quot;Shared Read Blocks&quot;: 0,
+            &quot;Shared Dirtied Blocks&quot;: 0,
+            &quot;Shared Written Blocks&quot;: 0,
+            &quot;Local Hit Blocks&quot;: 0,
+            &quot;Local Read Blocks&quot;: 0,
+            &quot;Local Dirtied Blocks&quot;: 0,
+            &quot;Local Written Blocks&quot;: 0,
+            &quot;Temp Read Blocks&quot;: 0,
+            &quot;Temp Written Blocks&quot;: 0
+          }
+        ]
+      }
+    ]
+  },
+  &quot;Planning&quot;: {
+    &quot;Shared Hit Blocks&quot;: 15,
+    &quot;Shared Read Blocks&quot;: 0,
+    &quot;Shared Dirtied Blocks&quot;: 0,
+    &quot;Shared Written Blocks&quot;: 0,
+    &quot;Local Hit Blocks&quot;: 0,
+    &quot;Local Read Blocks&quot;: 0,
+    &quot;Local Dirtied Blocks&quot;: 0,
+    &quot;Local Written Blocks&quot;: 0,
+    &quot;Temp Read Blocks&quot;: 0,
+    &quot;Temp Written Blocks&quot;: 0
+  },
+  &quot;Planning Time&quot;: 0.4,
+  &quot;Triggers&quot;: [],
+  &quot;Execution Time&quot;: 0.3
+}</pre></details><details><summary>Sequential alternative: cost 1.12; execution 0.1 ms</summary><pre tabindex="0">{
+  &quot;Plan&quot;: {
+    &quot;Node Type&quot;: &quot;Limit&quot;,
+    &quot;Parallel Aware&quot;: false,
+    &quot;Async Capable&quot;: false,
+    &quot;Startup Cost&quot;: 1.11,
+    &quot;Total Cost&quot;: 1.12,
+    &quot;Plan Rows&quot;: 1,
+    &quot;Plan Width&quot;: 883,
+    &quot;Actual Startup Time&quot;: 0.1,
+    &quot;Actual Total Time&quot;: 0.1,
+    &quot;Actual Rows&quot;: 2,
+    &quot;Actual Loops&quot;: 1,
+    &quot;Disabled&quot;: false,
+    &quot;Shared Hit Blocks&quot;: 1,
+    &quot;Shared Read Blocks&quot;: 0,
+    &quot;Shared Dirtied Blocks&quot;: 0,
+    &quot;Shared Written Blocks&quot;: 0,
+    &quot;Local Hit Blocks&quot;: 0,
+    &quot;Local Read Blocks&quot;: 0,
+    &quot;Local Dirtied Blocks&quot;: 0,
+    &quot;Local Written Blocks&quot;: 0,
+    &quot;Temp Read Blocks&quot;: 0,
+    &quot;Temp Written Blocks&quot;: 0,
+    &quot;Plans&quot;: [
+      {
+        &quot;Node Type&quot;: &quot;Sort&quot;,
+        &quot;Parent Relationship&quot;: &quot;Outer&quot;,
+        &quot;Parallel Aware&quot;: false,
+        &quot;Async Capable&quot;: false,
+        &quot;Startup Cost&quot;: 1.11,
+        &quot;Total Cost&quot;: 1.12,
+        &quot;Plan Rows&quot;: 1,
+        &quot;Plan Width&quot;: 883,
+        &quot;Actual Startup Time&quot;: 0.1,
+        &quot;Actual Total Time&quot;: 0.1,
+        &quot;Actual Rows&quot;: 2,
+        &quot;Actual Loops&quot;: 1,
+        &quot;Disabled&quot;: false,
+        &quot;Sort Key&quot;: [
+          &quot;(ts_rank(search_vector, &#39;&#39;&#39;world&#39;&#39;:* &amp; &#39;&#39;record&#39;&#39;:*&#39;::tsquery)) DESC&quot;,
+          &quot;vote_score DESC&quot;,
+          &quot;created_at DESC&quot;
+        ],
+        &quot;Sort Method&quot;: &quot;quicksort&quot;,
+        &quot;Sort Space Used&quot;: 17,
+        &quot;Sort Space Type&quot;: &quot;Memory&quot;,
+        &quot;Shared Hit Blocks&quot;: 1,
+        &quot;Shared Read Blocks&quot;: 0,
+        &quot;Shared Dirtied Blocks&quot;: 0,
+        &quot;Shared Written Blocks&quot;: 0,
+        &quot;Local Hit Blocks&quot;: 0,
+        &quot;Local Read Blocks&quot;: 0,
+        &quot;Local Dirtied Blocks&quot;: 0,
+        &quot;Local Written Blocks&quot;: 0,
+        &quot;Temp Read Blocks&quot;: 0,
+        &quot;Temp Written Blocks&quot;: 0,
+        &quot;Plans&quot;: [
+          {
+            &quot;Node Type&quot;: &quot;Seq Scan&quot;,
+            &quot;Parent Relationship&quot;: &quot;Outer&quot;,
+            &quot;Parallel Aware&quot;: false,
+            &quot;Async Capable&quot;: false,
+            &quot;Relation Name&quot;: &quot;clips&quot;,
+            &quot;Alias&quot;: &quot;c&quot;,
+            &quot;Startup Cost&quot;: 0,
+            &quot;Total Cost&quot;: 1.1,
+            &quot;Plan Rows&quot;: 1,
+            &quot;Plan Width&quot;: 883,
+            &quot;Actual Startup Time&quot;: 0,
+            &quot;Actual Total Time&quot;: 0,
+            &quot;Actual Rows&quot;: 2,
+            &quot;Actual Loops&quot;: 1,
+            &quot;Disabled&quot;: false,
+            &quot;Filter&quot;: &quot;((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed) AND (search_vector @@ &#39;&#39;&#39;world&#39;&#39;:* &amp; &#39;&#39;record&#39;&#39;:*&#39;::tsquery))&quot;,
+            &quot;Rows Removed by Filter&quot;: 6,
+            &quot;Shared Hit Blocks&quot;: 1,
+            &quot;Shared Read Blocks&quot;: 0,
+            &quot;Shared Dirtied Blocks&quot;: 0,
+            &quot;Shared Written Blocks&quot;: 0,
+            &quot;Local Hit Blocks&quot;: 0,
+            &quot;Local Read Blocks&quot;: 0,
+            &quot;Local Dirtied Blocks&quot;: 0,
+            &quot;Local Written Blocks&quot;: 0,
+            &quot;Temp Read Blocks&quot;: 0,
+            &quot;Temp Written Blocks&quot;: 0
+          }
+        ]
+      }
+    ]
+  },
+  &quot;Planning&quot;: {
+    &quot;Shared Hit Blocks&quot;: 15,
+    &quot;Shared Read Blocks&quot;: 0,
+    &quot;Shared Dirtied Blocks&quot;: 0,
+    &quot;Shared Written Blocks&quot;: 0,
+    &quot;Local Hit Blocks&quot;: 0,
+    &quot;Local Read Blocks&quot;: 0,
+    &quot;Local Dirtied Blocks&quot;: 0,
+    &quot;Local Written Blocks&quot;: 0,
+    &quot;Temp Read Blocks&quot;: 0,
+    &quot;Temp Written Blocks&quot;: 0
+  },
+  &quot;Planning Time&quot;: 0.7,
+  &quot;Triggers&quot;: [],
+  &quot;Execution Time&quot;: 0.1
+}</pre></details><details><summary>GIN alternative: cost 21.22; execution 0.9 ms</summary><pre tabindex="0">{
+  &quot;Plan&quot;: {
+    &quot;Node Type&quot;: &quot;Limit&quot;,
+    &quot;Parallel Aware&quot;: false,
+    &quot;Async Capable&quot;: false,
+    &quot;Startup Cost&quot;: 21.22,
+    &quot;Total Cost&quot;: 21.22,
+    &quot;Plan Rows&quot;: 1,
+    &quot;Plan Width&quot;: 883,
+    &quot;Actual Startup Time&quot;: 0.5,
+    &quot;Actual Total Time&quot;: 0.6,
+    &quot;Actual Rows&quot;: 2,
+    &quot;Actual Loops&quot;: 1,
+    &quot;Disabled&quot;: false,
+    &quot;Shared Hit Blocks&quot;: 4,
+    &quot;Shared Read Blocks&quot;: 0,
+    &quot;Shared Dirtied Blocks&quot;: 0,
+    &quot;Shared Written Blocks&quot;: 0,
+    &quot;Local Hit Blocks&quot;: 0,
+    &quot;Local Read Blocks&quot;: 0,
+    &quot;Local Dirtied Blocks&quot;: 0,
+    &quot;Local Written Blocks&quot;: 0,
+    &quot;Temp Read Blocks&quot;: 0,
+    &quot;Temp Written Blocks&quot;: 0,
+    &quot;Plans&quot;: [
+      {
+        &quot;Node Type&quot;: &quot;Sort&quot;,
+        &quot;Parent Relationship&quot;: &quot;Outer&quot;,
+        &quot;Parallel Aware&quot;: false,
+        &quot;Async Capable&quot;: false,
+        &quot;Startup Cost&quot;: 21.22,
+        &quot;Total Cost&quot;: 21.22,
+        &quot;Plan Rows&quot;: 1,
+        &quot;Plan Width&quot;: 883,
+        &quot;Actual Startup Time&quot;: 0.5,
+        &quot;Actual Total Time&quot;: 0.5,
+        &quot;Actual Rows&quot;: 2,
+        &quot;Actual Loops&quot;: 1,
+        &quot;Disabled&quot;: false,
+        &quot;Sort Key&quot;: [
+          &quot;(ts_rank(search_vector, &#39;&#39;&#39;world&#39;&#39;:* &amp; &#39;&#39;record&#39;&#39;:*&#39;::tsquery)) DESC&quot;,
+          &quot;vote_score DESC&quot;,
+          &quot;created_at DESC&quot;
+        ],
+        &quot;Sort Method&quot;: &quot;quicksort&quot;,
+        &quot;Sort Space Used&quot;: 17,
+        &quot;Sort Space Type&quot;: &quot;Memory&quot;,
+        &quot;Shared Hit Blocks&quot;: 4,
+        &quot;Shared Read Blocks&quot;: 0,
+        &quot;Shared Dirtied Blocks&quot;: 0,
+        &quot;Shared Written Blocks&quot;: 0,
+        &quot;Local Hit Blocks&quot;: 0,
+        &quot;Local Read Blocks&quot;: 0,
+        &quot;Local Dirtied Blocks&quot;: 0,
+        &quot;Local Written Blocks&quot;: 0,
+        &quot;Temp Read Blocks&quot;: 0,
+        &quot;Temp Written Blocks&quot;: 0,
+        &quot;Plans&quot;: [
+          {
+            &quot;Node Type&quot;: &quot;Bitmap Heap Scan&quot;,
+            &quot;Parent Relationship&quot;: &quot;Outer&quot;,
+            &quot;Parallel Aware&quot;: false,
+            &quot;Async Capable&quot;: false,
+            &quot;Relation Name&quot;: &quot;clips&quot;,
+            &quot;Alias&quot;: &quot;c&quot;,
+            &quot;Startup Cost&quot;: 17.19,
+            &quot;Total Cost&quot;: 21.21,
+            &quot;Plan Rows&quot;: 1,
+            &quot;Plan Width&quot;: 883,
+            &quot;Actual Startup Time&quot;: 0.4,
+            &quot;Actual Total Time&quot;: 0.4,
+            &quot;Actual Rows&quot;: 2,
+            &quot;Actual Loops&quot;: 1,
+            &quot;Disabled&quot;: false,
+            &quot;Recheck Cond&quot;: &quot;(search_vector @@ &#39;&#39;&#39;world&#39;&#39;:* &amp; &#39;&#39;record&#39;&#39;:*&#39;::tsquery)&quot;,
+            &quot;Rows Removed by Index Recheck&quot;: 0,
+            &quot;Filter&quot;: &quot;((NOT is_removed) AND (NOT is_hidden) AND (NOT dmca_removed))&quot;,
+            &quot;Rows Removed by Filter&quot;: 0,
+            &quot;Exact Heap Blocks&quot;: 1,
+            &quot;Lossy Heap Blocks&quot;: 0,
+            &quot;Shared Hit Blocks&quot;: 4,
+            &quot;Shared Read Blocks&quot;: 0,
+            &quot;Shared Dirtied Blocks&quot;: 0,
+            &quot;Shared Written Blocks&quot;: 0,
+            &quot;Local Hit Blocks&quot;: 0,
+            &quot;Local Read Blocks&quot;: 0,
+            &quot;Local Dirtied Blocks&quot;: 0,
+            &quot;Local Written Blocks&quot;: 0,
+            &quot;Temp Read Blocks&quot;: 0,
+            &quot;Temp Written Blocks&quot;: 0,
+            &quot;Plans&quot;: [
+              {
+                &quot;Node Type&quot;: &quot;Bitmap Index Scan&quot;,
+                &quot;Parent Relationship&quot;: &quot;Outer&quot;,
+                &quot;Parallel Aware&quot;: false,
+                &quot;Async Capable&quot;: false,
+                &quot;Index Name&quot;: &quot;idx_clips_search_vector&quot;,
+                &quot;Startup Cost&quot;: 0,
+                &quot;Total Cost&quot;: 17.19,
+                &quot;Plan Rows&quot;: 1,
+                &quot;Plan Width&quot;: 0,
+                &quot;Actual Startup Time&quot;: 0.4,
+                &quot;Actual Total Time&quot;: 0.4,
+                &quot;Actual Rows&quot;: 2,
+                &quot;Actual Loops&quot;: 1,
+                &quot;Disabled&quot;: false,
+                &quot;Index Cond&quot;: &quot;(search_vector @@ &#39;&#39;&#39;world&#39;&#39;:* &amp; &#39;&#39;record&#39;&#39;:*&#39;::tsquery)&quot;,
+                &quot;Index Searches&quot;: 1,
+                &quot;Shared Hit Blocks&quot;: 3,
+                &quot;Shared Read Blocks&quot;: 0,
+                &quot;Shared Dirtied Blocks&quot;: 0,
+                &quot;Shared Written Blocks&quot;: 0,
+                &quot;Local Hit Blocks&quot;: 0,
+                &quot;Local Read Blocks&quot;: 0,
+                &quot;Local Dirtied Blocks&quot;: 0,
+                &quot;Local Written Blocks&quot;: 0,
+                &quot;Temp Read Blocks&quot;: 0,
+                &quot;Temp Written Blocks&quot;: 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  &quot;Planning&quot;: {
+    &quot;Shared Hit Blocks&quot;: 20,
+    &quot;Shared Read Blocks&quot;: 0,
+    &quot;Shared Dirtied Blocks&quot;: 0,
+    &quot;Shared Written Blocks&quot;: 0,
+    &quot;Local Hit Blocks&quot;: 0,
+    &quot;Local Read Blocks&quot;: 0,
+    &quot;Local Dirtied Blocks&quot;: 0,
+    &quot;Local Written Blocks&quot;: 0,
+    &quot;Temp Read Blocks&quot;: 0,
+    &quot;Temp Written Blocks&quot;: 0
+  },
+  &quot;Planning Time&quot;: 0.3,
+  &quot;Triggers&quot;: [],
+  &quot;Execution Time&quot;: 0.9
+}</pre></details>
+    <p>EXPLAIN ANALYZE executes the captured clip query separately from the handler. Its time is subject to browser clock rounding and is excluded from the Timing tab. These measurements were recorded in Chromium, not in this tab.</p></div>
+  </section>
+</div>
+      </div>
+    </section>
+
+    <section class="pane log" data-pane="4" tabindex="-1" aria-labelledby="p4" style="--i: 3">
+      <header class="ptitle"><h2 class="pname" id="p4"><i aria-hidden="true">4</i>log</h2><span>needs JavaScript</span></header>
+      <div class="pbody">
+        <p class="empty">Startup events and measured times appear here when JavaScript is enabled.</p>
+      </div>
+    </section>
+
+    <section class="pane process" data-pane="5" tabindex="-1" aria-labelledby="p5" style="--i: 4">
+      <header class="ptitle"><h2 class="pname" id="p5"><i aria-hidden="true">5</i>process</h2><span>needs JavaScript</span></header>
+      <div class="pbody">
+        <p class="empty">Live ink and PostgreSQL statistics appear here when JavaScript is enabled.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Alt+1 to Alt+5 move focus between panes.</p>
+    <nav aria-label="Elsewhere">
+      <a href="/" data-bleed="y">Home</a>
+      <a href="/motion/" data-bleed="o">Motion set</a>
+    </nav>
+  </footer>
+  
+
+</body>
+</html>
