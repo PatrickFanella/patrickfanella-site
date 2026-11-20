@@ -1,4 +1,5 @@
-// Linux recorder: exercise the exact built visitor worker in headless Chromium.
+// Linux recorder: exercise the exact built visitor worker in headless Chromium, through the same
+// worker client as the desk.
 import { chromium } from '@playwright/test'
 import { createServer } from 'node:http'
 import { readFileSync } from 'node:fs'
@@ -21,12 +22,15 @@ const workerSha256 = createHash('sha256').update(await readFile(`${root}/_astro/
 const built = JSON.parse(await readFile(`${root}/_astro/clpr-recording-build.json`, 'utf8'))
 if (built.sourceFingerprint !== fingerprint || built.workerSha256 !== workerSha256 || built.worker !== workers[0]) throw new Error('Build first: the worker and source fingerprint do not match dist/.')
 const downloads = new Map()
+const CLIENT = '/worker-client.mjs'
 const mime = { '.js': 'text/javascript', '.json': 'application/json', '.wasm': 'application/wasm', '.gz': 'application/gzip' }
 const server = createServer(async (req, res) => {
   try {
     res.setHeader('Content-Security-Policy', config.server.headers['Content-Security-Policy'])
     const path = decodeURIComponent(new URL(req.url, 'http://localhost').pathname)
     if (path === '/') { res.setHeader('Content-Type', 'text/html'); res.end('<!doctype html><title>Clpr recording</title>'); return }
+    // The harness's own script, not a visitor download, so it stays out of the recorded sizes.
+    if (path === CLIENT) { res.setHeader('Content-Type', 'text/javascript'); res.end(await readFile('src/desk/worker-client.mjs')); return }
     const file = resolve(root, `.${path}`)
     if (!file.startsWith(root + '/')) { res.writeHead(403); res.end(); return }
     const data = await readFile(file)
@@ -63,35 +67,30 @@ try {
   browser = await chromium.connect(browserServer.wsEndpoint())
   const page = await browser.newPage()
   await page.goto(`http://127.0.0.1:${server.address().port}/`)
-  const result = await page.evaluate(async ({ workerPath, sizes }) => {
-    const worker = new Worker(workerPath, { type: 'module' })
+  const result = await page.evaluate(async ({ workerPath, clientPath, sizes }) => {
+    const { connect } = await import(clientPath)
     const started = performance.now(), results = []
-    let ready, startupMs
+    let ready, startupMs, up, down
+    const startup = new Promise((resolve, reject) => { up = resolve; down = reject })
+    // Any failure ends the recording: closing the client rejects the request in flight.
+    const stop = message => { down(new Error(message)); client.close(message) }
+    const client = connect(new Worker(workerPath, { type: 'module' }), {
+      event: data => { if (data.ev === 'ready') { ready = data; startupMs = performance.now() - started; client.started(); up() } },
+      result: data => data,
+      failed: stop,
+      slow: () => stop('Worker startup timed out'), slowAfter: 180_000,
+    })
     try {
-      await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('Worker startup timed out')), 180_000)
-        worker.onerror = event => reject(new Error(event.message))
-        worker.onmessage = ({ data }) => {
-          if (data.ev === 'error') reject(new Error(data.message))
-          if (data.ev === 'ready') { ready = data; startupMs = performance.now() - started; clearTimeout(timeout); resolve() }
-        }
-      })
-      let id = 0
+      await startup
       for (const rows of sizes) {
-        const result = await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error('Search recording timed out')), 180_000)
-          worker.onmessage = ({ data }) => {
-            if (data.ev === 'error') { clearTimeout(timeout); reject(new Error(data.message)) }
-            if (data.ev === 'result' && data.id === id) { clearTimeout(timeout); resolve(data) }
-          }
-          worker.postMessage({ id: ++id, words: 'world record', rows })
-        })
+        const timeout = setTimeout(() => stop('Search recording timed out'), 180_000)
+        const result = await client.request({ ev: 'search', words: 'world record', rows }).finally(() => clearTimeout(timeout))
         if (result.response.status !== 200 || result.rows !== rows || !result.plan) throw new Error(result.planError ?? 'Invalid recorded response')
         results.push(result)
       }
       return { results, ready, startupMs }
-    } finally { worker.terminate() }
-  }, { workerPath: `/_astro/${workers[0]}`, sizes: tableSizes })
+    } finally { client.close('The recording ended.') }
+  }, { workerPath: `/_astro/${workers[0]}`, clientPath: CLIENT, sizes: tableSizes })
   clearInterval(timer); await sampling; await sample()
   if (sampleError) throw sampleError
   if (!peakBytes || samples < 2) throw new Error('No usable memory samples were collected')

@@ -23,8 +23,8 @@ Checks: `npm run test:unit`, `npm run build` and `npx playwright test e2e/shell.
 
 ## Pane modes
 
-`src/desk/pane-modes.ts` owns which mode the psql pane is in, what that mode's worker is doing, the
-status copy and which worker replies still count. It has no DOM: `src/desk/psql.ts` passes in the two
+`src/desk/pane-modes.ts` owns which mode the psql pane is in, what that mode's worker is doing and the
+status copy. It has no DOM: `src/desk/psql.ts` passes in the two
 worker factories and a render function, and writes each view to the page. `psql.ts` is the only place
 that shows or hides the psql text, the timing panel and the inspector, from the view's mode: the SQL
 benchmark has the text and the panel; the recorded run and Clpr live mode have the inspector.
@@ -46,7 +46,7 @@ worker and reject its pending searches ("The SQL benchmark stopped.", "Clpr live
 "PostgreSQL is unavailable in this tab."); leaving the page rejects a pending SQL search with
 "The desk was closed." and a pending Clpr search with "Clpr live mode stopped.".
 A callback from a worker that is no longer current changes nothing, and neither does a reply nobody
-is waiting for. Request numbers carry on across restarts. Until the SQL benchmark's indexed
+is waiting for. Until the SQL benchmark's indexed
 measurement arrives, the pane shows the recorded times, and progress replaces only the last line of
 the psql text. A completed SQL worker stays for shell searches; a failed search can be retried. In
 Clpr live mode only the latest search is shown in the inspector; an earlier one still answers its
@@ -55,6 +55,37 @@ Status copy distinguishes direct SQL over generated clips from Clpr's Go handler
 any explicitly added generated clips).
 
 `src/desk/pane-modes.test.ts` covers all of this directly with fixture workers.
+
+## Worker messages
+
+Both modes, and the recorder in `scripts/record-clpr.mjs`, talk to their worker through `connect()`
+in `src/desk/worker-client.mjs`. It numbers each worker's requests from 1, keeps the ones still
+waiting, gives the 30 s notice unless the caller says the worker has started, reports a worker that
+fails or does not load, and on `close(reason)` terminates the worker and rejects what is waiting
+with that reason. After `close` nothing the worker delivers is heard. The caller passes in the
+worker and says what an event, a reply and a failure mean; `pane-modes.ts` does that for the two
+modes. It is plain JavaScript without imports because the recorder serves the file to its harness
+page unbuilt.
+
+Both worker scripts use `replies(self)` from `src/desk/worker-replies.ts`: one `post`, one `fail`
+and one queue (`serve`) that answers requests one at a time in the order they arrive. It also
+reports an uncaught error or unhandled rejection in the worker as the worker failing.
+
+Both protocols tag their messages the same way (`pg-protocol.ts`, `clpr-protocol.ts`):
+
+| Message | Meaning |
+| --- | --- |
+| `{ ev, … }` | an event from the worker, or a message to it that expects no reply (`stats`) |
+| `{ ev, id, … }` | a request (`search`) |
+| `{ ev: 'result', id, … }` | its reply |
+| `{ ev: 'error', id, message }` | that request failed |
+| `{ ev: 'error', message }` | the worker failed |
+
+Every message from a worker also carries `at`, its clock reading (see `docs/desk-telemetry.md`).
+A failed SQL search rejects that search and the worker stays. Clpr's worker runs every request on
+one PostgreSQL connection, so a failed Clpr request ends live mode.
+
+`src/desk/worker-client.test.ts` and `src/desk/worker-replies.test.ts` cover both halves directly.
 `e2e/desk-status.spec.ts` keeps what needs a page: that a view reaches the controls, the psql text,
 the inspector and the shell; its fixture times are not performance proof.
 `e2e/desk.spec.ts` also asserts completion after a real PostgreSQL benchmark, and that each

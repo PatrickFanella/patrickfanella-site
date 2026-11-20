@@ -51,7 +51,9 @@ node scripts/check-clpr-recording.mjs --built
 
 The command builds the site, starts a temporary server bound to localhost, and launches one
 headless Chromium with a blank harness. It starts the exact compiled `clpr.worker` used by the
-desk; it does not implement another SQL or Go path. The harness uses the site's CSP. It waits
+desk; it does not implement another SQL or Go path. The harness uses the site's CSP and talks to
+the worker through the desk's own client, `src/desk/worker-client.mjs`, which the temporary server
+serves unbuilt and leaves out of the recorded download sizes. It waits
 for all migrations and Go startup, then sends the same worker requests as live resizing.
 Each request runs the handler, capture and plan comparisons. It checks HTTP 200, the row count
 and plan availability, writes the data atomically, and rebuilds the site from that data.
@@ -59,7 +61,8 @@ It closes its own browser and server on success or failure. A failed capture lea
 
 The build writes a source fingerprint and worker SHA-256 to
 `dist/_astro/clpr-recording-build.json`. The recorder refuses a stale build. The inputs listed
-in `recording.mjs` cover the worker, protocol, capture, decoder, plans, pinned manifest
+in `recording.mjs` cover the worker, protocol, both halves of the worker messaging (`worker-replies.ts`
+and `worker-client.mjs`), capture, decoder, plans, pinned manifest
 and dependency lockfile, plus the build configuration, the site facts it reads (the recorder
 serves the harness with that Content-Security-Policy), the recorder and the contract itself.
 `--built` checks that `dist/` was built from this checkout and that the final build uses the

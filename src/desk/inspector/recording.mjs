@@ -22,6 +22,8 @@ const inputs = [
   'public/clpr/manifest.json',
   'src/desk/clpr.worker.ts',
   'src/desk/clpr-protocol.ts',
+  'src/desk/worker-replies.ts',
+  'src/desk/worker-client.mjs',
   'src/desk/inspector/capture.ts',
   'src/desk/inspector/wire.ts',
   'src/desk/inspector/plans.ts',

@@ -169,7 +169,7 @@ test('a shell search waits for the SQL benchmark, then reports matches, no match
   const none = d.modes.search('absent')
   expect(d.pg[0].sent).toEqual([{ ev: 'search', id: 1, words: 'absent' }])
   expect(d.view).toMatchObject({ phase: 'live', canStop: true, status: 'Running a direct SQL search on generated clips in this tab.' })
-  d.pg[0].emit({ ev: 'search', id: 1, query: "'absent':*", run: idx, rows: [], total: 0 })
+  d.pg[0].emit({ ev: 'result', id: 1, query: "'absent':*", run: idx, rows: [], total: 0 })
   await expect(none).resolves.toEqual({ total: 0, time: '2.00', top: undefined })
   expect(d.view.status).toBe('SQL search complete: 0 matches in 50,008 generated clips. Direct SQL, measured in this tab.')
   // The comparison belonged to the first query, so its row is hidden and the indexed row describes this search.
@@ -183,17 +183,17 @@ test('a shell search waits for the SQL benchmark, then reports matches, no match
   })
 
   const failed = d.modes.search('retry')
-  d.pg[0].emit({ ev: 'search-error', id: 2, message: 'fixture search failed' })
+  d.pg[0].emit({ ev: 'error', id: 2, message: 'fixture search failed' })
   await expect(failed).rejects.toThrow('fixture search failed')
   expect(d.view).toMatchObject({ phase: 'live', canStop: true, status: 'SQL search failed. The last output remains; try another search.' })
   expect(d.view.session.query).toBe("'absent':*")
 
   const one = d.modes.search('retry')
-  d.pg[0].emit({ ev: 'search', id: 3, query: "'retry':*", run: idx, rows: [match], total: 1 })
+  d.pg[0].emit({ ev: 'result', id: 3, query: "'retry':*", run: idx, rows: [match], total: 1 })
   await expect(one).resolves.toEqual({ total: 1, time: '2.00', top: 'fixture match' })
   expect(d.view.status).toBe('SQL search complete: 1 match in 50,008 generated clips. Direct SQL, measured in this tab.')
   // A reply nobody is waiting for changes nothing.
-  d.pg[0].emit({ ev: 'search', id: 3, query: "'stale':*", run: idx, rows: [], total: 0 })
+  d.pg[0].emit({ ev: 'result', id: 3, query: "'stale':*", run: idx, rows: [], total: 0 })
   expect(d.view.session.query).toBe("'retry':*")
 })
 
@@ -226,7 +226,7 @@ test('stopping the SQL benchmark returns to the recorded run, rejects its search
   expect(stopped.bench).toMatchObject({ cap: "Recorded on Clpr's demo, 14 Nov 2026", seqHidden: false, idx: '3.50', note: 'Choose Clpr live mode to run the Go handler, or the SQL benchmark to compare index timings.' })
   expect(stopped.session.status).toBe("recorded run from Clpr's demo, 14 Nov 2026")
   const heard = d.log.length
-  d.pg[0].emit({ ev: 'search', id: 1, query: "'world':* & 'record':*", run: idx, rows: [match], total: 1 })
+  d.pg[0].emit({ ev: 'result', id: 1, query: "'world':* & 'record':*", run: idx, rows: [match], total: 1 })
   d.pg[0].emit({ ev: 'error', message: 'stale SQL failure' })
   d.pg[0].fail('stale SQL failure')
   vi.advanceTimersByTime(60_000)
@@ -246,7 +246,7 @@ test('a stop before PostgreSQL answers cancels the still-loading notice', () => 
 test.each([
   ['an error event', (worker: FixtureWorker<PgRequest, PgEvent>) => worker.emit({ ev: 'error', message: 'fixture failure' }), 'fixture failure'],
   ['a worker that fails', (worker: FixtureWorker<PgRequest, PgEvent>) => worker.fail('fixture failure'), 'fixture failure'],
-  ['a worker script that does not load', (worker: FixtureWorker<PgRequest, PgEvent>) => worker.fail(''), 'the worker script did not load'],
+  ['a worker script that does not load', (worker: FixtureWorker<PgRequest, PgEvent>) => worker.fail(''), 'The worker did not load'],
 ])('the SQL benchmark fails on %s, keeps the recorded times and can be retried', async (_name, break_, why) => {
   const d = desk()
   d.modes.startBenchmark()
@@ -301,7 +301,7 @@ test('Clpr live mode reports its download, goes live and shows its first search'
   expect(d.view).toMatchObject({ phase: 'starting', status: 'Applying migrations.' })
   d.clpr[0].emit(ready)
   // The fixture request goes out at once, so its status replaces the ready line.
-  expect(d.clpr[0].sent).toEqual([{ id: 1, words: 'world record', rows: undefined }])
+  expect(d.clpr[0].sent).toEqual([{ ev: 'search', id: 1, words: 'world record', rows: undefined }])
   expect(d.view).toMatchObject({
     mode: 'clpr', phase: 'live', sub: 'Clpr 0123456, live in this tab', live: null, canStart: false, canExample: false, canStop: true,
     status: 'Running Clpr’s Go search handler on fixture clips and any generated clips in this tab.',
@@ -332,7 +332,7 @@ test('a Clpr search reports matches, no match and a bad response, and only the l
   await expect(d.modes.search('   ')).rejects.toThrow('Use search followed by words or numbers.')
 
   const none = d.modes.search('absent')
-  expect(d.clpr[0].sent.at(-1)).toEqual({ id: 2, words: 'absent', rows: undefined })
+  expect(d.clpr[0].sent.at(-1)).toEqual({ ev: 'search', id: 2, words: 'absent', rows: undefined })
   expect(d.view.status).toBe('Running Clpr’s Go search handler on fixture clips and any generated clips in this tab.')
   const empty = result(2, clips([]), 200, 1008)
   d.clpr[0].emit(empty)
@@ -387,7 +387,7 @@ test('the Plan tab re-runs the last Clpr search on another number of clips', asy
   await liveClpr(d)
   void d.modes.search('clutch fight').catch(() => {})
   void d.modes.resize(10008).catch(() => {})
-  expect(d.clpr[0].sent.slice(1)).toEqual([{ id: 2, words: 'clutch fight', rows: undefined }, { id: 3, words: 'clutch fight', rows: 10008 }])
+  expect(d.clpr[0].sent.slice(1)).toEqual([{ ev: 'search', id: 2, words: 'clutch fight', rows: undefined }, { ev: 'search', id: 3, words: 'clutch fight', rows: 10008 }])
   d.modes.stop()
   await expect(d.modes.resize(10008)).rejects.toThrow('Start Clpr live mode to run the Go search handler.')
 })
@@ -426,6 +426,7 @@ test('stopping during the first search is a cancellation, not a failure', async 
 test.each([
   ['an error event', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.emit({ ev: 'error', message: 'fixture failure' }), 'fixture failure'],
   ['a worker that fails', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.fail('fixture failure'), 'fixture failure'],
+  ['a request that fails', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.emit({ ev: 'error', id: 2, message: 'fixture failure' }), 'fixture failure'],
   ['a worker script that does not load', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.fail(''), 'The worker did not load'],
 ])('Clpr live mode fails on %s, keeps the recorded run and can be retried', async (_name, break_, why) => {
   const d = desk()
@@ -446,9 +447,12 @@ test.each([
 
   d.modes.startLive()
   d.clpr[1].emit(ready)
-  // Request numbers carry on, so a late reply to an old worker's number cannot match.
-  expect(d.clpr[1].sent).toEqual([{ id: 3, words: 'world record', rows: undefined }])
-  d.clpr[1].emit(result(3))
+  // Each worker's requests are numbered from 1; the old worker's reply to the same number does not count.
+  expect(d.clpr[1].sent).toEqual([{ ev: 'search', id: 1, words: 'world record', rows: undefined }])
+  const waiting = d.view
+  d.clpr[0].emit(result(1, clips([])))
+  expect(d.view).toBe(waiting)
+  d.clpr[1].emit(result(1))
   expect(d.view).toMatchObject({ phase: 'live', status: 'Clpr search complete: 2 matches. Clpr is live: all 155 migrations applied, 8 fixture clips and 0 generated clips. Go handler request measured in this tab.' })
 })
 
@@ -474,14 +478,14 @@ test('the example control starts live mode with its words, then searches in the 
   d.modes.example('another')
   expect(d.clpr).toHaveLength(1)
   d.clpr[0].emit(ready)
-  expect(d.clpr[0].sent).toEqual([{ id: 1, words: 'clutch fight', rows: undefined }])
+  expect(d.clpr[0].sent).toEqual([{ ev: 'search', id: 1, words: 'clutch fight', rows: undefined }])
   d.clpr[0].emit(result(1))
   await settled()
   expect(d.view.canExample).toBe(true)
 
   d.modes.example('absent')
   expect(d.clpr).toHaveLength(1)
-  expect(d.clpr[0].sent.at(-1)).toEqual({ id: 2, words: 'absent', rows: undefined })
+  expect(d.clpr[0].sent.at(-1)).toEqual({ ev: 'search', id: 2, words: 'absent', rows: undefined })
   expect(d.view.canExample).toBe(false)
   // The shell's own search does not release the example control.
   const shell = d.modes.search('shell')
@@ -530,7 +534,7 @@ test('starting Clpr during a SQL search stops the benchmark and ignores its repl
   expect(d.view.bench.cap).toBe("Recorded on Clpr's demo, 14 Nov 2026")
   const starting = d.view, heard = d.log.length
   finishSql(d.pg[0])
-  d.pg[0].emit({ ev: 'search', id: 1, query: "'world':* & 'record':*", run: idx, rows: [match], total: 1 })
+  d.pg[0].emit({ ev: 'result', id: 1, query: "'world':* & 'record':*", run: idx, rows: [match], total: 1 })
   d.pg[0].emit({ ev: 'error', message: 'stale SQL failure after switching' })
   vi.advanceTimersByTime(2000)
   expect(d.view).toBe(starting)

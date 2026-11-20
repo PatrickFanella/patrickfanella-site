@@ -12,12 +12,12 @@ const fingerprint = (read: (path: string) => string) => sourceFingerprint(create
 test('the fingerprint covers every input path and its bytes, and changes when one input changes', () => {
   const read = (path: string) => `contents of ${path}`
   // SHA-256 over path, NUL, bytes, NUL for each input in order, as recordings have been bound since the first one.
-  expect(fingerprint(read)).toBe('efdd5badff5c7e8d7c28a96b7b55808e6b51cfbf089445769f783c2d8d05e33c')
+  expect(fingerprint(read)).toBe('9544f6656a74b3665bb2a12e5a7f1cd7f340f5f20169805024d72ad86748803c')
   const paths: string[] = []
   fingerprint(path => (paths.push(path), ''))
   expect(paths).toEqual([
     'astro.config.mjs', 'src/content/site-facts.mjs', 'scripts/record-clpr.mjs', 'src/desk/inspector/recording.mjs', 'package-lock.json',
-    'public/clpr/manifest.json', 'src/desk/clpr.worker.ts', 'src/desk/clpr-protocol.ts',
+    'public/clpr/manifest.json', 'src/desk/clpr.worker.ts', 'src/desk/clpr-protocol.ts', 'src/desk/worker-replies.ts', 'src/desk/worker-client.mjs',
     'src/desk/inspector/capture.ts', 'src/desk/inspector/wire.ts', 'src/desk/inspector/plans.ts',
   ])
   for (const changed of paths) {
