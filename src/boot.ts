@@ -23,9 +23,6 @@ function syncBrowserTheme() {
 
 export interface Page { ink: Ink | null; bleeder: ReturnType<typeof bleed> | null }
 
-/** Layout is final once the display face has loaded. */
-export const displayFace = () => document.fonts.load(DISPLAY_FACE)
-
 /**
  * Starts the page and brings its ink to rest or to life once the display face and the solver are
  * ready. `pour` runs at that point, with null when no ink can be drawn: it measures the final
@@ -52,7 +49,8 @@ export function boot(pour?: (ink: Ink | null) => void): Page {
   const bleeder = ink ? bleed(ink) : null
   if (ink) splash(ink)
   if (ink) readout(ink)
-  void Promise.all([displayFace().catch(() => []).then(() => document.fonts.ready), ink?.ready]).then(() => {
+  // Layout is final once the display face has loaded.
+  void Promise.all([document.fonts.load(DISPLAY_FACE).catch(() => []).then(() => document.fonts.ready), ink?.ready]).then(() => {
     ink?.invalidate()
     // With motion the tank is running before the pour, so each splash lands in moving water. With
     // reduced motion the solver runs ahead over what was poured and the page shows one still frame.
