@@ -15,6 +15,29 @@ Astro and the live inspector use `render.ts`, including the same plan chart and 
 Captured strings are escaped before becoming HTML. The recording JSON is a build input, not
 a client-side import; visitors receive the rendered evidence instead of downloading that JSON.
 
+## One contract
+
+`src/desk/inspector/recording.mjs` defines the recorded run. It is plain JavaScript with no
+Node imports and never imports the JSON, so the Astro config, the node scripts, the Inspector's
+frontmatter, the tests, the worker and the page scripts all import it.
+
+- `fixtureCount` and `tableSizes` are stated there once. The worker's fixture list must have
+  that length to typecheck; the size control, the plan chart's scale, the recorder and the
+  checker read the sizes.
+- `sourceFingerprint` hashes the input files. The build, the recorder, the checker, the
+  Inspector and the browser tests call it; the caller passes the hash and the file reader.
+- `parseRecording` is the recording's shape. It throws `Invalid Clpr recording: <field>` on a
+  missing or malformed field and its return type is the `Recording` type. The recorder writes
+  what it returns, and the checker and the Inspector read the JSON through it. It rebuilds the
+  recording from the fields it names, so the checker's comparison with the file also fails on
+  an unknown field. Wire messages, statements and PostgreSQL's plan trees are passed through:
+  messages are checked for a name and one hex byte per counted byte, plans for a total cost
+  and an execution time.
+
+`checkoutLiveGate` in `live-policy.ts` builds the gate for a checkout from that fingerprint
+and the size of the pinned `search.wasm.gz` on disk. The Desk page and the browser tests both
+use it, so a test skips live mode exactly when the page disables it.
+
 ## Reproduce or update
 
 On Linux, with dependencies and Playwright Chromium installed:
@@ -35,11 +58,12 @@ and plan availability, writes the data atomically, and rebuilds the site from th
 It closes its own browser and server on success or failure. A failed capture leaves the prior record intact; a successful capture replaces it atomically before the final build.
 
 The build writes a source fingerprint and worker SHA-256 to
-`dist/_astro/clpr-recording-build.json`. The recorder refuses a stale build. Inputs in
-`recording-inputs.json` cover the worker, protocol, capture, decoder, plans, pinned manifest
+`dist/_astro/clpr-recording-build.json`. The recorder refuses a stale build. The inputs listed
+in `recording.mjs` cover the worker, protocol, capture, decoder, plans, pinned manifest
 and dependency lockfile, plus the build configuration, the site facts it reads (the recorder
-serves the harness with that Content-Security-Policy) and the recorder itself. `--built` checks
-that the final build uses the recorded worker.
+serves the harness with that Content-Security-Policy), the recorder and the contract itself.
+`--built` checks that `dist/` was built from this checkout and that the final build uses the
+recorded worker.
 The recording also names Clpr's source commit, PostgreSQL, migration count, Chromium version,
 platform, UTC date, payload sizes, startup duration and checkout HEAD. The fingerprint identifies
 the worker sources even when a local capture includes uncommitted work. CI recordings include

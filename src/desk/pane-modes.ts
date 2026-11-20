@@ -9,6 +9,7 @@ import { QUERY, searchTerms, type PgEvent, type PgRequest, type Row, type Run } 
 import type { ClprEvent, ClprRequest } from './clpr-protocol'
 import { RECORDED_ON, recordedIdx, recordedSeq } from './recorded'
 import { compare, measured, scanName, tick } from './benchmark'
+import { fixtureCount } from './inspector/recording.mjs'
 
 export interface SearchResult { total: number; time: string; top?: string; timing?: string }
 export type ClprResult = Extract<ClprEvent, { ev: 'result' }>
@@ -243,7 +244,7 @@ export function startModes({ gate, build, pgWorker, clprWorker, render, onPgEven
         || typeof results !== 'object' || results === null || !('clips' in results) || !Array.isArray(results.clips)) throw new Error('Clpr returned unexpected clip results')
       const first: unknown = results.clips[0]
       const top = typeof first === 'object' && first !== null && 'title' in first && typeof first.title === 'string' ? first.title : undefined
-      if (shown) status = `Clpr search complete: ${counts.clips} ${plural(counts.clips)}. Clpr is live: all ${build.migrationCount} migrations applied, 8 fixture clips and ${fmt(event.rows - 8)} generated clips. Go handler request measured in this tab.`
+      if (shown) status = `Clpr search complete: ${counts.clips} ${plural(counts.clips)}. Clpr is live: all ${build.migrationCount} migrations applied, ${fixtureCount} fixture clips and ${fmt(event.rows - fixtureCount)} generated clips. Go handler request measured in this tab.`
       request.resolve({ total: counts.clips, top, time: event.ms.toFixed(1), timing: 'Clpr request time' })
     } catch (error) {
       if (shown) status = 'Clpr search failed; inspect its response or try another search.'

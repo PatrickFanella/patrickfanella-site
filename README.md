@@ -51,6 +51,7 @@ The pages are built with Astro as static HTML. There is no client router and no 
 - `src/desk/desk.ts`: the desk page: pours the name from the about pane and moves focus between panes.
 - `src/desk/pg.worker.ts`: PostgreSQL (PGlite, bundled from npm) in a module worker. It seeds the clips, times three batches of the query without and with the index, and posts each step. It reports failures inside PGlite's start-up, which never reach the page's `Worker.onerror`. The worker stays available for shell searches.
 - `src/desk/clpr.worker.ts`: loads the pinned Clpr artifact, verifies its Wasm and migration hashes, applies every migration, seeds eight fixtures, and runs requests through the Go handler and pgx bridge.
+- `src/desk/inspector/recording.mjs`: the recorded Clpr run's contract: the fixture count and table sizes, the source fingerprint and `parseRecording`, which writes, checks and types the recording. See [clpr-recording.md](docs/clpr-recording.md).
 - `src/desk/pane-modes.ts`: which mode the psql pane is in (recorded run, SQL benchmark or Clpr live), each mode's state, status copy, stop/retry, stale worker replies and shell request routing. No DOM; it takes its worker factories as arguments, and `pane-modes.test.ts` covers it directly.
 - `src/desk/clpr.ts`: the live-mode controls and manifest provenance, as elements.
 - `public/clpr/`: the pinned manifest and its payload, copied from Clpr CI. See [docs/clpr-artifact.md](docs/clpr-artifact.md) for updating it.

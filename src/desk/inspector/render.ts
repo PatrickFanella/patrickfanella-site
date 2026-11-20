@@ -3,6 +3,7 @@
 import type { ClprEvent } from '../clpr-protocol'
 import type { PlanNode, PlanSample } from './plans'
 import type { Statement } from './capture'
+import { tableSizes } from './recording.mjs'
 
 export type Result = Extract<ClprEvent, { ev: 'result' }>
 export const escape = (value: unknown) => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
@@ -60,14 +61,15 @@ export function planMarkup(points: PlanSample[], selected: PlanSample, live: boo
   const crossover = firstGin > 0 ? `The sampled cost crossover lies between ${number(points[firstGin - 1].rows)} and ${number(points[firstGin].rows)} clips. More rows make a sequential scan more expensive; the matching fraction, row width and statistics also affect this choice.`
     : 'Measure several sizes to bracket the crossover. Its location depends on this query and generated data; no production threshold is claimed.'
   const max = Math.max(1, ...points.flatMap(point => [point.seq.Plan['Total Cost'], point.gin.Plan['Total Cost']]))
-  const x = (rows: number) => 60 + Math.log(rows / 8) / Math.log(50008 / 8) * 430, y = (cost: number) => 195 - cost / max * 155
+  const least = tableSizes[0], most = tableSizes.at(-1)!
+  const x = (rows: number) => 60 + Math.log(rows / least) / Math.log(most / least) * 430, y = (cost: number) => 195 - cost / max * 155
   return `<p>Recorded planner costs at this size: sequential ${number(seq)}, GIN ${number(gin)}. ${seq < gin
     ? 'Reading the small table directly costs less than starting the GIN lookup and fetching heap pages.' : 'The GIN lookup avoids enough table scanning to offset its startup and heap-fetch costs.'}
     Costs are PostgreSQL estimates in arbitrary units, not milliseconds. The default planner chose ${escape(chosen.toLowerCase())}. Alternatives use local planner switches; the GIN comparison temporarily removes competing secondary indexes in a transaction, then rolls it back. Handler searches keep every index.</p>
     <p>${escape(crossover)}</p><p class="plan-legend"><span class="plan-seq">Solid: sequential</span> / <span class="plan-gin">Dashed: GIN</span></p>
     <svg class="plan-chart" viewBox="0 0 520 240" role="img" aria-label="Sequential and GIN estimated total cost across measured table sizes. Exact values follow in the table. Row count uses a logarithmic scale; cost uses a linear scale.">
       <path d="M60 30 V195 H490" class="plan-axis" />${[0, max / 2, max].map(cost => `<text x="52" y="${y(cost) + 4}" text-anchor="end">${number(cost)}</text>`).join('')}
-      <text x="60" y="18">Estimated total cost</text><text x="60" y="215">8</text><text x="490" y="215" text-anchor="end">50,008 clips (log scale)</text>
+      <text x="60" y="18">Estimated total cost</text><text x="60" y="215">${least}</text><text x="490" y="215" text-anchor="end">${number(most)} clips (log scale)</text>
       ${(['seq', 'gin'] as const).map(kind => `<polyline points="${points.map(p => `${x(p.rows)},${y(p[kind].Plan['Total Cost'])}`).join(' ')}" class="plan-line plan-${kind}" />${points.map(p => `<circle cx="${x(p.rows)}" cy="${y(p[kind].Plan['Total Cost'])}" r="${p.rows === selected.rows ? 5 : 3}" class="plan-dot plan-${kind}" />`).join('')}`).join('')}
     </svg><table data-plan-samples><caption>${live ? 'Measurements for this search' : 'Recorded measurements'}; total planner cost</caption><thead><tr>${['Clips', 'Sequential', 'GIN', 'Default choice'].map(label => `<th scope="col">${label}</th>`).join('')}</tr></thead>
       <tbody>${points.map(p => `<tr data-rows="${p.rows}"><td>${number(p.rows)}</td><td>${number(p.seq.Plan['Total Cost'])}</td><td>${number(p.gin.Plan['Total Cost'])}</td><td>${escape(scan(p.natural.Plan) || p.natural.Plan['Node Type'])}</td></tr>`).join('')}</tbody></table>
