@@ -24,7 +24,7 @@ frontmatter, the tests, the worker and the page scripts all import it.
 - `fixtureCount` and `tableSizes` are stated there once. The worker's fixture list must have
   that length to typecheck; the size control, the plan chart's scale, the recorder and the
   checker read the sizes.
-- `sourceFingerprint` hashes the input files. The build, the recorder, the checker, the
+- `sourceFingerprint` hashes the input files and the Content-Security-Policy. The build, the recorder, the checker, the
   Inspector and the browser tests call it; the caller passes the hash and the file reader.
 - `parseRecording` is the recording's shape. It throws `Invalid Clpr recording: <field>` on a
   missing or malformed field and its return type is the `Recording` type. The recorder writes
@@ -63,8 +63,9 @@ The build writes a source fingerprint and worker SHA-256 to
 `dist/_astro/clpr-recording-build.json`. The recorder refuses a stale build. The inputs listed
 in `recording.mjs` cover the worker, protocol, both halves of the worker messaging (`worker-replies.ts`
 and `worker-client.mjs`), capture, decoder, plans, pinned manifest
-and dependency lockfile, plus the build configuration, the site facts it reads (the recorder
-serves the harness with that Content-Security-Policy), the recorder and the contract itself.
+and dependency lockfile, plus the build configuration, the recorder and the contract itself.
+The fingerprint also hashes the Content-Security-Policy string from `site-facts.mjs`, because the
+recorder serves the harness with it; other edits to the site facts leave the recording current.
 `--built` checks that `dist/` was built from this checkout and that the final build uses the
 recorded worker.
 The recording also names Clpr's source commit, PostgreSQL, migration count, Chromium version,

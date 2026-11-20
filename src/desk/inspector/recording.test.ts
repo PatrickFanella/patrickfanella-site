@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import { expect, test } from 'vitest'
+import { contentSecurityPolicy } from '../../content/site-facts.mjs'
 import { fixtureCount, parseRecording, sourceFingerprint, tableSizes } from './recording.mjs'
 
 test('the recording covers the eight fixtures alone and with 1,000 to 50,000 generated clips', () => {
@@ -8,19 +9,23 @@ test('the recording covers the eight fixtures alone and with 1,000 to 50,000 gen
 })
 
 const fingerprint = (read: (path: string) => string) => sourceFingerprint(createHash('sha256'), read)
+/** The input paths, in the order the fingerprint reads them. */
+const paths = () => { const read: string[] = []; fingerprint(path => (read.push(path), '')); return read }
 
-test('the fingerprint covers every input path and its bytes, and changes when one input changes', () => {
+test('the fingerprint covers every input path and its bytes and the security policy, and changes when one input changes', () => {
   const read = (path: string) => `contents of ${path}`
-  // SHA-256 over path, NUL, bytes, NUL for each input in order, as recordings have been bound since the first one.
-  expect(fingerprint(read)).toBe('9544f6656a74b3665bb2a12e5a7f1cd7f340f5f20169805024d72ad86748803c')
-  const paths: string[] = []
-  fingerprint(path => (paths.push(path), ''))
-  expect(paths).toEqual([
-    'astro.config.mjs', 'src/content/site-facts.mjs', 'scripts/record-clpr.mjs', 'src/desk/inspector/recording.mjs', 'package-lock.json',
+  // SHA-256 over path, NUL, bytes, NUL for each input in order, then the name, policy and NUL of the
+  // content security policy from site-facts.mjs.
+  const expected = createHash('sha256')
+  for (const path of paths()) expected.update(`${path}\0${read(path)}\0`)
+  expected.update(`contentSecurityPolicy\0${contentSecurityPolicy}\0`)
+  expect(fingerprint(read)).toBe(expected.digest('hex'))
+  expect(paths()).toEqual([
+    'astro.config.mjs', 'scripts/record-clpr.mjs', 'src/desk/inspector/recording.mjs', 'package-lock.json',
     'public/clpr/manifest.json', 'src/desk/clpr.worker.ts', 'src/desk/clpr-protocol.ts', 'src/desk/worker-replies.ts', 'src/desk/worker-client.mjs',
     'src/desk/inspector/capture.ts', 'src/desk/inspector/wire.ts', 'src/desk/inspector/plans.ts',
   ])
-  for (const changed of paths) {
+  for (const changed of paths()) {
     expect(fingerprint(path => path === changed ? `${read(path)} ` : read(path)), changed).not.toBe(fingerprint(read))
   }
 })

@@ -1,7 +1,8 @@
 import { expect, test } from 'vitest'
 import { assembleCatalog, assetPaths, socialCardPath, type SourceProject } from './project-catalog.mjs'
-import { allProjects, featuredProjects, projectsReply, reviewedOn, selectedProjects, studiedProjects, studiesReviewedOn, supportingProjects } from './project-presentation'
+import { catalog, projectsReply } from './projects.mjs'
 import { GET } from '../pages/sitemap.xml'
+const { all: allProjects, featured: featuredProjects, reviewedOn, selected: selectedProjects, studied: studiedProjects, studiesReviewedOn, supporting: supportingProjects } = catalog
 
 // Literal fixture data, so the join's rules are tested whatever the content files hold.
 const project = (slug: string, extra: Partial<SourceProject> = {}): SourceProject => ({
@@ -14,7 +15,10 @@ const fixture = () => ({
   portfolio: [project('old'), project('alpha', { title: 'Stale title' })],
   selected: [project('alpha', { media: [shot], thumbnailUrl: '/assets/a.webp', tagline: 'first letter' }), project('beta'), project('rekolekt'), project('clpr')],
   studies: [study('alpha')],
-  sources: [{ repo: 'org/alpha', sha: 'abc123' }, { repo: 'org/old', sha: 'def456' }, { repo: 'org/not-alpha', sha: 'fff' }],
+  sources: [
+    { repo: 'org/alpha', sha: 'abc123' }, { repo: 'org/old', sha: 'def456' }, { repo: 'org/not-alpha', sha: 'fff' },
+    { repo: 'org/beta', sha: 'b' }, { repo: 'org/rekolekt', sha: 'r' }, { repo: 'org/clpr', sha: 'c' },
+  ],
   assets: [{ path: '/assets/a.webp', width: 1280, height: 800 }],
   featured: ['alpha'],
   reviewedAt: { selection: '2026-03-09', studies: '2026-04-10' },
@@ -43,7 +47,7 @@ test('each project is joined once with its study, source, media dimensions, soci
   // A current entry without its own image shares the site card.
   expect(beta.socialImage).toBe('/assets/brand/patrick/share-card.png')
   expect(beta.study).toBeUndefined()
-  expect(beta.evidence).toBeUndefined()
+  expect(beta.evidence?.repo).toBe('org/beta')
   // A historical entry keeps its rendered card and takes no pinned source, even when one matches its slug.
   expect(old.socialImage).toBe('/assets/projects/social/old.png')
   expect(old.evidence).toBeUndefined()
@@ -93,6 +97,12 @@ test('a project without its assets fails and names the project and the file', ()
   expect(() => assembleCatalog(historical)).toThrow('project "old": media /assets/gone.webp is not in project-assets-provenance.json')
 })
 
+test('a current project without a pinned source fails and names the project', () => {
+  const data = fixture()
+  data.sources = data.sources.filter(source => source.repo !== 'org/beta')
+  expect(() => assembleCatalog(data)).toThrow('project "beta" has no pinned source in selected-project-sources.json')
+})
+
 test('a featured slug that is not selected, or has no study, fails and names the slug', () => {
   expect(() => assembleCatalog({ ...fixture(), featured: ['alpha', 'old'] })).toThrow('featured slug "old" is not in selected-projects.json')
   expect(() => assembleCatalog({ ...fixture(), featured: ['alpha', 'beta'] })).toThrow('featured slug "beta" has no study in project-case-studies.json')
@@ -120,7 +130,7 @@ test('a studied project needs its own social card, so its study page never takes
   expect(() => assembleCatalog(data)).toThrow('project-case-studies.json: study "alpha" has no social card: project "alpha" has no thumbnailUrl')
 })
 
-// The real content files: importing project-presentation runs the join, so a disagreement fails this file.
+// The real content files: importing projects.mjs runs the join, so a disagreement fails this file.
 test('the content files agree and give four studied projects, twelve others and 43 detail pages', () => {
   expect(featuredProjects.map(item => item.title)).toEqual(['Clpr', 'Clustr', 'Rekolekt + HasanAra', 'Undertow'])
   expect(studiedProjects.map(item => item.study.path)).toEqual(['/case-studies/clpr/', '/case-studies/clustr/', '/case-studies/rekolekt/', '/case-studies/undertow/'])

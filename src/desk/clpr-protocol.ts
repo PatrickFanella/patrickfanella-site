@@ -14,3 +14,5 @@ export type ClprEvent = (
   | { ev: 'result'; id: number; url: string; response: ClprResponse; ms: number; calls: DatabaseCall[]; rows: number; plan?: PlanSample; planError?: string }
   | { ev: 'error'; id?: number; message: string }
 ) & { at?: number }
+/** A search's reply: the handler's response, the captured database calls and the plan comparison. */
+export type ClprResult = Extract<ClprEvent, { ev: 'result' }>

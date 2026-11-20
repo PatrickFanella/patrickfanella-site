@@ -1,6 +1,7 @@
 import { test, expect, poured } from './fixtures'
-import { featuredProjects } from '../src/content/project-presentation'
+import { catalog } from '../src/content/projects.mjs'
 import { DISPLAY_FACE } from '../src/display-face'
+const { featured: featuredProjects } = catalog
 
 test('the name pours in and is fitted to the width', async ({ page }) => {
   await page.goto('/')

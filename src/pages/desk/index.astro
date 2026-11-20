@@ -1,10 +1,11 @@
 ---
-import { featuredProjects, projectsReply } from '../../content/project-presentation'
+import { catalog, projectsReply } from '../../content/projects.mjs'
 import SiteHeader from '../../components/SiteHeader.astro'
 import { recruitingEmail } from '../../content/contact'
 import resume from '../../content/resume.json'
 import Page from '../../layouts/Page.astro'
 import Inspector from '../../desk/inspector/Inspector.astro'
+const { featured: featuredProjects } = catalog
 ---
 <Page title="Engineering Desk | Patrick Fanella" description="Inspect Clpr’s pinned Go search code, PostgreSQL queries, protocol traffic and query plans in an interactive engineering desk by Patrick Fanella." bodyClass="desk" noscript={false}>
   <!-- Without ink, a still solid pane avoids compositing a very tall protocol

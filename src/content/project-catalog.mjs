@@ -50,7 +50,7 @@
  * }} Project
  * `media` carries its dimensions from the asset manifest. `current` is true for the selection and
  * false for retained historical pages. `displayName` names the product at `liveUrl`. `evidence` is
- * the pinned source the copy was reviewed against; only current projects have one.
+ * the pinned source the copy was reviewed against; every current project has one, and historical ones none.
  */
 /** @typedef {Project & { study: Study }} StudiedProject */
 /**
@@ -108,6 +108,8 @@ export function assembleCatalog({ portfolio, selected, studies, sources, assets,
     const isCurrent = current.has(project.slug)
     const study = isCurrent ? studyBySlug.get(project.slug) : undefined
     const source = isCurrent ? sources.find(item => item.repo.endsWith(`/${project.slug}`)) : undefined
+    // Current copy is reviewed against a pinned source, and the page links it.
+    if (isCurrent && !source) problems.push(`project "${project.slug}" has no pinned source in selected-project-sources.json`)
     return {
       ...project,
       media: project.media.map(media => {

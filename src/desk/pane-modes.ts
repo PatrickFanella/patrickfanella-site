@@ -7,17 +7,13 @@
 // pending searches, the 30 s notice and what happens to a late reply. Leaving a mode closes its
 // client, which terminates the worker and rejects its pending searches.
 import { QUERY, searchTerms, type PgEvent, type PgRequest, type Row, type Run } from './pg-protocol'
-import type { ClprEvent, ClprRequest } from './clpr-protocol'
+import type { ClprEvent, ClprRequest, ClprResult } from './clpr-protocol'
 import { RECORDED_ON, recordedIdx, recordedSeq } from './recorded'
 import { compare, measured, scanName, tick } from './benchmark'
 import { connect, type WorkerLike } from './worker-client.mjs'
 import { fixtureCount } from './inspector/recording.mjs'
 
 export interface SearchResult { total: number; time: string; top?: string; timing?: string }
-export type ClprResult = Extract<ClprEvent, { ev: 'result' }>
-
-/** A worker as the modes use it. `Worker` fits; a test passes a fixture. */
-export type ModeWorker<Request, Event> = WorkerLike<Request, Event>
 
 /** A measured run also carries the clock's step, so its times are shown at the clock's resolution. */
 export interface Shown { run: Run; rows: Row[]; total: number; of: number; step?: number }
@@ -26,7 +22,7 @@ export interface Shown { run: Run; rows: Row[]; total: number; of: number; step?
 export interface Session { shown: Shown; query: string; status: string }
 /** The timing panel. `bars` are the two times the bars are scaled by; `batches` are the batch means
  *  of a measured comparison. */
-export interface Bench {
+interface Bench {
   cap: string; seqNote: string; idxNote: string; seq: string; idx: string
   bars: [seq: number, idx: number]; batches?: [seq: string, idx: string]; seqHidden: boolean; note: string
 }
@@ -57,8 +53,8 @@ export function startModes({ gate, build, pgWorker, clprWorker, render, onPgEven
   /** The pinned Clpr build. */
   build: { commit: string; migrationCount: number }
   /** Nothing is requested until the visitor starts a mode. */
-  pgWorker(): ModeWorker<PgRequest, PgEvent>
-  clprWorker(): ModeWorker<ClprRequest, ClprEvent>
+  pgWorker(): WorkerLike<PgRequest, PgEvent>
+  clprWorker(): WorkerLike<ClprRequest, ClprEvent>
   /** Called with the whole view after every change. */
   render(view: View): void
   /** Every event of the current SQL worker except its replies to searches, for the startup log. */

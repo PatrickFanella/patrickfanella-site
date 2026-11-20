@@ -65,7 +65,7 @@ test('a reply that cannot be used rejects its request', async () => {
   await expect(search).rejects.toThrow('bad total')
 })
 
-test('a failed request is refused, then rejects with the worker\'s message; the client stays open', async () => {
+test('a failed request rejects with the worker\'s message, then is refused; the client stays open', async () => {
   const { worker, calls, c } = client()
   const failed = c.request({ ev: 'search', words: '' })
   worker.emit({ ev: 'error', id: 1, message: 'no words' })
@@ -130,7 +130,7 @@ test('after closing, a reply, an event and an error from the worker are all igno
   await expect(c.request({ ev: 'search', words: 'again' })).rejects.toThrow('Stopped.')
 })
 
-test('a callback may close the client: a refused request then rejects with the reason', async () => {
+test('a callback may close the client: a refused request still rejects with the worker\'s message', async () => {
   const worker = new FixtureWorker()
   const c = connect<Request, Event, string>(worker, {
     event: () => {}, result: () => '', failed: () => {},
@@ -138,7 +138,7 @@ test('a callback may close the client: a refused request then rejects with the r
   })
   const search = c.request({ ev: 'search', words: 'world' })
   worker.emit({ ev: 'error', id: 1, message: 'handler crashed' })
-  await expect(search).rejects.toThrow('Live mode stopped.')
+  await expect(search).rejects.toThrow('handler crashed')
   expect(worker.terminated).toBe(true)
 })
 

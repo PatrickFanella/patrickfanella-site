@@ -6,7 +6,7 @@ interface Target { tex: WebGLTexture; fbo: WebGLFramebuffer; w: number; h: numbe
 interface Pair { r: Target; w: Target; swap(): void }
 type Uniform = number | number[] | Float32Array | Target | { tex: WebGLTexture }
 
-export async function createWebGL(canvas: HTMLCanvasElement, onLost: () => void): Promise<Backend> {
+export async function createWebGL(canvas: HTMLCanvasElement): Promise<Backend> {
   const gl = canvas.getContext('webgl2', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance', preserveDrawingBuffer: false })
   if (!gl) throw new Error('WebGL2 is not available')
   if (!gl.getExtension('EXT_color_buffer_float') && !gl.getExtension('EXT_color_buffer_half_float')) throw new Error('No float render targets')
@@ -84,8 +84,6 @@ export async function createWebGL(canvas: HTMLCanvasElement, onLost: () => void)
     else { gl!.bindFramebuffer(gl!.FRAMEBUFFER, null); gl!.viewport(0, 0, canvas.width, canvas.height) }
     gl!.drawArrays(gl!.TRIANGLES, 0, 3)
   }
-
-  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onLost() })
 
   return {
     path: 'WebGL2',

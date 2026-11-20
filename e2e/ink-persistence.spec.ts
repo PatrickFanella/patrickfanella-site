@@ -282,3 +282,44 @@ test('a page that loads with no viewport starts its ink once it has one', async 
   await expect.poll(async () => { await page.touchscreen.tap(x, y); return inked(page) }, { timeout: 120_000 }).toBeGreaterThan(0.02)
   expect(await page.evaluate(() => document.documentElement.classList.contains('no-ink'))).toBe(false)
 })
+
+// A browser drops a WebGL context it needs back (iOS Safari does this to background tabs). The
+// loop must stop while the context is gone, showing the tab must not run it on the dead context,
+// and once the context is restored the ink comes back: running, or as a new still.
+for (const reduced of [false, true]) {
+  test(`the ink comes back after its WebGL context is lost and restored${reduced ? ' (reduced motion)' : ''}`, async ({ page }) => {
+    if (reduced) await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/?ink=webgl2')
+    // A still is drawn once, and reading a WebGL canvas back after it is shown gives nothing, so
+    // this reads screenshots of the top of the page with everything but the ink hidden. A loaded
+    // machine fits few steps into a still, so the floor is low; bare ground reads 0.
+    await page.addStyleTag({ content: 'body *:not(#ink) { visibility: hidden !important }' })
+    const top = () => shotInk(page, { x: 0, y: 0, width: PHONE.width, height: 380 })
+    const floor = 0.005
+    await expect.poll(top, { timeout: 120_000 }).toBeGreaterThan(floor)
+    const rate = page.locator('[data-k=fps]')
+    await expect(rate).toHaveText(reduced ? 'still frame' : /^\d+ fps$/)
+    // getContext returns the page's own context. A lost context gives no extensions, so keep this one.
+    const lose = (how: 'loseContext' | 'restoreContext', event: string) => page.evaluate(([how, event]) => new Promise<void>((resolve) => {
+      const ink = document.querySelector<HTMLCanvasElement>('#ink')!
+      const w = window as unknown as { loser?: WEBGL_lose_context }
+      w.loser ??= ink.getContext('webgl2')!.getExtension('WEBGL_lose_context')!
+      ink.addEventListener(event, () => resolve(), { once: true })
+      w.loser[how as 'loseContext']()
+    }), [how, event])
+
+    await lose('loseContext', 'webglcontextlost')
+    await expect(rate).toHaveText('still frame')
+    await expect(page.locator('[data-k=grid]')).toHaveText('…')
+    // Showing the tab again must not start the loop on the lost context.
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')))
+    await page.waitForTimeout(1500)
+    await expect(rate).toHaveText('still frame')
+
+    await lose('restoreContext', 'webglcontextrestored')
+    await expect(page.locator('[data-k=grid]')).toHaveText(/^\d+ × \d+$/, { timeout: 60_000 })
+    await expect(rate).toHaveText(reduced ? 'still frame' : /^\d+ fps$/)
+    await expect.poll(top, { message: 'ink after the context came back', timeout: 120_000 }).toBeGreaterThan(floor)
+    expect(await page.evaluate(() => document.documentElement.classList.contains('no-ink'))).toBe(false)
+  })
+}
