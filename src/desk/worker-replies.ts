@@ -9,6 +9,9 @@ export interface WorkerScope {
   addEventListener(type: 'error' | 'unhandledrejection', listener: (event: { message?: string; reason?: unknown }) => void): void
 }
 
+/** What a request's answer carries: the protocol's result without the tags this module adds. */
+type Answer<Event> = Omit<Extract<Event, { ev: 'result' }>, 'ev' | 'id' | 'at'>
+
 export function replies<Request extends { ev: string; id?: number }, Event extends { ev: string }>(scope: WorkerScope) {
   // Every message carries the worker's clock, which the page translates to its own.
   const send = (message: object) => scope.postMessage({ ...message, at: performance.timeOrigin + performance.now() })
@@ -25,7 +28,7 @@ export function replies<Request extends { ev: string; id?: number }, Event exten
     fail,
     /** Start answering requests, one at a time. What `answer` returns for a request with an id is
      *  posted as its result; what it throws, as that request's failure. */
-    serve(answer: (request: Request) => Promise<object | void>) {
+    serve(answer: (request: Request) => Promise<Answer<Event> | void>) {
       scope.onmessage = ({ data }: MessageEvent<Request>) => {
         queue = queue.then(async () => {
           try {
