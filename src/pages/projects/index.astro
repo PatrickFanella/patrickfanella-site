@@ -3,10 +3,14 @@ import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
 import resume from '../../content/resume.json'
 import { featuredProjects, reviewedOn, supportingProjects } from '../../content/project-presentation'
+import { catalog } from '../../content/projects.mjs'
+import { NumberWord, numberWord } from '../../content/number-words.mjs'
+const featuredCount = catalog.featured.length
+const supportingCount = catalog.supporting.length
 ---
-<ContentPage title="Work | Patrick Fanella" description="Four engineering case studies and twelve selected projects by Patrick Fanella: search, data pipelines, media systems and developer tools.">
+<ContentPage title="Work | Patrick Fanella" description={`${NumberWord(featuredCount)} engineering case studies and ${numberWord(supportingCount)} selected projects by Patrick Fanella: search, data pipelines, media systems and developer tools.`}>
   <h1>Selected work</h1>
-  <p class="lead">Four projects in depth: a clip discovery product, a community graph, a recording archive and a browser video editor. Each study follows the problem, the implementation choices and the evidence.</p>
+  <p class="lead">{NumberWord(featuredCount)} projects in depth: a clip discovery product, a community graph, a recording archive and a browser video editor. Each study follows the problem, the implementation choices and the evidence.</p>
   <section aria-label="Featured projects">
     <h2 class="group-title">Case studies</h2>
     <ul class="project-list">{featuredProjects.map(project => <li><article id={project.slug}>
@@ -21,7 +25,7 @@ import { featuredProjects, reviewedOn, supportingProjects } from '../../content/
   </section>
   <section aria-label="Other selected projects">
     <h2 class="group-title">Other projects</h2>
-    <p>Applications, infrastructure and smaller tools. Private previews, research models and early releases keep their scope visible.</p>
+    <p class="group-intro">Applications, infrastructure and smaller tools. Each status line says how far the project has got, including private previews, research models and early releases.</p>
     <ul class="project-list supporting-projects">{supportingProjects.map(project => <li><article id={project.slug}>
       <div class="project-list-copy">
         <h3><a href={`/projects/${project.slug}/`} data-project-name={project.slug}>{project.title}</a></h3>
