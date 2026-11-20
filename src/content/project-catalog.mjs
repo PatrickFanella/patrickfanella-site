@@ -61,7 +61,7 @@
  * @property {{ repo: string, sha: string }[]} sources selected-project-sources.json `sources`
  * @property {{ path: string, width: number, height: number }[]} assets project-assets-provenance.json `files`
  * @property {string[]} featured featured slugs, in display order
- * @property {string[]} reviewedAt each content file's `reviewedAt` (YYYY-MM-DD); they must agree
+ * @property {{ selection: string, studies: string }} reviewedAt those two files' `reviewedAt` (YYYY-MM-DD)
  */
 
 /** The four projects with a case study, in display order. */
@@ -90,10 +90,11 @@ export const assetPaths = project => [...new Set([
 /**
  * Join the content files into finished projects. Throws one Error naming every entry that disagrees.
  * @param {CatalogInput} input
- * @returns {{ all: Project[], selected: Project[], featured: StudiedProject[], supporting: Project[], studied: StudiedProject[], reviewedOn: string }}
+ * @returns {{ all: Project[], selected: Project[], featured: StudiedProject[], supporting: Project[], studied: StudiedProject[], reviewedOn: string, studiesReviewedOn: string }}
  * `all` is every detail page: the portfolio in its own order with current entries overlaid, then
- * new selections. `studied` follows the study file's order. `reviewedOn` is the copy review date as
- * the pages print it, for example "November 16, 2026".
+ * new selections. `studied` follows the study file's order. `reviewedOn` is the selection's review date
+ * as the pages print it, for example "November 16, 2026"; `studiesReviewedOn` is the study file's, so
+ * either file can be reviewed again on its own.
  */
 export function assembleCatalog({ portfolio, selected, studies, sources, assets, featured, reviewedAt }) {
   /** @type {string[]} */
@@ -145,10 +146,17 @@ export function assembleCatalog({ portfolio, selected, studies, sources, assets,
     // The Desk shell's `projects` reply prints one for each featured project.
     else if (!finished.get(slug)?.tagline) problems.push(`featured slug "${slug}" has no tagline in selected-projects.json`)
   }
-  const reviewed = new Date(`${reviewedAt[0]}T00:00:00Z`)
-  if (new Set(reviewedAt).size !== 1 || !/^\d{4}-\d{2}-\d{2}$/.test(reviewedAt[0]) || Number.isNaN(reviewed.getTime())) {
-    problems.push(`reviewedAt must be one YYYY-MM-DD date in every content file, not ${reviewedAt.join(', ')}`)
+  /** @param {string} file @param {string} value */
+  const longDate = (file, value) => {
+    const date = new Date(`${value}T00:00:00Z`)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(date.getTime())) {
+      problems.push(`${file}: reviewedAt must be a YYYY-MM-DD date, not ${value}`)
+      return ''
+    }
+    return date.toLocaleDateString('en-US', { dateStyle: 'long', timeZone: 'UTC' })
   }
+  const reviewedOn = longDate('selected-projects.json', reviewedAt.selection)
+  const studiesReviewedOn = longDate('project-case-studies.json', reviewedAt.studies)
   if (problems.length) throw new Error(`Project catalog: the content files disagree.\n- ${problems.join('\n- ')}`)
 
   const pick = (/** @type {string[]} */ slugs) => slugs.map(slug => /** @type {StudiedProject} */ (finished.get(slug)))
@@ -158,6 +166,7 @@ export function assembleCatalog({ portfolio, selected, studies, sources, assets,
     featured: pick(featured),
     supporting: [...finished.values()].filter(project => !featured.includes(project.slug)),
     studied: pick(studies.map(study => study.slug)),
-    reviewedOn: reviewed.toLocaleDateString('en-US', { dateStyle: 'long', timeZone: 'UTC' }),
+    reviewedOn,
+    studiesReviewedOn,
   }
 }

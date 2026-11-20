@@ -24,12 +24,12 @@ for (const asset of [...assets].sort()) {
   files.push({ path: asset, sha256: createHash('sha256').update(raw).digest('hex'), width, height })
 }
 // PNGs work in social previews even when the source image is an SVG. No remote image requests.
-await mkdir(new URL('../public/assets/projects/social/', import.meta.url), { recursive: true })
 for (const project of projects) {
   if (!project.thumbnailUrl) throw new Error(`Missing social image for ${project.slug}`)
   const input = new URL(`../public${project.thumbnailUrl}`, import.meta.url)
-  await sharp(input.pathname).resize(1200, 630, { fit: 'contain', background: project.brandBackground ?? '#e9eff2' })
-    .png().toFile(new URL(`../public${socialCardPath(project.slug)}`, import.meta.url).pathname)
+  const card = new URL(`../public${socialCardPath(project.slug)}`, import.meta.url).pathname
+  await mkdir(dirname(card), { recursive: true })
+  await sharp(input.pathname).resize(1200, 630, { fit: 'contain', background: project.brandBackground ?? '#e9eff2' }).png().toFile(card)
 }
 await writeFile(new URL('../src/content/project-assets-provenance.json', import.meta.url), JSON.stringify({ repository, commit, files }, null, 2) + '\n')
 console.log(`Copied ${files.length} pinned assets and rendered ${projects.length} social images.`)

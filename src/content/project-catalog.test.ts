@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { assembleCatalog, assetPaths, socialCardPath, type SourceProject } from './project-catalog.mjs'
-import { allProjects, featuredProjects, projectsReply, reviewedOn, selectedProjects, studiedProjects, supportingProjects } from './project-presentation'
+import { allProjects, featuredProjects, projectsReply, reviewedOn, selectedProjects, studiedProjects, studiesReviewedOn, supportingProjects } from './project-presentation'
 import { GET } from '../pages/sitemap.xml'
 
 // Literal fixture data, so the join's rules are tested whatever the content files hold.
@@ -17,7 +17,7 @@ const fixture = () => ({
   sources: [{ repo: 'org/alpha', sha: 'abc123' }, { repo: 'org/old', sha: 'def456' }, { repo: 'org/not-alpha', sha: 'fff' }],
   assets: [{ path: '/assets/a.webp', width: 1280, height: 800 }],
   featured: ['alpha'],
-  reviewedAt: ['2026-03-09', '2026-03-09', '2026-03-09'],
+  reviewedAt: { selection: '2026-03-09', studies: '2026-04-10' },
 })
 
 test('each project is joined once with its study, source, media dimensions, social card and display name', () => {
@@ -50,7 +50,9 @@ test('each project is joined once with its study, source, media dimensions, soci
   // The slug rules the page templates used to branch on.
   expect(rekolekt.displayName).toBe('HasanAra')
   expect(clpr.furtherStudies).toEqual([{ href: '/case-studies/clpr-search/', label: 'Read the search decisions study' }])
+  // Each file's review date is its own, so one can be reviewed again without the other.
   expect(catalog.reviewedOn).toBe('March 9, 2026')
+  expect(catalog.studiesReviewedOn).toBe('April 10, 2026')
 })
 
 test('asset path rules: the social card, and a project\'s thumbnail, media and srcSet candidates once each', () => {
@@ -65,10 +67,11 @@ test('asset path rules: the social card, and a project\'s thumbnail, media and s
   })).toEqual(['/assets/b-1280.webp', '/assets/b-640.webp', '/assets/c.svg'])
 })
 
-test('review dates that disagree or are not a date fail and are named', () => {
-  expect(() => assembleCatalog({ ...fixture(), reviewedAt: ['2026-03-09', '2026-03-10', '2026-03-09'] }))
-    .toThrow('reviewedAt must be one YYYY-MM-DD date in every content file, not 2026-03-09, 2026-03-10, 2026-03-09')
-  expect(() => assembleCatalog({ ...fixture(), reviewedAt: ['March 9', 'March 9'] })).toThrow('not March 9, March 9')
+test('a review date that is not a date fails and names its file', () => {
+  expect(() => assembleCatalog({ ...fixture(), reviewedAt: { selection: 'March 9', studies: '2026-03-09' } }))
+    .toThrow('selected-projects.json: reviewedAt must be a YYYY-MM-DD date, not March 9')
+  expect(() => assembleCatalog({ ...fixture(), reviewedAt: { selection: '2026-03-09', studies: '2026-13-40' } }))
+    .toThrow('project-case-studies.json: reviewedAt must be a YYYY-MM-DD date, not 2026-13-40')
 })
 
 test('a study without a project fails and names the study', () => {
@@ -130,6 +133,7 @@ test('the content files agree and give four studied projects, twelve others and 
   expect(allProjects).toHaveLength(43)
   expect(allProjects.filter(item => !item.current)).toHaveLength(27)
   expect(reviewedOn).toBe('November 16, 2026')
+  expect(studiesReviewedOn).toBe('November 16, 2026')
   expect(projectsReply).toBe('Clpr: Twitch clip search and moderation. Clustr: Reddit community map in 2D and 3D. HasanAra: searchable broadcast archive. Undertow: browser music-video editor (live beta).')
   expect(featuredProjects.every(item => item.media.length === 2 && item.media.every(media => media.width > 0 && media.height > 0))).toBe(true)
 })

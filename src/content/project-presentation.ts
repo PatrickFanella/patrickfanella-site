@@ -10,8 +10,10 @@ export const featuredProjects = catalog.featured
 export const supportingProjects = catalog.supporting
 /** The projects with a product case study, in the study file's order. */
 export const studiedProjects = catalog.studied
-/** The date the current copy was reviewed against its sources, as the pages print it. */
+/** The date the selection's copy was reviewed against its sources, as the pages print it. */
 export const reviewedOn = catalog.reviewedOn
+/** The same for the product studies, which are reviewed in their own file. */
+export const studiesReviewedOn = catalog.studiesReviewedOn
 /** The Desk shell's `projects` reply: each featured project by its product name. */
 export const projectsReply = featuredProjects.map(project => `${project.displayName}: ${project.tagline}.`).join(' ')
 export const employmentFeature = {

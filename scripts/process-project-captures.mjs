@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { dirname } from 'node:path'
 import sharp from 'sharp'
 import { socialCardPath } from '../src/content/project-catalog.mjs'
 
@@ -9,7 +10,6 @@ const evidence = JSON.parse(await readFile('docs/evidence/portfolio-2026-11-16/c
 const selection = JSON.parse(await readFile('src/content/selected-projects.json', 'utf8'))
 const assets = JSON.parse(await readFile('src/content/project-assets-provenance.json', 'utf8'))
 await mkdir('public/assets/projects/screenshots', { recursive: true })
-await mkdir('public/assets/projects/social', { recursive: true })
 for (const project of selection.projects) {
   project.media = []
   const captures = evidence.captures.filter(capture => capture.slug === project.slug)
@@ -33,6 +33,7 @@ for (const project of selection.projects) {
     project.thumbnailAlt = project.media[0].alt
     const path = socialCardPath(project.slug)
     const bytes = await sharp(captures[0].original).resize(1200, 630, { fit: 'contain', background: project.brandBackground ?? '#e9eff2' }).png().toBuffer()
+    await mkdir(dirname(`public${path}`), { recursive: true })
     await writeFile(`public${path}`, bytes)
     assets.files = assets.files.filter(file => file.path !== path)
     assets.files.push({ path, sha256: createHash('sha256').update(bytes).digest('hex'), width: 1200, height: 630, capture: captures[0].original })

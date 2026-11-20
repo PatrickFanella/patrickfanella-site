@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
+import { featuredProjects } from '../src/content/project-presentation'
 import { test, expect } from './fixtures'
 
 // The desk shares boot.ts with the other pages, so a markup change on one page can break it
@@ -35,7 +36,7 @@ test('project names and delivery labels fit their pane at phone and desktop widt
     await page.goto('/desk/')
     await page.evaluate(() => document.fonts.ready)
     const body = page.locator('.projects .pbody')
-    await expect(body.locator('.work h3')).toHaveCount(4)
+    await expect(body.locator('.work h3')).toHaveCount(featuredProjects.length)
     for (const fontSize of ['100%', '200%']) {
       await page.evaluate(size => { document.documentElement.style.fontSize = size }, fontSize)
       const overflow = await body.evaluate(el => el.scrollWidth - el.clientWidth)

@@ -139,7 +139,7 @@ for (const colorScheme of ['light', 'dark'] as const) test(`project detail fits 
   await page.emulateMedia({ colorScheme })
   for (const slug of ['clpr', 'undertow', 'rekolekt', 'subcorp']) {
     await page.setViewportSize({ width: 320, height: 740 })
-    await page.goto(`/projects/${slug}/`)
+    await page.goto(allProjects.find(project => project.slug === slug)!.path)
     expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(320)
     await page.setViewportSize({ width: 390, height: 844 })
     expect(await page.locator('html').evaluate(el => el.scrollWidth)).toBe(390)
