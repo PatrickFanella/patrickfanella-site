@@ -48,6 +48,9 @@ export function boot(pour?: (ink: Ink | null) => void): Page {
   }
   const bleeder = ink ? bleed(ink) : null
   if (ink) splash(ink)
+  // A canvas shows black until the solver first draws on it, so it stays transparent until then
+  // and fades in over the ground it matches.
+  void ink?.ready.then(() => requestAnimationFrame(() => root.classList.add('ink-on')))
   if (ink) readout(ink)
   // Layout is final once the display face has loaded.
   void Promise.all([document.fonts.load(DISPLAY_FACE).catch(() => []).then(() => document.fonts.ready), ink?.ready]).then(() => {
