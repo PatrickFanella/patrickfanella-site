@@ -4,49 +4,63 @@ import { test, expect } from './fixtures'
 // Issue #106: on a phone the ink started over whenever the screen was touched or scrolled. A
 // mobile browser resizes the window when its toolbar slides in or out during a touch scroll, and
 // every resize event used to rebuild the solver's textures empty. This runs WebGL2 on SwiftShader
-// in emulated mobile Chromium. Emulation has no toolbar, so the height changes are made by hand;
-// the WebGPU path and real phones are not exercised.
+// in emulated mobile Chromium. Emulation has no toolbar, so the height changes are made by hand.
+// Real phones are not exercised, and neither is the WebGPU path: headless Chromium has no WebGPU
+// adapter by default, and its SwiftShader one loses the device before the first frame.
 const PHONE = { width: 390, height: 664 }
 const DPR = 2
 test.use({ viewport: PHONE, deviceScaleFactor: DPR, hasTouch: true, isMobile: true })
 
 interface Probe {
-  /** The share of the top 380 CSS px of the ink canvas that holds ink right now. */
-  inked(): number
+  /** The share of the top 380 CSS px of the ink canvas, from `fromX` CSS px rightwards, that holds ink right now. */
+  inked(fromX?: number): number
+  /** How far down that band the ink sits on average, in CSS px. */
+  depth(): number
   /** `inked()` each time the canvas was given a new size, read before the browser painted it. */
   atResize: number[]
+  /** `depth()` at the same moments. */
+  depthAtResize: number[]
 }
 
 function install() {
-  const inked = () => {
+  const BAND = 380, N = 48
+  // The ink pixels of the band, and the sum of their rows, on an N by N copy.
+  const read = (fromX = 0) => {
     const ink = document.querySelector<HTMLCanvasElement>('#ink')!
-    const copy = document.createElement('canvas'); copy.width = 48; copy.height = 48
+    const copy = document.createElement('canvas'); copy.width = N; copy.height = N
     const ctx = copy.getContext('2d', { willReadFrequently: true })!
     // Every viewport below is at least 380 px tall, so they all show this band.
-    ctx.drawImage(ink, 0, 0, ink.width, ink.height * 380 / innerHeight, 0, 0, copy.width, copy.height)
-    const px = ctx.getImageData(0, 0, copy.width, copy.height).data
-    // The top left corner is bare ground; ink is any pixel well away from that colour.
-    let n = 0
+    const x0 = ink.width * fromX / innerWidth
+    ctx.drawImage(ink, x0, 0, ink.width - x0, ink.height * BAND / innerHeight, 0, 0, N, N)
+    const px = ctx.getImageData(0, 0, N, N).data
+    // The ground is flat; take its colour from the top left corner of the whole canvas.
+    const one = document.createElement('canvas'); one.width = 1; one.height = 1
+    const octx = one.getContext('2d', { willReadFrequently: true })!
+    octx.drawImage(ink, 0, 0, 2, 2, 0, 0, 1, 1)
+    const g = octx.getImageData(0, 0, 1, 1).data
+    let n = 0, rows = 0
     for (let i = 0; i < px.length; i += 4) {
-      if (Math.max(Math.abs(px[i] - px[0]), Math.abs(px[i + 1] - px[1]), Math.abs(px[i + 2] - px[2])) > 12) n++
+      if (Math.max(Math.abs(px[i] - g[0]), Math.abs(px[i + 1] - g[1]), Math.abs(px[i + 2] - g[2])) > 12) { n++; rows += Math.floor(i / 4 / N) + 0.5 }
     }
-    return n / (copy.width * copy.height)
+    return { n, rows }
   }
-  const atResize: number[] = [];
-  (window as unknown as { inkProbe: Probe }).inkProbe = { inked, atResize }
+  const inked = (fromX = 0) => read(fromX).n / (N * N)
+  const depth = () => { const { n, rows } = read(); return n ? rows / n * BAND / N : -1 }
+  const atResize: number[] = [], depthAtResize: number[] = [];
+  (window as unknown as { inkProbe: Probe }).inkProbe = { inked, depth, atResize, depthAtResize }
   // The observer runs as soon as the callback that sized the canvas returns, before a paint.
   addEventListener('DOMContentLoaded', () => {
-    new MutationObserver(() => atResize.push(inked()))
+    new MutationObserver(() => { atResize.push(inked()); depthAtResize.push(depth()) })
       .observe(document.querySelector('#ink')!, { attributes: true, attributeFilter: ['width', 'height'] })
   })
 }
 
 /** Ink coverage, read after the engine has drawn a frame. */
-function inked(page: Page) {
-  return page.evaluate(() => new Promise<number>((resolve) => {
+function inked(page: Page, fromX = 0) {
+  return page.evaluate((x) => new Promise<number>((resolve) => {
     // Two frames: the first lets a queued resize run, the engine's callback then draws ahead of this one.
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve((window as unknown as { inkProbe: Probe }).inkProbe.inked())))
-  }))
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve((window as unknown as { inkProbe: Probe }).inkProbe.inked(x))))
+  }), fromX)
 }
 
 /** Resize the viewport and wait until the ink canvas has taken the new size. */
@@ -92,7 +106,8 @@ for (const [path, start] of [['/', null], ['/motion/', '#demo-pour'], ['/desk/',
         await page.waitForTimeout(16)
       }
       await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
-      expect(Math.abs(await page.evaluate(() => scrollY) - y0), 'the swipe scrolled the page').toBeGreaterThan(40)
+      // The scroll is applied off the main thread and reaches scrollY a frame or more later.
+      await expect.poll(() => page.evaluate((y) => Math.abs(scrollY - y), y0), 'how far the swipe scrolled the page').toBeGreaterThan(40)
     }
     // Scrolling moves the page's solid shapes over the ink and pushes the water, so allow more change.
     await kept('a touch scroll down and back up', async () => { await swipe(-100); await swipe(100) }, 0.4)
@@ -106,8 +121,20 @@ for (const [path, start] of [['/', null], ['/motion/', '#demo-pour'], ['/desk/',
     expect(await page.evaluate(() => (window as unknown as { inkProbe: Probe }).inkProbe.atResize), 'the canvas is left alone when its size has not changed').toEqual([])
 
     // A toolbar that hides adds about 60 to 100 CSS px of height; one that shows takes it away.
+    // The ink is anchored at the top left: it must not move down or up the screen with the bottom
+    // edge, which would shift it by the whole 80 px. Read in the frame of the resize, it has had
+    // only a step or two to flow.
     for (const height of [744, 664, 584, 664]) {
-      await kept(`the viewport height changing to ${height} px`, () => resizeTo(page, PHONE.width, height))
+      let was = 0
+      await kept(`the viewport height changing to ${height} px`, async () => {
+        // Read in a frame, after the engine's draw: a WebGL canvas is blank once it has been shown.
+        was = await page.evaluate(() => new Promise<number>((resolve) => {
+          requestAnimationFrame(() => resolve((window as unknown as { inkProbe: Probe }).inkProbe.depth()))
+        }))
+        await resizeTo(page, PHONE.width, height)
+      })
+      const now = await page.evaluate(() => (window as unknown as { inkProbe: Probe }).inkProbe.depthAtResize.at(-1)!)
+      expect(Math.abs(now - was), `how far the ink moved on screen when the height changed to ${height} px (${was.toFixed(1)} to ${now.toFixed(1)} px down)`).toBeLessThan(40)
     }
     // Sizing a canvas clears it. The ink must be drawn back before the browser paints, not a frame later.
     const before = await inked(page)
@@ -123,3 +150,81 @@ for (const [path, start] of [['/', null], ['/motion/', '#demo-pour'], ['/desk/',
     })).toEqual([0, 0, PHONE.height, PHONE.width, PHONE.height * DPR, PHONE.width * DPR])
   })
 }
+
+/**
+ * Ink coverage of a viewport rectangle in CSS px, counted on a screenshot with the page's content
+ * hidden. A still is drawn once, and a WebGL canvas cannot be read back after it has been shown.
+ */
+async function shotInk(page: Page, clip: { x: number; y: number; width: number; height: number }) {
+  const png = (await page.screenshot({ clip, scale: 'css' })).toString('base64')
+  // Bare ground, under the header.
+  const corner = (await page.screenshot({ clip: { x: 0, y: 0, width: 2, height: 2 }, scale: 'css' })).toString('base64')
+  const counter = await page.context().newPage()
+  try {
+    return await counter.evaluate(async ([a, b]) => {
+      const px = async (b64: string) => {
+        const bmp = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob())
+        const c = new OffscreenCanvas(bmp.width, bmp.height), ctx = c.getContext('2d')!
+        ctx.drawImage(bmp, 0, 0)
+        return ctx.getImageData(0, 0, bmp.width, bmp.height).data
+      }
+      const d = await px(a), g = await px(b)
+      let n = 0
+      for (let i = 0; i < d.length; i += 4) {
+        if (Math.max(Math.abs(d[i] - g[0]), Math.abs(d[i + 1] - g[1]), Math.abs(d[i + 2] - g[2])) > 12) n++
+      }
+      return n / (d.length / 4)
+    }, [png, corner])
+  } finally { await counter.close() }
+}
+
+// With reduced motion the page shows one still and the solver never steps again by itself. After a
+// real change of size the still is made again for the new layout, as a load at that size would.
+test('a reduced-motion still is made again after a rotation', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/?ink=webgl2')
+  await page.addStyleTag({ content: 'body *:not(#ink) { visibility: hidden !important }' })
+  // The strip under the feet of the name, where its letters pour.
+  const feet = () => page.evaluate(() => {
+    const r = [...document.querySelectorAll('[data-ink-letter]')].map((el) => el.getBoundingClientRect())
+    const x = Math.min(...r.map((q) => q.left)), bottom = Math.max(...r.map((q) => q.bottom))
+    return { x, y: bottom - 4, width: Math.max(...r.map((q) => q.right)) - x, height: 24 }
+  })
+  const upright = await feet()
+  await expect.poll(() => shotInk(page, upright), { timeout: 120_000 }).toBeGreaterThan(0.1)
+
+  await page.setViewportSize({ width: PHONE.height, height: PHONE.width })
+  await expect.poll(async () => (await feet()).y).not.toBe(upright.y)
+  const turned = await feet()
+  expect(Math.abs(turned.y - upright.y), 'the name moved when the page turned').toBeGreaterThan(40)
+  await expect.poll(() => shotInk(page, turned), { message: 'ink under the name where it now stands', timeout: 60_000 }).toBeGreaterThan(0.1)
+  expect(await shotInk(page, upright), 'ink left where the name used to stand').toBeLessThan(0.02)
+})
+
+// A frame that is not displayed has a viewport of 0 by 0. The site may not be framed, so the
+// test reports that size itself until it is told to stop. The page's own layout is not what is
+// under test, so ink is asked for with a press on a button that splashes.
+test('a page that loads with no viewport starts its ink once it has one', async ({ page }) => {
+  await page.addInitScript(install)
+  await page.addInitScript(() => {
+    const w = window as unknown as { hasViewport: boolean }
+    for (const key of ['innerWidth', 'innerHeight'] as const) {
+      const real = Object.getOwnPropertyDescriptor(window, key)!.get!
+      Object.defineProperty(window, key, { configurable: true, get: () => w.hasViewport ? real.call(window) : 0 })
+    }
+  })
+  await page.goto('/motion/?ink=webgl2')
+  expect(await page.evaluate(() => [innerWidth, innerHeight])).toEqual([0, 0])
+  // Give the solver time to start (and, before the fix, to fail on grids it never laid out).
+  await page.waitForTimeout(3000)
+  await page.evaluate(() => { (window as unknown as { hasViewport: boolean }).hasViewport = true; dispatchEvent(new Event('resize')) })
+  await expect.poll(() => page.evaluate(() => document.querySelector<HTMLCanvasElement>('#ink')!.width)).toBe(PHONE.width * DPR)
+  // Put the button inside the band that `inked` reads, and press it where it is.
+  const [x, y] = await page.getByRole('button', { name: 'Press me' }).evaluate((el) => {
+    scrollBy(0, el.getBoundingClientRect().top - 150)
+    const r = el.getBoundingClientRect()
+    return [r.left + r.width / 2, r.top + r.height / 2]
+  })
+  await expect.poll(async () => { await page.touchscreen.tap(x, y); return inked(page) }, { timeout: 120_000 }).toBeGreaterThan(0.02)
+  expect(await page.evaluate(() => document.documentElement.classList.contains('no-ink'))).toBe(false)
+})
