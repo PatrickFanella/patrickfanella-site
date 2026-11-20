@@ -22,7 +22,7 @@ npm run test:unit  # run the tests that need no browser and no build
 npm run test:e2e   # build, serve dist/ and run the browser tests in headless Chromium
 ```
 
-`npm run test:unit` runs Vitest over `src/**/*.test.ts`. A test belongs there, beside the module it covers, when it calls TypeScript directly and needs neither a page nor `dist/`: the live-mode gate today, and decoders, arithmetic and data assembly as they gain direct tests. A test that opens a page or reads the built site belongs in `e2e/`. CI runs the unit tests first, before it records or builds anything.
+`npm run test:unit` runs Vitest over `src/**/*.test.ts`. A test belongs there, beside the module it covers, when it calls TypeScript directly and needs neither a page nor `dist/`: the live-mode gate and the SQL benchmark's arithmetic today, and decoders and data assembly as they gain direct tests. A test that opens a page or reads the built site belongs in `e2e/`. CI runs the unit tests first, before it records or builds anything.
 
 The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame within 3 s of the fonts loading, that the page works without WebGL2, that the desk measures the search in a worker while the ink keeps drawing, that a slow download still reaches the measured run, that it falls back to the recorded run when the worker script, PGlite's WebAssembly or a policy without `'wasm-unsafe-eval'` stops it, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. They serve `dist/` with `astro preview`. Set `E2E_PORT` to serve on a port other than 4173.
 
@@ -53,7 +53,7 @@ The pages are built with Astro as static HTML. There is no client router and no 
 - `src/desk/clpr.worker.ts`: loads the pinned Clpr artifact, verifies its Wasm and migration hashes, applies every migration, seeds eight fixtures, and runs requests through the Go handler and pgx bridge.
 - `src/desk/clpr.ts`: live-mode controls, manifest provenance, response display, stop/retry and shell request routing.
 - `public/clpr/`: the pinned manifest and its payload, copied from Clpr CI. See [docs/clpr-artifact.md](docs/clpr-artifact.md) for updating it.
-- `src/desk/psql.ts`: the psql pane and its timing panel. `src/desk/recorded.ts` holds Clpr's recorded run; `src/desk/pg-protocol.ts` holds the query and the messages.
+- `src/desk/psql.ts`: the psql pane and its timing panel. `src/desk/benchmark.ts` holds the SQL benchmark's arithmetic and wording, with no DOM or worker: how a time is shown at the clock's resolution, the tidied plan, the scan name and the ratio sentence; `benchmark.test.ts` covers it directly. `src/desk/recorded.ts` holds Clpr's recorded run; `src/desk/pg-protocol.ts` holds the query and the messages.
 - `src/styles/site.css`: tokens (colour, type, four durations, two curves), layout, rise, view transitions and reduced motion.
 - `src/styles/desk.css`: the desk's tiling layout. Its colours are the `--desk-*` tokens in `site.css`, separate from the smoke palette. Panes 1, 2 and 5 keep their gold, cobalt and orange accents. Panes 3 and 4 keep the prototype's pink and green, so the five pane buttons stay distinct.
 - `docs/`: the plan, the original design doc and the prototypes the roadmap builds from.
