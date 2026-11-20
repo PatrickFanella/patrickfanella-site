@@ -39,7 +39,8 @@ benchmark has the text and the panel; the recorded run and Clpr live mode have t
 
 One worker runs at a time. Starting either mode, stopping and failing all terminate the current
 worker and reject its pending searches ("The SQL benchmark stopped.", "Clpr live mode stopped.",
-"PostgreSQL is unavailable in this tab."); leaving the page rejects with "The desk was closed.".
+"PostgreSQL is unavailable in this tab."); leaving the page rejects a pending SQL search with
+"The desk was closed." and a pending Clpr search with "Clpr live mode stopped.".
 A callback from a worker that is no longer current changes nothing, and neither does a reply nobody
 is waiting for. Request numbers carry on across restarts. Until the SQL benchmark's indexed
 measurement arrives, the pane shows the recorded times, and progress replaces only the last line of
