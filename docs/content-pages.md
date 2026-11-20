@@ -52,8 +52,10 @@ come from the content data.
 
 `deploy/origin.Caddyfile` and `deploy/edge-route.py` are hand-written. `node
 scripts/check-site-facts.mjs` runs in `npm run build` and in CI, and fails when either file's policy
-differs from the definition, when either declares its own redirect, or when `deploy/update.py`
-requires a page that is not a route. Intended differences are listed in that script with a reason;
+differs from the definition or appears more than once, when either contains a redirect, or when
+`deploy/update.py` requires a page that is not a route. The redirect search covers the whole text of
+both files for `redir`, `rewrite`, `handle_path`, `uri` rewrites, a `Location` header, a `respond`
+with a 3xx status, and the old paths in `redirects`; a redirect written another way is not detected. Intended differences are listed in that script with a reason;
 the only one is the edge copy's extra `upgrade-insecure-requests`. The GitHub and LinkedIn links on
 the pages and in the Shell come from `src/content/resume.json`.
 

@@ -13,19 +13,23 @@ const root = new URL('../', import.meta.url)
 const read = file => readFile(new URL(file, root), 'utf8')
 const directives = policy => policy.split(';').map(directive => directive.trim().replace(/\s+/g, ' ')).filter(Boolean)
 const failures = []
+const redirecting = /\b(redir|rewrite|handle_path)\b|\buri\s+(strip_prefix|strip_suffix|replace|path_regexp)\b|\bLocation\b|\brespond\b[^\n]*\b30[12378]\b/
 const policies = {
-  'deploy/origin.Caddyfile': /^\s*Content-Security-Policy "([^"]*)"$/m,
-  'deploy/edge-route.py': /^CSP = "([^"]*)"$/m,
+  'deploy/origin.Caddyfile': /^\s*Content-Security-Policy "([^"]*)"$/gm,
+  'deploy/edge-route.py': /^CSP = "([^"]*)"$/gm,
 }
 for (const [file, pattern] of Object.entries(policies)) {
   const source = await read(file)
-  const actual = directives(source.match(pattern)?.[1] ?? '')
+  const found = [...source.matchAll(pattern)]
+  if (found.length !== 1) failures.push(`${file}: expected one Content-Security-Policy, found ${found.length}`)
+  const actual = directives(found[0]?.[1] ?? '')
   const expected = [...directives(contentSecurityPolicy), ...intended.filter(difference => difference.file === file).map(difference => difference.extra)]
   if (actual.join('; ') !== expected.join('; ')) {
     failures.push(`${file}: Content-Security-Policy differs from site-facts.mjs\n  missing: ${expected.filter(d => !actual.includes(d)).join('; ') || 'none'}\n  unexpected: ${actual.filter(d => !expected.includes(d)).join('; ') || 'none'}${actual.length === expected.length && expected.every(d => actual.includes(d)) ? '\n  the order changed' : ''}`)
   }
   // Redirects are built as static pages from site-facts.mjs; neither deploy file may add its own.
-  if (/^\s*(redir|rewrite|uri)\b/m.test(source)) failures.push(`${file}: declares a redirect or rewrite; the ${Object.keys(redirects).length} redirects belong in site-facts.mjs`)
+  // The edge script holds Caddy text inside Python strings, so this searches the whole text, not line starts.
+  if (redirecting.test(source) || Object.keys(redirects).some(old => source.includes(old))) failures.push(`${file}: declares a redirect or rewrite; the ${Object.keys(redirects).length} redirects belong in site-facts.mjs`)
 }
 // deploy/update.py refuses a release without these pages; each must still be a route.
 const required = [...(await read('deploy/update.py')).matchAll(/'([^']*index\.html)'/g)].map(([, file]) => `/${file.replace(/index\.html$/, '')}`)
