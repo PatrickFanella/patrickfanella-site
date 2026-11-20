@@ -1,5 +1,5 @@
 import { boot } from './boot'
-import { pourIn, splitLetters, stirSweep, unfold } from './motion/motion'
+import { glide, pourIn, splitLetters, stirSweep, unfold } from './motion/motion'
 
 const { ink } = boot((ink) => { layout(); void pourIn(letters, ink) })
 const word = document.getElementById('demo-pour')!
@@ -8,6 +8,7 @@ const layout = () => { word.style.fontSize = ''; ink?.invalidate() }
 layout()
 addEventListener('resize', layout)
 unfold()
+glide()
 
 
 const replay: Record<string, () => void> = {

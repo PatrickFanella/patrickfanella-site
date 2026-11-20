@@ -24,7 +24,7 @@ npm run test:e2e   # build, serve dist/ and run the browser tests in headless Ch
 
 `npm run test:unit` runs Vitest over `src/**/*.test.ts`. A test belongs there, beside the module it covers, when it calls TypeScript directly and needs neither a page nor `dist/`: the live-mode gate, the SQL benchmark's arithmetic, the wire decoder, statement capture and plan rollback today, and data assembly as it gains direct tests. A test that opens a page or reads the built site belongs in `e2e/`. CI runs the unit tests first, before it records or builds anything.
 
-The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame within 3 s of the fonts loading, that the page works without WebGL2, that the desk measures the search in a worker while the ink keeps drawing, that a slow download still reaches the measured run, that it falls back to the recorded run when the worker script, PGlite's WebAssembly or a policy without `'wasm-unsafe-eval'` stops it, and that axe finds no accessibility violations on either page in either theme. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. They serve `dist/` with `astro preview`. Set `E2E_PORT` to serve on a port other than 4173.
+The browser tests in `e2e/` use Playwright. Install its Chromium once with `npx playwright install chromium`. They check that the name pours in and fits the width, that reduced motion gives a still frame within 3 s of the fonts loading, that the page works without WebGL2, that the desk measures the search in a worker while the ink keeps drawing, that a slow download still reaches the measured run, that it falls back to the recorded run when the worker script, PGlite's WebAssembly or a policy without `'wasm-unsafe-eval'` stops it, and that axe finds no accessibility violations on either page in either theme. `e2e/motion.spec.ts` checks that a replayed pour lands each letter only once it has hit, that fitting the name does not move the page, that the ink canvas stays clear until the solver draws, and that the selected work rises and in-page links glide with motion and do neither with reduced motion. Chromium runs WebGL2 on the CPU through SwiftShader, so the tests behave the same with or without a GPU. They do not compare screenshots of the ink, which differ between GPUs. They serve `dist/` with `astro preview`. Set `E2E_PORT` to serve on a port other than 4173.
 
 CI (`.github/workflows/ci.yml`) records Clpr through the visitor worker in headless Chromium, rebuilds from that evidence, and tests the resulting artifact on every push to main and pull request. It also enforces mobile Lighthouse budgets. The main-only deploy job publishes that tested artifact for production. Run `npm run record:clpr` on Linux to refresh the local recording.
 
@@ -46,7 +46,7 @@ The pages are built with Astro as static HTML. There is no client router and no 
 - `src/ink/mask.ts`: draws the page into the solver's mask. Letters marked `data-ink-letter` are solid and pour from their feet once they carry `data-pour`. Elements marked `data-ink-solid` are solid rectangles.
 - `src/ink/schedule.ts`: the engine's arithmetic as pure functions on plain numbers: the burst queue, the preroll time budget, grid and canvas sizing, the resize keep ratio, and whether a reduced-motion still must be made again. `src/ink/schedule.test.ts` tests them directly.
 - `src/ink/engine.ts`: the frame loop, choosing a path, and the API the pages use: `setEmitters`, `burst`, `stir`, `setTheme`, `preroll`, and `ready`, which `boot()` waits on before the pour starts. Up to four bursts run at once, each with a direction, spread and length. When the window changes size, the engine resizes the canvas and grids to the new viewport and both paths carry the velocity and ink over, anchored at the top left, so the ink stays where it was on screen; what no longer fits is cut off, and new space starts empty. A resize event at an unchanged size does nothing. A reduced-motion still is not stepped again, so after a change of width, or of more than 120 px of height, the engine empties the tank and makes the still again for the new layout; a smaller change of height, such as a phone's toolbar showing, keeps the carried still with its bottom cut off, and the still is made again once the viewport is taller than what is left of it, as when the toolbar hides. A page that loads with a viewport of 0 by 0 starts its ink at the first resize that gives it a size. A phone resizes the window each time its toolbar hides or shows during a touch scroll, so a resize must never empty the tank; `e2e/ink-persistence.spec.ts` guards this on WebGL2; no test runs the WebGPU path, because headless Chromium has no usable WebGPU adapter.
-- `src/motion/motion.ts`: the motion set. Pour-in, bleed, splash, stir, unfold and fitting the name to the width.
+- `src/motion/motion.ts`: the motion set. Pour-in, bleed, splash, stir, glide, unfold and fitting the name to the width. A replayed pour cancels the run before it, so that run's timers cannot land a letter early.
 - `src/display-face.ts`: the display face as `document.fonts.load` takes it, shared by `boot()`, the Desk startup log and the specs.
 - `src/boot.ts`: start-up shared by every page: fonts, theme switch, ink, readout. Once the display face and the solver are ready it starts the ink: running, or one still frame run ahead with reduced motion. A page that pours letters passes `boot()` the step that lands them.
 - `src/desk/desk.ts`: the desk page: pours the name from the about pane and moves focus between panes.
@@ -66,16 +66,19 @@ The pages are built with Astro as static HTML. There is no client router and no 
 | Name | Trigger | Timing |
 |---|---|---|
 | Pour-in | Page load | 620 ms per letter, 60 ms apart, spring curve; ink splashes down as each letter hits |
-| Bleed | Hover or keyboard focus on `data-bleed` | in over 240 ms, out over 400 ms |
+| Bleed | Hover or keyboard focus on `data-bleed` | in over 240 ms, out over 400 ms, timed by the clock so 120 Hz screens match 60 Hz |
 | Splash | Press on `data-splash` (pointer, Enter, Space) | one solver step |
 | Stir | Pointer movement, scrolling | continuous |
-| Rise | Scrolling a `data-rise` element into view | CSS scroll-driven animation |
+| Rise | Scrolling a `data-rise` element into view, including the selected work on `/` | CSS scroll-driven animation |
+| Glide | Following a link to a place on the same page, on `/` and `/motion/` | the browser's smooth scroll, for that scroll only |
 | Unfold | Opening a `details[data-unfold]` | 420 ms view transition |
 | Hand-over | Following a link between pages | 620 ms cross-document view transition |
 | Theme switch | The switch in the top bar | 420 ms view transition |
 | Focus | Tab, Shift+Tab | 240 ms |
 
-With `prefers-reduced-motion: reduce`, the solver runs ahead and the page shows one still frame, letters start in place, and transitions and view transitions are off. The run-ahead stops after about 1.5 s of GPU time, so a slow or software GPU shows a less poured frame instead of freezing the tab. Without WebGPU or WebGL2 the page falls back to a static wash in the same three inks.
+A WebGL2 or WebGPU canvas is black until it is first drawn on, so the ink canvas stays clear until the solver is ready and then fades in over 240 ms. The landing page's stylesheet gives the name the size `fitWidth()` will give it, and the script refits only once the display face has loaded, so the page below does not move when the name is fitted.
+
+With `prefers-reduced-motion: reduce`, the solver runs ahead and the page shows one still frame, letters start in place, in-page links jump, and transitions and view transitions are off. The run-ahead stops after about 1.5 s of GPU time, so a slow or software GPU shows a less poured frame instead of freezing the tab. Without WebGPU or WebGL2 the page falls back to a static wash in the same three inks.
 
 ## Licence
 

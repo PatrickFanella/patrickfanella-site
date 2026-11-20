@@ -38,18 +38,28 @@ export const INK_DELAY = 20
 
 const ms = (v: string) => (v.endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000) || 0
 
+// The pour run in progress for each set of letters. A replay aborts the run before it, so that
+// run's backstop timers and listeners cannot land a letter that is falling again or mark the
+// host poured partway through the new run.
+const runs = new WeakMap<HTMLElement, AbortController>()
+
 /**
  * pour-in: the letters drop into place left to right, 60 ms apart. Just after
  * each one hits, its ink splashes down from its foot and it starts to pour.
  * 620 ms per letter on a spring curve, which reaches rest 22% of the way in.
  */
 export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false } = {}) {
+  const key = letters[0]
+  if (!key) return Promise.resolve()
+  runs.get(key)?.abort()
+  const run = new AbortController(), { signal } = run
+  runs.set(key, run)
   for (const l of letters) { delete l.dataset.pour; l.classList.remove('landed') }
-  const host = letters[0]?.closest<HTMLElement>('[data-pour-in]')
+  const host = key.closest<HTMLElement>('[data-pour-in]')
   if (reduced()) { host?.classList.add('poured'); for (const l of letters) { l.dataset.pour = '1'; l.classList.add('landed') } ink?.invalidate(); return Promise.resolve() }
   if (host) { host.classList.remove('pouring', 'poured'); if (replay) void host.offsetWidth; host.classList.add('pouring') }
   const hit = (l: HTMLElement) => {
-    if (l.dataset.pour) return
+    if (signal.aborted || l.dataset.pour) return
     l.dataset.pour = '1'
     ink?.invalidate()
     if (!ink) return
@@ -67,9 +77,8 @@ export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false
     const anim = l.getAnimations().find((a) => (a as CSSAnimation).animationName === 'pour-in')
     return { l, anim, at: ms(cs.animationDelay) + ms(cs.animationDuration) * IMPACT + INK_DELAY }
   })
-  let live = true
   const track = () => {
-    if (!live) return
+    if (signal.aborted) return
     for (const d of due) {
       const t = d.anim?.currentTime
       if (!d.l.dataset.pour && typeof t === 'number' && t >= d.at) hit(d.l)
@@ -79,30 +88,48 @@ export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false
   }
   requestAnimationFrame(track)
   return Promise.all(due.map(({ l, at }) => new Promise<void>((done) => {
-    const land = () => { hit(l); l.classList.add('landed'); done() }
-    l.addEventListener('animationend', land, { once: true })
-    setTimeout(land, at + 2400) // a backstop if the animation never runs
-  }))).then(() => { live = false; host?.classList.add('poured') })
+    const land = () => { if (signal.aborted) return; hit(l); l.classList.add('landed'); done() }
+    l.addEventListener('animationend', land, { once: true, signal })
+    const backstop = setTimeout(land, at + 2400) // a backstop if the animation never runs
+    signal.addEventListener('abort', () => { clearTimeout(backstop); done() }, { once: true })
+  }))).then(() => {
+    if (signal.aborted) return
+    run.abort() // the run is over: stop the frame loop and drop the listeners
+    host?.classList.add('poured')
+  })
+}
+
+/** How long bleed takes to fade in and out, in ms. */
+export const BLEED = { in: 240, out: 400 }
+
+/** One frame of bleed: move strength `s` toward `target` at the fade-in or fade-out rate over `dt` ms. */
+export function bleedStep(s: number, target: number, dt: number) {
+  const k = dt / (target > s ? BLEED.in : BLEED.out)
+  return s + Math.sign(target - s) * Math.min(Math.abs(target - s), k)
 }
 
 /**
  * bleed: an element marked `data-bleed="c|o|y"` lets ink go from its bottom
  * edge while hovered or focused, fading in over 240 ms and out over 400 ms.
+ * The fade follows the clock, so it takes as long on a 120 Hz screen as on 60 Hz.
  */
 export function bleed(ink: Ink, base: () => Emitter[] = () => []) {
   const active = new Map<HTMLElement, { ink: InkId; s: number; target: number }>()
-  let raf = 0
-  const tick = () => {
+  let raf = 0, last = 0
+  const tick = (now: number) => {
     raf = 0
+    // A long gap (a hidden tab, the first frame) counts as one 60 Hz frame.
+    const dt = last && now - last < 100 ? now - last : 1000 / 60
+    last = now
     let moving = false
     for (const [el, a] of active) {
-      const k = a.target > a.s ? 1 / 14 : 1 / 24
-      a.s += Math.sign(a.target - a.s) * Math.min(Math.abs(a.target - a.s), k)
+      a.s = bleedStep(a.s, a.target, dt)
       if (a.s !== a.target) moving = true
       if (a.s <= 0 && a.target === 0) active.delete(el)
     }
     ink.setEmitters([...base(), ...[...active].map(([el, a]) => ({ rect: el.getBoundingClientRect(), ink: a.ink, strength: a.s * 0.45 }))])
     if (moving || active.size) raf = requestAnimationFrame(tick)
+    else last = 0
   }
   const set = (el: HTMLElement, on: boolean) => {
     if (reduced()) return
@@ -131,6 +158,27 @@ export function splash(ink: Ink) {
     if (!el || reduced()) return
     const r = el.getBoundingClientRect()
     ink.burst(r.left + r.width / 2, r.top + r.height / 2, inkFromCode(el.dataset.splash), 1)
+  })
+}
+
+/**
+ * glide: following a link to a place further down the same page scrolls there smoothly
+ * instead of jumping, and the scroll drags the ink with it. The browser still does the
+ * navigation, so history and the keyboard's starting point move as usual; only that one
+ * scroll is smooth. Skip links still jump.
+ */
+export function glide() {
+  const html = document.documentElement
+  let reset = 0
+  const done = () => { clearTimeout(reset); html.style.scrollBehavior = '' }
+  document.addEventListener('click', (e) => {
+    if (reduced() || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    const a = (e.target as Element | null)?.closest?.<HTMLAnchorElement>('a[href^="#"]:not(.skip)')
+    if (!a || a.hash.length < 2 || !document.getElementById(decodeURIComponent(a.hash.slice(1)))) return
+    html.style.scrollBehavior = 'smooth'
+    addEventListener('scrollend', done, { once: true })
+    // No scroll (the target is already in place) means no scrollend.
+    reset = window.setTimeout(done, 1500)
   })
 }
 

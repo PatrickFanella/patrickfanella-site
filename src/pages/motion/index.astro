@@ -11,7 +11,7 @@ import Page from '../../layouts/Page.astro'
   <main class="specs">
     <div class="specs-head panel">
       <h1>Motion set</h1>
-      <p>Every page on the new site moves with these nine animations and nothing else. They share four durations and two curves. Each has a reduced-motion version: if your system asks for less motion, the page still shows everything, just without the movement.</p>
+      <p>Every page on the new site moves with these ten animations and nothing else. They share four durations and two curves. Each has a reduced-motion version: if your system asks for less motion, the page still shows everything, just without the movement.</p>
       <dl class="tokens">
         <div><dt>120 ms</dt><dd>press, toggle</dd></div>
         <div><dt>240 ms</dt><dd>hover, focus</dd></div>
@@ -21,7 +21,7 @@ import Page from '../../layouts/Page.astro'
     </div>
 
     <ol class="spec-list">
-      <li class="spec panel" data-rise>
+      <li class="spec panel" data-rise id="pour-in">
         <div class="spec-text">
           <h2>Pour-in</h2>
           <p>Letters drop into place from left to right. The moment each one hits, its ink splashes down from its foot and starts to pour.</p>
@@ -68,12 +68,22 @@ import Page from '../../layouts/Page.astro'
       <li class="spec panel" data-rise>
         <div class="spec-text">
           <h2>Rise</h2>
-          <p>Rows lift into place as they scroll into view. The browser runs it from the scroll position, with no script.</p>
+          <p>Rows lift into place as they scroll into view, here and in the selected work on the landing page. The browser runs it from the scroll position.</p>
           <dl><dt>Trigger</dt><dd>Scrolling, CSS scroll-driven animation</dd><dt>Timing</dt><dd>Over the first 70% of the row's entry</dd><dt>Reduced</dt><dd>Rows already in place</dd></dl>
         </div>
         <div class="stage">
           <div class="rise-demo" id="rise-demo"><span></span><span></span><span></span></div>
           <button type="button" class="btn" data-replay="rise" data-splash="o">Replay</button>
+        </div>
+      </li>
+      <li class="spec panel" data-rise>
+        <div class="spec-text">
+          <h2>Glide</h2>
+          <p>A link to another place on the same page scrolls there instead of jumping, so you can see where you went. The scroll drags the ink along.</p>
+          <dl><dt>Trigger</dt><dd>Following a link within the page</dd><dt>Timing</dt><dd>The browser's smooth scroll, longer for a longer distance</dd><dt>Reduced</dt><dd>Jumps at once</dd></dl>
+        </div>
+        <div class="stage">
+          <a class="btn" href="#pour-in" data-bleed="c" data-splash="c">Glide back to Pour-in</a>
         </div>
       </li>
       <li class="spec panel" data-rise>
