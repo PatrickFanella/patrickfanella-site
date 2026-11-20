@@ -276,6 +276,8 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     // No viewport yet: the resize handler calls this again once there is one.
     if (sized !== be) return settle()
     if (pending) preroll(...pending)
+    // A solver started again (after a lost context or device) makes the still the page asked for.
+    else if (still && !wanted) preroll(...still)
     pending = null
     if (wanted && !document.hidden) start(); else draw()
     settle()
