@@ -38,18 +38,28 @@ export const INK_DELAY = 20
 
 const ms = (v: string) => (v.endsWith('ms') ? parseFloat(v) : parseFloat(v) * 1000) || 0
 
+// The pour run in progress for each set of letters. A replay aborts the run before it, so that
+// run's backstop timers and listeners cannot land a letter that is falling again or mark the
+// host poured partway through the new run.
+const runs = new WeakMap<HTMLElement, AbortController>()
+
 /**
  * pour-in: the letters drop into place left to right, 60 ms apart. Just after
  * each one hits, its ink splashes down from its foot and it starts to pour.
  * 620 ms per letter on a spring curve, which reaches rest 22% of the way in.
  */
 export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false } = {}) {
+  const key = letters[0]
+  if (!key) return Promise.resolve()
+  runs.get(key)?.abort()
+  const run = new AbortController(), { signal } = run
+  runs.set(key, run)
   for (const l of letters) { delete l.dataset.pour; l.classList.remove('landed') }
-  const host = letters[0]?.closest<HTMLElement>('[data-pour-in]')
+  const host = key.closest<HTMLElement>('[data-pour-in]')
   if (reduced()) { host?.classList.add('poured'); for (const l of letters) { l.dataset.pour = '1'; l.classList.add('landed') } ink?.invalidate(); return Promise.resolve() }
   if (host) { host.classList.remove('pouring', 'poured'); if (replay) void host.offsetWidth; host.classList.add('pouring') }
   const hit = (l: HTMLElement) => {
-    if (l.dataset.pour) return
+    if (signal.aborted || l.dataset.pour) return
     l.dataset.pour = '1'
     ink?.invalidate()
     if (!ink) return
@@ -67,9 +77,8 @@ export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false
     const anim = l.getAnimations().find((a) => (a as CSSAnimation).animationName === 'pour-in')
     return { l, anim, at: ms(cs.animationDelay) + ms(cs.animationDuration) * IMPACT + INK_DELAY }
   })
-  let live = true
   const track = () => {
-    if (!live) return
+    if (signal.aborted) return
     for (const d of due) {
       const t = d.anim?.currentTime
       if (!d.l.dataset.pour && typeof t === 'number' && t >= d.at) hit(d.l)
@@ -79,10 +88,15 @@ export function pourIn(letters: HTMLElement[], ink: Ink | null, { replay = false
   }
   requestAnimationFrame(track)
   return Promise.all(due.map(({ l, at }) => new Promise<void>((done) => {
-    const land = () => { hit(l); l.classList.add('landed'); done() }
-    l.addEventListener('animationend', land, { once: true })
-    setTimeout(land, at + 2400) // a backstop if the animation never runs
-  }))).then(() => { live = false; host?.classList.add('poured') })
+    const land = () => { if (signal.aborted) return; hit(l); l.classList.add('landed'); done() }
+    l.addEventListener('animationend', land, { once: true, signal })
+    const backstop = setTimeout(land, at + 2400) // a backstop if the animation never runs
+    signal.addEventListener('abort', () => { clearTimeout(backstop); done() }, { once: true })
+  }))).then(() => {
+    if (signal.aborted) return
+    run.abort() // the run is over: stop the frame loop and drop the listeners
+    host?.classList.add('poured')
+  })
 }
 
 /**
