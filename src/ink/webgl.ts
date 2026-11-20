@@ -91,14 +91,21 @@ export async function createWebGL(canvas: HTMLCanvasElement, onLost: () => void)
     path: 'WebGL2',
     renderer,
     rows: [256, 200],
-    resize(simW, simH, dW, dH) {
+    resize(simW, simH, dW, dH, keep) {
+      const old = owned.splice(0), had = old.length > 0, oldVel = had && vel.r, oldDye = had && dye.r
       dyeW = dW; dyeH = dH
-      for (const t of owned.splice(0)) { gl.deleteTexture(t.tex); gl.deleteFramebuffer(t.fbo) }
       vel = pair(simW, simH, gl.RG16F, gl.RG, gl.LINEAR)
       prs = pair(simW, simH, gl.R16F, gl.RED, gl.NEAREST)
       curl = target(simW, simH, gl.R16F, gl.RED, gl.NEAREST)
       divg = target(simW, simH, gl.R16F, gl.RED, gl.NEAREST)
       dye = pair(dyeW, dyeH, gl.RGBA16F, gl.RGBA, gl.LINEAR)
+      // Velocity is in viewport heights a second, so a new height rescales it. Pressure only
+      // warm-starts the next solve and starts again from zero.
+      if (keep && oldVel && oldDye) {
+        run('resample', { uSrc: oldVel, uScale: keep, uGain: 1 / keep[1] }, vel.r)
+        run('resample', { uSrc: oldDye, uScale: keep, uGain: 1 }, dye.r)
+      }
+      for (const t of old) { gl.deleteTexture(t.tex); gl.deleteFramebuffer(t.fbo) }
     },
     mask(src) {
       gl.bindTexture(gl.TEXTURE_2D, maskTex)

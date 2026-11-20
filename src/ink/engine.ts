@@ -69,7 +69,12 @@ export interface Backend {
   readonly stepCost?: number
   /** Block until the GPU has run every step sent so far (WebGL2; WebGPU cannot wait on the main thread). */
   finish?(): void
-  resize(simW: number, simH: number, dyeW: number, dyeH: number): void
+  /**
+   * Lay the grids out for a new viewport. `keep` is the new viewport size over the old one,
+   * in CSS px: the velocity and ink already there are carried over, anchored at the top left,
+   * so they stay where they were on screen. Without it the tank starts empty.
+   */
+  resize(simW: number, simH: number, dyeW: number, dyeH: number, keep?: [number, number]): void
   mask(src: HTMLCanvasElement): void
   step(s: StepInput): void
   draw(look: Look): void
@@ -90,6 +95,8 @@ const INK_RGB: Record<InkId, number[]> = { 0: [1, 0, 0], 1: [0, 1, 0], 2: [0, 0,
 // How long WebGPU may take to start before WebGL2 takes the canvas instead. The pages wait
 // this long at most before the pour; a cold start took about 250 ms more than WebGL2 here.
 const GPU_WAIT_MS = 1000
+// A phone's toolbar changes the viewport height by up to about this many CSS px.
+const TOOLBAR_PX = 120
 
 /**
  * Starts the ink on WebGPU where the browser gives a hardware adapter, otherwise on
@@ -103,19 +110,31 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   const mctx = maskCanvas.getContext('2d', { willReadFrequently: false })!
   let be: Backend | null = null
   let simW = 0, simH = 0, dyeW = 0, dyeH = 0
+  // The solver and viewport the grids were last laid out for.
+  let sized: Backend | null = null, cssW = 0, cssH = 0
 
+  // A phone resizes the window whenever its toolbar slides in or out during a touch scroll, so
+  // this must not empty the tank: the solver carries its velocity and ink over to the new grids.
+  // Returns whether the grids were laid out again. A viewport with no size (a hidden frame) is
+  // left alone; `sized` stays behind `be` until one has a size, and nothing steps or draws until then.
   function resize() {
-    if (!be) return
+    if (!be || !innerWidth || !innerHeight) return false
     const lim = be.maxSize ?? Infinity
     const dpr = Math.min(devicePixelRatio || 1, 2, lim / Math.max(innerWidth, innerHeight))
-    canvas.width = Math.min(lim, Math.round(innerWidth * dpr)); canvas.height = Math.min(lim, Math.round(innerHeight * dpr))
+    const cw = Math.min(lim, Math.round(innerWidth * dpr)), ch = Math.min(lim, Math.round(innerHeight * dpr))
+    const same = sized === be
+    // Assigning a canvas its own size still clears it, so leave an unchanged one alone.
+    if (same && cw === canvas.width && ch === canvas.height && cssW === innerWidth && cssH === innerHeight) return false
+    canvas.width = cw; canvas.height = ch
     const rows = be.rows[innerWidth <= 700 ? 1 : 0]
     simH = rows; simW = Math.max(16, Math.round(rows * innerWidth / innerHeight))
     const dyeScale = Math.min(1, 1100 / Math.max(innerWidth, innerHeight))
     dyeW = Math.round(innerWidth * dyeScale); dyeH = Math.round(innerHeight * dyeScale)
     maskCanvas.width = dyeW; maskCanvas.height = dyeH
-    be.resize(simW, simH, dyeW, dyeH)
+    be.resize(simW, simH, dyeW, dyeH, same ? [innerWidth / cssW, innerHeight / cssH] : undefined)
+    sized = be; cssW = innerWidth; cssH = innerHeight
     maskDirty = true
+    return true
   }
 
   let emitters: Emitter[] = []
@@ -130,7 +149,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   let time = 0
 
   function step(dt: number) {
-    if (!be) return
+    if (!be || sized !== be) return
     if (maskDirty) {
       drawMask(mctx, dyeW, dyeH, emitters, Math.max(5, 9 * dyeH / innerHeight * (innerHeight / 900)))
       be.mask(maskCanvas); maskDirty = false
@@ -149,7 +168,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   }
 
   let look = LOOK[theme]
-  const draw = () => { try { be?.draw(look) } catch (err) { crash(err as Error) } }
+  const draw = () => { try { if (be && sized === be) be.draw(look) } catch (err) { crash(err as Error) } }
 
   // Frame loop. One solver step per frame at a fixed 1/60 s, so the motion
   // looks the same on 60 Hz and 120 Hz screens; the step time is wall clock.
@@ -164,7 +183,11 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     stepMs += (performance.now() - t0 - stepMs) * 0.05
   }
 
+  // With no viewport there is nowhere to stir or burst, and dividing by its size would put
+  // NaN into the water for good.
+  const noView = () => !innerWidth || !innerHeight
   addEventListener('pointermove', (e) => {
+    if (noView()) return
     if (ptr.x >= 0) { ptr.ax += e.movementX / innerHeight; ptr.ay -= e.movementY / innerHeight }
     ptr.x = e.clientX / innerWidth; ptr.y = 1 - e.clientY / innerHeight
   }, { passive: true })
@@ -174,8 +197,34 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     scrollV = Math.max(-0.08, Math.min(0.08, scrollV + d * 0.0012))
     maskDirty = true
   }, { passive: true })
-  let rz = 0
-  addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => { resize(); if (!running) draw() }) })
+  // Sizing a canvas clears it, and this frame's draw may already have run, so draw again.
+  let rz = 0, again = 0
+  addEventListener('resize', () => {
+    cancelAnimationFrame(rz)
+    rz = requestAnimationFrame(() => {
+      const first = sized !== be
+      if (!resize()) return
+      // A page that loaded with no viewport gets its start now.
+      if (first && live) return begin()
+      draw()
+      // A still (reduced motion) is never stepped again, so the carried ink would keep the old
+      // layout's letter gaps and new space would stay bare. Once the size settles and the page
+      // has laid out, make the still again from an empty tank, as a load at this size would. A
+      // toolbar that shows only cuts the bottom off the carried still: anchored at the top, it
+      // stays aligned and is kept. One that hides uncovers space the still never reached, or a
+      // strip an earlier cut left bare, so any height past what is left of the still makes it again.
+      if (!still || wanted) return
+      stillCut = Math.min(stillCut, innerHeight)
+      if (innerWidth !== stillW || Math.abs(innerHeight - stillH) > TOOLBAR_PX || innerHeight > stillCut) {
+        clearTimeout(again)
+        again = window.setTimeout(() => {
+          if (!still || wanted || !be || sized !== be) return
+          be.resize(simW, simH, dyeW, dyeH); maskDirty = true
+          preroll(...still)
+        }, 200)
+      }
+    })
+  })
   document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else if (wanted) start() })
 
   let wanted = false, live = false
@@ -185,12 +234,17 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   // Choosing a solver. Calls made before one is ready are kept: emitters, bursts and
   // the pointer in the state above, a preroll here, running in `wanted`.
   let pending: [number, number] | null = null
+  // The still the page asked for (reduced motion), the viewport it was last made for, and the
+  // least height a resize has cut it to since.
+  let still: [number, number] | null = null, stillW = 0, stillH = 0, stillCut = 0
   let settle!: () => void
   const ready = new Promise<void>((r) => { settle = r })
   // A step returns once its work is sent, long before the GPU has run it. Timing that alone let
   // SwiftShader queue all 240 steps of a 1.5 s preroll and then freeze the tab for 15 s or more.
   function preroll(steps: number, budgetMs: number) {
-    if (!live || !be) { pending = [steps, budgetMs]; return 0 }
+    still = [steps, budgetMs]
+    if (!live || !be || sized !== be) { pending = [steps, budgetMs]; return 0 }
+    stillW = innerWidth; stillH = stillCut = innerHeight
     const b = be, finish = b.finish?.bind(b), t0 = performance.now(); let n = 0
     try {
       if (finish) {
@@ -220,6 +274,8 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
   }
   function begin() {
     live = true
+    // No viewport yet: the resize handler calls this again once there is one.
+    if (sized !== be) return settle()
     if (pending) preroll(...pending)
     pending = null
     if (wanted && !document.hidden) start(); else draw()
@@ -266,7 +322,9 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     createWebGPU(canvas, pick === 'webgpu', lost).then(async (b) => {
       gpu = b
       if (gave) return gpu.abandon()
-      be = gpu; resize(); step(1 / 60)
+      be = gpu; resize()
+      if (sized !== be) throw new Error('no viewport yet')
+      step(1 / 60)
       await gpu.commit(look)
       if (gave) { if (be === gpu) be = null; return gpu.abandon() }
       clearTimeout(timer); gave = true
@@ -284,7 +342,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
     invalidate() { maskDirty = true },
     setEmitters(list) { emitters = list; maskDirty = true },
     burst(x, y, ink, amount = 1, rx = 57, ry = rx, { dir = [0, 0], spread = 1, steps = 1 } = {}) {
-      if (waiting.length >= 24) return
+      if (waiting.length >= 24 || noView()) return
       waiting.push({
         a: [x / innerWidth, 1 - y / innerHeight, rx / innerHeight, ry / innerHeight],
         b: [dir[0], -dir[1], spread, 0.9 * amount],
@@ -292,7 +350,7 @@ export function createInk(canvas: HTMLCanvasElement, theme: Theme, onFail?: (err
         left: steps,
       })
     },
-    stir(x, y, dx, dy) { ptr.x = x / innerWidth; ptr.y = 1 - y / innerHeight; ptr.ax += dx / innerHeight; ptr.ay -= dy / innerHeight },
+    stir(x, y, dx, dy) { if (noView()) return; ptr.x = x / innerWidth; ptr.y = 1 - y / innerHeight; ptr.ax += dx / innerHeight; ptr.ay -= dy / innerHeight },
     setTheme(t) { look = LOOK[t]; if (!running) draw() },
     setRunning(on) { wanted = on; if (on && !document.hidden) start(); else { stop(); draw() } },
     preroll,
