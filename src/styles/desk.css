@@ -67,7 +67,7 @@
 .work { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .work li { display: grid; gap: 2px; padding-bottom: 8px; border-bottom: 1px solid var(--desk-line); }
 .work li:last-child { border-bottom: 0; padding-bottom: 0; }
-.work h3 { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; font: 800 1.45rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.01em; }
+.work h3 { margin: 0; display: grid; justify-items: start; gap: 4px; font: 800 1.45rem/1 var(--display); text-transform: uppercase; letter-spacing: 0.01em; }
 .work h3 a { text-decoration: none; }
 .work h3 a:hover, .work h3 a:focus-visible { text-decoration: underline; }
 .work h3 span { min-width: 0; max-width: 100%; font: 500 0.6875rem/1.4 var(--mono); text-transform: none; letter-spacing: 0; color: var(--desk-dim); overflow-wrap: anywhere; }

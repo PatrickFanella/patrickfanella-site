@@ -10,8 +10,9 @@
 .resume .skills dd { margin: 0; }
 .job-meta { color: var(--dim); margin-bottom: .5rem; }
 .resume li { margin-bottom: .4rem; }
-.resume-actions { display: flex; justify-content: flex-end; gap: 1.5rem; margin-bottom: 2rem; }
-.resume-actions button { color: var(--text); border: 1px solid var(--line); background: var(--raise); padding: .4rem .8rem; font: inherit; cursor: pointer; }
+.resume-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .5rem 1.5rem; margin-bottom: 2rem; }
+.resume-actions a { display: inline-flex; align-items: center; min-height: 44px; }
+.resume-actions button { min-height: 44px; color: var(--text); border: 1px solid var(--line); background: var(--raise); padding: .4rem .8rem; font: inherit; cursor: pointer; }
 @media (max-width: 600px) { .resume .skills div { grid-template-columns: minmax(0, 1fr); gap: .25rem; } }
 @media print {
   @page { size: letter; margin: .4in; }

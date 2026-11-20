@@ -241,7 +241,7 @@ main, .foot { position: relative; z-index: 1; }
 
 /* ---------- narrow screens ---------- */
 @media (max-width: 860px) {
-  .coming { grid-template-columns: minmax(0, 1fr); padding-top: 48px; gap: 18px; }
+  .coming { grid-template-columns: minmax(0, 1fr); padding-top: 48px; padding-bottom: 56px; gap: 18px; }
   .coming-head { position: static; }
 }
 @media (max-width: 700px) {
