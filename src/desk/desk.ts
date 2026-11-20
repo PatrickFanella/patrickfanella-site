@@ -2,12 +2,14 @@
 // about pane (view-transition-name: name) and pours from there. The psql pane offers opt-in Clpr
 // and SQL workers; panes 4 and 5 are empty for now.
 import { boot } from '../boot'
-import { reduced, splitLetters } from '../motion/motion'
+import { splitLetters } from '../motion/motion'
 import '../styles/desk.css'
 import { startPsql } from './psql'
 import { startShell } from './shell'
 import { startTelemetry } from './telemetry'
 
+// Text lands complete immediately. Normal ink develops in frames rather than
+// blocking interaction on a synchronous preroll; reduced motion gets one still.
 const { ink } = boot()
 
 // The same ink per letter as on the landing page, so each letter keeps its colour across the hand-over.
@@ -50,12 +52,3 @@ document.addEventListener('focusin', (e) => {
 // themselves, and element scroll events do not bubble, so catch them on the way down.
 addEventListener('scroll', () => ink?.invalidate(), { capture: true, passive: true })
 addEventListener('resize', () => ink?.invalidate())
-
-// Text lands complete immediately. Normal ink develops in frames rather than
-// blocking interaction on a synchronous preroll; reduced motion gets one still.
-document.fonts.load('900 100px "Big Shoulders Display Variable"').catch(() => []).then(() => document.fonts.ready).then(() => {
-  if (!ink) return
-  ink.invalidate()
-  if (reduced()) ink.preroll(240, 1500)
-  else ink.setRunning(true)
-})
