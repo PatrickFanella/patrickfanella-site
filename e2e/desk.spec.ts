@@ -1,7 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
 import { test, expect } from './fixtures'
-import { measured } from '../src/desk/psql'
 
 // The desk shares boot.ts with the other pages, so a markup change on one page can break it
 // without a merge conflict. These run it the same way as / and /motion/.
@@ -104,22 +103,24 @@ test.describe('PostgreSQL on the desk', () => {
     await expect(page.locator('[data-pg-seq]')).toHaveText(/^\d+(\.\d{1,2})?$/)
     await expect(page.locator('[data-pg-idx]')).toHaveText(/^(< )?\d+(\.\d{1,2})?$/)
     await expect(page.locator('[data-pg-note]')).toContainText("This tab's clock ticks every")
-    // Each figure is the middle of its three batch means, shown at the clock's resolution.
-    const step = Number(await page.locator('.bench').getAttribute('data-step'))
-    const shown: Record<string, string> = {}
+    // Each figure is the middle of its three batch means, rounded to the decimals it shows, or a
+    // bound above that mean. How the decimals and the bound follow the clock is benchmark.test.ts's.
     for (const kind of ['seq', 'idx']) {
       const fig = page.locator(`[data-pg-${kind}]`)
       const batches = (await fig.getAttribute('data-batches'))!.split(' ').map(Number)
       expect(batches, `${kind} batch means`).toHaveLength(3)
       const mid = [...batches].sort((a, b) => a - b)[1]
-      shown[kind] = measured(mid, step, Number(await fig.getAttribute('data-runs'))).text
-      await expect(fig).toHaveText(shown[kind])
+      const text = (await fig.textContent())!
+      const half = 0.5 / 10 ** (text.split('.')[1]?.length ?? 0) + 1e-9
+      if (text.startsWith('< ')) expect(mid, `${kind} median under its bound`).toBeLessThan(Number(text.slice(2)) + half)
+      else expect(Math.abs(Number(text) - mid), `${kind} figure against its median`).toBeLessThanOrEqual(half)
     }
+    const idx = (await page.locator('[data-pg-idx]').textContent())!
     await expect(page.locator('[data-pg-seq-note]')).toHaveText('seq scan, 50,008 rows')
     await expect(page.locator('[data-pg-sub]')).toHaveText(/^live in this tab, PostgreSQL \d+\.\d+/)
     const out = page.locator('.psql-out')
     // The session's Execution Time is the same batch mean as the panel's, not one run's coarse reading.
-    await expect(out).toContainText(`Execution Time: ${shown.idx} ms (mean of `)
+    await expect(out).toContainText(`Execution Time: ${idx} ms (mean of `)
     await expect(out).not.toContainText(/0\.000 ms|actual time=/)
     await expect(out).toContainText('idx_clips_search_vector')
     await expect(out).toContainText('speedrun world record attempt')

@@ -53,7 +53,7 @@ The pages are built with Astro as static HTML. There is no client router and no 
 - `src/desk/clpr.worker.ts`: loads the pinned Clpr artifact, verifies its Wasm and migration hashes, applies every migration, seeds eight fixtures, and runs requests through the Go handler and pgx bridge.
 - `src/desk/clpr.ts`: live-mode controls, manifest provenance, response display, stop/retry and shell request routing.
 - `public/clpr/`: the pinned manifest and its payload, copied from Clpr CI. See [docs/clpr-artifact.md](docs/clpr-artifact.md) for updating it.
-- `src/desk/psql.ts`: the psql pane and its timing panel. `src/desk/recorded.ts` holds Clpr's recorded run; `src/desk/pg-protocol.ts` holds the query and the messages.
+- `src/desk/psql.ts`: the psql pane and its timing panel. `src/desk/benchmark.ts` holds the SQL benchmark's arithmetic and wording, with no DOM or worker: how a time is shown at the clock's resolution, the tidied plan, the scan name and the ratio sentence; `benchmark.test.ts` covers it directly. `src/desk/recorded.ts` holds Clpr's recorded run; `src/desk/pg-protocol.ts` holds the query and the messages.
 - `src/styles/site.css`: tokens (colour, type, four durations, two curves), layout, rise, view transitions and reduced motion.
 - `src/styles/desk.css`: the desk's tiling layout. Its colours are the `--desk-*` tokens in `site.css`, separate from the smoke palette. Panes 1, 2 and 5 keep their gold, cobalt and orange accents. Panes 3 and 4 keep the prototype's pink and green, so the five pane buttons stay distinct.
 - `docs/`: the plan, the original design doc and the prototypes the roadmap builds from.

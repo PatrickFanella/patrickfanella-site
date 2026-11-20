@@ -28,5 +28,7 @@ Each worker callback checks that its worker is still current before changing out
 status. Switching, stopping and retrying terminate the previous worker and reject its
 pending requests. `e2e/desk-status.spec.ts` injects deterministic controller-boundary events
 for terminal and stale-callback regressions; those fixture times are not performance proof.
-`e2e/desk.spec.ts` also asserts completion after a real PostgreSQL benchmark, while
+`e2e/desk.spec.ts` also asserts completion after a real PostgreSQL benchmark, and that each
+figure is the median of its three batch means; how a time is rounded to the clock, how the plan
+is tidied and what the ratio sentence says are tested directly in `src/desk/benchmark.test.ts`, while
 `e2e/clpr.spec.ts` exercises the actual pinned Go worker, integrity failure and retry.
