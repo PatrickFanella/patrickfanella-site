@@ -1,13 +1,15 @@
 ---
 import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
-import { studiedProjects, studiesReviewedOn, type StudiedProject } from '../../content/project-presentation'
+import { catalog } from '../../content/projects.mjs'
+import type { StudiedProject } from '../../content/project-catalog.mjs'
 
 export function getStaticPaths() {
-  return studiedProjects.map(project => ({ params: { slug: project.slug }, props: { project } }))
+  return catalog.studied.map(project => ({ params: { slug: project.slug }, props: { project } }))
 }
 interface Props { project: StudiedProject }
 const { project } = Astro.props
+const { studiesReviewedOn } = catalog
 const { study } = project
 const seo = {
   breadcrumbs: [{ name: 'Home', href: '/' }, { name: 'Case studies', href: '/case-studies/' }, { name: project.title, href: study.path }],

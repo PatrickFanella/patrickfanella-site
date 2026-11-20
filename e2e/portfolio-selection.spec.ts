@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
-import { allProjects, studiedProjects, studiesReviewedOn } from '../src/content/project-presentation'
+import { catalog } from '../src/content/projects.mjs'
 import { test, expect } from './fixtures'
+const { all: allProjects, studied: studiedProjects, studiesReviewedOn } = catalog
 
 test.use({ reducedMotion: 'reduce' })
 

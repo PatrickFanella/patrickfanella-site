@@ -3,8 +3,15 @@ import SiteHeader from '../components/SiteHeader.astro'
 import { recruitingEmail } from '../content/contact'
 import resume from '../content/resume.json'
 import Page from '../layouts/Page.astro'
-import { employmentFeature, featuredProjects } from '../content/project-presentation'
+import { catalog } from '../content/projects.mjs'
 import { siteMetadata } from '../content/site-metadata'
+const { featured: featuredProjects } = catalog
+const employmentFeature = {
+  title: 'DeliverZero',
+  ownership: 'Full-stack engineer, working directly with the CTO',
+  outcome: resume.deliverzero_bullets[1],
+  href: '/resume/#deliverzero',
+}
 ---
 <Page title={siteMetadata.title} description={siteMetadata.description} bodyClass="landing">
   <a class="skip" href="#coming">Skip to the work</a>

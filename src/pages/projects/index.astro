@@ -2,7 +2,8 @@
 import ContentPage from '../../layouts/ContentPage.astro'
 import ProjectMedia from '../../components/ProjectMedia.astro'
 import resume from '../../content/resume.json'
-import { featuredProjects, reviewedOn, supportingProjects } from '../../content/project-presentation'
+import { catalog } from '../../content/projects.mjs'
+const { featured: featuredProjects, reviewedOn, supporting: supportingProjects } = catalog
 ---
 <ContentPage title="Work | Patrick Fanella" description="Four engineering case studies and twelve selected projects by Patrick Fanella: search, data pipelines, media systems and developer tools.">
   <h1>Selected work</h1>

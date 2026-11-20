@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
-import { selectedProjects } from '../src/content/project-presentation'
+import { catalog } from '../src/content/projects.mjs'
 import { test, expect } from './fixtures'
+const { selected: selectedProjects } = catalog
 
 test('projects render the curated selection without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })

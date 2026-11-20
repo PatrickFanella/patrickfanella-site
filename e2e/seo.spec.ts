@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
-import { allProjects, studiedProjects } from '../src/content/project-presentation'
+import { catalog } from '../src/content/projects.mjs'
 import { test, expect } from './fixtures'
+const { all: allProjects, studied: studiedProjects } = catalog
 
 test('the sitemap contains indexable canonical pages and images from their visible content', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false })

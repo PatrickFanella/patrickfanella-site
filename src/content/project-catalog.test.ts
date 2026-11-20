@@ -1,7 +1,8 @@
 import { expect, test } from 'vitest'
 import { assembleCatalog, assetPaths, socialCardPath, type SourceProject } from './project-catalog.mjs'
-import { allProjects, featuredProjects, projectsReply, reviewedOn, selectedProjects, studiedProjects, studiesReviewedOn, supportingProjects } from './project-presentation'
+import { catalog, projectsReply } from './projects.mjs'
 import { GET } from '../pages/sitemap.xml'
+const { all: allProjects, featured: featuredProjects, reviewedOn, selected: selectedProjects, studied: studiedProjects, studiesReviewedOn, supporting: supportingProjects } = catalog
 
 // Literal fixture data, so the join's rules are tested whatever the content files hold.
 const project = (slug: string, extra: Partial<SourceProject> = {}): SourceProject => ({
@@ -129,7 +130,7 @@ test('a studied project needs its own social card, so its study page never takes
   expect(() => assembleCatalog(data)).toThrow('project-case-studies.json: study "alpha" has no social card: project "alpha" has no thumbnailUrl')
 })
 
-// The real content files: importing project-presentation runs the join, so a disagreement fails this file.
+// The real content files: importing projects.mjs runs the join, so a disagreement fails this file.
 test('the content files agree and give four studied projects, twelve others and 43 detail pages', () => {
   expect(featuredProjects.map(item => item.title)).toEqual(['Clpr', 'Clustr', 'Rekolekt + HasanAra', 'Undertow'])
   expect(studiedProjects.map(item => item.study.path)).toEqual(['/case-studies/clpr/', '/case-studies/clustr/', '/case-studies/rekolekt/', '/case-studies/undertow/'])

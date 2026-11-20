@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright'
 import type { Page } from '@playwright/test'
-import { featuredProjects } from '../src/content/project-presentation'
+import { catalog } from '../src/content/projects.mjs'
 import { test, expect } from './fixtures'
+const { featured: featuredProjects } = catalog
 
 // The desk shares boot.ts with the other pages, so a markup change on one page can break it
 // without a merge conflict. These run it the same way as / and /motion/.
