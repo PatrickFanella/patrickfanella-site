@@ -25,7 +25,7 @@ The project and case-study pages, the landing page, the Desk, the sitemap and `P
 read those and do not open the JSON files.
 
 The join throws when the files disagree: a study whose slug is not in the selection or whose project
-has no image, a media file missing from the asset manifest, or a featured slug that is not selected
+has no image or no `thumbnailUrl` (the study page uses the project's `socialImage`), a media file missing from the asset manifest, or a featured slug that is not selected
 or has no study. The message names each entry. Because the pages import the result, this fails
 `npm run build`; `src/content/project-catalog.test.ts` fails `npm run test:unit` on the same data
 and tests each rule with broken fixture data. The module is plain JavaScript with its data passed

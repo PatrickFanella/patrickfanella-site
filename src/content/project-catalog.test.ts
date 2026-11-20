@@ -87,11 +87,20 @@ test('a studied project needs a lead image, and every disagreement is reported t
   ].join('\n'))
 })
 
+test('a studied project needs its own social card, so its study page never takes the site card', () => {
+  const data = fixture()
+  data.selected[0] = project('alpha', { media: [shot] })
+  expect(() => assembleCatalog(data)).toThrow('project-case-studies.json: study "alpha" has no social card: project "alpha" has no thumbnailUrl')
+})
+
 // The real content files: importing project-presentation runs the join, so a disagreement fails this file.
 test('the content files agree and give four studied projects, twelve others and 43 detail pages', () => {
   expect(featuredProjects.map(item => item.title)).toEqual(['Clpr', 'Clustr', 'Rekolekt + HasanAra', 'Undertow'])
   expect(studiedProjects.map(item => item.study.path)).toEqual(['/case-studies/clpr/', '/case-studies/clustr/', '/case-studies/rekolekt/', '/case-studies/undertow/'])
   expect(featuredProjects.map(item => item.displayName)).toEqual(['Clpr', 'Clustr', 'HasanAra', 'Undertow'])
+  expect(studiedProjects.map(item => item.socialImage)).toEqual([
+    '/assets/projects/social/clpr.png', '/assets/projects/social/clustr.png', '/assets/projects/social/rekolekt.png', '/assets/projects/social/undertow.png',
+  ])
   expect(supportingProjects).toHaveLength(12)
   expect(selectedProjects).toHaveLength(16)
   expect(allProjects).toHaveLength(43)

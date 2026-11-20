@@ -102,6 +102,7 @@ export function assembleCatalog({ portfolio, selected, studies, sources, assets,
       current: isCurrent,
       displayName: displayNames[project.slug] ?? project.title,
       // Current entries without their own image share the site card; everything else has a rendered card.
+      // One rule serves the project page and its study page.
       socialImage: isCurrent && !project.thumbnailUrl ? sharedCard : `/assets/projects/social/${project.slug}.png`,
       furtherStudies: furtherStudies[project.slug] ?? [],
       ...(study && { study: { ...study, path: `/case-studies/${study.slug}/` } }),
@@ -119,6 +120,8 @@ export function assembleCatalog({ portfolio, selected, studies, sources, assets,
     const project = finished.get(study.slug)
     if (!project) problems.push(`project-case-studies.json: study "${study.slug}" has no project in selected-projects.json`)
     else if (!project.media.length) problems.push(`project-case-studies.json: study "${study.slug}" has no lead image: project "${study.slug}" has no media`)
+    // The study page shares the project's card, and a study must not fall back to the site card.
+    else if (!project.thumbnailUrl) problems.push(`project-case-studies.json: study "${study.slug}" has no social card: project "${study.slug}" has no thumbnailUrl`)
   }
   for (const slug of featured) {
     if (!current.has(slug)) problems.push(`featured slug "${slug}" is not in selected-projects.json`)
