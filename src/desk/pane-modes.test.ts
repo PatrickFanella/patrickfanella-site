@@ -423,17 +423,18 @@ test('stopping during the first search is a cancellation, not a failure', async 
   expect(d.view).toMatchObject({ mode: 'recorded', phase: 'idle', canExample: true, status: 'Live mode stopped. The psql pane shows the recorded run.' })
 })
 
+// A failed request rejects with the worker's error; any other failure closes the client under it.
 test.each([
-  ['an error event', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.emit({ ev: 'error', message: 'fixture failure' }), 'fixture failure'],
-  ['a worker that fails', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.fail('fixture failure'), 'fixture failure'],
-  ['a request that fails', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.emit({ ev: 'error', id: 2, message: 'fixture failure' }), 'fixture failure'],
-  ['a worker script that does not load', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.fail(''), 'The worker did not load'],
-])('Clpr live mode fails on %s, keeps the recorded run and can be retried', async (_name, break_, why) => {
+  ['an error event', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.emit({ ev: 'error', message: 'fixture failure' }), 'fixture failure', 'Clpr live mode stopped.'],
+  ['a worker that fails', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.fail('fixture failure'), 'fixture failure', 'Clpr live mode stopped.'],
+  ['a request that fails', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.emit({ ev: 'error', id: 2, message: 'fixture failure' }), 'fixture failure', 'fixture failure'],
+  ['a worker script that does not load', (worker: FixtureWorker<ClprRequest, ClprEvent>) => worker.fail(''), 'The worker did not load', 'Clpr live mode stopped.'],
+])('Clpr live mode fails on %s, keeps the recorded run and can be retried', async (_name, break_, why, rejection) => {
   const d = desk()
   await liveClpr(d)
   const search = d.modes.search('world record')
   break_(d.clpr[0])
-  await expect(search).rejects.toThrow('Clpr live mode stopped.')
+  await expect(search).rejects.toThrow(rejection)
   expect(d.clpr[0].terminated).toBe(true)
   expect(d.view).toMatchObject({
     mode: 'clpr', phase: 'failed', sub: 'recorded run', live: null, stopLabel: 'Stop live mode', canStart: true, canExample: true, canStop: false,
